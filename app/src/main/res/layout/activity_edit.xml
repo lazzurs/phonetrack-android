@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="it.niedermann.owncloud.notes.android.activity.EditNoteActivity">
+    tools:context="it.eneiluj.nextcloud.phonetrack.android.activity.EditNoteActivity">
 
     <com.yydcdut.rxmarkdown.RxMDEditText
             android:id="@+id/editContent"

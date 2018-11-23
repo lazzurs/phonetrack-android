@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Notes</string>
+    <string name="app_name">PhoneTrack</string>
     <string name="no_notes">Aucune note pour l\'instant</string>
     <string name="label_all_notes">Toutes les notes</string>
     <string name="label_favorites">Favoris</string>

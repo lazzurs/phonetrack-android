@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
-        applicationId "it.niedermann.owncloud.notes"
+        applicationId "it.eneiluj.nextcloud.phonetrack"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 37
-        versionName "0.22.3"
+        versionCode 1
+        versionName "0.0.1"
     }
     buildTypes {
         release {

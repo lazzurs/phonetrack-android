@@ -1,0 +1,11 @@
+package it.eneiluj.nextcloud.phonetrack.util;
+
+/**
+ * Callback
+ * Created by stefan on 01.10.15.
+ */
+public interface ICallback {
+    void onFinish();
+
+    void onScheduled();
+}

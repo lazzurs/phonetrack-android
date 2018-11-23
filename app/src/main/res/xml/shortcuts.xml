@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
-        android:shortcutId="it.niedermann.owncloud.notes"
+        android:shortcutId="it.eneiluj.nextcloud.phonetrack"
         android:enabled="true"
         android:icon="@drawable/ic_add_blue_24dp"
         android:shortcutShortLabel="@string/action_create"
         android:shortcutLongLabel="@string/shortcut_create_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="it.niedermann.owncloud.notes"
-            android:targetClass="it.niedermann.owncloud.notes.android.activity.EditNoteActivity" />
+            android:targetPackage="it.eneiluj.nextcloud.phonetrack"
+            android:targetClass="it.eneiluj.nextcloud.phonetrack.android.activity.EditNoteActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 </shortcuts>
