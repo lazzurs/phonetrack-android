@@ -174,9 +174,9 @@ public class SettingsActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        if (!first_run) {
+        //if (!first_run) {
             super.onBackPressed();
-        }
+        //}
     }
 
     private void login() {

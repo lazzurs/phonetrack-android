@@ -115,10 +115,10 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // First Run Wizard
-        if (!NoteServerSyncHelper.isConfigured(this)) {
+        /*if (!NoteServerSyncHelper.isConfigured(this)) {
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, server_settings);
-        }
+        }*/
         String categoryAdapterSelectedItem = ADAPTER_KEY_RECENT;
         if (savedInstanceState != null) {
             navigationSelection = (Category) savedInstanceState.getSerializable(SAVED_STATE_NAVIGATION_SELECTION);
@@ -135,6 +135,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
         setupNotesList();
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
+        this.account.setText("Tap here to connect");
     }
 
     @Override
