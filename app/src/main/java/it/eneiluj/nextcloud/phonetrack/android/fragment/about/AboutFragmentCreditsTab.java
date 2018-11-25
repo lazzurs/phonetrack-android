@@ -28,7 +28,7 @@ public class AboutFragmentCreditsTab extends Fragment {
         ButterKnife.bind(this, v);
         SupportUtil.setHtml(aboutVersion, R.string.about_version, "v" + BuildConfig.VERSION_NAME);
         SupportUtil.setHtml(aboutMaintainer, R.string.about_maintainer);
-        SupportUtil.setHtml(aboutTranslators, R.string.about_translators_transifex, getString(R.string.url_translations));
+        SupportUtil.setHtml(aboutTranslators, R.string.about_translators_crowdin, getString(R.string.url_translations));
         return v;
     }
 }
