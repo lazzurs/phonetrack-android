@@ -135,7 +135,6 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
         setupNotesList();
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
-        this.account.setText("Tap here to connect");
     }
 
     @Override
@@ -338,12 +337,12 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
     }
 
     private void setupNavigationMenu() {
-        final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
+        //final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
         final NavigationAdapter.NavigationItem itemSettings = new NavigationAdapter.NavigationItem("settings", getString(R.string.action_settings), null, R.drawable.ic_settings_grey600_24dp);
         final NavigationAdapter.NavigationItem itemAbout = new NavigationAdapter.NavigationItem("about", getString(R.string.simple_about), null, R.drawable.ic_info_outline_grey600_24dp);
 
         ArrayList<NavigationAdapter.NavigationItem> itemsMenu = new ArrayList<>();
-        itemsMenu.add(itemTrashbin);
+        //itemsMenu.add(itemTrashbin);
         itemsMenu.add(itemSettings);
         itemsMenu.add(itemAbout);
 
@@ -356,11 +355,12 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                 } else if (item == itemAbout) {
                     Intent aboutIntent = new Intent(getApplicationContext(), AboutActivity.class);
                     startActivityForResult(aboutIntent, about);
-                } else if (item == itemTrashbin) {
+                }
+                /*else if (item == itemTrashbin) {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url + "index.php/apps/files/?dir=/&view=trashbin")));
-                }
+                }*/
             }
 
             @Override
@@ -606,6 +606,9 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
         String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS).replace("https://", "").replace("http://", "");
         if(!SettingsActivity.DEFAULT_SETTINGS.equals(username) && !SettingsActivity.DEFAULT_SETTINGS.equals(url)) {
             this.account.setText(username + "@" + url.substring(0, url.length() - 1));
+        }
+        else {
+            this.account.setText("Tap here to connect");
         }
     }
 
