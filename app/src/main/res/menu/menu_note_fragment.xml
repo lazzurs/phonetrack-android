@@ -8,6 +8,13 @@
         android:checkable="true"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/menu_enabled"
+        android:checkable="true"
+        android:orderInCategory="81"
+        android:title="@string/menu_enabled"
+        app:actionLayout="@layout/switch_item"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/menu_category"
         android:icon="@drawable/ic_folder_white_24dp"
         android:orderInCategory="100"

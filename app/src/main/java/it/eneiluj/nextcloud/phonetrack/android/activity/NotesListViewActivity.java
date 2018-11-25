@@ -658,6 +658,15 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
     }
 
     @Override
+    public void onLogjobEnabledClick(int position, View view) {
+        DBNote note = (DBNote) adapter.getItem(position);
+        NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(view.getContext());
+        db.toggleFavorite(note, syncCallBack);
+        adapter.notifyItemChanged(position);
+        refreshLists();
+    }
+
+    @Override
     public boolean onNoteLongClick(int position, View v) {
         boolean selected = adapter.select(position);
         if (selected) {

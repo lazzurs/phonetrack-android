@@ -10,8 +10,8 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/button_padding"
         android:layout_marginStart="@dimen/button_padding"
+        android:layout_marginLeft="@dimen/button_padding"
         android:contentDescription="@string/menu_favorite"
         android:src="@drawable/ic_star_white_24dp" />
 
@@ -30,6 +30,74 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/list_item_background_selector">
+
+
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/list_item_background_selector"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp">
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_item_background_selector">
+
+                <TextView
+                    android:id="@+id/noteTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textColor="@drawable/list_item_color_selector"
+                    android:textSize="@dimen/primary_font_size" />
+            </android.support.v7.widget.LinearLayoutCompat>
+
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_item_background_selector">
+
+
+                <TextView
+                    android:id="@+id/noteExcerpt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
+                    android:textColor="@drawable/list_item_color_selector_low"
+                    android:textSize="@dimen/secondary_font_size" />
+
+                <TextView
+                    android:id="@+id/noteCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/border"
+                    android:maxLines="1"
+                    android:paddingLeft="8dp"
+                    android:paddingTop="1dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="1dp"
+                    android:singleLine="true"
+                    android:textColor="@drawable/list_item_color_selector"
+                    android:textSize="@dimen/secondary_font_size" />
+            </android.support.v7.widget.LinearLayoutCompat>
+        </android.support.v7.widget.LinearLayoutCompat>
 
         <FrameLayout
             android:layout_centerVertical="true"
@@ -55,74 +123,12 @@
                 android:layout_gravity="center_vertical|end"
                 android:baseline="14dp"
                 android:src="@drawable/ic_sync_blue_18dp" />
+
+            <Switch
+                android:id="@+id/logjobEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
         </FrameLayout>
-
-
-        <android.support.v7.widget.LinearLayoutCompat
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="16dp"
-            android:orientation="vertical"
-            android:background="@drawable/list_item_background_selector">
-
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_item_background_selector">
-
-                <TextView
-                    android:id="@+id/noteTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:layout_weight="1"
-                    android:textColor="@drawable/list_item_color_selector"
-                    android:textSize="@dimen/primary_font_size" />
-            </android.support.v7.widget.LinearLayoutCompat>
-
-
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_item_background_selector">
-
-
-                <TextView
-                    android:id="@+id/noteExcerpt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:paddingBottom="1dp"
-                    android:paddingTop="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@drawable/list_item_color_selector_low"
-                    android:textSize="@dimen/secondary_font_size" />
-
-                <TextView
-                    android:id="@+id/noteCategory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:background="@drawable/border"
-                    android:maxLines="1"
-                    android:paddingBottom="1dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:paddingTop="1dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:singleLine="true"
-                    android:textColor="@drawable/list_item_color_selector"
-                    android:textSize="@dimen/secondary_font_size" />
-            </android.support.v7.widget.LinearLayoutCompat>
-        </android.support.v7.widget.LinearLayoutCompat>
     </android.support.v7.widget.LinearLayoutCompat>
 
     <ImageView

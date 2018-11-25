@@ -108,10 +108,16 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
         super.onPrepareOptionsMenu(menu);
         MenuItem itemFavorite = menu.findItem(R.id.menu_favorite);
         prepareFavoriteOption(itemFavorite);
+        MenuItem itemEnabled = menu.findItem(R.id.menu_enabled);
+        prepareEnabledOption(itemEnabled);
     }
 
     private void prepareFavoriteOption(MenuItem item) {
         item.setIcon(note.isFavorite() ? R.drawable.ic_star_white_24dp : R.drawable.ic_star_border_white_24dp);
+        item.setChecked(note.isFavorite());
+    }
+
+    private void prepareEnabledOption(MenuItem item) {
         item.setChecked(note.isFavorite());
     }
 
@@ -137,6 +143,11 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
                 db.toggleFavorite(note, null);
                 listener.onNoteUpdated(note);
                 prepareFavoriteOption(item);
+                return true;
+            case R.id.menu_enabled:
+                db.toggleFavorite(note, null);
+                listener.onNoteUpdated(note);
+                prepareEnabledOption(item);
                 return true;
             case R.id.menu_category:
                 showCategorySelector();

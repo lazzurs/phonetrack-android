@@ -27,6 +27,7 @@
     <string name="menu_delete">Delete</string>
     <string name="menu_change_category">Category</string>
     <string name="menu_favorite">Favorite</string>
+    <string name="menu_enabled">Enabled</string>
     <string name="menu_preview">Preview</string>
     <string name="menu_share">Share</string>
     <string name="menu_about">About</string>

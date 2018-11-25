@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -112,6 +113,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     noteClickListener.onNoteFavoriteClick(holder.getAdapterPosition(), view);
                 }
             });
+            nvHolder.logjobEnabled.setChecked(note.isFavorite());
+            nvHolder.logjobEnabled.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    noteClickListener.onLogjobEnabledClick(holder.getAdapterPosition(), view);
+                }
+            });
         }
     }
 
@@ -168,6 +176,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         void onNoteFavoriteClick(int position, View v);
 
+        void onLogjobEnabledClick(int position, View v);
+
         boolean onNoteLongClick(int position, View v);
     }
 
@@ -185,6 +195,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ImageView noteStatus;
         @BindView(R.id.noteFavorite)
         ImageView noteFavorite;
+        @BindView(R.id.logjobEnabled)
+        Switch logjobEnabled;
 
         private NoteViewHolder(View v) {
             super(v);
@@ -197,6 +209,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.noteExcerpt = v.findViewById(R.id.noteExcerpt);
             this.noteStatus = v.findViewById(R.id.noteStatus);
             this.noteFavorite = v.findViewById(R.id.noteFavorite);
+            this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
