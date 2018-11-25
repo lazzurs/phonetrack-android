@@ -85,60 +85,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="it.eneiluj.nextcloud.phonetrack.android.appwidget.NoteListWidgetConfiguration">
-
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
-
-        <receiver
-            android:name="it.eneiluj.nextcloud.phonetrack.android.appwidget.CreateNoteWidget"
-            android:label="@string/widget_create_note">
-
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/create_note_widget_provider" />
-        </receiver>
-
-        <receiver
-            android:name="it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget"
-            android:label="@string/widget_single_note_title">
-
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/single_note_widget_provider_info" />
-        </receiver>
-
-        <receiver
-            android:name="it.eneiluj.nextcloud.phonetrack.android.appwidget.NoteListWidget"
-            android:label="@string/widget_note_list_title">
-
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/note_list_widget_provider_info" />
-        </receiver>
-
-        <service
-            android:name="it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
-
-        <service
-            android:name="it.eneiluj.nextcloud.phonetrack.android.appwidget.NoteListWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
-
         <service
             android:name="it.eneiluj.nextcloud.phonetrack.android.quicksettings.NewNoteTileService"
             android:icon="@drawable/ic_quicksettings_new"

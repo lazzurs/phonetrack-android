@@ -13,7 +13,7 @@ import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
-import it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget;
+//import it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget;
 import it.eneiluj.nextcloud.phonetrack.model.DBNote;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
@@ -59,18 +59,18 @@ public class SelectSingleNoteActivity extends NotesListViewActivity {
             finish();
         }
 
-        int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        //int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         SharedPreferences.Editor sp = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
-        sp.putLong(SingleNoteWidget.WIDGET_KEY + appWidgetId, noteID);
-        sp.putBoolean(SingleNoteWidget.DARK_THEME_KEY + appWidgetId, PhoneTrack.getAppTheme(getApplicationContext()));
+        //sp.putLong(SingleNoteWidget.WIDGET_KEY + appWidgetId, noteID);
+        //sp.putBoolean(SingleNoteWidget.DARK_THEME_KEY + appWidgetId, PhoneTrack.getAppTheme(getApplicationContext()));
         sp.apply();
 
-        Intent updateIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null,
-                                        getApplicationContext(), SingleNoteWidget.class);
-        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        setResult(RESULT_OK, updateIntent);
-        getApplicationContext().sendBroadcast(updateIntent);
+        //Intent updateIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null,
+        //                                getApplicationContext(), SingleNoteWidget.class);
+        //updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        //setResult(RESULT_OK, updateIntent);
+        //getApplicationContext().sendBroadcast(updateIntent);
         finish();
     }
 }

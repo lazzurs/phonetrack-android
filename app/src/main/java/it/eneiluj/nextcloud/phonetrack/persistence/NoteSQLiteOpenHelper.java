@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.eneiluj.nextcloud.phonetrack.android.appwidget.NoteListWidget;
-import it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget;
+//import it.eneiluj.nextcloud.phonetrack.android.appwidget.NoteListWidget;
+//import it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget;
 import it.eneiluj.nextcloud.phonetrack.model.CloudNote;
 import it.eneiluj.nextcloud.phonetrack.model.DBNote;
 import it.eneiluj.nextcloud.phonetrack.model.DBStatus;
@@ -548,25 +548,25 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      * Notify about changed phonetrack.
      */
     void notifyNotesChanged() {
-        updateSingleNoteWidgets();
-        updateNoteListWidgets();
+        //updateSingleNoteWidgets();
+        //updateNoteListWidgets();
     }
 
     /**
      * Update single note widget, if the note data was changed.
      */
-    private void updateSingleNoteWidgets() {
+    /*private void updateSingleNoteWidgets() {
         Intent intent = new Intent(getContext(), SingleNoteWidget.class);
         intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
         getContext().sendBroadcast(intent);
-    }
+    }*/
 
     /**
      * Update note list widgets, if the note data was changed.
      */
-    private void updateNoteListWidgets() {
+    /*private void updateNoteListWidgets() {
         Intent intent = new Intent(getContext(), NoteListWidget.class);
         intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
         getContext().sendBroadcast(intent);
-    }
+    }*/
 }

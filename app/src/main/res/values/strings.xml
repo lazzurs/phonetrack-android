@@ -128,7 +128,7 @@
     <string name="activity_select_single_note">Select note</string>
 
     <!-- Shortcuts -->
-    <string name="shortcut_create_long">Create a new note</string>
+    <string name="shortcut_create_long">Create a new log job</string>
 
     <!-- Key / Values for preferences -->
     <string name="pref_key_certs" translatable="false">certificates</string>
