@@ -65,7 +65,8 @@
             android:parentActivityName="it.eneiluj.nextcloud.phonetrack.android.activity.NotesListViewActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask">
-            <intent-filter android:label="@string/action_create">
+            <!-- this is to receive share action from other apps -->
+            <intent-filter android:label="@string/action_create_share">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
