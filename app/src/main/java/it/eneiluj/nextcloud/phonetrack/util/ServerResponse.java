@@ -6,43 +6,42 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
-import it.eneiluj.nextcloud.phonetrack.model.CloudNote;
+import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 
 /**
- * Provides entity classes for handling server responses with a single note ({@link NoteResponse}) or a list of phonetrack ({@link NotesResponse}).
+ * Provides entity classes for handling server responses with a single note ({@link SessionResponse}) or a list of phonetrack ({@link SessionsResponse}).
  */
 public class ServerResponse {
 
     public static class NotModifiedException extends IOException {
     }
 
-    public static class NoteResponse extends ServerResponse {
-        public NoteResponse(NotesClient.ResponseData response) {
+    public static class SessionResponse extends ServerResponse {
+        public SessionResponse(NotesClient.ResponseData response) {
             super(response);
         }
 
-        public CloudNote getNote() throws JSONException {
-            return getNoteFromJSON(new JSONObject(getContent()));
+        public CloudSession getSession() throws JSONException {
+            return getSessionFromJSON(new JSONObject(getContent()));
         }
     }
 
-    public static class NotesResponse extends ServerResponse {
-        public NotesResponse(NotesClient.ResponseData response) {
+    public static class SessionsResponse extends ServerResponse {
+        public SessionsResponse(NotesClient.ResponseData response) {
             super(response);
         }
 
-        public List<CloudNote> getNotes() throws JSONException {
-            List<CloudNote> notesList = new ArrayList<>();
-            JSONArray notes = new JSONArray(getContent());
-            for (int i = 0; i < notes.length(); i++) {
-                JSONObject json = notes.getJSONObject(i);
-                notesList.add(getNoteFromJSON(json));
+        public List<CloudSession> getSessions() throws JSONException {
+            List<CloudSession> sessionsList = new ArrayList<>();
+            JSONObject topObj = new JSONObject(getContent());
+            JSONArray sessions = new JSONArray(topObj.get("sessions"));
+            for (int i = 0; i < sessions.length(); i++) {
+                JSONArray json = sessions.getJSONArray(i);
+                sessionsList.add(getSessionFromJSON(json));
             }
-            return notesList;
+            return sessionsList;
         }
     }
 
@@ -65,15 +64,15 @@ public class ServerResponse {
         return response.getLastModified();
     }
 
-    protected CloudNote getNoteFromJSON(JSONObject json) throws JSONException {
+    protected CloudSession getSessionFromJSON(JSONArray json) throws JSONException {
         long id = 0;
-        String title = "";
-        String content = "";
-        Calendar modified = null;
-        boolean favorite = false;
-        String category = null;
-        String etag = null;
-        if (!json.isNull(NotesClient.JSON_ID)) {
+        String name = "";
+        String token = "";
+        if (json.length() > 1) {
+            name = json.get(0);
+            token = json.get(1);
+        }
+        /*if (!json.isNull(NotesClient.JSON_ID)) {
             id = json.getLong(NotesClient.JSON_ID);
         }
         if (!json.isNull(NotesClient.JSON_TITLE)) {
@@ -95,6 +94,8 @@ public class ServerResponse {
         if (!json.isNull(NotesClient.JSON_ETAG)) {
             etag = json.getString(NotesClient.JSON_ETAG);
         }
-        return new CloudNote(id, modified, title, content, favorite, category, etag);
+        return new CloudSession(id, modified, title, content, favorite, category, etag);
+        */
+        return new CloudSession(name, token);
     }
 }

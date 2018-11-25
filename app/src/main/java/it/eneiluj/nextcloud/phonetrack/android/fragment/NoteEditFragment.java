@@ -21,7 +21,7 @@ import com.yydcdut.rxmarkdown.RxMarkdown;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
-import it.eneiluj.nextcloud.phonetrack.model.CloudNote;
+import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.MarkDownUtil;
 import rx.Subscriber;
@@ -47,7 +47,7 @@ public class NoteEditFragment extends BaseNoteFragment {
         return f;
     }
 
-    public static NoteEditFragment newInstanceWithNewNote(CloudNote newNote) {
+    public static NoteEditFragment newInstanceWithNewNote(CloudSession newNote) {
         NoteEditFragment f = new NoteEditFragment();
         Bundle b = new Bundle();
         b.putSerializable(PARAM_NEWNOTE, newNote);

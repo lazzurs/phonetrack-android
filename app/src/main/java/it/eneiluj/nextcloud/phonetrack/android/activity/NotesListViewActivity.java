@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,13 +40,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
-import it.eneiluj.nextcloud.phonetrack.model.DBNote;
+import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
 import it.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import it.eneiluj.nextcloud.phonetrack.persistence.LoadNotesListTask;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
-import it.eneiluj.nextcloud.phonetrack.persistence.NoteServerSyncHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil;
@@ -115,7 +113,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // First Run Wizard
-        /*if (!NoteServerSyncHelper.isConfigured(this)) {
+        /*if (!SessionServerSyncHelper.isConfigured(this)) {
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, server_settings);
         }*/
@@ -417,7 +415,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 switch(direction) {
                     case ItemTouchHelper.LEFT: {
-                        final DBNote dbNote = (DBNote) adapter.getItem(viewHolder.getAdapterPosition());
+                        final DBLogjob dbNote = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
                         db.deleteNoteAndSync((dbNote).getId());
                         adapter.remove(dbNote);
                         refreshLists();
@@ -436,7 +434,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                         break;
                     }
                     case ItemTouchHelper.RIGHT: {
-                        final DBNote dbNote = (DBNote) adapter.getItem(viewHolder.getAdapterPosition());
+                        final DBLogjob dbNote = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
                         db.toggleFavorite(dbNote, syncCallBack);
                         refreshLists();
                         break;
@@ -583,7 +581,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
             if (resultCode == RESULT_OK) {
                 //not need because of db.synchronisation in createActivity
 
-                DBNote createdNote = (DBNote) data.getExtras().getSerializable(CREATED_NOTE);
+                DBLogjob createdNote = (DBLogjob) data.getExtras().getSerializable(CREATED_NOTE);
                 adapter.add(createdNote);
             }
             listView.scrollToPosition(0);
@@ -640,7 +638,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                 mActionMode.finish();
             }
         } else {
-            DBNote note = (DBNote) adapter.getItem(position);
+            DBLogjob note = (DBLogjob) adapter.getItem(position);
             Intent intent = new Intent(getApplicationContext(), EditNoteActivity.class);
             intent.putExtra(EditNoteActivity.PARAM_NOTE_ID, note.getId());
             startActivityForResult(intent, show_single_note_cmd);
@@ -650,7 +648,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
 
     @Override
     public void onNoteFavoriteClick(int position, View view) {
-        DBNote note = (DBNote) adapter.getItem(position);
+        DBLogjob note = (DBLogjob) adapter.getItem(position);
         NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(view.getContext());
         db.toggleFavorite(note, syncCallBack);
         adapter.notifyItemChanged(position);
@@ -659,7 +657,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
 
     @Override
     public void onLogjobEnabledClick(int position, View view) {
-        DBNote note = (DBNote) adapter.getItem(position);
+        DBLogjob note = (DBLogjob) adapter.getItem(position);
         NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(view.getContext());
         db.toggleFavorite(note, syncCallBack);
         adapter.notifyItemChanged(position);
@@ -721,7 +719,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                 case R.id.menu_delete:
                     List<Integer> selection = adapter.getSelected();
                     for (Integer i : selection) {
-                        DBNote note = (DBNote) adapter.getItem(i);
+                        DBLogjob note = (DBLogjob) adapter.getItem(i);
                         db.deleteNoteAndSync(note.getId());
                         // Not needed because of dbsync
                         //adapter.remove(note);

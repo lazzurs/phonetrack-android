@@ -2,7 +2,6 @@ package it.eneiluj.nextcloud.phonetrack.persistence;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -20,8 +19,8 @@ import java.util.Map;
 
 //import it.eneiluj.nextcloud.phonetrack.android.appwidget.NoteListWidget;
 //import it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget;
-import it.eneiluj.nextcloud.phonetrack.model.CloudNote;
-import it.eneiluj.nextcloud.phonetrack.model.DBNote;
+import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.DBStatus;
 import it.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -49,13 +48,13 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static NoteSQLiteOpenHelper instance;
 
-    private NoteServerSyncHelper serverSyncHelper = null;
+    private SessionServerSyncHelper serverSyncHelper = null;
     private Context context = null;
 
     private NoteSQLiteOpenHelper(Context context) {
         super(context, database_name, null, database_version);
         this.context = context.getApplicationContext();
-        serverSyncHelper = NoteServerSyncHelper.getInstance(this);
+        serverSyncHelper = SessionServerSyncHelper.getInstance(this);
         //recreateDatabase(getWritableDatabase());
     }
 
@@ -66,7 +65,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
             return instance;
     }
 
-    public NoteServerSyncHelper getNoteServerSyncHelper() {
+    public SessionServerSyncHelper getNoteServerSyncHelper() {
         return serverSyncHelper;
     }
 
@@ -174,7 +173,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @SuppressWarnings("UnusedReturnValue")
     public long addNoteAndSync(String content, String category, boolean favorite) {
-        CloudNote note = new CloudNote(0, Calendar.getInstance(), NoteUtil.generateNonEmptyNoteTitle(content, getContext()), content, favorite, category, null);
+        CloudSession note = new CloudSession(0, Calendar.getInstance(), NoteUtil.generateNonEmptyNoteTitle(content, getContext()), content, favorite, category, null);
         return addNoteAndSync(note);
     }
 
@@ -184,8 +183,8 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param note Note
      */
     @SuppressWarnings("UnusedReturnValue")
-    public long addNoteAndSync(CloudNote note) {
-        DBNote dbNote = new DBNote(0, 0, note.getModified(), note.getTitle(), note.getContent(), note.isFavorite(), note.getCategory(), note.getEtag(), DBStatus.LOCAL_EDITED);
+    public long addNoteAndSync(CloudSession note) {
+        DBLogjob dbNote = new DBLogjob(0, 0, note.getModified(), note.getTitle(), note.getContent(), note.isFavorite(), note.getCategory(), note.getEtag(), DBStatus.LOCAL_EDITED);
         long id = addNote(dbNote);
         notifyNotesChanged();
         getNoteServerSyncHelper().scheduleSync(true);
@@ -196,13 +195,13 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      * Inserts a note directly into the Database.
      * No Synchronisation will be triggered! Use addNoteAndSync()!
      *
-     * @param note Note to be added. Remotely created Notes must be of type CloudNote and locally created Notes must be of Type DBNote (with DBStatus.LOCAL_EDITED)!
+     * @param note Note to be added. Remotely created Notes must be of type CloudSession and locally created Notes must be of Type DBLogjob (with DBStatus.LOCAL_EDITED)!
      */
-    long addNote(CloudNote note) {
+    long addNote(CloudSession note) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        if (note instanceof DBNote) {
-            DBNote dbNote = (DBNote) note;
+        if (note instanceof DBLogjob) {
+            DBLogjob dbNote = (DBLogjob) note;
             if (dbNote.getId() > 0) {
                 values.put(key_id, dbNote.getId());
             }
@@ -228,8 +227,8 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param id int - ID of the requested Note
      * @return requested Note
      */
-    public DBNote getNote(long id) {
-        List<DBNote> notes = getNotesCustom(key_id + " = ? AND " + key_status + " != ?", new String[]{String.valueOf(id), DBStatus.LOCAL_DELETED.getTitle()}, null);
+    public DBLogjob getNote(long id) {
+        List<DBLogjob> notes = getNotesCustom(key_id + " = ? AND " + key_status + " != ?", new String[]{String.valueOf(id), DBStatus.LOCAL_DELETED.getTitle()}, null);
         return notes.isEmpty() ? null : notes.get(0);
     }
 
@@ -243,13 +242,13 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     @WorkerThread
-    private List<DBNote> getNotesCustom(@NonNull String selection, @NonNull String[] selectionArgs, @Nullable String orderBy) {
+    private List<DBLogjob> getNotesCustom(@NonNull String selection, @NonNull String[] selectionArgs, @Nullable String orderBy) {
         SQLiteDatabase db = getReadableDatabase();
         if (selectionArgs.length > 2) {
             Log.v("Note", selection + "   ----   " + selectionArgs[0] + " " + selectionArgs[1] + " " + selectionArgs[2]);
         }
         Cursor cursor = db.query(table_notes, columns, selection, selectionArgs, null, null, orderBy);
-        List<DBNote> notes = new ArrayList<>();
+        List<DBLogjob> notes = new ArrayList<>();
         while (cursor.moveToNext()) {
             notes.add(getNoteFromCursor(cursor));
         }
@@ -258,22 +257,22 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Creates a DBNote object from the current row of a Cursor.
+     * Creates a DBLogjob object from the current row of a Cursor.
      *
      * @param cursor database cursor
-     * @return DBNote
+     * @return DBLogjob
      */
     @NonNull
-    private DBNote getNoteFromCursor(@NonNull Cursor cursor) {
+    private DBLogjob getNoteFromCursor(@NonNull Cursor cursor) {
         Calendar modified = Calendar.getInstance();
         modified.setTimeInMillis(cursor.getLong(4) * 1000);
-        return new DBNote(cursor.getLong(0), cursor.getLong(1), modified, cursor.getString(3), cursor.getString(5), cursor.getInt(6) > 0, cursor.getString(7), cursor.getString(8), DBStatus.parse(cursor.getString(2)));
+        return new DBLogjob(cursor.getLong(0), cursor.getLong(1), modified, cursor.getString(3), cursor.getString(5), cursor.getInt(6) > 0, cursor.getString(7), cursor.getString(8), DBStatus.parse(cursor.getString(2)));
     }
 
     public void debugPrintFullDB() {
-        List<DBNote> notes = getNotesCustom("", new String[]{}, default_order);
+        List<DBLogjob> notes = getNotesCustom("", new String[]{}, default_order);
         Log.v(getClass().getSimpleName(), "Full Database (" + notes.size() + " phonetrack):");
-        for (DBNote note : notes) {
+        for (DBLogjob note : notes) {
             Log.v(getClass().getSimpleName(), "     " + note);
         }
     }
@@ -298,7 +297,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     @WorkerThread
-    public List<DBNote> getNotes() {
+    public List<DBLogjob> getNotes() {
         return getNotesCustom(key_status + " != ?", new String[]{DBStatus.LOCAL_DELETED.getTitle()}, default_order);
     }
 
@@ -309,7 +308,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     @WorkerThread
-    public List<DBNote> searchNotes(@Nullable CharSequence query, @Nullable String category, @Nullable Boolean favorite) {
+    public List<DBLogjob> searchNotes(@Nullable CharSequence query, @Nullable String category, @Nullable Boolean favorite) {
         List<String> where = new ArrayList<>();
         List<String> args = new ArrayList<>();
 
@@ -348,7 +347,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     @WorkerThread
-    public List<DBNote> getLocalModifiedNotes() {
+    public List<DBLogjob> getLocalModifiedNotes() {
         return getNotesCustom(key_status + " != ?", new String[]{DBStatus.VOID.getTitle()}, null);
     }
 
@@ -392,7 +391,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
         return categories;
     }
 
-    public void toggleFavorite(@NonNull DBNote note, @Nullable ICallback callback) {
+    public void toggleFavorite(@NonNull DBLogjob note, @Nullable ICallback callback) {
         note.setFavorite(!note.isFavorite());
         note.setStatus(DBStatus.LOCAL_EDITED);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -406,7 +405,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
         serverSyncHelper.scheduleSync(true);
     }
 
-    public void setCategory(@NonNull DBNote note, @NonNull String category, @Nullable ICallback callback) {
+    public void setCategory(@NonNull DBLogjob note, @NonNull String category, @Nullable ICallback callback) {
         note.setCategory(category);
         note.setStatus(DBStatus.LOCAL_EDITED);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -429,13 +428,13 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param callback   When the synchronization is finished, this callback will be invoked (optional).
      * @return changed note if differs from database, otherwise the old note.
      */
-    public DBNote updateNoteAndSync(@NonNull DBNote oldNote, @Nullable String newContent, @Nullable ICallback callback) {
+    public DBLogjob updateNoteAndSync(@NonNull DBLogjob oldNote, @Nullable String newContent, @Nullable ICallback callback) {
         //debugPrintFullDB();
-        DBNote newNote;
+        DBLogjob newNote;
         if (newContent == null) {
-            newNote = new DBNote(oldNote.getId(), oldNote.getRemoteId(), oldNote.getModified(), oldNote.getTitle(), oldNote.getContent(), oldNote.isFavorite(), oldNote.getCategory(), oldNote.getEtag(), DBStatus.LOCAL_EDITED);
+            newNote = new DBLogjob(oldNote.getId(), oldNote.getRemoteId(), oldNote.getModified(), oldNote.getTitle(), oldNote.getContent(), oldNote.isFavorite(), oldNote.getCategory(), oldNote.getEtag(), DBStatus.LOCAL_EDITED);
         } else {
-            newNote = new DBNote(oldNote.getId(), oldNote.getRemoteId(), Calendar.getInstance(), NoteUtil.generateNonEmptyNoteTitle(newContent, getContext()), newContent, oldNote.isFavorite(), oldNote.getCategory(), oldNote.getEtag(), DBStatus.LOCAL_EDITED);
+            newNote = new DBLogjob(oldNote.getId(), oldNote.getRemoteId(), Calendar.getInstance(), NoteUtil.generateNonEmptyNoteTitle(newContent, getContext()), newContent, oldNote.isFavorite(), oldNote.getCategory(), oldNote.getEtag(), DBStatus.LOCAL_EDITED);
         }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -471,7 +470,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param forceUnchangedDBNoteState is not null, then the local note is updated only if it was not modified meanwhile
      * @return The number of the Rows affected.
      */
-    int updateNote(long id, @NonNull CloudNote remoteNote, @Nullable DBNote forceUnchangedDBNoteState) {
+    int updateNote(long id, @NonNull CloudSession remoteNote, @Nullable DBLogjob forceUnchangedDBNoteState) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // First, update the remote ID, since this field cannot be changed in parallel, but have to be updated always.
@@ -492,14 +491,14 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
         String whereClause;
         String[] whereArgs;
         if (forceUnchangedDBNoteState != null) {
-            // used by: NoteServerSyncHelper.SyncTask.pushLocalChanges()
+            // used by: SessionServerSyncHelper.SyncTask.pushLocalChanges()
             // update only, if not modified locally during the synchronization
             // (i.e. all (!) user changeable columns (content, favorite) should still have the same value),
             // uses reference value gathered at start of synchronization
             whereClause = key_id + " = ? AND " + key_content + " = ? AND " + key_favorite + " = ? AND " + key_category + " = ?";
             whereArgs = new String[]{String.valueOf(id), forceUnchangedDBNoteState.getContent(), forceUnchangedDBNoteState.isFavorite() ? "1" : "0", forceUnchangedDBNoteState.getCategory()};
         } else {
-            // used by: NoteServerSyncHelper.SyncTask.pullRemoteChanges()
+            // used by: SessionServerSyncHelper.SyncTask.pullRemoteChanges()
             // update only, if not modified locally (i.e. STATUS="") and if modified remotely (i.e. any (!) column has changed)
             whereClause = key_id + " = ? AND " + key_status + " = ? AND (" + key_modified + "!=? OR " + key_title + "!=? OR " + key_favorite + "!=? OR " + key_category + "!=? OR " + (remoteNote.getEtag() != null ? key_etag + " IS NULL OR " : "") + key_etag + "!=? OR " + key_content + "!=?)";
             whereArgs = new String[]{String.valueOf(id), DBStatus.VOID.getTitle(), Long.toString(remoteNote.getModified().getTimeInMillis() / 1000), remoteNote.getTitle(), remoteNote.isFavorite() ? "1" : "0", remoteNote.getCategory(), remoteNote.getEtag(), remoteNote.getContent()};

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
-import it.eneiluj.nextcloud.phonetrack.model.DBNote;
+import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.SectionItem;
 import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
@@ -38,7 +38,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
 
     @Override
     protected List<Item> doInBackground(Void... voids) {
-        List<DBNote> noteList;
+        List<DBLogjob> noteList;
         NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(context);
         noteList = db.searchNotes(searchQuery, category.category, category.favorite);
 
@@ -49,7 +49,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
         }
     }
 
-    private DBNote colorTheNote(DBNote dbNote) {
+    private DBLogjob colorTheNote(DBLogjob dbNote) {
         if (!TextUtils.isEmpty(searchQuery)) {
             SpannableString spannableString = new SpannableString(dbNote.getTitle());
             Matcher matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
@@ -84,10 +84,10 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
 
     @NonNull
     @WorkerThread
-    private List<Item> fillListByCategory(@NonNull List<DBNote> noteList) {
+    private List<Item> fillListByCategory(@NonNull List<DBLogjob> noteList) {
         List<Item> itemList = new ArrayList<>();
         String currentCategory = category.category;
-        for (DBNote note : noteList) {
+        for (DBLogjob note : noteList) {
             if (currentCategory != null && !currentCategory.equals(note.getCategory())) {
                 itemList.add(new SectionItem(NoteUtil.extendCategory(note.getCategory())));
             }
@@ -100,7 +100,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
 
     @NonNull
     @WorkerThread
-    private List<Item> fillListByTime(@NonNull List<DBNote> noteList) {
+    private List<Item> fillListByTime(@NonNull List<DBLogjob> noteList) {
         List<Item> itemList = new ArrayList<>();
         // #12 Create Sections depending on Time
         boolean todaySet, yesterdaySet, weekSet, monthSet, earlierSet;
@@ -129,7 +129,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
         month.set(Calendar.SECOND, 0);
         month.set(Calendar.MILLISECOND, 0);
         for (int i = 0; i < noteList.size(); i++) {
-            DBNote currentNote = noteList.get(i);
+            DBLogjob currentNote = noteList.get(i);
             if (currentNote.isFavorite()) {
                 // don't show as new section
             } else if (!todaySet && currentNote.getModified().getTimeInMillis() >= today.getTimeInMillis()) {

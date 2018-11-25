@@ -18,8 +18,8 @@ import it.eneiluj.nextcloud.phonetrack.android.fragment.BaseNoteFragment;
 import it.eneiluj.nextcloud.phonetrack.android.fragment.NoteEditFragment;
 import it.eneiluj.nextcloud.phonetrack.android.fragment.NotePreviewFragment;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
-import it.eneiluj.nextcloud.phonetrack.model.CloudNote;
-import it.eneiluj.nextcloud.phonetrack.model.DBNote;
+import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
 public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragment.NoteFragmentListener {
@@ -141,7 +141,7 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
             content = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
 
-        CloudNote newNote = new CloudNote(0, Calendar.getInstance(), NoteUtil.generateNonEmptyNoteTitle(content, this), content, favorite, category, null);
+        CloudSession newNote = new CloudSession(0, Calendar.getInstance(), NoteUtil.generateNonEmptyNoteTitle(content, this), content, favorite, category, null);
         fragment = NoteEditFragment.newInstanceWithNewNote(newNote);
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
@@ -194,13 +194,11 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
     }
 
     @Override
-    public void onNoteUpdated(DBNote note) {
+    public void onLogjobUpdated(DBLogjob logjob) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(note.getTitle());
-            if(!note.getCategory().isEmpty()) {
-                actionBar.setSubtitle(NoteUtil.extendCategory(note.getCategory()));
-            }
+            actionBar.setTitle(logjob.getTitle());
+            actionBar.setSubtitle(Long.toString(logjob.getId()));
         }
     }
 }

@@ -15,8 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import it.eneiluj.nextcloud.phonetrack.R;
-import it.eneiluj.nextcloud.phonetrack.model.CloudNote;
-import it.eneiluj.nextcloud.phonetrack.model.DBNote;
+import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
@@ -25,7 +25,7 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     public interface NoteFragmentListener {
         void close();
 
-        void onNoteUpdated(DBNote note);
+        void onLogjobUpdated(DBLogjob note);
     }
 
     public static final String PARAM_NOTE_ID = "noteId";
@@ -33,9 +33,9 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     private static final String SAVEDKEY_NOTE = "note";
     private static final String SAVEDKEY_ORIGINAL_NOTE = "original_note";
 
-    protected DBNote note;
+    protected DBLogjob note;
     @Nullable
-    private DBNote originalNote;
+    private DBLogjob originalNote;
     private NoteSQLiteOpenHelper db;
     private NoteFragmentListener listener;
 
@@ -47,16 +47,16 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
             if (id > 0) {
                 note = originalNote = db.getNote(id);
             } else {
-                CloudNote cloudNote = (CloudNote) getArguments().getSerializable(PARAM_NEWNOTE);
-                if (cloudNote == null) {
+                CloudSession cloudSession = (CloudSession) getArguments().getSerializable(PARAM_NEWNOTE);
+                if (cloudSession == null) {
                     throw new IllegalArgumentException(PARAM_NOTE_ID + " is not given and argument " + PARAM_NEWNOTE + " is missing.");
                 }
-                note = db.getNote(db.addNoteAndSync(cloudNote));
+                note = db.getNote(db.addNoteAndSync(cloudSession));
                 originalNote = null;
             }
         } else {
-            note = (DBNote) savedInstanceState.getSerializable(SAVEDKEY_NOTE);
-            originalNote = (DBNote) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_NOTE);
+            note = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_NOTE);
+            originalNote = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_NOTE);
         }
         setHasOptionsMenu(true);
     }
@@ -75,7 +75,7 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     @Override
     public void onResume() {
         super.onResume();
-        listener.onNoteUpdated(note);
+        listener.onLogjobUpdated(note);
     }
 
     @Override
@@ -141,12 +141,12 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
                 return true;
             case R.id.menu_favorite:
                 db.toggleFavorite(note, null);
-                listener.onNoteUpdated(note);
+                listener.onLogjobUpdated(note);
                 prepareFavoriteOption(item);
                 return true;
             case R.id.menu_enabled:
                 db.toggleFavorite(note, null);
-                listener.onNoteUpdated(note);
+                listener.onLogjobUpdated(note);
                 prepareEnabledOption(item);
                 return true;
             case R.id.menu_category:
@@ -191,7 +191,7 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
             note = db.updateNoteAndSync(note, newContent, callback);
-            listener.onNoteUpdated(note);
+            listener.onLogjobUpdated(note);
         }
     }
 
@@ -218,6 +218,6 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     @Override
     public void onCategoryChosen(String category) {
         db.setCategory(note, category, null);
-        listener.onNoteUpdated(note);
+        listener.onLogjobUpdated(note);
     }
 }

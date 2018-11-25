@@ -1,8 +1,6 @@
 package it.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.app.Activity;
-import android.appwidget.AppWidgetManager;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,10 +12,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 //import it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget;
-import it.eneiluj.nextcloud.phonetrack.model.DBNote;
+import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
-import it.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
 public class SelectSingleNoteActivity extends NotesListViewActivity {
 
@@ -51,7 +48,7 @@ public class SelectSingleNoteActivity extends NotesListViewActivity {
     public void onNoteClick(int position, View v) {
         ItemAdapter adapter = getItemAdapter();
         Item item = adapter.getItem(position);
-        DBNote note = (DBNote) item;
+        DBLogjob note = (DBLogjob) item;
         long noteID = note.getId();
         final Bundle extras = getIntent().getExtras();
 

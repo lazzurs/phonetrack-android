@@ -24,7 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
-import it.eneiluj.nextcloud.phonetrack.persistence.NoteServerSyncHelper;
+import it.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil;
 import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil.LoginStatus;
 
@@ -69,7 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
 
-        if (!NoteServerSyncHelper.isConfigured(this)) {
+        if (!SessionServerSyncHelper.isConfigured(this)) {
             first_run = true;
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -164,7 +164,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Occurs in this scenario: User opens the app but doesn't configure the server settings, they then add the Create Note widget to home screen and configure
         // server settings there. The stale SettingsActivity is then displayed hence finish() here to close it down.
-        if ((first_run) && (NoteServerSyncHelper.isConfigured(this))) {
+        if ((first_run) && (SessionServerSyncHelper.isConfigured(this))) {
             finish();
         }
     }
@@ -216,7 +216,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... params) {
-            CustomCertManager ccm = NoteServerSyncHelper.getInstance(NoteSQLiteOpenHelper.getInstance(getApplicationContext())).getCustomCertManager();
+            CustomCertManager ccm = SessionServerSyncHelper.getInstance(NoteSQLiteOpenHelper.getInstance(getApplicationContext())).getCustomCertManager();
             return NotesClientUtil.isValidURL(ccm, params[0]);
         }
 
@@ -253,7 +253,7 @@ public class SettingsActivity extends AppCompatActivity {
             url = params[0];
             username = params[1];
             password = params[2];
-            CustomCertManager ccm = NoteServerSyncHelper.getInstance(NoteSQLiteOpenHelper.getInstance(getApplicationContext())).getCustomCertManager();
+            CustomCertManager ccm = SessionServerSyncHelper.getInstance(NoteSQLiteOpenHelper.getInstance(getApplicationContext())).getCustomCertManager();
             return NotesClientUtil.isValidLogin(ccm, url, username, password);
         }
 

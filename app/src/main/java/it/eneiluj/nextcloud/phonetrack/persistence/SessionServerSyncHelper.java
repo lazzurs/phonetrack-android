@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,8 +28,7 @@ import at.bitfire.cert4android.CustomCertManager;
 import at.bitfire.cert4android.CustomCertService;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
-import it.eneiluj.nextcloud.phonetrack.model.CloudNote;
-import it.eneiluj.nextcloud.phonetrack.model.DBNote;
+import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import it.eneiluj.nextcloud.phonetrack.model.DBStatus;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.NotesClient;
@@ -41,21 +39,21 @@ import it.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 /**
  * Helps to synchronize the Database to the Server.
  */
-public class NoteServerSyncHelper {
+public class SessionServerSyncHelper {
 
-    private static NoteServerSyncHelper instance;
+    private static SessionServerSyncHelper instance;
 
     /**
-     * Get (or create) instance from NoteServerSyncHelper.
+     * Get (or create) instance from SessionServerSyncHelper.
      * This has to be a singleton in order to realize correct registering and unregistering of
      * the BroadcastReceiver, which listens on changes of network connectivity.
      *
      * @param dbHelper NoteSQLiteOpenHelper
-     * @return NoteServerSyncHelper
+     * @return SessionServerSyncHelper
      */
-    public static synchronized NoteServerSyncHelper getInstance(NoteSQLiteOpenHelper dbHelper) {
+    public static synchronized SessionServerSyncHelper getInstance(NoteSQLiteOpenHelper dbHelper) {
         if (instance == null) {
-            instance = new NoteServerSyncHelper(dbHelper);
+            instance = new SessionServerSyncHelper(dbHelper);
         }
         return instance;
     }
@@ -102,7 +100,7 @@ public class NoteServerSyncHelper {
     private List<ICallback> callbacksPull = new ArrayList<>();
 
 
-    private NoteServerSyncHelper(NoteSQLiteOpenHelper db) {
+    private SessionServerSyncHelper(NoteSQLiteOpenHelper db) {
         this.dbHelper = db;
         this.appContext = db.getContext().getApplicationContext();
         new Thread() {
@@ -136,7 +134,7 @@ public class NoteServerSyncHelper {
     /**
      * Synchronization is only possible, if there is an active network connection and
      * Cert4Android service is available.
-     * NoteServerSyncHelper observes changes in the network connection.
+     * SessionServerSyncHelper observes changes in the network connection.
      * The current state can be retrieved with this method.
      *
      * @return true if sync is possible, otherwise false.
@@ -150,7 +148,7 @@ public class NoteServerSyncHelper {
     }
 
     /**
-     * Adds a callback method to the NoteServerSyncHelper for the synchronization part push local changes to the server.
+     * Adds a callback method to the SessionServerSyncHelper for the synchronization part push local changes to the server.
      * All callbacks will be executed once the synchronization operations are done.
      * After execution the callback will be deleted, so it has to be added again if it shall be
      * executed the next time all synchronize operations are finished.
@@ -162,7 +160,7 @@ public class NoteServerSyncHelper {
     }
 
     /**
-     * Adds a callback method to the NoteServerSyncHelper for the synchronization part pull remote changes from the server.
+     * Adds a callback method to the SessionServerSyncHelper for the synchronization part pull remote changes from the server.
      * All callbacks will be executed once the synchronization operations are done.
      * After execution the callback will be deleted, so it has to be added again if it shall be
      * executed the next time all synchronize operations are finished.
@@ -211,11 +209,11 @@ public class NoteServerSyncHelper {
         ConnectivityManager connMgr = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
         if (activeInfo != null && activeInfo.isConnected()) {
-            Log.d(NoteServerSyncHelper.class.getSimpleName(), "Network connection established.");
+            Log.d(SessionServerSyncHelper.class.getSimpleName(), "Network connection established.");
             networkConnected = true;
         } else {
             networkConnected = false;
-            Log.d(NoteServerSyncHelper.class.getSimpleName(), "No network connection.");
+            Log.d(SessionServerSyncHelper.class.getSimpleName(), "No network connection.");
         }
     }
 
@@ -252,67 +250,14 @@ public class NoteServerSyncHelper {
             Log.i(getClass().getSimpleName(), "STARTING SYNCHRONIZATION");
             //dbHelper.debugPrintFullDB();
             LoginStatus status = LoginStatus.OK;
-            pushLocalChanges();
-            if (!onlyLocalChanges) {
+            // TODO avoid doing getsessions everytime
+            //pushLocalChanges();
+            //if (!onlyLocalChanges) {
                 status = pullRemoteChanges();
-            }
+            //}
             //dbHelper.debugPrintFullDB();
             Log.i(getClass().getSimpleName(), "SYNCHRONIZATION FINISHED");
             return status;
-        }
-
-        /**
-         * Push local changes: for each locally created/edited/deleted Note, use NotesClient in order to push the changed to the server.
-         */
-        private void pushLocalChanges() {
-            Log.d(getClass().getSimpleName(), "pushLocalChanges()");
-            List<DBNote> notes = dbHelper.getLocalModifiedNotes();
-            for (DBNote note : notes) {
-                Log.d(getClass().getSimpleName(), "   Process Local Note: " + note);
-                try {
-                    CloudNote remoteNote = null;
-                    switch (note.getStatus()) {
-                        case LOCAL_EDITED:
-                            Log.v(getClass().getSimpleName(), "   ...create/edit");
-                            // if note is not new, try to edit it.
-                            if (note.getRemoteId() > 0) {
-                                Log.v(getClass().getSimpleName(), "   ...try to edit");
-                                try {
-                                    remoteNote = client.editNote(customCertManager, note).getNote();
-                                } catch (FileNotFoundException e) {
-                                    // Note does not exists anymore
-                                }
-                            }
-                            // However, the note may be deleted on the server meanwhile; or was never synchronized -> (re)create
-                            // Please note, thas dbHelper.updateNote() realizes an optimistic conflict resolution, which is required for parallel changes of this Note from the UI.
-                            if (remoteNote == null) {
-                                Log.v(getClass().getSimpleName(), "   ...Note does not exist on server -> (re)create");
-                                remoteNote = client.createNote(customCertManager, note).getNote();
-                            }
-                            dbHelper.updateNote(note.getId(), remoteNote, note);
-                            break;
-                        case LOCAL_DELETED:
-                            if (note.getRemoteId() > 0) {
-                                Log.v(getClass().getSimpleName(), "   ...delete (from server and local)");
-                                try {
-                                    client.deleteNote(customCertManager, note.getRemoteId());
-                                } catch (FileNotFoundException e) {
-                                    Log.v(getClass().getSimpleName(), "   ...Note does not exist on server (anymore?) -> delete locally");
-                                }
-                            } else {
-                                Log.v(getClass().getSimpleName(), "   ...delete (only local, since it was not synchronized)");
-                            }
-                            // Please note, thas dbHelper.deleteNote() realizes an optimistic conflict resolution, which is required for parallel changes of this Note from the UI.
-                            dbHelper.deleteNote(note.getId(), DBStatus.LOCAL_DELETED);
-                            break;
-                        default:
-                            throw new IllegalStateException("Unknown State of Note: " + note);
-                    }
-                } catch (IOException | JSONException e) {
-                    Log.e(getClass().getSimpleName(), "Exception", e);
-                    exceptions.add(e);
-                }
-            }
         }
 
         /**
@@ -326,11 +271,11 @@ public class NoteServerSyncHelper {
             LoginStatus status;
             try {
                 Map<Long, Long> idMap = dbHelper.getIdMap();
-                ServerResponse.NotesResponse response = client.getNotes(customCertManager, lastModified, lastETag);
-                List<CloudNote> remoteNotes = response.getNotes();
+                ServerResponse.SessionsResponse response = client.getNotes(customCertManager, lastModified, lastETag);
+                List<CloudSession> remoteNotes = response.getSessions();
                 Set<Long> remoteIDs = new HashSet<>();
                 // pull remote changes: update or create each remote note
-                for (CloudNote remoteNote : remoteNotes) {
+                for (CloudSession remoteNote : remoteNotes) {
                     Log.v(getClass().getSimpleName(), "   Process Remote Note: " + remoteNote);
                     remoteIDs.add(remoteNote.getRemoteId());
                     if (remoteNote.getModified() == null) {

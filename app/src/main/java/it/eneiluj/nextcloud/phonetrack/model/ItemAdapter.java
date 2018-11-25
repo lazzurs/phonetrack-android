@@ -49,7 +49,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      *
      * @param note Note that should be added.
      */
-    public void add(@NonNull DBNote note) {
+    public void add(@NonNull DBLogjob note) {
         itemList.add(0, note);
         notifyItemInserted(0);
         notifyItemChanged(0);
@@ -61,7 +61,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * @param note     Note with the changes.
      * @param position position in the list of the node
      */
-    public void replace(@NonNull DBNote note, int position) {
+    public void replace(@NonNull DBLogjob note, int position) {
         itemList.set(position, note);
         notifyItemChanged(position);
     }
@@ -98,7 +98,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             SectionItem section = (SectionItem) item;
             ((SectionViewHolder) holder).sectionTitle.setText(section.geTitle());
         } else {
-            final DBNote note = (DBNote) item;
+            final DBLogjob note = (DBLogjob) item;
             final NoteViewHolder nvHolder = ((NoteViewHolder) holder);
             nvHolder.noteSwipeable.setAlpha(DBStatus.LOCAL_DELETED.equals(note.getStatus()) ? 0.5f : 1.0f);
             nvHolder.noteTitle.setText(Html.fromHtml(note.getTitle()));

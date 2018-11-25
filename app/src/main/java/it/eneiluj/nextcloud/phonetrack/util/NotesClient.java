@@ -16,9 +16,8 @@ import java.net.MalformedURLException;
 
 import at.bitfire.cert4android.CustomCertManager;
 import it.eneiluj.nextcloud.phonetrack.BuildConfig;
-import it.eneiluj.nextcloud.phonetrack.model.CloudNote;
-import it.eneiluj.nextcloud.phonetrack.util.ServerResponse.NoteResponse;
-import it.eneiluj.nextcloud.phonetrack.util.ServerResponse.NotesResponse;
+import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import it.eneiluj.nextcloud.phonetrack.util.ServerResponse.SessionResponse;
 
 @WorkerThread
 public class NotesClient {
@@ -72,12 +71,15 @@ public class NotesClient {
         this.password = password;
     }
 
-    public NotesResponse getNotes(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
-        String url = "notes";
+    public ServerResponse.SessionsResponse getNotes(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
+        String url = "phonetrack/getSessions";
+        return new ServerResponse.SessionsResponse(requestServer(ccm, url, METHOD_POST, null, lastETag));
+        /*String url = "notes";
         if (lastModified > 0) {
             url += "?pruneBefore=" + lastModified;
         }
-        return new NotesResponse(requestServer(ccm, url, METHOD_GET, null, lastETag));
+        return new SessionsResponse(requestServer(ccm, url, METHOD_GET, null, lastETag));
+        */
     }
 
     /**
@@ -89,33 +91,33 @@ public class NotesClient {
      * @throws IOException
      */
     @SuppressWarnings("unused")
-    public NoteResponse getNoteById(CustomCertManager ccm, long id) throws JSONException, IOException {
-        return new NoteResponse(requestServer(ccm, "notes/" + id, METHOD_GET, null, null));
+    public SessionResponse getNoteById(CustomCertManager ccm, long id) throws JSONException, IOException {
+        return new SessionResponse(requestServer(ccm, "notes/" + id, METHOD_GET, null, null));
     }
 
-    private NoteResponse putNote(CustomCertManager ccm, CloudNote note, String path, String method) throws JSONException, IOException {
+    private SessionResponse putNote(CustomCertManager ccm, CloudSession note, String path, String method) throws JSONException, IOException {
         JSONObject paramObject = new JSONObject();
         paramObject.accumulate(JSON_CONTENT, note.getContent());
         paramObject.accumulate(JSON_MODIFIED, note.getModified().getTimeInMillis() / 1000);
         paramObject.accumulate(JSON_FAVORITE, note.isFavorite());
         paramObject.accumulate(JSON_CATEGORY, note.getCategory());
-        return new NoteResponse(requestServer(ccm, path, method, paramObject, null));
+        return new SessionResponse(requestServer(ccm, path, method, paramObject, null));
     }
 
 
     /**
      * Creates a Note on the Server
      *
-     * @param note {@link CloudNote} - the new Note
+     * @param note {@link CloudSession} - the new Note
      * @return Created Note including generated Title, ID and lastModified-Date
      * @throws JSONException
      * @throws IOException
      */
-    public NoteResponse createNote(CustomCertManager ccm, CloudNote note) throws JSONException, IOException {
+    public SessionResponse createNote(CustomCertManager ccm, CloudSession note) throws JSONException, IOException {
         return putNote(ccm, note, "notes", METHOD_POST);
     }
 
-    public NoteResponse editNote(CustomCertManager ccm, CloudNote note) throws JSONException, IOException {
+    public SessionResponse editNote(CustomCertManager ccm, CloudSession note) throws JSONException, IOException {
         return putNote(ccm, note, "notes/" + note.getRemoteId(), METHOD_PUT);
     }
 
