@@ -16,8 +16,6 @@ import java.net.MalformedURLException;
 
 import at.bitfire.cert4android.CustomCertManager;
 import it.eneiluj.nextcloud.phonetrack.BuildConfig;
-import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
-import it.eneiluj.nextcloud.phonetrack.util.ServerResponse.SessionResponse;
 
 @WorkerThread
 public class NotesClient {
@@ -50,16 +48,10 @@ public class NotesClient {
     }
 
     public static final String METHOD_GET = "GET";
-    public static final String METHOD_PUT = "PUT";
     public static final String METHOD_POST = "POST";
-    public static final String METHOD_DELETE = "DELETE";
     public static final String JSON_ID = "id";
     public static final String JSON_TITLE = "title";
-    public static final String JSON_CONTENT = "content";
-    public static final String JSON_FAVORITE = "favorite";
-    public static final String JSON_CATEGORY = "category";
     public static final String JSON_ETAG = "etag";
-    public static final String JSON_MODIFIED = "modified";
     private static final String application_json = "application/json";
     private String url = "";
     private String username = "";
@@ -71,9 +63,9 @@ public class NotesClient {
         this.password = password;
     }
 
-    public ServerResponse.SessionsResponse getNotes(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
-        String url = "phonetrack/getSessions";
-        return new ServerResponse.SessionsResponse(requestServer(ccm, url, METHOD_POST, null, lastETag));
+    public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
+        String target = "getSessions";
+        return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_POST, null, lastETag));
         /*String url = "notes";
         if (lastModified > 0) {
             url += "?pruneBefore=" + lastModified;
@@ -82,48 +74,6 @@ public class NotesClient {
         */
     }
 
-    /**
-     * Fetches a Note by ID from Server
-     *
-     * @param id long - ID of the wanted note
-     * @return Requested Note
-     * @throws JSONException
-     * @throws IOException
-     */
-    @SuppressWarnings("unused")
-    public SessionResponse getNoteById(CustomCertManager ccm, long id) throws JSONException, IOException {
-        return new SessionResponse(requestServer(ccm, "notes/" + id, METHOD_GET, null, null));
-    }
-
-    private SessionResponse putNote(CustomCertManager ccm, CloudSession note, String path, String method) throws JSONException, IOException {
-        JSONObject paramObject = new JSONObject();
-        paramObject.accumulate(JSON_CONTENT, note.getContent());
-        paramObject.accumulate(JSON_MODIFIED, note.getModified().getTimeInMillis() / 1000);
-        paramObject.accumulate(JSON_FAVORITE, note.isFavorite());
-        paramObject.accumulate(JSON_CATEGORY, note.getCategory());
-        return new SessionResponse(requestServer(ccm, path, method, paramObject, null));
-    }
-
-
-    /**
-     * Creates a Note on the Server
-     *
-     * @param note {@link CloudSession} - the new Note
-     * @return Created Note including generated Title, ID and lastModified-Date
-     * @throws JSONException
-     * @throws IOException
-     */
-    public SessionResponse createNote(CustomCertManager ccm, CloudSession note) throws JSONException, IOException {
-        return putNote(ccm, note, "notes", METHOD_POST);
-    }
-
-    public SessionResponse editNote(CustomCertManager ccm, CloudSession note) throws JSONException, IOException {
-        return putNote(ccm, note, "notes/" + note.getRemoteId(), METHOD_PUT);
-    }
-
-    public void deleteNote(CustomCertManager ccm, long noteId) throws IOException {
-        this.requestServer(ccm, "notes/" + noteId, METHOD_DELETE, null, null);
-    }
 
     /**
      * Request-Method for POST, PUT with or without JSON-Object-Parameter
@@ -139,7 +89,7 @@ public class NotesClient {
             throws IOException {
         StringBuffer result = new StringBuffer();
         // setup connection
-        String targetURL = url + "index.php/apps/notes/api/v0.2/" + target;
+        String targetURL = url + "index.php/apps/phonetrack/" + target;
         HttpURLConnection con = SupportUtil.getHttpURLConnection(ccm, targetURL);
         con.setRequestMethod(method);
         con.setRequestProperty(

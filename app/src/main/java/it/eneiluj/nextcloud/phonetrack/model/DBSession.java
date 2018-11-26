@@ -14,24 +14,15 @@ public class DBSession extends CloudSession implements Item, Serializable {
     private long id;
     private String name = "";
     private String token = "";
-    private DBStatus status;
+    private String nextURL = "";
 
-    public DBSession(long id, String name, String token, DBStatus status) {
-        super(name, token);
+    public DBSession(long id, String token, String name, String nextURL) {
+        super(name, token, nextURL);
         this.id = id;
-        this.status = status;
     }
 
     public long getId() {
         return id;
-    }
-
-    public DBStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(DBStatus status) {
-        this.status = status;
     }
 
     @Override
@@ -41,6 +32,6 @@ public class DBSession extends CloudSession implements Item, Serializable {
 
     @Override
     public String toString() {
-        return "#" + this.id + "/" + super.toString() + " " + getStatus();
+        return "#" + this.id + "/" + super.toString();
     }
 }

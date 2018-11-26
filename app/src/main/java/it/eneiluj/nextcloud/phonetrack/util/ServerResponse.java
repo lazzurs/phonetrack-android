@@ -24,7 +24,7 @@ public class ServerResponse {
         }
 
         public CloudSession getSession() throws JSONException {
-            return getSessionFromJSON(new JSONObject(getContent()));
+            return getSessionFromJSON(new JSONArray(getContent()));
         }
     }
 
@@ -69,8 +69,8 @@ public class ServerResponse {
         String name = "";
         String token = "";
         if (json.length() > 1) {
-            name = json.get(0);
-            token = json.get(1);
+            name = json.getString(0);
+            token = json.getString(1);
         }
         /*if (!json.isNull(NotesClient.JSON_ID)) {
             id = json.getLong(NotesClient.JSON_ID);

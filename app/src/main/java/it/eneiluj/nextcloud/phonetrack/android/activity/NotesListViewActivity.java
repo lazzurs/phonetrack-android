@@ -139,8 +139,8 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
     protected void onResume() {
         // refresh and sync every time the activity gets visible
         refreshLists();
-        db.getNoteServerSyncHelper().addCallbackPull(syncCallBack);
-        if (db.getNoteServerSyncHelper().isSyncPossible()) {
+        db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
+        if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
             synchronize();
         }
         super.onResume();
@@ -179,7 +179,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (db.getNoteServerSyncHelper().isSyncPossible()) {
+                if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
                     synchronize();
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
@@ -415,16 +415,16 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 switch(direction) {
                     case ItemTouchHelper.LEFT: {
-                        final DBLogjob dbNote = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
-                        db.deleteNoteAndSync((dbNote).getId());
-                        adapter.remove(dbNote);
+                        final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
+                        db.deleteLogjobAndSync((dbLogjob).getId());
+                        adapter.remove(dbLogjob);
                         refreshLists();
                         Log.v("Note", "Item deleted through swipe ----------------------------------------------");
                         Snackbar.make(swipeRefreshLayout, R.string.action_note_deleted, Snackbar.LENGTH_LONG)
                                 .setAction(R.string.action_undo, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        db.addNoteAndSync(dbNote);
+                                        db.addLogjobAndSync(dbLogjob);
                                         refreshLists();
                                         Snackbar.make(swipeRefreshLayout, R.string.action_note_restored, Snackbar.LENGTH_SHORT)
                                                 .show();
@@ -588,7 +588,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
         } else if (requestCode == server_settings) {
             // Create new Instance with new URL and credentials
             db = NoteSQLiteOpenHelper.getInstance(this);
-            if (db.getNoteServerSyncHelper().isSyncPossible()) {
+            if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
                 this.updateUsernameInDrawer();
                 adapter.removeAll();
                 synchronize();
@@ -687,8 +687,8 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
 
     private void synchronize() {
         swipeRefreshLayout.setRefreshing(true);
-        db.getNoteServerSyncHelper().addCallbackPull(syncCallBack);
-        db.getNoteServerSyncHelper().scheduleSync(false);
+        db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
+        db.getPhonetrackServerSyncHelper().scheduleSync(false);
     }
 
     /**

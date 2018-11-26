@@ -261,7 +261,7 @@ public class SessionServerSyncHelper {
         }
 
         /**
-         * Pull remote Changes: update or create each remote note (if local pendant has no changes) and remove remotely deleted phonetrack.
+         * Pull remote Changes: update or create each remote session and remove remotely deleted sessions.
          */
         private LoginStatus pullRemoteChanges() {
             Log.d(getClass().getSimpleName(), "pullRemoteChanges()");
@@ -270,28 +270,26 @@ public class SessionServerSyncHelper {
             long lastModified = preferences.getLong(SettingsActivity.SETTINGS_KEY_LAST_MODIFIED, 0);
             LoginStatus status;
             try {
-                Map<Long, Long> idMap = dbHelper.getIdMap();
-                ServerResponse.SessionsResponse response = client.getNotes(customCertManager, lastModified, lastETag);
+                Map<Long, Long> idMap = dbHelper.getTokenMap();
+                ServerResponse.SessionsResponse response = client.getSessions(customCertManager, lastModified, lastETag);
                 List<CloudSession> remoteNotes = response.getSessions();
-                Set<Long> remoteIDs = new HashSet<>();
+                Set<String> remoteTokens = new HashSet<>();
                 // pull remote changes: update or create each remote note
-                for (CloudSession remoteNote : remoteNotes) {
-                    Log.v(getClass().getSimpleName(), "   Process Remote Note: " + remoteNote);
-                    remoteIDs.add(remoteNote.getRemoteId());
-                    if (remoteNote.getModified() == null) {
-                        Log.v(getClass().getSimpleName(), "   ... unchanged");
-                    } else if (idMap.containsKey(remoteNote.getRemoteId())) {
+                for (CloudSession remoteSession : remoteNotes) {
+                    Log.v(getClass().getSimpleName(), "   Process Remote Note: " + remoteSession);
+                    remoteTokens.add(remoteSession.getToken());
+                    if (idMap.containsKey(remoteSession.getToken())) {
                         Log.v(getClass().getSimpleName(), "   ... found -> Update");
-                        dbHelper.updateNote(idMap.get(remoteNote.getRemoteId()), remoteNote, null);
+                        dbHelper.updateSession(idMap.get(remoteSession.getToken()), remoteSession, null);
                     } else {
                         Log.v(getClass().getSimpleName(), "   ... create");
-                        dbHelper.addNote(remoteNote);
+                        dbHelper.addNote(remoteSession);
                     }
                 }
                 Log.d(getClass().getSimpleName(), "   Remove remotely deleted Notes (only those without local changes)");
                 // remove remotely deleted phonetrack (only those without local changes)
                 for (Map.Entry<Long, Long> entry : idMap.entrySet()) {
-                    if (!remoteIDs.contains(entry.getKey())) {
+                    if (!remoteTokens.contains(entry.getKey())) {
                         Log.v(getClass().getSimpleName(), "   ... remove " + entry.getValue());
                         dbHelper.deleteNote(entry.getValue(), DBStatus.VOID);
                     }

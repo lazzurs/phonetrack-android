@@ -47,16 +47,16 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
             if (id > 0) {
                 note = originalNote = db.getNote(id);
             } else {
-                CloudSession cloudSession = (CloudSession) getArguments().getSerializable(PARAM_NEWNOTE);
-                if (cloudSession == null) {
+                CloudLogjob cloudLogjob = (CloudLogjob) getArguments().getSerializable(PARAM_NEWNOTE);
+                if (cloudLogjob == null) {
                     throw new IllegalArgumentException(PARAM_NOTE_ID + " is not given and argument " + PARAM_NEWNOTE + " is missing.");
                 }
-                note = db.getNote(db.addNoteAndSync(cloudSession));
-                originalNote = null;
+                logjob = db.getLogjob(db.addLogjobAndSync(cloudLogjob));
+                originalLogjob = null;
             }
         } else {
-            note = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_NOTE);
-            originalNote = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_NOTE);
+            logjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_NOTE);
+            originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_NOTE);
         }
         setHasOptionsMenu(true);
     }
