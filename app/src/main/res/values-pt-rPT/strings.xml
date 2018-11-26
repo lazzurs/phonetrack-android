@@ -92,7 +92,7 @@
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Criar uma nova nota</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Abrir no modo de edição</item>
         <item>Abrir no modo de visualização</item>

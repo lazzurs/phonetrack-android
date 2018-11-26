@@ -8,7 +8,7 @@ import java.util.Locale;
 import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
 /**
- * CloudSession represents a remote note from an OwnCloud server.
+ * CloudSession represents a remote logjob from an OwnCloud server.
  * It can be directly generated from the JSON answer from the server.
  */
 public class CloudSession implements Serializable {

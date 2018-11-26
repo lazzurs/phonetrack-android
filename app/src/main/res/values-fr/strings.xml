@@ -123,7 +123,7 @@
     <string name="pref_value_theme_light">Clair</string>
     <string name="pref_value_theme_dark">Sombre</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Ouvrir en mode édition</item>
         <item>Ouvrir en mode aperçu</item>

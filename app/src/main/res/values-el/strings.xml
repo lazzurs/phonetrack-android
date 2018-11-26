@@ -101,7 +101,7 @@
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Δημιουργία νέας σημείωσης</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Άνοιγμα σε λειτουργία τροποποίησης</item>
         <item>Άνοιγμα σε λειτουργία προεπισκόπισης</item>

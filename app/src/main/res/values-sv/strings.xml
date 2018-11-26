@@ -110,7 +110,7 @@
     <string name="pref_value_theme_light">Ljus</string>
     <string name="pref_value_theme_dark">Mörk</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Öppna i redigera-läge</item>
         <item>Öppna i förhandsvisningsläge</item>

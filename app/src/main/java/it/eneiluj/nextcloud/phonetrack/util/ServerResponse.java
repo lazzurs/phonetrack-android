@@ -17,7 +17,7 @@ import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 
 /**
- * Provides entity classes for handling server responses with a single note ({@link SessionResponse}) or a list of phonetrack ({@link SessionsResponse}).
+ * Provides entity classes for handling server responses with a single logjob ({@link SessionResponse}) or a list of phonetrack ({@link SessionsResponse}).
  */
 public class ServerResponse {
 

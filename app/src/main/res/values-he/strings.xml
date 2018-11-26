@@ -123,7 +123,7 @@
     <string name="pref_value_theme_light">בהיר</string>
     <string name="pref_value_theme_dark">כהה</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>פתיחה במצב עריכה</item>
         <item>פתיחה במצב תצוגה מקדימה</item>

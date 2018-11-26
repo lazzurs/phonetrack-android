@@ -112,7 +112,7 @@
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Sukurti naują užrašą</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Atidaryti redagavimo režimu</item>
         <item>Atidaryti peržiūros režimu</item>

@@ -61,7 +61,7 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
     }
 
     /**
-     * Starts the note fragment for an existing note or a new note.
+     * Starts the logjob fragment for an existing logjob or a new logjob.
      * The actual behavior is triggered by the activity's intent.
      */
     private void launchNoteFragment() {
@@ -74,10 +74,10 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
     }
 
     /**
-     * Starts a {@link NoteEditFragment} or {@link NotePreviewFragment} for an existing note.
+     * Starts a {@link NoteEditFragment} or {@link NotePreviewFragment} for an existing logjob.
      * The type of fragment (view-mode) is chosen based on the user preferences.
      *
-     * @param noteId ID of the existing note.
+     * @param noteId ID of the existing logjob.
      */
     private void launchExistingNote(long noteId) {
         final String prefKeyNoteMode = getString(R.string.pref_key_note_mode);
@@ -97,15 +97,15 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
     }
 
     /**
-     * Starts a {@link NoteEditFragment} or {@link NotePreviewFragment} for an existing note.
+     * Starts a {@link NoteEditFragment} or {@link NotePreviewFragment} for an existing logjob.
      *
-     * @param noteId ID of the existing note.
+     * @param noteId ID of the existing logjob.
      * @param edit   View-mode of the fragment:
      *               <code>true</code> for {@link NoteEditFragment},
      *               <code>false</code> for {@link NotePreviewFragment}.
      */
     private void launchExistingNote(long noteId, boolean edit) {
-        // save state of the fragment in order to resume with the same note and originalNote
+        // save state of the fragment in order to resume with the same logjob and originalNote
         Fragment.SavedState savedState = null;
         if (fragment != null) {
             savedState = getFragmentManager().saveFragmentInstanceState(fragment);
@@ -122,7 +122,7 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
     }
 
     /**
-     * Starts the {@link NoteEditFragment} with a new note.
+     * Starts the {@link NoteEditFragment} with a new logjob.
      * Content ("share" functionality), category and favorite attribute can be preset.
      */
     private void launchNewNote() {
@@ -179,8 +179,8 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
      * Send result and closes the Activity
      */
     public void close() {
-        /* TODO enhancement: store last mode in note
-         * for cross device functionality per note mode should be stored on the server.
+        /* TODO enhancement: store last mode in logjob
+         * for cross device functionality per logjob mode should be stored on the server.
          */
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         final String prefKeyLastMode = getString(R.string.pref_key_last_note_mode);

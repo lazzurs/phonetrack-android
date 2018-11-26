@@ -122,7 +122,7 @@
     <string name="pref_value_theme_light">Ljóst</string>
     <string name="pref_value_theme_dark">Dökkt</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Opna í breytingaham</item>
         <item>Opna í forskoðunarham</item>

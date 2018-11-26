@@ -12,7 +12,7 @@ public enum DBStatus {
     VOID(""),
 
     /**
-     * LOCAL_CREATED is not used anymore, since a newly created note has REMOTE_ID=0
+     * LOCAL_CREATED is not used anymore, since a newly created logjob has REMOTE_ID=0
      */
     @Deprecated
     LOCAL_CREATED("LOCAL_CREATED"),

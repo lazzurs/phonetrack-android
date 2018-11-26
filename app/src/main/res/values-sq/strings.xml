@@ -123,7 +123,7 @@
     <string name="pref_value_theme_light">E çelët</string>
     <string name="pref_value_theme_dark">E errët</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Hapur në modalitetin e redaktimit</item>
         <item>Hape në parapamje</item>

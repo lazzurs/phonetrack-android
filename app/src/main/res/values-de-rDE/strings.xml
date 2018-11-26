@@ -123,7 +123,7 @@
     <string name="pref_value_theme_light">Hell</string>
     <string name="pref_value_theme_dark">Dunkel</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Im Bearbeitungsmodus öffnen</item>
         <item>Im Vorschaumodus öffnen</item>

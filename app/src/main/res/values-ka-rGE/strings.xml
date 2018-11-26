@@ -107,7 +107,7 @@
     <!-- Shortcuts -->
     <string name="shortcut_create_long">შექმენით ახალი ჩანაწერი</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>გახსენით ცვლილების რეჟიმში</item>
         <item>გახსენით წინასწარი ჩვენების რეჟიმში</item>

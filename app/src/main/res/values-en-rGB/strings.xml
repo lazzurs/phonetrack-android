@@ -124,7 +124,7 @@
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Create a new note</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Open in edit mode</item>
         <item>Open in preview mode</item>

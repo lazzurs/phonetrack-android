@@ -15,12 +15,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import it.eneiluj.nextcloud.phonetrack.R;
-import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
-public abstract class BaseNoteFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
+//public abstract class BaseNoteFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
+public abstract class BaseNoteFragment extends Fragment{
 
     public interface NoteFragmentListener {
         void close();
@@ -30,12 +30,12 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
 
     public static final String PARAM_NOTE_ID = "noteId";
     public static final String PARAM_NEWNOTE = "newNote";
-    private static final String SAVEDKEY_NOTE = "note";
+    private static final String SAVEDKEY_NOTE = "logjob";
     private static final String SAVEDKEY_ORIGINAL_NOTE = "original_note";
 
-    protected DBLogjob note;
+    protected DBLogjob logjob;
     @Nullable
-    private DBLogjob originalNote;
+    private DBLogjob originalLogjob;
     private NoteSQLiteOpenHelper db;
     private NoteFragmentListener listener;
 
@@ -45,9 +45,9 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
         if (savedInstanceState == null) {
             long id = getArguments().getLong(PARAM_NOTE_ID);
             if (id > 0) {
-                note = originalNote = db.getNote(id);
+                logjob = originalLogjob = db.getLogjob(id);
             } else {
-                CloudLogjob cloudLogjob = (CloudLogjob) getArguments().getSerializable(PARAM_NEWNOTE);
+                DBLogjob cloudLogjob = (DBLogjob) getArguments().getSerializable(PARAM_NEWNOTE);
                 if (cloudLogjob == null) {
                     throw new IllegalArgumentException(PARAM_NOTE_ID + " is not given and argument " + PARAM_NEWNOTE + " is missing.");
                 }
@@ -75,13 +75,13 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     @Override
     public void onResume() {
         super.onResume();
-        listener.onLogjobUpdated(note);
+        listener.onLogjobUpdated(logjob);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        saveNote(null);
+        saveLogjob(null);
     }
 
     @Override
@@ -93,9 +93,9 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        saveNote(null);
-        outState.putSerializable(SAVEDKEY_NOTE, note);
-        outState.putSerializable(SAVEDKEY_ORIGINAL_NOTE, originalNote);
+        saveLogjob(null);
+        outState.putSerializable(SAVEDKEY_NOTE, logjob);
+        outState.putSerializable(SAVEDKEY_ORIGINAL_NOTE, originalLogjob);
     }
 
     @Override
@@ -106,19 +106,19 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        MenuItem itemFavorite = menu.findItem(R.id.menu_favorite);
-        prepareFavoriteOption(itemFavorite);
+        //MenuItem itemFavorite = menu.findItem(R.id.menu_favorite);
+        //prepareFavoriteOption(itemFavorite);
         MenuItem itemEnabled = menu.findItem(R.id.menu_enabled);
         prepareEnabledOption(itemEnabled);
     }
 
-    private void prepareFavoriteOption(MenuItem item) {
-        item.setIcon(note.isFavorite() ? R.drawable.ic_star_white_24dp : R.drawable.ic_star_border_white_24dp);
-        item.setChecked(note.isFavorite());
-    }
+    /*private void prepareFavoriteOption(MenuItem item) {
+        item.setIcon(logjob.isFavorite() ? R.drawable.ic_star_white_24dp : R.drawable.ic_star_border_white_24dp);
+        item.setChecked(logjob.isFavorite());
+    }*/
 
     private void prepareEnabledOption(MenuItem item) {
-        item.setChecked(note.isFavorite());
+        item.setChecked(logjob.isEnabled());
     }
 
     /**
@@ -128,40 +128,40 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_cancel:
-                if (originalNote == null) {
-                    db.deleteNoteAndSync(note.getId());
+                if (originalLogjob == null) {
+                    db.deleteLogjobAndSync(logjob.getId());
                 } else {
-                    db.updateNoteAndSync(originalNote, null, null);
+                    db.updateLogjobAndSync(originalLogjob, null, null, null, null, null);
                 }
                 listener.close();
                 return true;
             case R.id.menu_delete:
-                db.deleteNoteAndSync(note.getId());
+                db.deleteLogjobAndSync(logjob.getId());
                 listener.close();
                 return true;
             case R.id.menu_favorite:
-                db.toggleFavorite(note, null);
-                listener.onLogjobUpdated(note);
-                prepareFavoriteOption(item);
-                return true;
-            case R.id.menu_enabled:
-                db.toggleFavorite(note, null);
-                listener.onLogjobUpdated(note);
+                db.toggleEnabled(logjob, null);
+                listener.onLogjobUpdated(logjob);
                 prepareEnabledOption(item);
                 return true;
-            case R.id.menu_category:
-                showCategorySelector();
+            case R.id.menu_enabled:
+                db.toggleEnabled(logjob, null);
+                listener.onLogjobUpdated(logjob);
+                prepareEnabledOption(item);
                 return true;
+            //case R.id.menu_category:
+            //    showCategorySelector();
+            //    return true;
             case R.id.menu_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, note.getTitle());
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, note.getContent());
+                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, logjob.getTitle());
+                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, logjob.getNextURL());
 
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(Intent.createChooser(shareIntent, note.getTitle()));
+                    startActivity(Intent.createChooser(shareIntent, logjob.getTitle()));
                 } else {
                     ShareActionProvider actionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
                     actionProvider.setShareIntent(shareIntent);
@@ -174,8 +174,9 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     }
 
     public void onCloseNote() {
-        if (originalNote == null && getContent().isEmpty()) {
-            db.deleteNoteAndSync(note.getId());
+        // TODO if all fields are empty (or just title/URL) : delete
+        if (originalLogjob == null && getContent().isEmpty()) {
+            //db.deleteNoteAndSync(logjob.getId());
         }
     }
 
@@ -184,14 +185,16 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
      *
      * @param callback Observer which is called after save/synchronization
      */
-    protected void saveNote(@Nullable ICallback callback) {
+    protected void saveLogjob(@Nullable ICallback callback) {
+        // TODO check if something has changed
         Log.d(getClass().getSimpleName(), "saveData()");
         String newContent = getContent();
-        if(note.getContent().equals(newContent)) {
+        if(logjob.getTitle().equals(newContent)) {
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
-            note = db.updateNoteAndSync(note, newContent, callback);
-            listener.onLogjobUpdated(note);
+            // TODO get field values
+            logjob = db.updateLogjobAndSync(logjob, null, null, null, null , callback);
+            listener.onLogjobUpdated(logjob);
         }
     }
 
@@ -200,7 +203,7 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
     /**
      * Opens a dialog in order to chose a category
      */
-    private void showCategorySelector() {
+    /*private void showCategorySelector() {
         final String fragmentId = "fragment_category";
         FragmentManager manager = getFragmentManager();
         Fragment frag = manager.findFragmentByTag(fragmentId);
@@ -208,16 +211,16 @@ public abstract class BaseNoteFragment extends Fragment implements CategoryDialo
             manager.beginTransaction().remove(frag).commit();
         }
         Bundle arguments = new Bundle();
-        arguments.putString(CategoryDialogFragment.PARAM_CATEGORY, note.getCategory());
+        arguments.putString(CategoryDialogFragment.PARAM_CATEGORY, logjob.getCategory());
         CategoryDialogFragment categoryFragment = new CategoryDialogFragment();
         categoryFragment.setArguments(arguments);
         categoryFragment.setTargetFragment(this, 0);
         categoryFragment.show(manager, fragmentId);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onCategoryChosen(String category) {
-        db.setCategory(note, category, null);
-        listener.onLogjobUpdated(note);
-    }
+        db.setCategory(logjob, category, null);
+        listener.onLogjobUpdated(logjob);
+    }*/
 }

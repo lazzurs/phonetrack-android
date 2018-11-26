@@ -274,7 +274,7 @@ public class SessionServerSyncHelper {
                 ServerResponse.SessionsResponse response = client.getSessions(customCertManager, lastModified, lastETag);
                 List<CloudSession> remoteSessions = response.getSessions(dbHelper);
                 Set<String> remoteTokens = new HashSet<>();
-                // pull remote changes: update or create each remote note
+                // pull remote changes: update or create each remote logjob
                 for (CloudSession remoteSession : remoteSessions) {
                     Log.v(getClass().getSimpleName(), "   Process Remote Note: " + remoteSession);
                     remoteTokens.add(remoteSession.getToken());

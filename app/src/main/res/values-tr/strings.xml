@@ -123,7 +123,7 @@
     <string name="pref_value_theme_light">Açık</string>
     <string name="pref_value_theme_dark">Koyu</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Düzenleme kipinde aç</item>
         <item>Önizleme kipinde aç</item>

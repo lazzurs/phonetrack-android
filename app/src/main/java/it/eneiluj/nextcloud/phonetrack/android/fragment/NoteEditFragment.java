@@ -80,14 +80,14 @@ public class NoteEditFragment extends BaseNoteFragment {
 
         ButterKnife.bind(this, getView());
 
-        if (note.getContent().isEmpty()) {
+        if (logjob.getContent().isEmpty()) {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
         // workaround for issue yydcdut/RxMarkdown#41
-        note.setContent(note.getContent().replace("\r\n", "\n"));
+        logjob.setContent(logjob.getContent().replace("\r\n", "\n"));
 
-        editContent.setText(note.getContent());
+        editContent.setText(logjob.getContent());
         editContent.setEnabled(true);
 
         RxMarkdown.live(editContent)
@@ -169,8 +169,8 @@ public class NoteEditFragment extends BaseNoteFragment {
     }
 
     @Override
-    protected void saveNote(@Nullable ICallback callback) {
-        super.saveNote(callback);
+    protected void saveLogjob(@Nullable ICallback callback) {
+        super.saveLogjob(callback);
         unsavedEdit = false;
     }
 
@@ -180,7 +180,7 @@ public class NoteEditFragment extends BaseNoteFragment {
     private void autoSave() {
         Log.d(LOG_TAG_AUTOSAVE, "STARTAUTOSAVE");
         saveActive = true;
-        saveNote(new ICallback() {
+        saveLogjob(new ICallback() {
             @Override
             public void onFinish() {
                 onSaved();

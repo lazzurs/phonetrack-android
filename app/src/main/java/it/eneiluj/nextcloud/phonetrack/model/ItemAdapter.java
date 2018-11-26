@@ -45,7 +45,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     /**
-     * Adds the given note to the top of the list.
+     * Adds the given logjob to the top of the list.
      *
      * @param note Note that should be added.
      */
@@ -56,7 +56,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     /**
-     * Replaces a note with an updated version
+     * Replaces a logjob with an updated version
      *
      * @param note     Note with the changes.
      * @param position position in the list of the node
@@ -100,13 +100,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else {
             final DBLogjob logjob = (DBLogjob) item;
             final NoteViewHolder nvHolder = ((NoteViewHolder) holder);
-            //nvHolder.noteSwipeable.setAlpha(DBStatus.LOCAL_DELETED.equals(note.getStatus()) ? 0.5f : 1.0f);
+            //nvHolder.noteSwipeable.setAlpha(DBStatus.LOCAL_DELETED.equals(logjob.getStatus()) ? 0.5f : 1.0f);
             nvHolder.noteSwipeable.setAlpha(1.0f);
             nvHolder.noteTitle.setText(Html.fromHtml(logjob.getTitle()));
-            //nvHolder.noteCategory.setVisibility(showCategory && !note.getCategory().isEmpty() ? View.VISIBLE : View.GONE);
-            //nvHolder.noteCategory.setText(Html.fromHtml(note.getCategory()));
-            //nvHolder.noteExcerpt.setText(Html.fromHtml(note.getExcerpt()));
-            //nvHolder.noteStatus.setVisibility(DBStatus.VOID.equals(note.getStatus()) ? View.INVISIBLE : View.VISIBLE);
+            //nvHolder.noteCategory.setVisibility(showCategory && !logjob.getCategory().isEmpty() ? View.VISIBLE : View.GONE);
+            //nvHolder.noteCategory.setText(Html.fromHtml(logjob.getCategory()));
+            //nvHolder.noteExcerpt.setText(Html.fromHtml(logjob.getExcerpt()));
+            //nvHolder.noteStatus.setVisibility(DBStatus.VOID.equals(logjob.getStatus()) ? View.INVISIBLE : View.VISIBLE);
             nvHolder.noteFavorite.setImageResource(logjob.isEnabled() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
             nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override

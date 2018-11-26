@@ -112,7 +112,7 @@
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Opprett et nytt notat</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Åpne i redigeringsmodus</item>
         <item>Åpne i forhåndsvisningsmodus</item>

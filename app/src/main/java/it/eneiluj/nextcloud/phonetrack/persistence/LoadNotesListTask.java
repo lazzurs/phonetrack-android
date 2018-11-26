@@ -98,13 +98,13 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
     private List<Item> fillListByCategory(@NonNull List<DBLogjob> noteList) {
         List<Item> itemList = new ArrayList<>();
         String currentCategory = category.category;
-        for (DBLogjob note : noteList) {
-            if (currentCategory != null && !currentCategory.equals(note.getCategory())) {
-                itemList.add(new SectionItem(NoteUtil.extendCategory(note.getCategory())));
+        for (DBLogjob logjob : noteList) {
+            if (currentCategory != null && !currentCategory.equals(logjob.getCategory())) {
+                itemList.add(new SectionItem(NoteUtil.extendCategory(logjob.getCategory())));
             }
 
-            itemList.add(colorTheNote(note));
-            currentCategory = note.getCategory();
+            itemList.add(colorTheNote(logjob));
+            currentCategory = logjob.getCategory();
         }
         return itemList;
     }*/

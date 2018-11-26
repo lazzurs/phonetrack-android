@@ -406,7 +406,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
             }
 
             /**
-             * Delete note if note is swiped to left or right
+             * Delete logjob if logjob is swiped to left or right
              *
              * @param viewHolder RecyclerView.ViewHoler
              * @param direction  int
@@ -722,7 +722,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                         DBLogjob note = (DBLogjob) adapter.getItem(i);
                         db.deleteNoteAndSync(note.getId());
                         // Not needed because of dbsync
-                        //adapter.remove(note);
+                        //adapter.remove(logjob);
                     }
                     mode.finish(); // Action picked, so close the CAB
                     //after delete selection has to be cleared

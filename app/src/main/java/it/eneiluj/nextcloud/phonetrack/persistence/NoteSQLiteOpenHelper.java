@@ -455,14 +455,14 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
         serverSyncHelper.scheduleSync(true);
     }
 
-    /*public void setCategory(@NonNull DBLogjob note, @NonNull String category, @Nullable ICallback callback) {
-        note.setCategory(category);
-        note.setStatus(DBStatus.LOCAL_EDITED);
+    /*public void setCategory(@NonNull DBLogjob logjob, @NonNull String category, @Nullable ICallback callback) {
+        logjob.setCategory(category);
+        logjob.setStatus(DBStatus.LOCAL_EDITED);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(key_status, note.getStatus().getTitle());
-        values.put(key_category, note.getCategory());
-        db.update(table_notes, values, key_id + " = ?", new String[]{String.valueOf(note.getId())});
+        values.put(key_status, logjob.getStatus().getTitle());
+        values.put(key_category, logjob.getCategory());
+        db.update(table_notes, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
         if (callback != null) {
             serverSyncHelper.addCallbackPush(callback);
         }
@@ -476,7 +476,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param oldLogjob    Note to be changed
      * @param newContent New content. If this is <code>null</code>, then <code>oldNote</code> is saved again (useful for undoing changes).
      * @param callback   When the synchronization is finished, this callback will be invoked (optional).
-     * @return changed note if differs from database, otherwise the old note.
+     * @return changed logjob if differs from database, otherwise the old logjob.
      */
     public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken, @Nullable String newNextURL, @Nullable String newDevicename, @Nullable ICallback callback) {
         //debugPrintFullDB();
@@ -512,7 +512,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      *
      * @param id                        local ID of Note
      * @param remoteSession                Note from the server.
-     * @param forceUnchangedDBNoteState is not null, then the local note is updated only if it was not modified meanwhile
+     * @param forceUnchangedDBNoteState is not null, then the local logjob is updated only if it was not modified meanwhile
      * @return The number of the Rows affected.
      */
     int updateSession(long id, @NonNull CloudSession remoteSession) {
@@ -568,7 +568,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      *
      * @param id            long - ID of the Logjob that should be deleted.
      */
-    void deleteLogjob(long id) {
+    public void deleteLogjobAndSync(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(table_logjobs,
                 key_id + " = ?",
@@ -591,7 +591,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Update single note widget, if the note data was changed.
+     * Update single logjob widget, if the logjob data was changed.
      */
     /*private void updateSingleNoteWidgets() {
         Intent intent = new Intent(getContext(), SingleNoteWidget.class);
@@ -600,7 +600,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
     }*/
 
     /**
-     * Update note list widgets, if the note data was changed.
+     * Update logjob list widgets, if the logjob data was changed.
      */
     /*private void updateNoteListWidgets() {
         Intent intent = new Intent(getContext(), NoteListWidget.class);

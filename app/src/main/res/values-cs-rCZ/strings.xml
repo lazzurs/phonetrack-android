@@ -123,7 +123,7 @@
     <string name="pref_value_theme_light">Světlý</string>
     <string name="pref_value_theme_dark">Tmavé</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Otevřít v režimu úprav</item>
         <item>Otevřít v náhledovém režimu</item>

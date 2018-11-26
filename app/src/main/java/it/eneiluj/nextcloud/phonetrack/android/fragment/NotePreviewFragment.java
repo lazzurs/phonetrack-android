@@ -53,7 +53,7 @@ public class NotePreviewFragment extends BaseNoteFragment {
         super.onActivityCreated(savedInstanceState);
         ButterKnife.bind(this, getView());
 
-        String content = note.getContent();
+        String content = logjob.getContent();
 
         RxMarkdown.with(content, getActivity())
                 .config(
@@ -61,12 +61,12 @@ public class NotePreviewFragment extends BaseNoteFragment {
                         /*.setOnTodoClickCallback(new OnTodoClickCallback() {
                                 @Override
                                 public CharSequence onTodoClicked(View view, String line, int lineNumber) {
-                                String[] lines = TextUtils.split(note.getContent(), "\\r?\\n");
+                                String[] lines = TextUtils.split(logjob.getContent(), "\\r?\\n");
                                 if(lines.length >= lineNumber) {
                                     lines[lineNumber] = line;
                                 }
                                 noteContent.setText(TextUtils.join("\n", lines), TextView.BufferType.SPANNABLE);
-                                saveNote(null);
+                                saveLogjob(null);
                                 return line;
                             }
                         }
@@ -97,6 +97,6 @@ public class NotePreviewFragment extends BaseNoteFragment {
 
     @Override
     protected String getContent() {
-        return note.getContent();
+        return logjob.getContent();
     }
 }

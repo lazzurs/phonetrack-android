@@ -6,7 +6,7 @@ import java.util.Calendar;
 import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
 /**
- * DBLogjob represents a single note from the local SQLite database with all attributes.
+ * DBLogjob represents a single logjob from the local SQLite database with all attributes.
  */
 public class DBLogjob implements Item, Serializable {
 

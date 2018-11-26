@@ -95,7 +95,7 @@
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Luo uusi muistiinpano</string>
 
-    <!-- Array: note modes -->
+    <!-- Array: logjob modes -->
     <string-array name="noteMode_entries">
         <item>Avaa muokkaustilassa</item>
         <item>Avaa esikatselutilassa</item>
