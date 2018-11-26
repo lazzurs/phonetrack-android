@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -62,7 +63,26 @@ public class NoteEditFragment extends BaseNoteFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //inflater.inflate(R.layout.activity_edit, container, false);
-        addPreferencesFromResource(R.layout.activity_edit);
+        addPreferencesFromResource(R.xml.activity_edit);
+
+
+        Preference titlePref = findPreference("title");
+        titlePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                //do something
+                System.out.println("LALA "+newValue);
+                EditTextPreference pref = (EditTextPreference) findPreference("title");
+                pref.setSummary((CharSequence) newValue);
+                //saveLogjob(null);
+                return true;
+            }
+
+        });
+
+
         handler = new Handler(Looper.getMainLooper());
     }
 
@@ -94,8 +114,8 @@ public class NoteEditFragment extends BaseNoteFragment {
 
         editContent = (EditTextPreference) this.findPreference("title");
         editContent.setText(logjob.getTitle());
-        editContent.getBu
-        System.out.println("KKKKKKKKK "+editContent.getNegativeButtonText());
+        editContent.setSummary(logjob.getTitle());
+        //System.out.println("KKKKKKKKK "+editContent.getNegativeButtonText());
         //editContent.setText(logjob.getTitle());
         //editContent.setEnabled(true);
 

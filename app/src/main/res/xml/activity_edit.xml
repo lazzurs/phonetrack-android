@@ -19,13 +19,15 @@
 
 </ScrollView-->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    >
+<!--
+xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:key="logjob_preferences"
-    android:summary="@string/action_settings"
-    android:title="@string/action_settings">
-
+    android:summary="Logjob settings"
+    android:title="Logjob settings"
+-->
     <EditTextPreference
         android:id="@+id/editContent"
         android:defaultValue="plop"
@@ -35,8 +37,7 @@
         android:singleLine="true"
         android:selectAllOnFocus="true"
         android:persistent="true"
-        android:positiveButtonText="OK"
-        android:negativeButtonText="Cancell"
+        android:summary=""
         android:title="@string/setting_title" />
 
 </PreferenceScreen>

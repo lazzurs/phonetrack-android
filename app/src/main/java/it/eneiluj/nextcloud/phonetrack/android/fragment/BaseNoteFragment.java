@@ -193,6 +193,7 @@ public abstract class BaseNoteFragment extends PreferencesFragment{
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
             // TODO get field values
+            System.out.println("====== update logjob");
             logjob = db.updateLogjobAndSync(logjob, newContent, "", "", "" , callback);
             //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
             listener.onLogjobUpdated(logjob);
