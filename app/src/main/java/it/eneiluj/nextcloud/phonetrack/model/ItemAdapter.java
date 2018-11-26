@@ -105,7 +105,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             nvHolder.noteTitle.setText(Html.fromHtml(logjob.getTitle()));
             //nvHolder.noteCategory.setVisibility(showCategory && !logjob.getCategory().isEmpty() ? View.VISIBLE : View.GONE);
             //nvHolder.noteCategory.setText(Html.fromHtml(logjob.getCategory()));
-            //nvHolder.noteExcerpt.setText(Html.fromHtml(logjob.getExcerpt()));
+            nvHolder.noteExcerpt.setText(Html.fromHtml(logjob.getDeviceName()+" "+logjob.getNextURL()));
             //nvHolder.noteStatus.setVisibility(DBStatus.VOID.equals(logjob.getStatus()) ? View.INVISIBLE : View.VISIBLE);
             //nvHolder.noteFavorite.setImageResource(logjob.isEnabled() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
             /*nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
@@ -186,7 +186,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.noteSwipeable)
         public View noteSwipeable;
         View noteSwipeFrame;
-        ImageView noteFavoriteLeft, noteDeleteRight;
+        //ImageView noteFavoriteLeft;
+        TextView noteTextToggleLeft;
+        ImageView noteDeleteRight;
         TextView noteTitle;
         //@BindView(R.id.noteCategory)
         //TextView noteCategory;
@@ -203,7 +205,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(v);
             this.noteSwipeFrame = v.findViewById(R.id.noteSwipeFrame);
             this.noteSwipeable = v.findViewById(R.id.noteSwipeable);
-            this.noteFavoriteLeft = v.findViewById(R.id.noteFavoriteLeft);
+            //this.noteFavoriteLeft = v.findViewById(R.id.noteFavoriteLeft);
+            this.noteTextToggleLeft = v.findViewById(R.id.noteTextToggleLeft);
             this.noteDeleteRight = v.findViewById(R.id.noteDeleteRight);
             this.noteTitle = v.findViewById(R.id.noteTitle);
             //this.noteCategory = v.findViewById(R.id.noteCategory);
@@ -229,7 +232,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         public void showSwipe(boolean left) {
-            noteFavoriteLeft.setVisibility(left ? View.VISIBLE : View.INVISIBLE);
+            //noteFavoriteLeft.setVisibility(left ? View.VISIBLE : View.INVISIBLE);
+            noteTextToggleLeft.setVisibility(left ? View.VISIBLE : View.INVISIBLE);
             noteDeleteRight.setVisibility(left ? View.INVISIBLE : View.VISIBLE);
             noteSwipeFrame.setBackgroundResource(left ? R.color.bg_warning : R.color.bg_attention);
         }

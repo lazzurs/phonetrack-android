@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">PhoneTrack</string>
+    <string name="swipe_left">Toggle log job</string>
     <string name="no_notes">No log job yet</string>
     <string name="label_all_notes">All notes</string>
     <string name="label_favorites">Favorites</string>
