@@ -255,6 +255,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
         listNavigationCategories.setAdapter(adapterCategories);
     }
 
+    /*
     private class LoadCategoryListTask extends AsyncTask<Void, Void, List<NavigationAdapter.NavigationItem>> {
         @Override
         protected List<NavigationAdapter.NavigationItem> doInBackground(Void... voids) {
@@ -333,6 +334,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
             adapterCategories.setItems(items);
         }
     }
+    */
 
     private void setupNavigationMenu() {
         //final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
@@ -424,9 +426,9 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                                 .setAction(R.string.action_undo, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        db.addLogjobAndSync(dbLogjob);
+                                        db.addLogjob(dbLogjob);
                                         refreshLists();
-                                        Snackbar.make(swipeRefreshLayout, R.string.action_note_restored, Snackbar.LENGTH_SHORT)
+                                        Snackbar.make(swipeRefreshLayout, R.string.action_logjob_restored, Snackbar.LENGTH_SHORT)
                                                 .show();
                                     }
                                 })
@@ -434,8 +436,8 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                         break;
                     }
                     case ItemTouchHelper.RIGHT: {
-                        final DBLogjob dbNote = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
-                        db.toggleFavorite(dbNote, syncCallBack);
+                        final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
+                        db.toggleEnabled(dbLogjob, syncCallBack);
                         refreshLists();
                         break;
                     }
@@ -492,7 +494,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
             }
         };
         new LoadNotesListTask(getApplicationContext(), callback, navigationSelection, query).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        new LoadCategoryListTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        //new LoadCategoryListTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public ItemAdapter getItemAdapter() {
@@ -646,20 +648,20 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
         }
     }
 
-    @Override
+    /*@Override
     public void onNoteFavoriteClick(int position, View view) {
         DBLogjob note = (DBLogjob) adapter.getItem(position);
         NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(view.getContext());
         db.toggleFavorite(note, syncCallBack);
         adapter.notifyItemChanged(position);
         refreshLists();
-    }
+    }*/
 
     @Override
     public void onLogjobEnabledClick(int position, View view) {
-        DBLogjob note = (DBLogjob) adapter.getItem(position);
+        DBLogjob logjob = (DBLogjob) adapter.getItem(position);
         NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(view.getContext());
-        db.toggleFavorite(note, syncCallBack);
+        db.toggleEnabled(logjob, syncCallBack);
         adapter.notifyItemChanged(position);
         refreshLists();
     }
@@ -719,8 +721,8 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                 case R.id.menu_delete:
                     List<Integer> selection = adapter.getSelected();
                     for (Integer i : selection) {
-                        DBLogjob note = (DBLogjob) adapter.getItem(i);
-                        db.deleteNoteAndSync(note.getId());
+                        DBLogjob logjob = (DBLogjob) adapter.getItem(i);
+                        db.deleteLogjobAndSync(logjob.getId());
                         // Not needed because of dbsync
                         //adapter.remove(logjob);
                     }

@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.MarkDownUtil;
 import rx.Subscriber;
@@ -47,10 +48,10 @@ public class NoteEditFragment extends BaseNoteFragment {
         return f;
     }
 
-    public static NoteEditFragment newInstanceWithNewNote(CloudSession newNote) {
+    public static NoteEditFragment newInstanceWithNewNote(DBLogjob newLogjob) {
         NoteEditFragment f = new NoteEditFragment();
         Bundle b = new Bundle();
-        b.putSerializable(PARAM_NEWNOTE, newNote);
+        b.putSerializable(PARAM_NEWNOTE, newLogjob);
         f.setArguments(b);
         return f;
     }
@@ -80,14 +81,14 @@ public class NoteEditFragment extends BaseNoteFragment {
 
         ButterKnife.bind(this, getView());
 
-        if (logjob.getContent().isEmpty()) {
+        if (logjob.getTitle().isEmpty()) {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
         // workaround for issue yydcdut/RxMarkdown#41
-        logjob.setContent(logjob.getContent().replace("\r\n", "\n"));
+        //logjob.setContent(logjob.getContent().replace("\r\n", "\n"));
 
-        editContent.setText(logjob.getContent());
+        editContent.setText(logjob.getTitle());
         editContent.setEnabled(true);
 
         RxMarkdown.live(editContent)

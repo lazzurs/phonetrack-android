@@ -141,8 +141,8 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
             content = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
 
-        CloudSession newNote = new CloudSession(0, Calendar.getInstance(), NoteUtil.generateNonEmptyNoteTitle(content, this), content, favorite, category, null);
-        fragment = NoteEditFragment.newInstanceWithNewNote(newNote);
+        DBLogjob newLogjob = new DBLogjob(0, "empty",  "url", "to", "devname", false);
+        fragment = NoteEditFragment.newInstanceWithNewNote(newLogjob);
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 

@@ -53,7 +53,7 @@ public class NotePreviewFragment extends BaseNoteFragment {
         super.onActivityCreated(savedInstanceState);
         ButterKnife.bind(this, getView());
 
-        String content = logjob.getContent();
+        String content = logjob.getTitle();
 
         RxMarkdown.with(content, getActivity())
                 .config(
@@ -97,6 +97,6 @@ public class NotePreviewFragment extends BaseNoteFragment {
 
     @Override
     protected String getContent() {
-        return logjob.getContent();
+        return logjob.getTitle();
     }
 }

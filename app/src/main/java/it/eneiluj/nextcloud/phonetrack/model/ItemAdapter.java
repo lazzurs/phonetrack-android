@@ -108,12 +108,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //nvHolder.noteExcerpt.setText(Html.fromHtml(logjob.getExcerpt()));
             //nvHolder.noteStatus.setVisibility(DBStatus.VOID.equals(logjob.getStatus()) ? View.INVISIBLE : View.VISIBLE);
             nvHolder.noteFavorite.setImageResource(logjob.isEnabled() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
-            nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
+            /*nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     noteClickListener.onNoteFavoriteClick(holder.getAdapterPosition(), view);
                 }
-            });
+            });*/
             nvHolder.logjobEnabled.setChecked(logjob.isEnabled());
             nvHolder.logjobEnabled.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -175,7 +175,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public interface NoteClickListener {
         void onNoteClick(int position, View v);
 
-        void onNoteFavoriteClick(int position, View v);
+        //void onNoteFavoriteClick(int position, View v);
 
         void onLogjobEnabledClick(int position, View v);
 

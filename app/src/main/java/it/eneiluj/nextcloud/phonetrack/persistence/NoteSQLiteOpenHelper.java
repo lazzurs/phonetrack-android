@@ -216,7 +216,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      *
      * @param logjob logjob to be added.
      */
-    long addLogjob(DBLogjob logjob) {
+    public long addLogjob(DBLogjob logjob) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         if (logjob.getId() > 0) {

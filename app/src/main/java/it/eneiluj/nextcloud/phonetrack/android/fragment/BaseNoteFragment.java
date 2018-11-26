@@ -51,7 +51,7 @@ public abstract class BaseNoteFragment extends Fragment{
                 if (cloudLogjob == null) {
                     throw new IllegalArgumentException(PARAM_NOTE_ID + " is not given and argument " + PARAM_NEWNOTE + " is missing.");
                 }
-                logjob = db.getLogjob(db.addLogjobAndSync(cloudLogjob));
+                logjob = db.getLogjob(db.addLogjob(cloudLogjob));
                 originalLogjob = null;
             }
         } else {
