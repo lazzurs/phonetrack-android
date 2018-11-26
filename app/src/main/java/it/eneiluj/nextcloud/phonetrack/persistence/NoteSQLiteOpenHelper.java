@@ -488,7 +488,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_nextURL, newLogjob.getNextURL());
         values.put(key_token, newLogjob.getToken());
         values.put(key_deviceName, newLogjob.getDeviceName());
-        int rows = db.update(table_logjobs, values, key_id + " = ?)", new String[]{String.valueOf(newLogjob.getId())});
+        int rows = db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(newLogjob.getId())});
         // if data was changed, set new status and schedule sync (with callback); otherwise invoke callback directly.
         if (rows > 0) {
             notifyLogjobsChanged();

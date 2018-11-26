@@ -25,7 +25,7 @@ public abstract class BaseNoteFragment extends Fragment{
     public interface NoteFragmentListener {
         void close();
 
-        void onLogjobUpdated(DBLogjob note);
+        void onLogjobUpdated(DBLogjob logjob);
     }
 
     public static final String PARAM_NOTE_ID = "noteId";
@@ -59,6 +59,7 @@ public abstract class BaseNoteFragment extends Fragment{
             originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_NOTE);
         }
         setHasOptionsMenu(true);
+        System.out.println("AAAAAAAAAAAAAAA on create : "+logjob);
     }
 
     @Override
@@ -189,11 +190,13 @@ public abstract class BaseNoteFragment extends Fragment{
         // TODO check if something has changed
         Log.d(getClass().getSimpleName(), "saveData()");
         String newContent = getContent();
+        System.out.println("newcontent : "+newContent);
         if(logjob.getTitle().equals(newContent)) {
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
             // TODO get field values
-            logjob = db.updateLogjobAndSync(logjob, null, null, null, null , callback);
+            logjob = db.updateLogjobAndSync(logjob, newContent, "", "", "" , callback);
+            //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
             listener.onLogjobUpdated(logjob);
         }
     }
