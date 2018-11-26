@@ -65,8 +65,8 @@ public class NotesClient {
     }
 
     public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
-        String target = "getSessions";
-        return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_POST, null, lastETag));
+        String target = "APIgetSessions";
+        return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_GET, null, lastETag));
         /*String url = "notes";
         if (lastModified > 0) {
             url += "?pruneBefore=" + lastModified;
@@ -125,6 +125,7 @@ public class NotesClient {
             throw new ServerResponse.NotModifiedException();
         }
 
+        System.out.println("METHOD : "+method);
         BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String line;
         while ((line = rd.readLine()) != null) {

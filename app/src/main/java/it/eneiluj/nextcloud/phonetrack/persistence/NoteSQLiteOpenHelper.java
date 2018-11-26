@@ -87,7 +87,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 key_name + " TEXT, " +
                 key_nextURL + " TEXT, " +
-                key_token + " TEXT");
+                key_token + " TEXT)");
 
     }
 
@@ -98,7 +98,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_nextURL + " TEXT, " +
                 key_deviceName + " TEXT, " +
                 key_enabled + " INTEGER DEFAULT 0, " +
-                key_token + " TEXT");
+                key_token + " TEXT)");
     }
 
     @Override

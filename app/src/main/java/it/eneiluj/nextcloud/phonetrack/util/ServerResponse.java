@@ -41,8 +41,8 @@ public class ServerResponse {
 
         public List<CloudSession> getSessions(NoteSQLiteOpenHelper dbHelper) throws JSONException {
             List<CloudSession> sessionsList = new ArrayList<>();
-            JSONObject topObj = new JSONObject(getContent());
-            JSONArray sessions = new JSONArray(topObj.get("sessions"));
+            //JSONObject topObj = new JSONObject(getContent());
+            JSONArray sessions = new JSONArray(getContent());
             for (int i = 0; i < sessions.length(); i++) {
                 JSONArray json = sessions.getJSONArray(i);
                 sessionsList.add(getSessionFromJSON(json, dbHelper));
