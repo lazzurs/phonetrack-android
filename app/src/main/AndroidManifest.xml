@@ -60,7 +60,7 @@
             />
 
         <activity
-            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.EditNoteActivity"
+            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity"
             android:label="@string/simple_edit"
             android:parentActivityName="it.eneiluj.nextcloud.phonetrack.android.activity.NotesListViewActivity"
             android:windowSoftInputMode="stateHidden"

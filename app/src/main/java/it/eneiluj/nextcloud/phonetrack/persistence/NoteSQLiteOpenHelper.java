@@ -481,7 +481,12 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
     public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken, @Nullable String newNextURL, @Nullable String newDevicename, @Nullable ICallback callback) {
         //debugPrintFullDB();
         DBLogjob newLogjob;
-        newLogjob = new DBLogjob(oldLogjob.getId(), newTitle, newNextURL, newToken, newDevicename, oldLogjob.isEnabled());
+        if (newTitle == null) {
+            newLogjob = new DBLogjob(oldLogjob.getId(), oldLogjob.getTitle(), oldLogjob.getNextURL(), oldLogjob.getToken(), oldLogjob.getDeviceName(), oldLogjob.isEnabled());
+        }
+        else {
+            newLogjob = new DBLogjob(oldLogjob.getId(), newTitle, newNextURL, newToken, newDevicename, oldLogjob.isEnabled());
+        }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_title, newLogjob.getTitle());

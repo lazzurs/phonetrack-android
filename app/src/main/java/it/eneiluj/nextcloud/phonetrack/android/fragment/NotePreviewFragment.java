@@ -38,8 +38,8 @@ public class NotePreviewFragment extends BaseNoteFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.menu_edit).setVisible(true);
-        menu.findItem(R.id.menu_preview).setVisible(false);
+        //menu.findItem(R.id.menu_edit).setVisible(true);
+        //menu.findItem(R.id.menu_preview).setVisible(false);
     }
 
     @Nullable

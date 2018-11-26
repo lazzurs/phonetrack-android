@@ -9,7 +9,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="it.eneiluj.nextcloud.phonetrack"
-            android:targetClass="it.eneiluj.nextcloud.phonetrack.android.activity.EditNoteActivity" />
+            android:targetClass="it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 </shortcuts>

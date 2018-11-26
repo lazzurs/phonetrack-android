@@ -120,6 +120,9 @@ public abstract class BaseNoteFragment extends Fragment{
 
     private void prepareEnabledOption(MenuItem item) {
         item.setChecked(logjob.isEnabled());
+        //item.setIcon(logjob.isEnabled() ? R.drawable.menu_ico_checked : R.drawable.check_off);
+        //System.out.println("CHECKEEEEEEEDDDD : "+logjob.isEnabled());
+        //System.out.println("CHECKEEEEEEAAAAAAitem : "+item.isChecked());
     }
 
     /**
@@ -139,11 +142,6 @@ public abstract class BaseNoteFragment extends Fragment{
             case R.id.menu_delete:
                 db.deleteLogjobAndSync(logjob.getId());
                 listener.close();
-                return true;
-            case R.id.menu_favorite:
-                db.toggleEnabled(logjob, null);
-                listener.onLogjobUpdated(logjob);
-                prepareEnabledOption(item);
                 return true;
             case R.id.menu_enabled:
                 db.toggleEnabled(logjob, null);

@@ -11,18 +11,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.Calendar;
-
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.fragment.BaseNoteFragment;
 import it.eneiluj.nextcloud.phonetrack.android.fragment.NoteEditFragment;
 import it.eneiluj.nextcloud.phonetrack.android.fragment.NotePreviewFragment;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
-import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
-import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
-public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragment.NoteFragmentListener {
+public class EditLogjobActivity extends AppCompatActivity implements BaseNoteFragment.NoteFragmentListener {
 
     public static final String PARAM_NOTE_ID = "noteId";
     public static final String PARAM_CATEGORY = "category";
@@ -67,9 +63,9 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
     private void launchNoteFragment() {
         long noteId = getNoteId();
         if (noteId > 0) {
-            launchExistingNote(noteId);
+            launchExistingLogjob(noteId);
         } else {
-            launchNewNote();
+            launchNewLogjob();
         }
     }
 
@@ -79,7 +75,7 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
      *
      * @param noteId ID of the existing logjob.
      */
-    private void launchExistingNote(long noteId) {
+    /*private void launchExistingLogjob(long noteId) {
         final String prefKeyNoteMode = getString(R.string.pref_key_note_mode);
         final String prefKeyLastMode = getString(R.string.pref_key_last_note_mode);
         final String prefValueEdit = getString(R.string.pref_value_mode_edit);
@@ -93,28 +89,29 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
         if (prefValuePreview.equals(mode) || (prefValueLast.equals(mode) && prefValuePreview.equals(lastMode))) {
             editMode = false;
         }
-        launchExistingNote(noteId, editMode);
-    }
+        launchExistingLogjob(noteId, editMode);
+    }*/
 
     /**
      * Starts a {@link NoteEditFragment} or {@link NotePreviewFragment} for an existing logjob.
      *
-     * @param noteId ID of the existing logjob.
+     * @param logjobId ID of the existing logjob.
      * @param edit   View-mode of the fragment:
      *               <code>true</code> for {@link NoteEditFragment},
      *               <code>false</code> for {@link NotePreviewFragment}.
      */
-    private void launchExistingNote(long noteId, boolean edit) {
+    private void launchExistingLogjob(long logjobId) {
         // save state of the fragment in order to resume with the same logjob and originalNote
         Fragment.SavedState savedState = null;
         if (fragment != null) {
             savedState = getFragmentManager().saveFragmentInstanceState(fragment);
         }
-        if (edit) {
-            fragment = NoteEditFragment.newInstance(noteId);
+        fragment = NoteEditFragment.newInstance(logjobId);
+        /*if (edit) {
+            fragment = NoteEditFragment.newInstance(logjobId);
         } else {
-            fragment = NotePreviewFragment.newInstance(noteId);
-        }
+            fragment = NotePreviewFragment.newInstance(logjobId);
+        }*/
         if (savedState != null) {
             fragment.setInitialSavedState(savedState);
         }
@@ -125,7 +122,7 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
      * Starts the {@link NoteEditFragment} with a new logjob.
      * Content ("share" functionality), category and favorite attribute can be preset.
      */
-    private void launchNewNote() {
+    private void launchNewLogjob() {
         Intent intent = getIntent();
 
         String category = null;
@@ -151,11 +148,11 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
         close();
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_note_activity, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+        //getMenuInflater().inflate(R.menu.menu_note_activity, menu);
+        //return super.onCreateOptionsMenu(menu);
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -163,12 +160,12 @@ public class EditNoteActivity extends AppCompatActivity implements BaseNoteFragm
             case android.R.id.home:
                 close();
                 return true;
-            case R.id.menu_preview:
-                launchExistingNote(getNoteId(), false);
+            /*case R.id.menu_preview:
+                launchExistingLogjob(getNoteId(), false);
                 return true;
             case R.id.menu_edit:
-                launchExistingNote(getNoteId(), true);
-                return true;
+                launchExistingLogjob(getNoteId(), true);
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }

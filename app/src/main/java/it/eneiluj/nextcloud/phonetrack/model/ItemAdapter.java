@@ -102,6 +102,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             final NoteViewHolder nvHolder = ((NoteViewHolder) holder);
             //nvHolder.noteSwipeable.setAlpha(DBStatus.LOCAL_DELETED.equals(logjob.getStatus()) ? 0.5f : 1.0f);
             nvHolder.noteSwipeable.setAlpha(1.0f);
+            System.out.println("BIND JOB "+logjob);
+            System.out.println("BIND TITTTTT "+logjob.getTitle());
             nvHolder.noteTitle.setText(Html.fromHtml(logjob.getTitle()));
             //nvHolder.noteCategory.setVisibility(showCategory && !logjob.getCategory().isEmpty() ? View.VISIBLE : View.GONE);
             //nvHolder.noteCategory.setText(Html.fromHtml(logjob.getCategory()));

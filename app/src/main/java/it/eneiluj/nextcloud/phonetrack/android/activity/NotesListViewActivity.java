@@ -34,7 +34,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -192,8 +191,8 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
         fabCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent createIntent = new Intent(getApplicationContext(), EditNoteActivity.class);
-                createIntent.putExtra(EditNoteActivity.PARAM_CATEGORY, navigationSelection);
+                Intent createIntent = new Intent(getApplicationContext(), EditLogjobActivity.class);
+                createIntent.putExtra(EditLogjobActivity.PARAM_CATEGORY, navigationSelection);
                 startActivityForResult(createIntent, create_note_cmd);
             }
         });
@@ -640,9 +639,9 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                 mActionMode.finish();
             }
         } else {
-            DBLogjob note = (DBLogjob) adapter.getItem(position);
-            Intent intent = new Intent(getApplicationContext(), EditNoteActivity.class);
-            intent.putExtra(EditNoteActivity.PARAM_NOTE_ID, note.getId());
+            DBLogjob logjob = (DBLogjob) adapter.getItem(position);
+            Intent intent = new Intent(getApplicationContext(), EditLogjobActivity.class);
+            intent.putExtra(EditLogjobActivity.PARAM_NOTE_ID, logjob.getId());
             startActivityForResult(intent, show_single_note_cmd);
 
         }
