@@ -3,6 +3,7 @@ package it.eneiluj.nextcloud.phonetrack.android.fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.EditTextPreference;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,13 +38,14 @@ public class NoteEditFragment extends BaseNoteFragment {
     private Handler handler;
     private boolean saveActive, unsavedEdit;
 
-    @BindView(R.id.editContent)
-    RxMDEditText editContent;
+    //@BindView(R.id.editContent)
+    //RxMDEditText editContent;
+    EditTextPreference editContent;
 
-    public static NoteEditFragment newInstance(long noteId) {
+    public static NoteEditFragment newInstance(long logjobId) {
         NoteEditFragment f = new NoteEditFragment();
         Bundle b = new Bundle();
-        b.putLong(PARAM_NOTE_ID, noteId);
+        b.putLong(PARAM_NOTE_ID, logjobId);
         f.setArguments(b);
         return f;
     }
@@ -59,6 +61,8 @@ public class NoteEditFragment extends BaseNoteFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //inflater.inflate(R.layout.activity_edit, container, false);
+        addPreferencesFromResource(R.layout.activity_edit);
         handler = new Handler(Looper.getMainLooper());
     }
 
@@ -69,11 +73,11 @@ public class NoteEditFragment extends BaseNoteFragment {
         //menu.findItem(R.id.menu_preview).setVisible(true);
     }
 
-    @Nullable
+    /*@Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_edit, container, false);
-    }
+    }*/
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -88,10 +92,14 @@ public class NoteEditFragment extends BaseNoteFragment {
         // workaround for issue yydcdut/RxMarkdown#41
         //logjob.setContent(logjob.getContent().replace("\r\n", "\n"));
 
+        editContent = (EditTextPreference) this.findPreference("title");
         editContent.setText(logjob.getTitle());
-        editContent.setEnabled(true);
+        editContent.getBu
+        System.out.println("KKKKKKKKK "+editContent.getNegativeButtonText());
+        //editContent.setText(logjob.getTitle());
+        //editContent.setEnabled(true);
 
-        RxMarkdown.live(editContent)
+        /*RxMarkdown.live(editContent)
                 .config(MarkDownUtil.getMarkDownConfiguration(getActivity().getApplicationContext()).build())
                 .factory(EditFactory.create())
                 .intoObservable()
@@ -108,10 +116,10 @@ public class NoteEditFragment extends BaseNoteFragment {
                     public void onNext(CharSequence charSequence) {
                         editContent.setText(charSequence, TextView.BufferType.SPANNABLE);
                     }
-                });
+                });*/
     }
 
-    private final TextWatcher textWatcher = new TextWatcher() {
+    /*private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
@@ -128,9 +136,9 @@ public class NoteEditFragment extends BaseNoteFragment {
                 handler.postDelayed(runAutoSave, DELAY);
             }
         }
-    };
+    };*/
 
-    @Override
+    /*@Override
     public void onResume() {
         super.onResume();
         editContent.addTextChangedListener(textWatcher);
@@ -141,9 +149,9 @@ public class NoteEditFragment extends BaseNoteFragment {
         super.onPause();
         editContent.removeTextChangedListener(textWatcher);
         cancelTimers();
-    }
+    }*/
 
-    private final Runnable runAutoSave = new Runnable() {
+    /*private final Runnable runAutoSave = new Runnable() {
         @Override
         public void run() {
             if (unsavedEdit) {
@@ -157,7 +165,7 @@ public class NoteEditFragment extends BaseNoteFragment {
 
     private void cancelTimers() {
         handler.removeCallbacks(runAutoSave);
-    }
+    }*/
 
     /**
      * Gets the current content of the EditText field in the UI.
@@ -166,7 +174,7 @@ public class NoteEditFragment extends BaseNoteFragment {
      */
     @Override
     protected String getContent() {
-        return editContent.getText().toString();
+        return editContent.getText();
     }
 
     @Override
@@ -178,7 +186,7 @@ public class NoteEditFragment extends BaseNoteFragment {
     /**
      * Saves the current changes and show the status in the ActionBar
      */
-    private void autoSave() {
+    /*private void autoSave() {
         Log.d(LOG_TAG_AUTOSAVE, "STARTAUTOSAVE");
         saveActive = true;
         saveLogjob(new ICallback() {
@@ -202,5 +210,5 @@ public class NoteEditFragment extends BaseNoteFragment {
 
             }
         });
-    }
+    }*/
 }

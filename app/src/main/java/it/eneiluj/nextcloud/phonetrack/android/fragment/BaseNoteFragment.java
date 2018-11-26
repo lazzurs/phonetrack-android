@@ -20,7 +20,7 @@ import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 //public abstract class BaseNoteFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
-public abstract class BaseNoteFragment extends Fragment{
+public abstract class BaseNoteFragment extends PreferencesFragment{
 
     public interface NoteFragmentListener {
         void close();

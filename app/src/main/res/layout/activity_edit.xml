@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/editContentContainer"
     android:layout_width="match_parent"
@@ -15,4 +15,28 @@
             android:inputType="textMultiLine|textCapSentences"
             android:padding="16dp"
             android:textColor="@color/fg_default"/>
-</ScrollView>
+
+
+</ScrollView-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:key="logjob_preferences"
+    android:summary="@string/action_settings"
+    android:title="@string/action_settings">
+
+    <EditTextPreference
+        android:id="@+id/editContent"
+        android:defaultValue="plop"
+        android:dialogMessage="@string/setting_title_long"
+        android:dialogTitle="@string/setting_title"
+        android:key="title"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:persistent="true"
+        android:positiveButtonText="OK"
+        android:negativeButtonText="Cancell"
+        android:title="@string/setting_title" />
+
+</PreferenceScreen>
