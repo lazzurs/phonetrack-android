@@ -35,6 +35,10 @@ public class DBLogjob implements Item, Serializable {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getToken() {
         return token;
     }

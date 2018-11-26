@@ -12,7 +12,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +21,7 @@ import java.util.Map;
 import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import it.eneiluj.nextcloud.phonetrack.model.DBSession;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
-import it.eneiluj.nextcloud.phonetrack.model.DBStatus;
-import it.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
-import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
 /**
  * Helps to add, get, update and delete Notes with the option to trigger a Resync with the Server.
@@ -105,6 +101,10 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_token + " TEXT");
     }
 
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
 
     /*@Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -183,15 +183,15 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param content String
      */
     @SuppressWarnings("UnusedReturnValue")
-    public long addSessionAndSync(String name, String token) {
-        CloudSession session = new CloudSession(name, token);
+    public long addSessionAndSync(String name, String token, String nextURL) {
+        CloudSession session = new CloudSession(name, token, nextURL);
         return addSessionAndSync(session);
     }
 
     public long addSessionAndSync(CloudSession session) {
-        DBSession dbs = new DBSession(0, session.getName(), session.getToken());
+        DBSession dbs = new DBSession(0, session.getName(), session.getToken(), session.getNextURL());
         long id = addSession(dbs);
-        notifyNotesChanged();
+        notifyLogjobsChanged();
         getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
     }
@@ -204,9 +204,9 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
     @SuppressWarnings("UnusedReturnValue")
     public long addLogjobAndSync(String title, String nextURL, String token, String deviceName) {
         // TODO there is an 'enabled' field
-        DBLogjob dblj = new DBLogjob(0, title, nextURL, token, deviceName);
+        DBLogjob dblj = new DBLogjob(0, title, nextURL, token, deviceName, false);
         long id = addLogjob(dblj);
-        notifyLogjobChanged();
+        notifyLogjobsChanged();
         getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
     }
@@ -230,12 +230,9 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
         return db.insert(table_logjobs, null, values);
     }
 
-    long addSession(DBSession session) {
+    long addSession(CloudSession session) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        if (session.getId() > 0) {
-            values.put(key_id, session.getId());
-        }
         values.put(key_name, session.getName());
         values.put(key_token, session.getToken());
         values.put(key_nextURL, session.getNextURL());
@@ -285,7 +282,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     private DBLogjob getLogjobFromCursor(@NonNull Cursor cursor) {
-        return new DBLogjob(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4)));
+        return new DBLogjob(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5) == 1);
     }
 
     /**
@@ -331,7 +328,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     private DBSession getSessionFromCursor(@NonNull Cursor cursor) {
-        return new DBSession(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
+        return new DBSession(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
     }
 
     public void debugPrintFullDB() {
@@ -561,7 +558,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
                 values,
                 key_id + " = ?",
                 new String[]{String.valueOf(id)});
-        notifyNotesChanged();
+        notifyLogjobsChanged();
         getPhonetrackServerSyncHelper().scheduleSync(true);
         return i;
     }*/
@@ -588,7 +585,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
     /**
      * Notify about changed phonetrack.
      */
-    void notifyNotesChanged() {
+    void notifyLogjobsChanged() {
         //updateSingleNoteWidgets();
         //updateNoteListWidgets();
     }

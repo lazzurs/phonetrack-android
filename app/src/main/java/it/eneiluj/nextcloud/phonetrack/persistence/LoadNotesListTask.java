@@ -38,51 +38,62 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
 
     @Override
     protected List<Item> doInBackground(Void... voids) {
-        List<DBLogjob> noteList;
+        List<DBLogjob> logjobList;
         NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(context);
-        noteList = db.searchNotes(searchQuery, category.category, category.favorite);
+        logjobList = db.searchLogjobs(searchQuery, null);
 
-        if (category.category == null) {
-            return fillListByTime(noteList);
+        return fillListTitle(logjobList);
+        /*if (category.category == null) {
+            return fillListByTime(logjobList);
         } else {
-            return fillListByCategory(noteList);
-        }
+            return fillListByCategory(logjobList);
+        }*/
     }
 
-    private DBLogjob colorTheNote(DBLogjob dbNote) {
+    private DBLogjob colorTheNote(DBLogjob dbLogjob) {
         if (!TextUtils.isEmpty(searchQuery)) {
-            SpannableString spannableString = new SpannableString(dbNote.getTitle());
+            SpannableString spannableString = new SpannableString(dbLogjob.getTitle());
             Matcher matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
             while (matcher.find()) {
                 spannableString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.primary_dark)),
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbNote.setTitle(Html.toHtml(spannableString));
+            dbLogjob.setTitle(Html.toHtml(spannableString));
 
-            spannableString = new SpannableString(dbNote.getCategory());
+            /*spannableString = new SpannableString(dbLogjob.getCategory());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
             while (matcher.find()) {
                 spannableString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.primary_dark)),
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbNote.setCategory(Html.toHtml(spannableString));
+            dbLogjob.setCategory(Html.toHtml(spannableString));
 
-            spannableString = new SpannableString(dbNote.getExcerpt());
+            spannableString = new SpannableString(dbLogjob.getExcerpt());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
             while (matcher.find()) {
                 spannableString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.primary_dark)),
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbNote.setExcerptDirectly(Html.toHtml(spannableString));
+            dbLogjob.setExcerptDirectly(Html.toHtml(spannableString));*/
         }
 
-        return dbNote;
+        return dbLogjob;
     }
 
     @NonNull
+    @WorkerThread
+    private List<Item> fillListTitle(@NonNull List<DBLogjob> logjobList) {
+        List<Item> itemList = new ArrayList<>();
+        for (DBLogjob logjob : logjobList) {
+            itemList.add(colorTheNote(logjob));
+        }
+        return itemList;
+    }
+
+    /*@NonNull
     @WorkerThread
     private List<Item> fillListByCategory(@NonNull List<DBLogjob> noteList) {
         List<Item> itemList = new ArrayList<>();
@@ -96,9 +107,9 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
             currentCategory = note.getCategory();
         }
         return itemList;
-    }
+    }*/
 
-    @NonNull
+    /*@NonNull
     @WorkerThread
     private List<Item> fillListByTime(@NonNull List<DBLogjob> noteList) {
         List<Item> itemList = new ArrayList<>();
@@ -168,6 +179,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
 
         return itemList;
     }
+    */
 
     @Override
     protected void onPostExecute(List<Item> items) {

@@ -29,7 +29,6 @@ import at.bitfire.cert4android.CustomCertService;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
-import it.eneiluj.nextcloud.phonetrack.model.DBStatus;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.NotesClient;
 import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil.LoginStatus;
@@ -264,34 +263,35 @@ public class SessionServerSyncHelper {
          * Pull remote Changes: update or create each remote session and remove remotely deleted sessions.
          */
         private LoginStatus pullRemoteChanges() {
+            // TODO add/remove sessions
             Log.d(getClass().getSimpleName(), "pullRemoteChanges()");
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
             String lastETag = preferences.getString(SettingsActivity.SETTINGS_KEY_ETAG, null);
             long lastModified = preferences.getLong(SettingsActivity.SETTINGS_KEY_LAST_MODIFIED, 0);
             LoginStatus status;
             try {
-                Map<Long, Long> idMap = dbHelper.getTokenMap();
+                Map<String, Long> locIdMap = dbHelper.getTokenMap();
                 ServerResponse.SessionsResponse response = client.getSessions(customCertManager, lastModified, lastETag);
-                List<CloudSession> remoteNotes = response.getSessions();
+                List<CloudSession> remoteSessions = response.getSessions(dbHelper);
                 Set<String> remoteTokens = new HashSet<>();
                 // pull remote changes: update or create each remote note
-                for (CloudSession remoteSession : remoteNotes) {
+                for (CloudSession remoteSession : remoteSessions) {
                     Log.v(getClass().getSimpleName(), "   Process Remote Note: " + remoteSession);
                     remoteTokens.add(remoteSession.getToken());
-                    if (idMap.containsKey(remoteSession.getToken())) {
+                    if (locIdMap.containsKey(remoteSession.getToken())) {
                         Log.v(getClass().getSimpleName(), "   ... found -> Update");
-                        dbHelper.updateSession(idMap.get(remoteSession.getToken()), remoteSession, null);
+                        dbHelper.updateSession(locIdMap.get(remoteSession.getToken()), remoteSession);
                     } else {
                         Log.v(getClass().getSimpleName(), "   ... create");
-                        dbHelper.addNote(remoteSession);
+                        dbHelper.addSession(remoteSession);
                     }
                 }
-                Log.d(getClass().getSimpleName(), "   Remove remotely deleted Notes (only those without local changes)");
-                // remove remotely deleted phonetrack (only those without local changes)
-                for (Map.Entry<Long, Long> entry : idMap.entrySet()) {
-                    if (!remoteTokens.contains(entry.getKey())) {
-                        Log.v(getClass().getSimpleName(), "   ... remove " + entry.getValue());
-                        dbHelper.deleteNote(entry.getValue(), DBStatus.VOID);
+                Log.d(getClass().getSimpleName(), "   Remove remotely deleted Sessions");
+                // remove remotely deleted sessions
+                for (Map.Entry<String, Long> locEntry : locIdMap.entrySet()) {
+                    if (!remoteTokens.contains(locEntry.getKey())) {
+                        Log.v(getClass().getSimpleName(), "   ... remove " + locEntry.getValue());
+                        dbHelper.deleteSession(locEntry.getValue());
                     }
                 }
                 status = LoginStatus.OK;
@@ -340,7 +340,7 @@ public class SessionServerSyncHelper {
             for (ICallback callback : callbacks) {
                 callback.onFinish();
             }
-            dbHelper.notifyNotesChanged();
+            dbHelper.notifyLogjobsChanged();
             // start next sync if scheduled meanwhile
             if (syncScheduled) {
                 scheduleSync(false);

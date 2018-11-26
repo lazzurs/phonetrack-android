@@ -1,5 +1,9 @@
 package it.eneiluj.nextcloud.phonetrack.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,7 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 
 /**
  * Provides entity classes for handling server responses with a single note ({@link SessionResponse}) or a list of phonetrack ({@link SessionsResponse}).
@@ -23,8 +29,8 @@ public class ServerResponse {
             super(response);
         }
 
-        public CloudSession getSession() throws JSONException {
-            return getSessionFromJSON(new JSONArray(getContent()));
+        public CloudSession getSession(NoteSQLiteOpenHelper dbHelper) throws JSONException {
+            return getSessionFromJSON(new JSONArray(getContent()), dbHelper);
         }
     }
 
@@ -33,13 +39,13 @@ public class ServerResponse {
             super(response);
         }
 
-        public List<CloudSession> getSessions() throws JSONException {
+        public List<CloudSession> getSessions(NoteSQLiteOpenHelper dbHelper) throws JSONException {
             List<CloudSession> sessionsList = new ArrayList<>();
             JSONObject topObj = new JSONObject(getContent());
             JSONArray sessions = new JSONArray(topObj.get("sessions"));
             for (int i = 0; i < sessions.length(); i++) {
                 JSONArray json = sessions.getJSONArray(i);
-                sessionsList.add(getSessionFromJSON(json));
+                sessionsList.add(getSessionFromJSON(json, dbHelper));
             }
             return sessionsList;
         }
@@ -64,8 +70,8 @@ public class ServerResponse {
         return response.getLastModified();
     }
 
-    protected CloudSession getSessionFromJSON(JSONArray json) throws JSONException {
-        long id = 0;
+    protected CloudSession getSessionFromJSON(JSONArray json, NoteSQLiteOpenHelper dbHelper) throws JSONException {
+        //long id = 0;
         String name = "";
         String token = "";
         if (json.length() > 1) {
@@ -96,6 +102,10 @@ public class ServerResponse {
         }
         return new CloudSession(id, modified, title, content, favorite, category, etag);
         */
-        return new CloudSession(name, token);
+
+        Context appContext = dbHelper.getContext().getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
+        String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+        return new CloudSession(name, token, "");
     }
 }

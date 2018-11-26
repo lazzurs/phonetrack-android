@@ -98,22 +98,23 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             SectionItem section = (SectionItem) item;
             ((SectionViewHolder) holder).sectionTitle.setText(section.geTitle());
         } else {
-            final DBLogjob note = (DBLogjob) item;
+            final DBLogjob logjob = (DBLogjob) item;
             final NoteViewHolder nvHolder = ((NoteViewHolder) holder);
-            nvHolder.noteSwipeable.setAlpha(DBStatus.LOCAL_DELETED.equals(note.getStatus()) ? 0.5f : 1.0f);
-            nvHolder.noteTitle.setText(Html.fromHtml(note.getTitle()));
-            nvHolder.noteCategory.setVisibility(showCategory && !note.getCategory().isEmpty() ? View.VISIBLE : View.GONE);
-            nvHolder.noteCategory.setText(Html.fromHtml(note.getCategory()));
-            nvHolder.noteExcerpt.setText(Html.fromHtml(note.getExcerpt()));
-            nvHolder.noteStatus.setVisibility(DBStatus.VOID.equals(note.getStatus()) ? View.INVISIBLE : View.VISIBLE);
-            nvHolder.noteFavorite.setImageResource(note.isFavorite() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
+            //nvHolder.noteSwipeable.setAlpha(DBStatus.LOCAL_DELETED.equals(note.getStatus()) ? 0.5f : 1.0f);
+            nvHolder.noteSwipeable.setAlpha(1.0f);
+            nvHolder.noteTitle.setText(Html.fromHtml(logjob.getTitle()));
+            //nvHolder.noteCategory.setVisibility(showCategory && !note.getCategory().isEmpty() ? View.VISIBLE : View.GONE);
+            //nvHolder.noteCategory.setText(Html.fromHtml(note.getCategory()));
+            //nvHolder.noteExcerpt.setText(Html.fromHtml(note.getExcerpt()));
+            //nvHolder.noteStatus.setVisibility(DBStatus.VOID.equals(note.getStatus()) ? View.INVISIBLE : View.VISIBLE);
+            nvHolder.noteFavorite.setImageResource(logjob.isEnabled() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
             nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     noteClickListener.onNoteFavoriteClick(holder.getAdapterPosition(), view);
                 }
             });
-            nvHolder.logjobEnabled.setChecked(note.isFavorite());
+            nvHolder.logjobEnabled.setChecked(logjob.isEnabled());
             nvHolder.logjobEnabled.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 
 import at.bitfire.cert4android.CustomCertManager;
 import it.eneiluj.nextcloud.phonetrack.BuildConfig;
+import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 
 @WorkerThread
 public class NotesClient {
