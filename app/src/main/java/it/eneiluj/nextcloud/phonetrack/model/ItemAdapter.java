@@ -107,7 +107,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //nvHolder.noteCategory.setText(Html.fromHtml(logjob.getCategory()));
             //nvHolder.noteExcerpt.setText(Html.fromHtml(logjob.getExcerpt()));
             //nvHolder.noteStatus.setVisibility(DBStatus.VOID.equals(logjob.getStatus()) ? View.INVISIBLE : View.VISIBLE);
-            nvHolder.noteFavorite.setImageResource(logjob.isEnabled() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
+            //nvHolder.noteFavorite.setImageResource(logjob.isEnabled() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
             /*nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -188,14 +188,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         View noteSwipeFrame;
         ImageView noteFavoriteLeft, noteDeleteRight;
         TextView noteTitle;
-        @BindView(R.id.noteCategory)
-        TextView noteCategory;
+        //@BindView(R.id.noteCategory)
+        //TextView noteCategory;
         @BindView(R.id.noteExcerpt)
         TextView noteExcerpt;
         @BindView(R.id.noteStatus)
         ImageView noteStatus;
-        @BindView(R.id.noteFavorite)
-        ImageView noteFavorite;
+        //@BindView(R.id.noteFavorite)
+        //ImageView noteFavorite;
         @BindView(R.id.logjobEnabled)
         Switch logjobEnabled;
 
@@ -206,10 +206,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.noteFavoriteLeft = v.findViewById(R.id.noteFavoriteLeft);
             this.noteDeleteRight = v.findViewById(R.id.noteDeleteRight);
             this.noteTitle = v.findViewById(R.id.noteTitle);
-            this.noteCategory = v.findViewById(R.id.noteCategory);
+            //this.noteCategory = v.findViewById(R.id.noteCategory);
             this.noteExcerpt = v.findViewById(R.id.noteExcerpt);
             this.noteStatus = v.findViewById(R.id.noteStatus);
-            this.noteFavorite = v.findViewById(R.id.noteFavorite);
+            //this.noteFavorite = v.findViewById(R.id.noteFavorite);
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);

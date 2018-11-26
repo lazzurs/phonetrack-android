@@ -422,7 +422,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
                         adapter.remove(dbLogjob);
                         refreshLists();
                         Log.v("Note", "Item deleted through swipe ----------------------------------------------");
-                        Snackbar.make(swipeRefreshLayout, R.string.action_note_deleted, Snackbar.LENGTH_LONG)
+                        Snackbar.make(swipeRefreshLayout, R.string.action_logjob_deleted, Snackbar.LENGTH_LONG)
                                 .setAction(R.string.action_undo, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
