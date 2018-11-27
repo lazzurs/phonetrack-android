@@ -36,7 +36,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:key="title"
         android:singleLine="true"
         android:selectAllOnFocus="true"
-        android:persistent="true"
+        android:persistent="false"
         android:summary=""
         android:title="@string/setting_title" />
 
@@ -49,7 +49,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:key="nextURL"
         android:singleLine="true"
         android:selectAllOnFocus="true"
-        android:persistent="true"
+        android:persistent="false"
         android:summary=""
         android:title="@string/setting_nexturl" />
 
@@ -62,7 +62,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:key="token"
         android:singleLine="true"
         android:selectAllOnFocus="true"
-        android:persistent="true"
+        android:persistent="false"
         android:summary=""
         android:title="@string/setting_token" />
 
@@ -75,7 +75,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:key="devicename"
         android:singleLine="true"
         android:selectAllOnFocus="true"
-        android:persistent="true"
+        android:persistent="false"
         android:summary=""
         android:title="@string/setting_devicename" />
 

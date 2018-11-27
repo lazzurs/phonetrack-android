@@ -1,12 +1,16 @@
 package it.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import it.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 //import it.eneiluj.nextcloud.phonetrack.android.fragment.NoteEditFragment;
@@ -26,7 +30,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            launchNoteFragment();
+            launchLogjobFragment();
         } else {
             fragment = (EditLogjobFragment) getFragmentManager().findFragmentById(android.R.id.content);
         }
@@ -45,10 +49,10 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
             getFragmentManager().beginTransaction().detach(fragment).commit();
             fragment = null;
         }
-        launchNoteFragment();
+        launchLogjobFragment();
     }
 
-    private long getNoteId() {
+    private long getLogjobId() {
         return getIntent().getLongExtra(PARAM_NOTE_ID, 0);
     }
 
@@ -56,10 +60,10 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
      * Starts the logjob fragment for an existing logjob or a new logjob.
      * The actual behavior is triggered by the activity's intent.
      */
-    private void launchNoteFragment() {
-        long noteId = getNoteId();
-        if (noteId > 0) {
-            launchExistingLogjob(noteId);
+    private void launchLogjobFragment() {
+        long logjobId = getLogjobId();
+        if (logjobId > 0) {
+            launchExistingLogjob(logjobId);
         } else {
             launchNewLogjob();
         }
@@ -157,10 +161,10 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
                 close();
                 return true;
             /*case R.id.menu_preview:
-                launchExistingLogjob(getNoteId(), false);
+                launchExistingLogjob(getLogjobId(), false);
                 return true;
             case R.id.menu_edit:
-                launchExistingLogjob(getNoteId(), true);
+                launchExistingLogjob(getLogjobId(), true);
                 return true;*/
             default:
                 return super.onOptionsItemSelected(item);
@@ -179,7 +183,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         } else {
             preferences.edit().putString(prefKeyLastMode, getString(R.string.pref_value_mode_preview)).apply();
         }*/
-        fragment.onCloseNote();
+        fragment.onCloseLogjob();
         finish();
     }
 
@@ -189,6 +193,17 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         if (actionBar != null) {
             actionBar.setTitle(logjob.getTitle());
             actionBar.setSubtitle(Long.toString(logjob.getId()));
+        }
+        hideKeyboard();
+    }
+
+    public void hideKeyboard() {
+        View view = getCurrentFocus();
+        System.out.println("HHHHHHHHHHHHHHHHHHHIDE : "+view);
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            //inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }

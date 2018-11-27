@@ -21,6 +21,7 @@ import android.view.MenuItem;
 
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
+import it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -283,7 +284,7 @@ public class EditLogjobFragment extends PreferenceFragment {
         }
     }
 
-    public void onCloseNote() {
+    public void onCloseLogjob() {
         // TODO if all fields are empty (or just title/URL) : delete
         if (originalLogjob == null && getTitle().isEmpty()) {
             //db.deleteNoteAndSync(logjob.getId());
