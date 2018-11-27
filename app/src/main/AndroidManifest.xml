@@ -42,7 +42,7 @@
                 android:resource="@xml/searchable" />
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="it.niedermann.owncloud.notes.android.activity.NotesListViewActivity" />
+                android:value="it.eneiluj.nextcloud.phonetrack.android.activity.NotesListViewActivity" />
         </activity>
 
         <activity

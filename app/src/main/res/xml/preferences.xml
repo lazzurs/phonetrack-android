@@ -5,8 +5,8 @@
         android:icon="@drawable/ic_account_circle_grey_24dp"
         android:title="@string/settings_server_settings">
         <intent
-            android:targetClass="it.niedermann.owncloud.notes.android.activity.SettingsActivity"
-            android:targetPackage="it.niedermann.owncloud.notes" />
+            android:targetClass="it.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity"
+            android:targetPackage="it.eneiluj.nextcloud.phonetrack" />
     </Preference>
 
     <ListPreference
