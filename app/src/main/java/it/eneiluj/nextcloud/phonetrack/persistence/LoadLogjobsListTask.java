@@ -179,11 +179,11 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
     */
 
     @Override
-    protected void onPostExecute(List<Item> items) {
-        callback.onLogjobsLoaded(items, category.category == null);
+    protected void onPostExecute(List<Item> ljItems) {
+        callback.onLogjobsLoaded(ljItems, category.category == null);
     }
 
     public interface LogjobsLoadedListener {
-        void onLogjobsLoaded(List<Item> notes, boolean showCategory);
+        void onLogjobsLoaded(List<Item> ljItems, boolean showCategory);
     }
 }

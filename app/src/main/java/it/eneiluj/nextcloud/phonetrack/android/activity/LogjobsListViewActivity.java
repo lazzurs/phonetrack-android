@@ -484,9 +484,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         LoadLogjobsListTask.LogjobsLoadedListener callback = new LoadLogjobsListTask.LogjobsLoadedListener() {
             @Override
-            public void onLogjobsLoaded(List<Item> notes, boolean showCategory) {
+            public void onLogjobsLoaded(List<Item> ljItems, boolean showCategory) {
                 adapter.setShowCategory(showCategory);
-                adapter.setItemList(notes);
+                adapter.setItemList(ljItems);
                 if(scrollToTop) {
                     listView.scrollToPosition(0);
                 }
