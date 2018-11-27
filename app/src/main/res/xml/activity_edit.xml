@@ -31,7 +31,7 @@ xmlns:tools="http://schemas.android.com/tools"
     <EditTextPreference
         android:id="@+id/editContent"
         android:defaultValue="plop"
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@android:drawable/ic_menu_edit"
         android:dialogMessage="@string/setting_title_long"
         android:dialogTitle="@string/setting_title"
         android:key="title"

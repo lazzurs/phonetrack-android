@@ -11,8 +11,6 @@ import android.os.Looper;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -57,7 +55,10 @@ public class BaseNoteFragment extends PreferenceFragment {
     private Handler handler;
     private boolean saveActive, unsavedEdit;
 
-    EditTextPreference editContent;
+    EditTextPreference editTitle;
+    EditTextPreference editNextURL;
+    EditTextPreference editToken;
+    EditTextPreference editDevicename;
 
     private DialogInterface.OnClickListener dialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
@@ -111,7 +112,35 @@ public class BaseNoteFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("nexturl");
+                EditTextPreference pref = (EditTextPreference) findPreference("nextURL");
+                pref.setSummary((CharSequence) newValue);
+                pref.setText((String) newValue);
+                saveLogjob(null);
+                return true;
+            }
+
+        });
+        Preference tokenPref = findPreference("token");
+        tokenPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                EditTextPreference pref = (EditTextPreference) findPreference("token");
+                pref.setSummary((CharSequence) newValue);
+                pref.setText((String) newValue);
+                saveLogjob(null);
+                return true;
+            }
+
+        });
+        Preference devicenamePref = findPreference("devicename");
+        devicenamePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                EditTextPreference pref = (EditTextPreference) findPreference("devicename");
                 pref.setSummary((CharSequence) newValue);
                 pref.setText((String) newValue);
                 saveLogjob(null);
@@ -257,7 +286,7 @@ public class BaseNoteFragment extends PreferenceFragment {
 
     public void onCloseNote() {
         // TODO if all fields are empty (or just title/URL) : delete
-        if (originalLogjob == null && getContent().isEmpty()) {
+        if (originalLogjob == null && getTitle().isEmpty()) {
             //db.deleteNoteAndSync(logjob.getId());
         }
     }
@@ -268,16 +297,20 @@ public class BaseNoteFragment extends PreferenceFragment {
      * @param callback Observer which is called after save/synchronization
      */
     protected void saveLogjob(@Nullable ICallback callback) {
-        // TODO check if something has changed
         Log.d(getClass().getSimpleName(), "saveData()");
-        String newContent = getContent();
-        System.out.println("newcontent : "+newContent);
-        if(logjob.getTitle().equals(newContent)) {
+        String newTitle = getTitle();
+        String newNextURL = getNextURL();
+        String newToken = getToken();
+        String newDevicename = getDevicename();
+        System.out.println("newtitle : "+newTitle);
+        if(logjob.getTitle().equals(newTitle) &&
+                logjob.getNextURL().equals(newNextURL) &&
+                logjob.getToken().equals(newToken) &&
+                logjob.getDeviceName().equals(newDevicename)) {
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
-            // TODO get field values
             System.out.println("====== update logjob");
-            logjob = db.updateLogjobAndSync(logjob, newContent, "", "", "" , callback);
+            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newNextURL, newDevicename , callback);
             //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
             listener.onLogjobUpdated(logjob);
         }
@@ -330,20 +363,29 @@ public class BaseNoteFragment extends PreferenceFragment {
         ButterKnife.bind(this, getView());
 
         if (logjob.getTitle().isEmpty()) {
-            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        //    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
         // workaround for issue yydcdut/RxMarkdown#41
-        //logjob.setContent(logjob.getContent().replace("\r\n", "\n"));
+        //logjob.setContent(logjob.getTitle().replace("\r\n", "\n"));
 
-        editContent = (EditTextPreference) this.findPreference("title");
-        editContent.setText(logjob.getTitle());
-        editContent.setSummary(logjob.getTitle());
-        //System.out.println("KKKKKKKKK "+editContent.getNegativeButtonText());
-        //editContent.setText(logjob.getTitle());
-        //editContent.setEnabled(true);
+        editTitle = (EditTextPreference) this.findPreference("title");
+        editTitle.setText(logjob.getTitle());
+        editTitle.setSummary(logjob.getTitle());
+        editNextURL = (EditTextPreference) this.findPreference("nextURL");
+        editNextURL.setText(logjob.getNextURL());
+        editNextURL.setSummary(logjob.getNextURL());
+        editToken = (EditTextPreference) this.findPreference("token");
+        editToken.setText(logjob.getToken());
+        editToken.setSummary(logjob.getToken());
+        editDevicename = (EditTextPreference) this.findPreference("devicename");
+        editDevicename.setText(logjob.getDeviceName());
+        editDevicename.setSummary(logjob.getDeviceName());
+        //System.out.println("KKKKKKKKK "+editTitle.getNegativeButtonText());
+        //editTitle.setText(logjob.getTitle());
+        //editTitle.setEnabled(true);
 
-        /*RxMarkdown.live(editContent)
+        /*RxMarkdown.live(editTitle)
                 .config(MarkDownUtil.getMarkDownConfiguration(getActivity().getApplicationContext()).build())
                 .factory(EditFactory.create())
                 .intoObservable()
@@ -358,13 +400,22 @@ public class BaseNoteFragment extends PreferenceFragment {
 
                     @Override
                     public void onNext(CharSequence charSequence) {
-                        editContent.setText(charSequence, TextView.BufferType.SPANNABLE);
+                        editTitle.setText(charSequence, TextView.BufferType.SPANNABLE);
                     }
                 });*/
     }
 
-    protected String getContent() {
-        return editContent.getText();
+    private String getTitle() {
+        return editTitle.getText();
+    }
+    private String getNextURL() {
+        return editNextURL.getText();
+    }
+    private String getToken() {
+        return editToken.getText();
+    }
+    private String getDevicename() {
+        return editDevicename.getText();
     }
 
 }
