@@ -89,9 +89,12 @@ public class BaseNoteFragment extends PreferencesFragment {
                                               Object newValue) {
                 //do something
                 System.out.println("LALA "+newValue);
-                //EditTextPreference pref = (EditTextPreference) findPreference("title");
-                preference.setSummary((CharSequence) newValue);
-                //saveLogjob(null);
+                EditTextPreference pref = (EditTextPreference) findPreference("title");
+                pref.setSummary((CharSequence) newValue);
+                // trick to make change effective before saving
+                // otherwise edittext is not up to date when saving...
+                pref.setText((String) newValue);
+                saveLogjob(null);
                 return true;
             }
 
@@ -102,9 +105,10 @@ public class BaseNoteFragment extends PreferencesFragment {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                //EditTextPreference pref = (EditTextPreference) findPreference("nexturl");
-                preference.setSummary((CharSequence) newValue);
-                //saveLogjob(null);
+                EditTextPreference pref = (EditTextPreference) findPreference("nexturl");
+                pref.setSummary((CharSequence) newValue);
+                pref.setText((String) newValue);
+                saveLogjob(null);
                 return true;
             }
 
