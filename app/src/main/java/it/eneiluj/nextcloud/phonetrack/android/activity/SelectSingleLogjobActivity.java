@@ -16,7 +16,7 @@ import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
 
-public class SelectSingleNoteActivity extends NotesListViewActivity {
+public class SelectSingleLogjobActivity extends LogjobsListViewActivity {
 
     @BindView(R.id.fab_create)
     View fabCreate;

@@ -49,7 +49,7 @@ import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil;
 
-public class NotesListViewActivity extends AppCompatActivity implements ItemAdapter.NoteClickListener {
+public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.NoteClickListener {
 
     public final static String CREATED_NOTE = "it.eneiluj.nextcloud.phonetrack.created_notes";
     public final static String CREDENTIALS_CHANGED = "it.eneiluj.nextcloud.phonetrack.CREDENTIALS_CHANGED";
@@ -370,7 +370,7 @@ public class NotesListViewActivity extends AppCompatActivity implements ItemAdap
 
 
         this.updateUsernameInDrawer();
-        final NotesListViewActivity that = this;
+        final LogjobsListViewActivity that = this;
         this.account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

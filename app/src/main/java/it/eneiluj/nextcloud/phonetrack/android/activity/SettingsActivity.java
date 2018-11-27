@@ -269,7 +269,7 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.apply();
 
                 final Intent data = new Intent();
-                data.putExtra(NotesListViewActivity.CREDENTIALS_CHANGED, CREDENTIALS_CHANGED);
+                data.putExtra(LogjobsListViewActivity.CREDENTIALS_CHANGED, CREDENTIALS_CHANGED);
                 setResult(RESULT_OK, data);
                 finish();
             } else {

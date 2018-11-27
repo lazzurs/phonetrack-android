@@ -2,28 +2,24 @@ package it.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 
-import it.eneiluj.nextcloud.phonetrack.R;
-import it.eneiluj.nextcloud.phonetrack.android.fragment.BaseNoteFragment;
+import it.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 //import it.eneiluj.nextcloud.phonetrack.android.fragment.NoteEditFragment;
 //import it.eneiluj.nextcloud.phonetrack.android.fragment.NotePreviewFragment;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 
-public class EditLogjobActivity extends AppCompatActivity implements BaseNoteFragment.NoteFragmentListener {
+public class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.NoteFragmentListener {
 
     public static final String PARAM_NOTE_ID = "noteId";
     public static final String PARAM_CATEGORY = "category";
 
-    private BaseNoteFragment fragment;
+    private EditLogjobFragment fragment;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -32,7 +28,7 @@ public class EditLogjobActivity extends AppCompatActivity implements BaseNoteFra
         if (savedInstanceState == null) {
             launchNoteFragment();
         } else {
-            fragment = (BaseNoteFragment) getFragmentManager().findFragmentById(android.R.id.content);
+            fragment = (EditLogjobFragment) getFragmentManager().findFragmentById(android.R.id.content);
         }
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -106,7 +102,7 @@ public class EditLogjobActivity extends AppCompatActivity implements BaseNoteFra
         if (fragment != null) {
             savedState = getFragmentManager().saveFragmentInstanceState(fragment);
         }
-        fragment = BaseNoteFragment.newInstance(logjobId);
+        fragment = EditLogjobFragment.newInstance(logjobId);
         /*if (edit) {
             fragment = NoteEditFragment.newInstance(logjobId);
         } else {
@@ -139,7 +135,7 @@ public class EditLogjobActivity extends AppCompatActivity implements BaseNoteFra
         }
 
         DBLogjob newLogjob = new DBLogjob(0, "empty",  "url", "to", "devname", false);
-        fragment = BaseNoteFragment.newInstanceWithNewNote(newLogjob);
+        fragment = EditLogjobFragment.newInstanceWithNewNote(newLogjob);
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 

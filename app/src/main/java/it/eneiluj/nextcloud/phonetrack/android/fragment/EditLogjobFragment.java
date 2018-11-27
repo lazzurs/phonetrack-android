@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
@@ -26,9 +25,9 @@ import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
-//public abstract class BaseNoteFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
-//public class BaseNoteFragment extends PreferencesFragment {
-public class BaseNoteFragment extends PreferenceFragment {
+//public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
+//public class EditLogjobFragment extends PreferencesFragment {
+public class EditLogjobFragment extends PreferenceFragment {
 
     public interface NoteFragmentListener {
         void close();
@@ -340,16 +339,16 @@ public class BaseNoteFragment extends PreferenceFragment {
         listener.onLogjobUpdated(logjob);
     }*/
 
-    public static BaseNoteFragment newInstance(long logjobId) {
-        BaseNoteFragment f = new BaseNoteFragment();
+    public static EditLogjobFragment newInstance(long logjobId) {
+        EditLogjobFragment f = new EditLogjobFragment();
         Bundle b = new Bundle();
         b.putLong(PARAM_NOTE_ID, logjobId);
         f.setArguments(b);
         return f;
     }
 
-    public static BaseNoteFragment newInstanceWithNewNote(DBLogjob newLogjob) {
-        BaseNoteFragment f = new BaseNoteFragment();
+    public static EditLogjobFragment newInstanceWithNewNote(DBLogjob newLogjob) {
+        EditLogjobFragment f = new EditLogjobFragment();
         Bundle b = new Bundle();
         b.putSerializable(PARAM_NEWNOTE, newLogjob);
         f.setArguments(b);
