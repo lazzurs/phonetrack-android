@@ -31,6 +31,7 @@ xmlns:tools="http://schemas.android.com/tools"
     <EditTextPreference
         android:id="@+id/editContent"
         android:defaultValue="plop"
+        android:icon="@android:drawable/ic_menu_info_details"
         android:dialogMessage="@string/setting_title_long"
         android:dialogTitle="@string/setting_title"
         android:key="title"
@@ -39,5 +40,44 @@ xmlns:tools="http://schemas.android.com/tools"
         android:persistent="true"
         android:summary=""
         android:title="@string/setting_title" />
+
+    <EditTextPreference
+        android:id="@+id/editNexturl"
+        android:defaultValue="plop"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:dialogMessage="@string/setting_nexturl_long"
+        android:dialogTitle="@string/setting_nexturl"
+        android:key="nextURL"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:persistent="true"
+        android:summary=""
+        android:title="@string/setting_nexturl" />
+
+    <EditTextPreference
+        android:id="@+id/editToken"
+        android:defaultValue="plop"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:dialogMessage="@string/setting_token_long"
+        android:dialogTitle="@string/setting_token"
+        android:key="token"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:persistent="true"
+        android:summary=""
+        android:title="@string/setting_token" />
+
+    <EditTextPreference
+        android:id="@+id/editDevicename"
+        android:defaultValue="plop"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:dialogMessage="@string/setting_devicename_long"
+        android:dialogTitle="@string/setting_devicename"
+        android:key="devicename"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:persistent="true"
+        android:summary=""
+        android:title="@string/setting_devicename" />
 
 </PreferenceScreen>

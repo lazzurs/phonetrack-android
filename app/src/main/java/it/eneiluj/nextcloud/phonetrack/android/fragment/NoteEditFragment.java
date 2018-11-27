@@ -74,8 +74,21 @@ public class NoteEditFragment extends BaseNoteFragment {
                                               Object newValue) {
                 //do something
                 System.out.println("LALA "+newValue);
-                EditTextPreference pref = (EditTextPreference) findPreference("title");
-                pref.setSummary((CharSequence) newValue);
+                //EditTextPreference pref = (EditTextPreference) findPreference("title");
+                preference.setSummary((CharSequence) newValue);
+                //saveLogjob(null);
+                return true;
+            }
+
+        });
+        Preference nextURLPref = findPreference("nextURL");
+        nextURLPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                //EditTextPreference pref = (EditTextPreference) findPreference("nexturl");
+                preference.setSummary((CharSequence) newValue);
                 //saveLogjob(null);
                 return true;
             }
