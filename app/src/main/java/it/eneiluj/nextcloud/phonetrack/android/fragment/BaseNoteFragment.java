@@ -1,8 +1,8 @@
 package it.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -26,7 +29,8 @@ import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 //public abstract class BaseNoteFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
-public class BaseNoteFragment extends PreferencesFragment {
+//public class BaseNoteFragment extends PreferencesFragment {
+public class BaseNoteFragment extends PreferenceFragment {
 
     public interface NoteFragmentListener {
         void close();
@@ -55,6 +59,9 @@ public class BaseNoteFragment extends PreferencesFragment {
 
     EditTextPreference editContent;
 
+    private DialogInterface.OnClickListener dialogClickListener;
+    private AlertDialog.Builder confirmDeleteAlertBuilder;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +86,6 @@ public class BaseNoteFragment extends PreferencesFragment {
 
         ///////////////
         addPreferencesFromResource(R.xml.activity_edit);
-
 
         Preference titlePref = findPreference("title");
         titlePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -114,6 +120,26 @@ public class BaseNoteFragment extends PreferencesFragment {
 
         });
 
+        // delete confirmation
+        dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        db.deleteLogjobAndSync(logjob.getId());
+                        listener.close();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+        confirmDeleteAlertBuilder = new AlertDialog.Builder(getContext());
+        confirmDeleteAlertBuilder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+               .setNegativeButton("No", dialogClickListener);
 
         handler = new Handler(Looper.getMainLooper());
     }
@@ -196,8 +222,9 @@ public class BaseNoteFragment extends PreferencesFragment {
                 listener.close();
                 return true;
             case R.id.menu_delete:
-                db.deleteLogjobAndSync(logjob.getId());
-                listener.close();
+                //db.deleteLogjobAndSync(logjob.getId());
+                //listener.close();
+                confirmDeleteAlertBuilder.show();
                 return true;
             case R.id.menu_enabled:
                 db.toggleEnabled(logjob, null);
