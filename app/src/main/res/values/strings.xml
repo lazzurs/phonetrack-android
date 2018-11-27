@@ -17,6 +17,8 @@
     <string name="setting_token_long">Session identification token</string>
     <string name="setting_nexturl">Nextcloud URL</string>
     <string name="setting_nexturl_long">Nextcloud URL of target PhoneTrack instance hosting the session</string>
+    <string name="setting_list">Use a session from PhoneTrack</string>
+    <string name="setting_list_long">Session from PhoneTrack</string>
     <string name="action_trashbin">Deleted notes</string>
     <string name="action_search">Search</string>
     <string name="action_create_save">Save</string>

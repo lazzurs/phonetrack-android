@@ -27,6 +27,12 @@ xmlns:tools="http://schemas.android.com/tools"
     android:summary="Logjob settings"
     android:title="Logjob settings"
 -->
+    <ListPreference
+        android:id="@+id/editSessionList"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:key="sessionList"
+        android:summary=""
+        android:title="@string/setting_list" />
     <EditTextPreference
         android:id="@+id/editTitle"
         android:defaultValue="plop"

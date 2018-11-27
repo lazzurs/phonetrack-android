@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
@@ -59,6 +60,7 @@ public class EditLogjobFragment extends PreferenceFragment {
     EditTextPreference editNextURL;
     EditTextPreference editToken;
     EditTextPreference editDevicename;
+    ListPreference editSessionList;
 
     private DialogInterface.OnClickListener dialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
@@ -381,6 +383,12 @@ public class EditLogjobFragment extends PreferenceFragment {
         editDevicename = (EditTextPreference) this.findPreference("devicename");
         editDevicename.setText(logjob.getDeviceName());
         editDevicename.setSummary(logjob.getDeviceName());
+
+        editSessionList = (ListPreference) this.findPreference("sessionList");
+        CharSequence[] cs = new String[]{"myValue", "lala"};
+        editSessionList.setEntries(new String[]{"plop", "lala"});
+        editSessionList.setEntryValues(new String[]{"plop", "lala"});
+        getPreferenceScreen().removePreference(editSessionList);
         //System.out.println("KKKKKKKKK "+editTitle.getNegativeButtonText());
         //editTitle.setText(logjob.getTitle());
         //editTitle.setEnabled(true);
