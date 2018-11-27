@@ -43,7 +43,7 @@ import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
 import it.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
-import it.eneiluj.nextcloud.phonetrack.persistence.LoadNotesListTask;
+import it.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
@@ -482,9 +482,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             query = searchView.getQuery();
         }
 
-        LoadNotesListTask.NotesLoadedListener callback = new LoadNotesListTask.NotesLoadedListener() {
+        LoadLogjobsListTask.LogjobsLoadedListener callback = new LoadLogjobsListTask.LogjobsLoadedListener() {
             @Override
-            public void onNotesLoaded(List<Item> notes, boolean showCategory) {
+            public void onLogjobsLoaded(List<Item> notes, boolean showCategory) {
                 adapter.setShowCategory(showCategory);
                 adapter.setItemList(notes);
                 if(scrollToTop) {
@@ -492,7 +492,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 }
             }
         };
-        new LoadNotesListTask(getApplicationContext(), callback, navigationSelection, query).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoadLogjobsListTask(getApplicationContext(), callback, navigationSelection, query).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         //new LoadCategoryListTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

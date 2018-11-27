@@ -87,7 +87,7 @@
         </activity>
 
         <service
-            android:name="it.eneiluj.nextcloud.phonetrack.android.quicksettings.NewNoteTileService"
+            android:name="it.eneiluj.nextcloud.phonetrack.android.quicksettings.NewLogjobTileService"
             android:icon="@drawable/ic_quicksettings_new"
             android:label="@string/action_create"
             android:description="@string/action_create"

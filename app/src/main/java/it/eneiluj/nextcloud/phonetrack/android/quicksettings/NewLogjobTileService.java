@@ -12,7 +12,7 @@ import it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
  * This {@link TileService} adds a quick settings tile that leads to the new logjob view.
  */
 @TargetApi(Build.VERSION_CODES.N)
-public class NewNoteTileService extends TileService {
+public class NewLogjobTileService extends TileService {
 
     @Override
     public void onStartListening() {

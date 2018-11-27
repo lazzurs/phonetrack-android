@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,16 +19,14 @@ import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
-import it.eneiluj.nextcloud.phonetrack.model.SectionItem;
-import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
-public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
+public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
 
     private final Context context;
-    private final NotesLoadedListener callback;
+    private final LogjobsLoadedListener callback;
     private final Category category;
     private final CharSequence searchQuery;
-    public LoadNotesListTask(@NonNull Context context, @NonNull NotesLoadedListener callback, @NonNull Category category, @Nullable CharSequence searchQuery) {
+    public LoadLogjobsListTask(@NonNull Context context, @NonNull LogjobsLoadedListener callback, @NonNull Category category, @Nullable CharSequence searchQuery) {
         this.context = context;
         this.callback = callback;
         this.category = category;
@@ -50,7 +47,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
         }*/
     }
 
-    private DBLogjob colorTheNote(DBLogjob dbLogjob) {
+    private DBLogjob colorTheLogjob(DBLogjob dbLogjob) {
         if (!TextUtils.isEmpty(searchQuery)) {
             SpannableString spannableString = new SpannableString(dbLogjob.getTitle());
             Matcher matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
@@ -60,7 +57,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
             }
 
             dbLogjob.setTitle(Html.toHtml(spannableString));
-
+            // TODO search by sub title
             /*spannableString = new SpannableString(dbLogjob.getCategory());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
             while (matcher.find()) {
@@ -88,7 +85,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
     private List<Item> fillListTitle(@NonNull List<DBLogjob> logjobList) {
         List<Item> itemList = new ArrayList<>();
         for (DBLogjob logjob : logjobList) {
-            itemList.add(colorTheNote(logjob));
+            itemList.add(colorTheLogjob(logjob));
         }
         return itemList;
     }
@@ -103,7 +100,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
                 itemList.add(new SectionItem(NoteUtil.extendCategory(logjob.getCategory())));
             }
 
-            itemList.add(colorTheNote(logjob));
+            itemList.add(colorTheLogjob(logjob));
             currentCategory = logjob.getCategory();
         }
         return itemList;
@@ -174,7 +171,7 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
                 }
                 earlierSet = true;
             }
-            itemList.add(colorTheNote(currentNote));
+            itemList.add(colorTheLogjob(currentNote));
         }
 
         return itemList;
@@ -183,10 +180,10 @@ public class LoadNotesListTask extends AsyncTask<Void, Void, List<Item>> {
 
     @Override
     protected void onPostExecute(List<Item> items) {
-        callback.onNotesLoaded(items, category.category == null);
+        callback.onLogjobsLoaded(items, category.category == null);
     }
 
-    public interface NotesLoadedListener {
-        void onNotesLoaded(List<Item> notes, boolean showCategory);
+    public interface LogjobsLoadedListener {
+        void onLogjobsLoaded(List<Item> notes, boolean showCategory);
     }
 }
