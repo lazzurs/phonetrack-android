@@ -13,8 +13,8 @@ import android.view.MenuItem;
 
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.fragment.BaseNoteFragment;
-import it.eneiluj.nextcloud.phonetrack.android.fragment.NoteEditFragment;
-import it.eneiluj.nextcloud.phonetrack.android.fragment.NotePreviewFragment;
+//import it.eneiluj.nextcloud.phonetrack.android.fragment.NoteEditFragment;
+//import it.eneiluj.nextcloud.phonetrack.android.fragment.NotePreviewFragment;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 
@@ -106,7 +106,7 @@ public class EditLogjobActivity extends AppCompatActivity implements BaseNoteFra
         if (fragment != null) {
             savedState = getFragmentManager().saveFragmentInstanceState(fragment);
         }
-        fragment = NoteEditFragment.newInstance(logjobId);
+        fragment = BaseNoteFragment.newInstance(logjobId);
         /*if (edit) {
             fragment = NoteEditFragment.newInstance(logjobId);
         } else {
@@ -139,7 +139,7 @@ public class EditLogjobActivity extends AppCompatActivity implements BaseNoteFra
         }
 
         DBLogjob newLogjob = new DBLogjob(0, "empty",  "url", "to", "devname", false);
-        fragment = NoteEditFragment.newInstanceWithNewNote(newLogjob);
+        fragment = BaseNoteFragment.newInstanceWithNewNote(newLogjob);
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 
@@ -176,16 +176,13 @@ public class EditLogjobActivity extends AppCompatActivity implements BaseNoteFra
      * Send result and closes the Activity
      */
     public void close() {
-        /* TODO enhancement: store last mode in logjob
-         * for cross device functionality per logjob mode should be stored on the server.
-         */
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        /*SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         final String prefKeyLastMode = getString(R.string.pref_key_last_note_mode);
         if (fragment instanceof NoteEditFragment) {
             preferences.edit().putString(prefKeyLastMode, getString(R.string.pref_value_mode_edit)).apply();
         } else {
             preferences.edit().putString(prefKeyLastMode, getString(R.string.pref_value_mode_preview)).apply();
-        }
+        }*/
         fragment.onCloseNote();
         finish();
     }

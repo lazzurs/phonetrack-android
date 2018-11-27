@@ -6,6 +6,10 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -13,14 +17,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
+import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 //public abstract class BaseNoteFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
-public abstract class BaseNoteFragment extends PreferencesFragment{
+public class BaseNoteFragment extends PreferencesFragment {
 
     public interface NoteFragmentListener {
         void close();
@@ -38,6 +44,16 @@ public abstract class BaseNoteFragment extends PreferencesFragment{
     private DBLogjob originalLogjob;
     private NoteSQLiteOpenHelper db;
     private NoteFragmentListener listener;
+
+    private static final String LOG_TAG_AUTOSAVE = "AutoSave";
+
+    private static final long DELAY = 2000; // Wait for this time after typing before saving
+    private static final long DELAY_AFTER_SYNC = 5000; // Wait for this time after saving before checking for next save
+
+    private Handler handler;
+    private boolean saveActive, unsavedEdit;
+
+    EditTextPreference editContent;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +76,42 @@ public abstract class BaseNoteFragment extends PreferencesFragment{
         }
         setHasOptionsMenu(true);
         System.out.println("AAAAAAAAAAAAAAA on create : "+logjob);
+
+        ///////////////
+        addPreferencesFromResource(R.xml.activity_edit);
+
+
+        Preference titlePref = findPreference("title");
+        titlePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                //do something
+                System.out.println("LALA "+newValue);
+                //EditTextPreference pref = (EditTextPreference) findPreference("title");
+                preference.setSummary((CharSequence) newValue);
+                //saveLogjob(null);
+                return true;
+            }
+
+        });
+        Preference nextURLPref = findPreference("nextURL");
+        nextURLPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                //EditTextPreference pref = (EditTextPreference) findPreference("nexturl");
+                preference.setSummary((CharSequence) newValue);
+                //saveLogjob(null);
+                return true;
+            }
+
+        });
+
+
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -200,8 +252,6 @@ public abstract class BaseNoteFragment extends PreferencesFragment{
         }
     }
 
-    protected abstract String getContent();
-
     /**
      * Opens a dialog in order to chose a category
      */
@@ -225,4 +275,65 @@ public abstract class BaseNoteFragment extends PreferencesFragment{
         db.setCategory(logjob, category, null);
         listener.onLogjobUpdated(logjob);
     }*/
+
+    public static BaseNoteFragment newInstance(long logjobId) {
+        BaseNoteFragment f = new BaseNoteFragment();
+        Bundle b = new Bundle();
+        b.putLong(PARAM_NOTE_ID, logjobId);
+        f.setArguments(b);
+        return f;
+    }
+
+    public static BaseNoteFragment newInstanceWithNewNote(DBLogjob newLogjob) {
+        BaseNoteFragment f = new BaseNoteFragment();
+        Bundle b = new Bundle();
+        b.putSerializable(PARAM_NEWNOTE, newLogjob);
+        f.setArguments(b);
+        return f;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ButterKnife.bind(this, getView());
+
+        if (logjob.getTitle().isEmpty()) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
+
+        // workaround for issue yydcdut/RxMarkdown#41
+        //logjob.setContent(logjob.getContent().replace("\r\n", "\n"));
+
+        editContent = (EditTextPreference) this.findPreference("title");
+        editContent.setText(logjob.getTitle());
+        editContent.setSummary(logjob.getTitle());
+        //System.out.println("KKKKKKKKK "+editContent.getNegativeButtonText());
+        //editContent.setText(logjob.getTitle());
+        //editContent.setEnabled(true);
+
+        /*RxMarkdown.live(editContent)
+                .config(MarkDownUtil.getMarkDownConfiguration(getActivity().getApplicationContext()).build())
+                .factory(EditFactory.create())
+                .intoObservable()
+                .subscribe(new Subscriber<CharSequence>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(CharSequence charSequence) {
+                        editContent.setText(charSequence, TextView.BufferType.SPANNABLE);
+                    }
+                });*/
+    }
+
+    protected String getContent() {
+        return editContent.getText();
+    }
+
 }
