@@ -88,7 +88,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
         void assignItem(@NonNull NavigationItem item) {
             currentItem = item;
             boolean isSelected = item.id.equals(selectedItem);
-            name.setText(NoteUtil.extendCategory(item.label));
+            //name.setText(NoteUtil.extendCategory(item.label));
+            name.setText(item.label);
             count.setVisibility(item.count == null ? View.GONE : View.VISIBLE);
             count.setText(String.valueOf(item.count));
             if (item.icon > 0) {

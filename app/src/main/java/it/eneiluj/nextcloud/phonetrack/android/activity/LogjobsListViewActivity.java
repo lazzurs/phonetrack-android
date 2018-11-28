@@ -468,11 +468,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private void refreshLists(final boolean scrollToTop) {
         String subtitle = "";
         if (navigationSelection.category != null) {
-            if (navigationSelection.category.isEmpty()) {
+            /*if (navigationSelection.category.isEmpty()) {
                 subtitle = getString(R.string.action_uncategorized);
             } else {
                 subtitle = NoteUtil.extendCategory(navigationSelection.category);
-            }
+            }*/
         } else if (navigationSelection.favorite != null && navigationSelection.favorite) {
             subtitle = getString(R.string.label_enabled);
         } else {
