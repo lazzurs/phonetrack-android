@@ -20,10 +20,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import it.eneiluj.nextcloud.phonetrack.model.DBSession;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
@@ -145,6 +149,22 @@ public class EditLogjobFragment extends PreferenceFragment {
                 EditTextPreference pref = (EditTextPreference) findPreference("devicename");
                 pref.setSummary((CharSequence) newValue);
                 pref.setText((String) newValue);
+                saveLogjob(null);
+                return true;
+            }
+
+        });
+        // session selected
+        Preference sessionPref= this.findPreference("sessionList");
+        sessionPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                ListPreference pref = (ListPreference) findPreference("sessionList");
+                pref.setSummary((CharSequence) newValue);
+                System.out.println("NEWVAL SESSION : "+newValue);
+                // TODO call a local method to set fields according to session values
                 saveLogjob(null);
                 return true;
             }
@@ -384,11 +404,25 @@ public class EditLogjobFragment extends PreferenceFragment {
         editDevicename.setText(logjob.getDeviceName());
         editDevicename.setSummary(logjob.getDeviceName());
 
+        List<DBSession> sessionList = db.getSessions();
+        List<String> ent = new ArrayList<>();
+        List<String> val = new ArrayList<>();
+        for (DBSession session : sessionList) {
+            ent.add(session.getName());
+            val.add(session.getName());
+        }
+
         editSessionList = (ListPreference) this.findPreference("sessionList");
-        CharSequence[] cs = new String[]{"myValue", "lala"};
-        editSessionList.setEntries(new String[]{"plop", "lala"});
-        editSessionList.setEntryValues(new String[]{"plop", "lala"});
-        getPreferenceScreen().removePreference(editSessionList);
+
+        if (ent.size() > 0) {
+            CharSequence[] entcs = ent.toArray(new CharSequence[ent.size()]);
+            CharSequence[] valcs = val.toArray(new CharSequence[val.size()]);
+            editSessionList.setEntries(entcs);
+            editSessionList.setEntryValues(valcs);
+        }
+        else {
+            getPreferenceScreen().removePreference(editSessionList);
+        }
         //System.out.println("KKKKKKKKK "+editTitle.getNegativeButtonText());
         //editTitle.setText(logjob.getTitle());
         //editTitle.setEnabled(true);
