@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,10 @@ public class EditLogjobFragment extends PreferenceFragment {
 
     private AlertDialog.Builder selectBuilder;
     private AlertDialog selectDialog;
+
+    private AlertDialog.Builder fromUrlBuilder;
+    private AlertDialog fromUrlDialog;
+    private EditText fromUrlEdit;
 
     private List<DBSession> sessionList;
     private List<String> sessionNameList;
@@ -293,6 +299,7 @@ public class EditLogjobFragment extends PreferenceFragment {
                 return true;
             case R.id.menu_fromLogUrl:
                 //fromLogUrl();
+                fromUrlDialog.show();
                 return true;
             case R.id.menu_selectSession:
                 //selectSession();
@@ -400,9 +407,11 @@ public class EditLogjobFragment extends PreferenceFragment {
         System.out.println("ACT CREATEDDDDDDD");
         ButterKnife.bind(this, getView());
 
-        if (logjob.getTitle().isEmpty()) {
+        // hide the keyboard when this window gets the focus
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //if (logjob.getTitle().isEmpty()) {
         //    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        }
+        //}
 
         // workaround for issue yydcdut/RxMarkdown#41
         //logjob.setContent(logjob.getTitle().replace("\r\n", "\n"));
@@ -445,7 +454,7 @@ public class EditLogjobFragment extends PreferenceFragment {
         }*/
         getPreferenceScreen().removePreference(editSessionList);
 
-        // manage preference list DIALOG
+        // manage session list DIALOG
         selectBuilder = new AlertDialog.Builder(getContext());
         selectBuilder.setTitle("Choose a session");
 
@@ -472,8 +481,32 @@ public class EditLogjobFragment extends PreferenceFragment {
             });
             selectBuilder.setNegativeButton("Cancel", null);
 
-            // create and show the alert dialog
+            // create the alert dialog
             selectDialog = selectBuilder.create();
+
+            // manage from URL DIALOG
+            fromUrlEdit = new EditText(getContext());
+            fromUrlBuilder = new AlertDialog.Builder(getContext());
+            fromUrlBuilder.setMessage("Enter Your Message");
+            fromUrlBuilder.setTitle("Enter Your Title");
+
+            fromUrlBuilder.setView(fromUrlEdit);
+
+            fromUrlBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    setFieldsFromUrl(fromUrlEdit.getText().toString());
+                    saveLogjob(null);
+                }
+            });
+
+            fromUrlBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // what ever you want to do with No option.
+                }
+            });
+
+            // create the alert dialog
+            fromUrlDialog = fromUrlBuilder.create();
         }
     }
 
@@ -497,6 +530,36 @@ public class EditLogjobFragment extends PreferenceFragment {
         editNextURL.setSummary(s.getNextURL());
         editToken.setText(s.getToken());
         editToken.setSummary(s.getToken());
+    }
+
+    private void setFieldsFromUrl(String url) {
+        //System.out.println("UUUUUUUUUUUUU : "+url);
+        String[] spl = url.split("/app/phonetrack/");
+        System.out.println(spl.length);
+        if (spl.length == 2) {
+            String nextURL = spl[0];
+            if (nextURL.contains("index.php")) {
+                nextURL = nextURL.replace("index.php", "");
+            }
+
+            String right = spl[1];
+            String[] spl2 = right.split("/");
+            if (spl2.length > 2) {
+                String token = spl2[1];
+                String[] spl3 = spl2[2].split("\\?");
+                if (spl3.length > 1) {
+                    String devname = spl3[0];
+                    editTitle.setText("From logging URL");
+                    editTitle.setSummary("From logging URL");
+                    editDevicename.setText(devname);
+                    editDevicename.setSummary(devname);
+                    editToken.setText(token);
+                    editToken.setSummary(token);
+                    editNextURL.setText(nextURL);
+                    editNextURL.setSummary(nextURL);
+                }
+            }
+        }
     }
 
 }
