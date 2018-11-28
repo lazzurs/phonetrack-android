@@ -388,7 +388,9 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
 
         if (query != null) {
             // TODO search with nextURL
-            where.add("(" + key_title + " LIKE ?)");
+            where.add("(" + key_title + " LIKE ? OR " + key_nextURL + " LIKE ? OR " + key_deviceName + " LIKE ?)");
+            args.add("%" + query + "%");
+            args.add("%" + query + "%");
             args.add("%" + query + "%");
         }
 

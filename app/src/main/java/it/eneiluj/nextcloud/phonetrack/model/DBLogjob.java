@@ -39,6 +39,14 @@ public class DBLogjob implements Item, Serializable {
         this.title = title;
     }
 
+    public void setNextURL(String nextURL) {
+        this.nextURL = nextURL;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
     public String getToken() {
         return token;
     }
