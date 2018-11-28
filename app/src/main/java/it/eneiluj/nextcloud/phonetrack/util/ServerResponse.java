@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class ServerResponse {
     }
 
     public static class SessionResponse extends ServerResponse {
-        public SessionResponse(NotesClient.ResponseData response) {
+        public SessionResponse(PhoneTrackClient.ResponseData response) {
             super(response);
         }
 
@@ -35,7 +34,7 @@ public class ServerResponse {
     }
 
     public static class SessionsResponse extends ServerResponse {
-        public SessionsResponse(NotesClient.ResponseData response) {
+        public SessionsResponse(PhoneTrackClient.ResponseData response) {
             super(response);
         }
 
@@ -52,9 +51,9 @@ public class ServerResponse {
     }
 
 
-    private final NotesClient.ResponseData response;
+    private final PhoneTrackClient.ResponseData response;
 
-    public ServerResponse(NotesClient.ResponseData response) {
+    public ServerResponse(PhoneTrackClient.ResponseData response) {
         this.response = response;
     }
 
@@ -78,27 +77,27 @@ public class ServerResponse {
             name = json.getString(0);
             token = json.getString(1);
         }
-        /*if (!json.isNull(NotesClient.JSON_ID)) {
-            id = json.getLong(NotesClient.JSON_ID);
+        /*if (!json.isNull(PhoneTrackClient.JSON_ID)) {
+            id = json.getLong(PhoneTrackClient.JSON_ID);
         }
-        if (!json.isNull(NotesClient.JSON_TITLE)) {
-            title = json.getString(NotesClient.JSON_TITLE);
+        if (!json.isNull(PhoneTrackClient.JSON_TITLE)) {
+            title = json.getString(PhoneTrackClient.JSON_TITLE);
         }
-        if (!json.isNull(NotesClient.JSON_CONTENT)) {
-            content = json.getString(NotesClient.JSON_CONTENT);
+        if (!json.isNull(PhoneTrackClient.JSON_CONTENT)) {
+            content = json.getString(PhoneTrackClient.JSON_CONTENT);
         }
-        if (!json.isNull(NotesClient.JSON_MODIFIED)) {
+        if (!json.isNull(PhoneTrackClient.JSON_MODIFIED)) {
             modified = GregorianCalendar.getInstance();
-            modified.setTimeInMillis(json.getLong(NotesClient.JSON_MODIFIED) * 1000);
+            modified.setTimeInMillis(json.getLong(PhoneTrackClient.JSON_MODIFIED) * 1000);
         }
-        if (!json.isNull(NotesClient.JSON_FAVORITE)) {
-            favorite = json.getBoolean(NotesClient.JSON_FAVORITE);
+        if (!json.isNull(PhoneTrackClient.JSON_FAVORITE)) {
+            favorite = json.getBoolean(PhoneTrackClient.JSON_FAVORITE);
         }
-        if (!json.isNull(NotesClient.JSON_CATEGORY)) {
-            category = json.getString(NotesClient.JSON_CATEGORY);
+        if (!json.isNull(PhoneTrackClient.JSON_CATEGORY)) {
+            category = json.getString(PhoneTrackClient.JSON_CATEGORY);
         }
-        if (!json.isNull(NotesClient.JSON_ETAG)) {
-            etag = json.getString(NotesClient.JSON_ETAG);
+        if (!json.isNull(PhoneTrackClient.JSON_ETAG)) {
+            etag = json.getString(PhoneTrackClient.JSON_ETAG);
         }
         return new CloudSession(id, modified, title, content, favorite, category, etag);
         */

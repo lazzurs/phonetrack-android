@@ -19,7 +19,7 @@ import it.eneiluj.nextcloud.phonetrack.BuildConfig;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 
 @WorkerThread
-public class NotesClient {
+public class PhoneTrackClient {
 
     /**
      * This entity class is used to return relevant data of the HTTP reponse.
@@ -58,7 +58,7 @@ public class NotesClient {
     private String username = "";
     private String password = "";
 
-    public NotesClient(String url, String username, String password) {
+    public PhoneTrackClient(String url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;

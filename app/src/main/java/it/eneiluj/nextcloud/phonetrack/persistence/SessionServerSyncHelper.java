@@ -30,8 +30,8 @@ import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
-import it.eneiluj.nextcloud.phonetrack.util.NotesClient;
-import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil.LoginStatus;
+import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
+import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil.LoginStatus;
 import it.eneiluj.nextcloud.phonetrack.util.ServerResponse;
 import it.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 
@@ -175,7 +175,7 @@ public class SessionServerSyncHelper {
      * Schedules a synchronization and start it directly, if the network is connected and no
      * synchronization is currently running.
      *
-     * @param onlyLocalChanges Whether to only push local changes to the server or to also load the whole list of phonetrack from the server.
+     * @param onlyLocalChanges Whether to only push local changes to the server or to also load the whole list of sessions from the server.
      */
     public void scheduleSync(boolean onlyLocalChanges) {
         Log.d(getClass().getSimpleName(), "Sync requested (" + (onlyLocalChanges ? "onlyLocalChanges" : "full") + "; " + (syncActive ? "sync active" : "sync NOT active") + ") ...");
@@ -223,7 +223,7 @@ public class SessionServerSyncHelper {
     private class SyncTask extends AsyncTask<Void, Void, LoginStatus> {
         private final boolean onlyLocalChanges;
         private final List<ICallback> callbacks = new ArrayList<>();
-        private NotesClient client;
+        private PhoneTrackClient client;
         private List<Throwable> exceptions = new ArrayList<>();
 
         public SyncTask(boolean onlyLocalChanges) {
@@ -348,11 +348,11 @@ public class SessionServerSyncHelper {
         }
     }
 
-    private NotesClient createNotesClient() {
+    private PhoneTrackClient createNotesClient() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
         String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
         String username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
         String password = preferences.getString(SettingsActivity.SETTINGS_PASSWORD, SettingsActivity.DEFAULT_SETTINGS);
-        return new NotesClient(url, username, password);
+        return new PhoneTrackClient(url, username, password);
     }
 }

@@ -48,7 +48,7 @@ import it.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
-import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil;
+import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.NoteClickListener {
 
@@ -183,7 +183,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     synchronize();
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(NotesClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -596,7 +596,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 adapter.removeAll();
                 synchronize();
             } else {
-                Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(NotesClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
             }
         }
     }

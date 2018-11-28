@@ -25,8 +25,8 @@ import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
-import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil;
-import it.eneiluj.nextcloud.phonetrack.util.NotesClientUtil.LoginStatus;
+import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
+import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil.LoginStatus;
 
 /**
  * Allows to set Settings like URL, Username and Password for Server-Synchronization
@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
         field_url.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                new URLValidatorAsyncTask().execute(NotesClientUtil.formatURL(field_url.getText().toString()));
+                new URLValidatorAsyncTask().execute(PhoneTrackClientUtil.formatURL(field_url.getText().toString()));
             }
         });
 
@@ -90,9 +90,9 @@ public class SettingsActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String url = NotesClientUtil.formatURL(field_url.getText().toString());
+                String url = PhoneTrackClientUtil.formatURL(field_url.getText().toString());
 
-                if (NotesClientUtil.isHttp(url)) {
+                if (PhoneTrackClientUtil.isHttp(url)) {
                     urlWarnHttp.setVisibility(View.VISIBLE);
                 } else {
                     urlWarnHttp.setVisibility(View.GONE);
@@ -188,7 +188,7 @@ public class SettingsActivity extends AppCompatActivity {
             password = old_password;
         }
 
-        url = NotesClientUtil.formatURL(url);
+        url = PhoneTrackClientUtil.formatURL(url);
 
         new LoginValidatorAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, username, password);
     }
@@ -217,7 +217,7 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
             CustomCertManager ccm = SessionServerSyncHelper.getInstance(NoteSQLiteOpenHelper.getInstance(getApplicationContext())).getCustomCertManager();
-            return NotesClientUtil.isValidURL(ccm, params[0]);
+            return PhoneTrackClientUtil.isValidURL(ccm, params[0]);
         }
 
         @Override
@@ -254,7 +254,7 @@ public class SettingsActivity extends AppCompatActivity {
             username = params[1];
             password = params[2];
             CustomCertManager ccm = SessionServerSyncHelper.getInstance(NoteSQLiteOpenHelper.getInstance(getApplicationContext())).getCustomCertManager();
-            return NotesClientUtil.isValidLogin(ccm, url, username, password);
+            return PhoneTrackClientUtil.isValidLogin(ccm, url, username, password);
         }
 
         @Override
