@@ -192,7 +192,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(logjob.getTitle());
-            actionBar.setSubtitle(Long.toString(logjob.getId()));
+            actionBar.setSubtitle(logjob.getDeviceName());
         }
         hideKeyboard();
     }

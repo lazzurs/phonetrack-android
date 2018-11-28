@@ -29,6 +29,19 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_title" />
 
     <EditTextPreference
+        android:id="@+id/editDevicename"
+        android:defaultValue="plop"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:dialogMessage="@string/setting_devicename_long"
+        android:dialogTitle="@string/setting_devicename"
+        android:key="devicename"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:persistent="false"
+        android:summary=""
+        android:title="@string/setting_devicename" />
+
+    <EditTextPreference
         android:id="@+id/editNexturl"
         android:defaultValue="plop"
         android:icon="@android:drawable/ic_menu_edit"
@@ -53,18 +66,5 @@ xmlns:tools="http://schemas.android.com/tools"
         android:persistent="false"
         android:summary=""
         android:title="@string/setting_token" />
-
-    <EditTextPreference
-        android:id="@+id/editDevicename"
-        android:defaultValue="plop"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:dialogMessage="@string/setting_devicename_long"
-        android:dialogTitle="@string/setting_devicename"
-        android:key="devicename"
-        android:singleLine="true"
-        android:selectAllOnFocus="true"
-        android:persistent="false"
-        android:summary=""
-        android:title="@string/setting_devicename" />
 
 </PreferenceScreen>
