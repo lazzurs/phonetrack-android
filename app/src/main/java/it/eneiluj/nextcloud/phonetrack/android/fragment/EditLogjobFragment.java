@@ -69,6 +69,13 @@ public class EditLogjobFragment extends PreferenceFragment {
     private DialogInterface.OnClickListener dialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
 
+    private AlertDialog.Builder selectBuilder;
+    private AlertDialog selectDialog;
+
+    private List<DBSession> sessionList;
+    private List<String> sessionNameList;
+    private List<String> sessionIdList;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -284,6 +291,13 @@ public class EditLogjobFragment extends PreferenceFragment {
                 listener.onLogjobUpdated(logjob);
                 prepareEnabledOption(item);
                 return true;
+            case R.id.menu_fromLogUrl:
+                //fromLogUrl();
+                return true;
+            case R.id.menu_selectSession:
+                //selectSession();
+                selectDialog.show();
+                return true;
             //case R.id.menu_category:
             //    showCategorySelector();
             //    return true;
@@ -383,7 +397,7 @@ public class EditLogjobFragment extends PreferenceFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        System.out.println("ACT CREATEDDDDDDD");
         ButterKnife.bind(this, getView());
 
         if (logjob.getTitle().isEmpty()) {
@@ -406,47 +420,61 @@ public class EditLogjobFragment extends PreferenceFragment {
         editDevicename.setText(logjob.getDeviceName());
         editDevicename.setSummary(logjob.getDeviceName());
 
-        List<DBSession> sessionList = db.getSessions();
-        List<String> ent = new ArrayList<>();
-        List<String> val = new ArrayList<>();
+        // manage session list
+        sessionList = db.getSessions();
+        sessionNameList = new ArrayList<>();
+        sessionIdList = new ArrayList<>();
         for (DBSession session : sessionList) {
-            ent.add(session.getName());
-            val.add(String.valueOf(session.getId()));
+            sessionNameList.add(session.getName());
+            sessionIdList.add(String.valueOf(session.getId()));
         }
 
+        // manage session list PREFERENCE
+        // it's better to do it with a dialog triggered by a menu entry
+        // rather than a confusing fake preference field...
         editSessionList = (ListPreference) this.findPreference("sessionList");
 
-        if (ent.size() > 0) {
-            CharSequence[] entcs = ent.toArray(new CharSequence[ent.size()]);
-            CharSequence[] valcs = val.toArray(new CharSequence[val.size()]);
+        /*if (sessionNameList.size() > 0) {
+            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
+            CharSequence[] valcs = sessionIdList.toArray(new CharSequence[sessionIdList.size()]);
             editSessionList.setEntries(entcs);
             editSessionList.setEntryValues(valcs);
         }
         else {
             getPreferenceScreen().removePreference(editSessionList);
+        }*/
+        getPreferenceScreen().removePreference(editSessionList);
+
+        // manage preference list DIALOG
+        selectBuilder = new AlertDialog.Builder(getContext());
+        selectBuilder.setTitle("Choose a session");
+
+        if (sessionNameList.size() > 0) {
+            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
+            selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // user checked an item
+                    System.out.println("CHECKED :"+which);
+                    setFieldsFromSession(sessionList.get(which));
+                    saveLogjob(null);
+                    dialog.dismiss();
+                }
+            });
+
+            // add OK and Cancel buttons
+            selectBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // user clicked OK
+                    System.out.println("CHECKED OK :"+which);
+                }
+            });
+            selectBuilder.setNegativeButton("Cancel", null);
+
+            // create and show the alert dialog
+            selectDialog = selectBuilder.create();
         }
-        //System.out.println("KKKKKKKKK "+editTitle.getNegativeButtonText());
-        //editTitle.setText(logjob.getTitle());
-        //editTitle.setEnabled(true);
-
-        /*RxMarkdown.live(editTitle)
-                .config(MarkDownUtil.getMarkDownConfiguration(getActivity().getApplicationContext()).build())
-                .factory(EditFactory.create())
-                .intoObservable()
-                .subscribe(new Subscriber<CharSequence>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onNext(CharSequence charSequence) {
-                        editTitle.setText(charSequence, TextView.BufferType.SPANNABLE);
-                    }
-                });*/
     }
 
     private String getTitle() {
@@ -463,6 +491,8 @@ public class EditLogjobFragment extends PreferenceFragment {
     }
 
     private void setFieldsFromSession(DBSession s) {
+        editTitle.setText("Log to "+s.getName());
+        editTitle.setSummary("Log to "+s.getName());
         editNextURL.setText(s.getNextURL());
         editNextURL.setSummary(s.getNextURL());
         editToken.setText(s.getToken());

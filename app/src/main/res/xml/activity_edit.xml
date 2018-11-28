@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/editContentContainer"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity">
-
-    <com.yydcdut.rxmarkdown.RxMDEditText
-            android:id="@+id/editTitle            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textMultiLine|textCapSentences"
-            android:padding="16dp"
-            android:textColor="@color/fg_default"/>
-
-
-</ScrollView-->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="logjob_preferences">
 <!--
