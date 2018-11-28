@@ -162,8 +162,10 @@ public class EditLogjobFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
                 ListPreference pref = (ListPreference) findPreference("sessionList");
-                pref.setSummary((CharSequence) newValue);
+                DBSession s = db.getSession(Long.valueOf((String)newValue));
                 System.out.println("NEWVAL SESSION : "+newValue);
+                pref.setSummary((CharSequence) s.getName());
+                setFieldsFromSession(s);
                 // TODO call a local method to set fields according to session values
                 saveLogjob(null);
                 return true;
@@ -409,7 +411,7 @@ public class EditLogjobFragment extends PreferenceFragment {
         List<String> val = new ArrayList<>();
         for (DBSession session : sessionList) {
             ent.add(session.getName());
-            val.add(session.getName());
+            val.add(String.valueOf(session.getId()));
         }
 
         editSessionList = (ListPreference) this.findPreference("sessionList");
@@ -458,6 +460,13 @@ public class EditLogjobFragment extends PreferenceFragment {
     }
     private String getDevicename() {
         return editDevicename.getText();
+    }
+
+    private void setFieldsFromSession(DBSession s) {
+        editNextURL.setText(s.getNextURL());
+        editNextURL.setSummary(s.getNextURL());
+        editToken.setText(s.getToken());
+        editToken.setSummary(s.getToken());
     }
 
 }

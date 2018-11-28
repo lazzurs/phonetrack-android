@@ -106,6 +106,6 @@ public class ServerResponse {
         Context appContext = dbHelper.getContext().getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
         String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
-        return new CloudSession(name, token, "");
+        return new CloudSession(name, token, url);
     }
 }
