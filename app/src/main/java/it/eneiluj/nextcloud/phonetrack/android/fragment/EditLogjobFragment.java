@@ -464,7 +464,7 @@ public class EditLogjobFragment extends PreferenceFragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // user checked an item
-                    System.out.println("CHECKED :"+which);
+                    System.out.println("CHECKED :" + which);
                     setFieldsFromSession(sessionList.get(which));
                     saveLogjob(null);
                     dialog.dismiss();
@@ -476,38 +476,39 @@ public class EditLogjobFragment extends PreferenceFragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // user clicked OK
-                    System.out.println("CHECKED OK :"+which);
+                    System.out.println("CHECKED OK :" + which);
                 }
             });
             selectBuilder.setNegativeButton("Cancel", null);
 
             // create the alert dialog
             selectDialog = selectBuilder.create();
-
-            // manage from URL DIALOG
-            fromUrlEdit = new EditText(getContext());
-            fromUrlBuilder = new AlertDialog.Builder(getContext());
-            fromUrlBuilder.setMessage("Enter Your Message");
-            fromUrlBuilder.setTitle("Enter Your Title");
-
-            fromUrlBuilder.setView(fromUrlEdit);
-
-            fromUrlBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    setFieldsFromUrl(fromUrlEdit.getText().toString());
-                    saveLogjob(null);
-                }
-            });
-
-            fromUrlBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    // what ever you want to do with No option.
-                }
-            });
-
-            // create the alert dialog
-            fromUrlDialog = fromUrlBuilder.create();
         }
+
+        // manage from URL DIALOG
+        fromUrlEdit = new EditText(getContext());
+        fromUrlBuilder = new AlertDialog.Builder(getContext());
+        fromUrlBuilder.setMessage("Enter Your Message");
+        fromUrlBuilder.setTitle("Enter Your Title");
+
+        fromUrlBuilder.setView(fromUrlEdit);
+
+        fromUrlBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                setFieldsFromUrl(fromUrlEdit.getText().toString());
+                saveLogjob(null);
+            }
+        });
+
+        fromUrlBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // what ever you want to do with No option.
+            }
+        });
+
+        // create the alert dialog
+        fromUrlDialog = fromUrlBuilder.create();
+
     }
 
     private String getTitle() {
