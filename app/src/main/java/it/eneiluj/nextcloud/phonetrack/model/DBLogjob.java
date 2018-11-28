@@ -47,6 +47,31 @@ public class DBLogjob implements Item, Serializable {
         this.deviceName = deviceName;
     }
 
+    public void setAttrFromUrl(String url) {
+        String[] spl = url.split("/app/phonetrack/");
+        System.out.println(spl.length);
+        if (spl.length == 2) {
+            String nextURL = spl[0];
+            if (nextURL.contains("index.php")) {
+                nextURL = nextURL.replace("index.php", "");
+            }
+
+            String right = spl[1];
+            String[] spl2 = right.split("/");
+            if (spl2.length > 2) {
+                String token = spl2[1];
+                String[] spl3 = spl2[2].split("\\?");
+                if (spl3.length > 1) {
+                    String devname = spl3[0];
+                    this.title = "From logging URL";
+                    this.deviceName = devname;
+                    this.token = token;
+                    this.nextURL = nextURL;
+                }
+            }
+        }
+    }
+
     public String getToken() {
         return token;
     }

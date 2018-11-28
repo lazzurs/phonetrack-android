@@ -38,7 +38,7 @@
     <string name="action_uncategorized">Uncategorized</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_select_session">Use server session</string>
-    <string name="menu_from_url">From logging URL</string>
+    <string name="menu_from_url">From PhoneTrack logging URL</string>
     <string name="menu_change_category">Category</string>
     <string name="menu_favorite">Favorite</string>
     <string name="menu_enabled">Enabled</string>

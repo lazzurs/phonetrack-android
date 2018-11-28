@@ -133,12 +133,15 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
             favorite = categoryPreselection.favorite != null ? categoryPreselection.favorite : false;
         }
 
-        String content = "";
+        DBLogjob newLogjob = new DBLogjob(0, "New log job",  "https://yournextcloud.org", "supersessiontoken", "mydevname", false);
+
+        String url = "";
         if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
-            content = intent.getStringExtra(Intent.EXTRA_TEXT);
+            url = intent.getStringExtra(Intent.EXTRA_TEXT);
+            newLogjob.setAttrFromUrl(url);
         }
 
-        DBLogjob newLogjob = new DBLogjob(0, "empty",  "url", "to", "devname", false);
+
         fragment = EditLogjobFragment.newInstanceWithNewNote(newLogjob);
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
