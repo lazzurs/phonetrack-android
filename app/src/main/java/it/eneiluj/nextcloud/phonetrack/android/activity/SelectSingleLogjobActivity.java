@@ -33,7 +33,7 @@ public class SelectSingleLogjobActivity extends LogjobsListViewActivity {
 
         android.support.v7.app.ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setTitle(R.string.activity_select_single_note);
+            ab.setTitle(R.string.activity_select_single_logjob);
         }
         swipeRefreshLayout.setEnabled(false);
         swipeRefreshLayout.setRefreshing(false);

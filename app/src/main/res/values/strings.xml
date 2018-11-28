@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">PhoneTrack</string>
     <string name="swipe_left">Toggle log job</string>
-    <string name="no_notes">No log job yet</string>
     <string name="label_all_logjobs">All log jobs</string>
     <string name="label_enabled">Enabled</string>
     <string name="action_create">New log job</string>
@@ -18,39 +17,21 @@
     <string name="setting_nexturl">Nextcloud URL</string>
     <string name="setting_nexturl_long">Nextcloud URL of target PhoneTrack instance hosting the session</string>
     <string name="setting_list">Use a session from PhoneTrack</string>
-    <string name="setting_list_long">Session from PhoneTrack</string>
-    <string name="action_trashbin">Deleted notes</string>
     <string name="action_search">Search</string>
-    <string name="action_create_save">Save</string>
     <string name="simple_cancel">Cancel</string>
     <string name="simple_edit">Edit</string>
-    <string name="action_edit_save">Save</string>
-    <string name="action_edit_saving">Saving &#8230;</string>
-    <string name="action_edit_saved">Saved</string>
     <string name="simple_about">About</string>
-    <string name="action_select_note">Select note</string>
     <string name="action_logjob_deleted">Log job deleted</string>
     <string name="action_logjob_restored">Log job restored</string>
     <string name="action_undo">Undo</string>
     <string name="action_drawer_open">open navigation</string>
     <string name="action_drawer_close">close navigation</string>
-    <string name="action_recent">Recent</string>
-    <string name="action_uncategorized">Uncategorized</string>
     <string name="menu_delete">Delete</string>
-    <string name="menu_select_session">Use server session</string>
+    <string name="menu_select_session">Use session from Nextcloud</string>
     <string name="menu_from_url">From PhoneTrack logging URL</string>
-    <string name="menu_change_category">Category</string>
-    <string name="menu_favorite">Favorite</string>
     <string name="menu_enabled">Enabled</string>
-    <string name="menu_preview">Preview</string>
+    <string name="menu_preview" tools:keep="@string/menu_preview">Preview</string>
     <string name="menu_share">Share</string>
-    <string name="menu_about">About</string>
-
-    <string name="listview_updated_today">Today</string>
-    <string name="listview_updated_yesterday">Yesterday</string>
-    <string name="listview_updated_this_week">This week</string>
-    <string name="listview_updated_this_month">This month</string>
-    <string name="listview_updated_earlier">Earlier</string>
 
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -60,10 +41,8 @@
     <string name="settings_username">Username</string>
     <string name="settings_password">Password</string>
     <string name="settings_password_unchanged">Password (not changed)</string>
-    <string name="settings_password_check_description">Displays whether the credentials are correct.</string>
     <string name="settings_submit">Connect</string>
     <string name="settings_submitting">Connecting &#8230;</string>
-    <string name="settings_note_mode">Display mode for Notes</string>
     <string name="settings_theme_title">Theme</string>
     <string name="settings_cert_category">Manage certificates</string>
     <string name="settings_cert_trust_system">Trust system certificates</string>
@@ -74,8 +53,8 @@
     <string name="settings_cert_reset_toast">All custom certificates have been cleared</string>
 
     <!-- Certificates -->
-    <string name="certificate_notification_connection_security">Notes - Connection security</string>
-    <string name="trust_certificate_unknown_certificate_found">Notes has encountered an unknown certificate. Do you want to trust it?</string>
+    <string name="certificate_notification_connection_security">PhoneTrack - Connection security</string>
+    <string name="trust_certificate_unknown_certificate_found">PhoneTrack has encountered an unknown certificate. Do you want to trust it?</string>
 
     <!-- Network -->
     <string name="network_connecting">Connecting</string>
@@ -128,17 +107,8 @@
     <string name="about_contribution_tab_title">Contribution</string>
     <string name="about_license_tab_title">License</string>
 
-    <!-- Widgets -->
-    <string name="widget_note_list_title">Note list</string>
-    <string name="widget_note_list_placeholder">No notes</string>
-    <string name="widget_single_note_title">Single note</string>
-    <string name="widget_single_note_placeholder_tv">Note not found</string>
-    <string name="widget_create_note">Create Note</string>
-    <string name="widget_not_logged_in">Please login to Notes before using this widget</string>
-    <string name="widget_entry_fav_contentDescription">Star icon is used to denote an item as a favourite</string>
-    <string name="widget_app_launcher_contentDescription">Launches app</string>
 
-    <string name="activity_select_single_note">Select note</string>
+    <string name="activity_select_single_logjob">Select log job</string>
 
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Create a new log job</string>
@@ -148,20 +118,8 @@
     <string name="pref_key_trust_system_certs" translatable="false">trustSystemCerts</string>
     <string name="pref_key_reset_trust" translatable="false">resetTrust</string>
     <string name="pref_key_theme" translatable="false">darkTheme</string>
-    <string name="pref_key_last_note_mode" translatable="false">lastNoteMode</string>
-    <string name="pref_value_mode_edit" translatable="false">edit</string>
-    <string name="pref_value_mode_preview" translatable="false">preview</string>
-    <string name="pref_value_mode_last" translatable="false">last</string>
-    <string name="pref_value_mode_note" translatable="false">note</string>
     <string name="pref_value_theme_light">Light</string>
     <string name="pref_value_theme_dark">Dark</string>
-
-    <!-- Array: logjob modes -->
-    <string-array name="noteMode_entries">
-        <item>Open in edit mode</item>
-        <item>Open in preview mode</item>
-        <item>Remember my last selection</item>
-    </string-array>
 
     <!-- Plurals -->
     <plurals name="ab_selected">
