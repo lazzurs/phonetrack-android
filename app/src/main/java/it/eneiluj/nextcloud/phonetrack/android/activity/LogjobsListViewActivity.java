@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -86,7 +87,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private ActionBarDrawerToggle drawerToggle;
     private ItemAdapter adapter = null;
     private NavigationAdapter adapterCategories;
-    private NavigationAdapter.NavigationItem itemRecent, itemFavorites, itemUncategorized;
+    private NavigationAdapter.NavigationItem itemRecent, itemEnabled, itemUncategorized;
     private Category navigationSelection = new Category(null, null);
     private String navigationOpen = "";
     private ActionMode mActionMode;
@@ -199,8 +200,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     private void setupNavigationList(final String selectedItem) {
-        itemRecent = new NavigationAdapter.NavigationItem(ADAPTER_KEY_RECENT, getString(R.string.label_all_notes), null, R.drawable.ic_access_time_grey600_24dp);
-        itemFavorites = new NavigationAdapter.NavigationItem(ADAPTER_KEY_STARRED, getString(R.string.label_favorites), null, R.drawable.ic_star_yellow_24dp);
+        itemRecent = new NavigationAdapter.NavigationItem(ADAPTER_KEY_RECENT, getString(R.string.label_all_logjobs), null, android.R.drawable.ic_input_get);
+        itemEnabled = new NavigationAdapter.NavigationItem(ADAPTER_KEY_STARRED, getString(R.string.label_enabled), null, android.R.drawable.ic_media_play);
         adapterCategories = new NavigationAdapter(new NavigationAdapter.ClickListener() {
             @Override
             public void onItemClick(NavigationAdapter.NavigationItem item) {
@@ -213,7 +214,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 // update current selection
                 if (itemRecent == item) {
                     navigationSelection = new Category(null, null);
-                } else if (itemFavorites == item) {
+                } else if (itemEnabled == item) {
                     navigationSelection = new Category(null, true);
                 } else if (itemUncategorized == item) {
                     navigationSelection = new Category("", null);
@@ -254,30 +255,31 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         listNavigationCategories.setAdapter(adapterCategories);
     }
 
-    /*
+
     private class LoadCategoryListTask extends AsyncTask<Void, Void, List<NavigationAdapter.NavigationItem>> {
         @Override
         protected List<NavigationAdapter.NavigationItem> doInBackground(Void... voids) {
-            List<NavigationAdapter.NavigationItem> categories = db.getCategories();
+            /*List<NavigationAdapter.NavigationItem> categories = db.getCategories();
             if (!categories.isEmpty() && categories.get(0).label.isEmpty()) {
                 itemUncategorized = categories.get(0);
                 itemUncategorized.label = getString(R.string.action_uncategorized);
                 itemUncategorized.icon = NavigationAdapter.ICON_NOFOLDER;
             } else {
                 itemUncategorized = null;
-            }
+            }*/
+            itemUncategorized = null;
 
-            Map<String, Integer> favorites = db.getFavoritesCount();
+            Map<String, Integer> favorites = db.getEnabledCount();
             int numFavorites = favorites.containsKey("1") ? favorites.get("1") : 0;
             int numNonFavorites = favorites.containsKey("0") ? favorites.get("0") : 0;
-            itemFavorites.count = numFavorites;
+            itemEnabled.count = numFavorites;
             itemRecent.count = numFavorites + numNonFavorites;
 
             ArrayList<NavigationAdapter.NavigationItem> items = new ArrayList<>();
             items.add(itemRecent);
-            items.add(itemFavorites);
+            items.add(itemEnabled);
             NavigationAdapter.NavigationItem lastPrimaryCategory = null, lastSecondaryCategory = null;
-            for (NavigationAdapter.NavigationItem item : categories) {
+            /*for (NavigationAdapter.NavigationItem item : categories) {
                 int slashIndex = item.label.indexOf('/');
                 String currentPrimaryCategory = slashIndex < 0 ? item.label : item.label.substring(0, slashIndex);
                 String currentSecondaryCategory = null;
@@ -324,7 +326,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     lastPrimaryCategory = item;
                     lastSecondaryCategory = null;
                 }
-            }
+            }*/
             return items;
         }
 
@@ -333,7 +335,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             adapterCategories.setItems(items);
         }
     }
-    */
+
 
     private void setupNavigationMenu() {
         //final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
@@ -472,7 +474,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 subtitle = NoteUtil.extendCategory(navigationSelection.category);
             }
         } else if (navigationSelection.favorite != null && navigationSelection.favorite) {
-            subtitle = getString(R.string.label_favorites);
+            subtitle = getString(R.string.label_enabled);
         } else {
             subtitle = getString(R.string.app_name);
         }
@@ -493,7 +495,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         };
         new LoadLogjobsListTask(getApplicationContext(), callback, navigationSelection, query).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        //new LoadCategoryListTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoadCategoryListTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public ItemAdapter getItemAdapter() {

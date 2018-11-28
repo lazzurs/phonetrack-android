@@ -85,8 +85,11 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
     private List<Item> fillListTitle(@NonNull List<DBLogjob> logjobList) {
         List<Item> itemList = new ArrayList<>();
         for (DBLogjob logjob : logjobList) {
-            itemList.add(colorTheLogjob(logjob));
+            if (category.favorite == null || logjob.isEnabled()) {
+                itemList.add(colorTheLogjob(logjob));
+            }
         }
+        System.out.println("PLPLPLPLPLPLPLPLPL");
         return itemList;
     }
 

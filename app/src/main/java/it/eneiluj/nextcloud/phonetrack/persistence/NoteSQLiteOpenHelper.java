@@ -402,7 +402,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
         return getLogjobsCustom(TextUtils.join(" AND ", where), args.toArray(new String[]{}), order);
     }
 
-    /*
+
     @NonNull
     @WorkerThread
     public Map<String, Integer> getEnabledCount() {
@@ -421,7 +421,7 @@ public class NoteSQLiteOpenHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return enabled;
-    }*/
+    }
 
     /*@NonNull
     @WorkerThread
