@@ -1,9 +1,6 @@
 package it.eneiluj.nextcloud.phonetrack.model;
 
 import java.io.Serializable;
-import java.util.Calendar;
-
-import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
 /**
  * DBLogjob represents a single logjob from the local SQLite database with all attributes.

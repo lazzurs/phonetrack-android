@@ -42,6 +42,7 @@ public class PreferencesFragment extends PreferenceFragment {
                 PhoneTrack.setAppTheme(darkTheme);
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
+                System.out.println("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTHHH "+darkTheme);
 
                 return true;
             }

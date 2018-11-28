@@ -1,11 +1,6 @@
 package it.eneiluj.nextcloud.phonetrack.model;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
-import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
 /**
  * CloudSession represents a remote logjob from an OwnCloud server.

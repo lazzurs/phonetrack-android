@@ -17,6 +17,7 @@ public class PhoneTrack extends Application {
 
     public static void setAppTheme(Boolean darkTheme) {
         if (darkTheme) {
+            System.out.println("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY "+darkTheme);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);

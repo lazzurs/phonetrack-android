@@ -1,9 +1,6 @@
 package it.eneiluj.nextcloud.phonetrack.model;
 
 import java.io.Serializable;
-import java.util.Calendar;
-
-import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 
 /**
  * DBSession represents a single session from the local SQLite database with all attributes.

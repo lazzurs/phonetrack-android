@@ -47,7 +47,6 @@ import it.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import it.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
-import it.eneiluj.nextcloud.phonetrack.util.NoteUtil;
 import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.NoteClickListener {
