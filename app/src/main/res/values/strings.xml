@@ -44,8 +44,6 @@
     <string name="menu_share">Share</string>
     <string name="menu_about">About</string>
 
-    <string name="change_category_title">Choose a category</string>
-
     <string name="listview_updated_today">Today</string>
     <string name="listview_updated_yesterday">Yesterday</string>
     <string name="listview_updated_this_week">This week</string>
