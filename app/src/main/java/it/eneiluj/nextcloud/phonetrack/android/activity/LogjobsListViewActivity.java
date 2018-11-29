@@ -62,6 +62,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     public static final String ADAPTER_KEY_STARRED = "starred";
 
     public final static String UPDATED_LOGJOBS = "it.eneiluj.nextcloud.phonetrack.UPDATED_LOGJOBS";
+    public final static String UPDATED_LOGJOB_ID = "it.eneiluj.nextcloud.phonetrack.UPDATED_LOGJOB_ID";
 
     private static final String SAVED_STATE_NAVIGATION_SELECTION = "navigationSelection";
     private static final String SAVED_STATE_NAVIGATION_ADAPTER_SLECTION = "navigationAdapterSelection";

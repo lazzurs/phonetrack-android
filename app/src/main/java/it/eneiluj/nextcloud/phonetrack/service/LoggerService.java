@@ -78,15 +78,13 @@ public class LoggerService extends Service {
     private Map<String, mLocationListener> locListeners;
     private Map<String, DBLogjob> logjobs;
     private NoteSQLiteOpenHelper db;
-    private int maxAccuracy = 100;
-    private float minDistance = 2;
-    private long minTimeMillis = 5000;
-    // max time tolerance is half min time, but not more that 5 min
-    final private long minTimeTolerance = Math.min(minTimeMillis / 2, 5 * 60 * 1000);
-    final private long maxTimeMillis = minTimeMillis + minTimeTolerance;
+    //private int maxAccuracy = 100;
+    //private float minDistance = 2;
+    //private long minTimeMillis = 5000;
 
-    private Map<String, Location> lastLocation;
-    private static volatile long lastUpdateRealtime = 0;
+
+    private Map<String, Location> lastLocations;
+    private static volatile Map<String, Long> lastUpdateRealtime;
 
     private final int NOTIFICATION_ID = 1526756640;
     private NotificationManager mNotificationManager;
@@ -113,21 +111,31 @@ public class LoggerService extends Service {
 
         locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        lastLocations = new HashMap<>();
+        lastUpdateRealtime = new HashMap<>();
         locListeners = new HashMap<>();
+        logjobs = new HashMap<>();
 
         List<DBLogjob> ljs = db.getLogjobs();
-        for (DBLogjob lj : ljs) {
-            if (lj.isEnabled()) {
-                mLocationListener ll = new mLocationListener(lj);
-                locListeners.put(String.valueOf(lj.getId()), ll);
+        for (DBLogjob ljob : ljs) {
+            if (ljob.isEnabled()) {
+                mLocationListener ll = new mLocationListener(ljob);
+                locListeners.put(String.valueOf(ljob.getId()), ll);
+                logjobs.put(String.valueOf(ljob.getId()), ljob);
+                lastLocations.put(String.valueOf(ljob.getId()), null);
+                lastUpdateRealtime.put(String.valueOf(ljob.getId()), new Long(0));
             }
         }
-
 
         // read user preferences
         updateLogjobs();
 
-        boolean hasLocationUpdates = requestLocationUpdates();
+        boolean hasLocationUpdates = false;
+        for (DBLogjob lj : ljs) {
+            if (lj.isEnabled()) {
+                hasLocationUpdates = requestLocationUpdates(String.valueOf(lj.getId()));
+            }
+        }
 
         if (hasLocationUpdates) {
             isRunning = true;
@@ -163,8 +171,9 @@ public class LoggerService extends Service {
 
         final boolean logjobsUpdated = (intent != null) && intent.getBooleanExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, false);
         if (logjobsUpdated) {
+            String ljId = intent.getStringExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID);
             if (DEBUG) { Log.d(TAG, "[onStartCommand : upd]"); }
-            handleLogjobsUpdated();
+            handleLogjobsUpdated(ljId);
         } else if (isRunning) {
             // first start
             if (DEBUG) { Log.d(TAG, "[onStartCommand : first start]"); }
@@ -182,12 +191,32 @@ public class LoggerService extends Service {
     /**
      * When user updated preferences, restart location updates, stop service on failure
      */
-    private void handleLogjobsUpdated() {
-        // restart updates
-        updateLogjobs();
-        if (isRunning && !restartUpdates()) {
-            // no valid providers after preferences update
-            stopSelf();
+    private void handleLogjobsUpdated(String ljId) {
+        boolean wasAlreadyThere = logjobs.containsKey(ljId);
+        updateLogjob(ljId);
+        // if it was not deleted
+        if (logjobs.containsKey(ljId)) {
+            if (isRunning) {
+                // it was modified
+                if (wasAlreadyThere) {
+                    if (!restartUpdates(ljId)) {
+                        // no valid providers after preferences update
+                        stopSelf();
+                    }
+                }
+                // it was created
+                else {
+                    if (!requestLocationUpdates(ljId)) {
+                        stopSelf();
+                    }
+                }
+            }
+        }
+        // it was deleted
+        else {
+            if (logjobs.isEmpty()) {
+                stopSelf();
+            }
         }
     }
 
@@ -218,9 +247,40 @@ public class LoggerService extends Service {
         /*minTimeMillis = Long.parseLong(prefs.getString("prefMinTime", getString(R.string.pref_mintime_default))) * 1000;
         minDistance = Float.parseFloat(prefs.getString("prefMinDistance", getString(R.string.pref_mindistance_default)));
         maxAccuracy = Integer.parseInt(prefs.getString("prefMinAccuracy", getString(R.string.pref_minaccuracy_default)));
-        useGps = prefs.getBoolean("prefUseGps", providerExists(LocationManager.GPS_PROVIDER));
-        useNet = prefs.getBoolean("prefUseNet", providerExists(LocationManager.NETWORK_PROVIDER));
-        liveSync = prefs.getBoolean("prefLiveSync", false);*/
+        */
+        //useGps = prefs.getBoolean("prefUseGps", providerExists(LocationManager.GPS_PROVIDER));
+        //useNet = prefs.getBoolean("prefUseNet", providerExists(LocationManager.NETWORK_PROVIDER));
+        //liveSync = prefs.getBoolean("prefLiveSync", false);
+    }
+
+    /**
+     * update internal values
+     *
+     * logjob might have been added, modified or deleted
+     *
+     */
+    private void updateLogjob(String ljId) {
+        DBLogjob lj = db.getLogjob(Long.valueOf(ljId));
+        if (lj != null) {
+            // new or modified : update logjob
+            logjobs.put(ljId, lj);
+
+            // this is a new logjob
+            if (!locListeners.containsKey(ljId)) {
+                mLocationListener ll = new mLocationListener(lj);
+                locListeners.put(ljId, ll);
+                lastLocations.put(ljId, null);
+                lastUpdateRealtime.put(ljId, new Long(0));
+            }
+        }
+        // it has been deleted
+        else {
+            locManager.removeUpdates(locListeners.get(ljId));
+            locListeners.remove(ljId);
+            lastLocations.remove(ljId);
+            lastUpdateRealtime.remove(ljId);
+            logjobs.remove(ljId);
+        }
     }
 
     /**
@@ -228,12 +288,12 @@ public class LoggerService extends Service {
      *
      * @return True if succeeded, false otherwise (eg. disabled all providers)
      */
-    private boolean restartUpdates(long jobId) {
+    private boolean restartUpdates(String jobId) {
         if (DEBUG) { Log.d(TAG, "[job "+jobId+"location updates restart]"); }
 
-        locManager.removeUpdates(locListeners.get(String.valueOf(jobId)));
+        locManager.removeUpdates(locListeners.get(jobId));
 
-        return requestLocationUpdates(logjobs.get(String.valueOf(jobId)));
+        return requestLocationUpdates(jobId);
     }
 
     /**
@@ -241,10 +301,12 @@ public class LoggerService extends Service {
      * @return True if succeeded from at least one provider
      */
     @SuppressWarnings({"MissingPermission"})
-    private boolean requestLocationUpdates(DBLogjob lj) {
+    private boolean requestLocationUpdates(String ljId) {
         // TODO here we start a location request for each activated logjob
-        minTimeMillis = lj.getMinTime();
-        minDistance = lj.getMinDist();
+        DBLogjob lj = logjobs.get(ljId);
+        int minTimeMillis = lj.getMinTime() * 1000;
+        int minDistance = lj.getMinDist();
+        mLocationListener locListener = locListeners.get(ljId);
         boolean hasLocationUpdates = false;
         if (canAccessLocation()) {
             if (useNet) {
@@ -258,7 +320,6 @@ public class LoggerService extends Service {
             if (useGps) {
                 //noinspection MissingPermission
                 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis, minDistance, locListener, looper);
-                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, minDistance, locListener2, looper);
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
                     if (DEBUG) { Log.d(TAG, "[Using gps provider]"); }
@@ -287,8 +348,9 @@ public class LoggerService extends Service {
 
         if (canAccessLocation()) {
             //noinspection MissingPermission
-            locManager.removeUpdates(locListener);
-            locManager.removeUpdates(locListener2);
+            for (Map.Entry<String, mLocationListener> entry : locListeners.entrySet()) {
+                locManager.removeUpdates(entry.getValue());
+            }
         }
         if (db != null) {
             //db.close();
@@ -325,16 +387,15 @@ public class LoggerService extends Service {
      *
      * @return Time or zero if not set
      */
-    public static long lastUpdateRealtime() {
-        return lastUpdateRealtime;
+    public static long lastUpdateRealtime(String ljId) {
+        return lastUpdateRealtime.get(ljId);
     }
 
     /**
      * Reset realtime of last update
      */
-    public static void resetUpdateRealtime() {
-
-        lastUpdateRealtime = 0;
+    public static void resetUpdateRealtime(String ljId) {
+        lastUpdateRealtime.put(ljId, new Long(0));
     }
 
     /**
@@ -417,23 +478,31 @@ public class LoggerService extends Service {
     private class mLocationListener implements LocationListener {
 
         private DBLogjob logjob;
+        private String logjobId;
+        private long minTimeTolerance;
+        private long maxTimeMillis;
 
         public mLocationListener(DBLogjob logjob) {
             this.logjob = logjob;
+            this.logjobId = String.valueOf(logjob.getId());
+            // max time tolerance is half min time, but not more that 5 min
+            int minTimeMillis = logjob.getMinTime() * 1000;
+            minTimeTolerance = Math.min(minTimeMillis / 2, 5 * 60 * 1000);
+            maxTimeMillis = minTimeMillis + minTimeTolerance;
         }
 
         @Override
         public void onLocationChanged(Location loc) {
 
-            if (DEBUG) { Log.d(TAG, "[location changed: " + logjob.getId()+ " : " + loc + "]"); }
+            if (DEBUG) { Log.d(TAG, "[location changed: " + logjobId + "/"+ logjob.getTitle() +" : " + loc + "]"); }
 
             if (!skipLocation(logjob, loc)) {
 
-                lastLocation = loc;
+                lastLocations.put(logjobId, loc);
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    lastUpdateRealtime = SystemClock.elapsedRealtime();
+                    lastUpdateRealtime.put(logjobId, SystemClock.elapsedRealtime());
                 } else {
-                    lastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
+                    lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
                 }
                 // TODO
                 //db.addLocation(logjob.getId(), loc);
@@ -452,20 +521,21 @@ public class LoggerService extends Service {
          */
         private boolean skipLocation(DBLogjob logjob, Location loc) {
             // TODO adapt to use logjob values
+            int maxAccuracy = logjob.getMaxAccuracy();
             // accuracy radius too high
             if (loc.hasAccuracy() && loc.getAccuracy() > maxAccuracy) {
                 if (DEBUG) { Log.d(TAG, "[location accuracy above limit: " + loc.getAccuracy() + " > " + maxAccuracy + "]"); }
                 // reset gps provider to get better accuracy even if time and distance criteria don't change
                 if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-                    restartUpdates();
+                    restartUpdates(logjobId);
                 }
                 return true;
             }
             // use network provider only if recent gps data is missing
-            if (loc.getProvider().equals(LocationManager.NETWORK_PROVIDER) && lastLocation != null) {
+            if (loc.getProvider().equals(LocationManager.NETWORK_PROVIDER) && lastLocations.get(logjobId) != null) {
                 // we received update from gps provider not later than after maxTime period
-                long elapsedMillis = SystemClock.elapsedRealtime() - lastUpdateRealtime;
-                if (lastLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && elapsedMillis < maxTimeMillis) {
+                long elapsedMillis = SystemClock.elapsedRealtime() - lastUpdateRealtime.get(logjobId);
+                if (lastLocations.get(logjobId).getProvider().equals(LocationManager.GPS_PROVIDER) && elapsedMillis < maxTimeMillis) {
                     // skip network provider
                     if (DEBUG) { Log.d(TAG, "[location network provider skipped]"); }
                     return true;
