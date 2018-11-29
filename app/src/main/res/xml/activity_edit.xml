@@ -56,7 +56,7 @@ xmlns:tools="http://schemas.android.com/tools"
 
     <EditTextPreference
         android:id="@+id/editToken"
-        android:defaultValue="plop"
+        android:defaultValue=""
         android:icon="@android:drawable/ic_menu_edit"
         android:dialogMessage="@string/setting_token_long"
         android:dialogTitle="@string/setting_token"
@@ -66,5 +66,33 @@ xmlns:tools="http://schemas.android.com/tools"
         android:persistent="false"
         android:summary=""
         android:title="@string/setting_token" />
+
+    <EditTextPreference
+        android:id="@+id/editMinDistance"
+        android:defaultValue="5"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:dialogMessage="@string/setting_min_distance_long"
+        android:dialogTitle="@string/setting_min_distance"
+        android:key="mindistance"
+        android:selectAllOnFocus="true"
+        android:persistent="false"
+        android:summary=""
+        android:numeric="integer"
+        android:maxLength="4"
+        android:title="@string/setting_min_distance" />
+
+    <EditTextPreference
+        android:id="@+id/editMinTime"
+        android:defaultValue="60"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:dialogMessage="@string/setting_min_time_long"
+        android:dialogTitle="@string/setting_min_time"
+        android:key="mintime"
+        android:selectAllOnFocus="true"
+        android:persistent="false"
+        android:summary=""
+        android:numeric="integer"
+        android:maxLength="5"
+        android:title="@string/setting_min_time" />
 
 </PreferenceScreen>

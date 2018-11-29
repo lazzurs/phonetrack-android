@@ -32,6 +32,10 @@
     <string name="menu_enabled">Enabled</string>
     <string name="menu_preview" tools:keep="@string/menu_preview">Preview</string>
     <string name="menu_share">Share</string>
+    <string name="setting_min_distance">Minimum distance</string>
+    <string name="setting_min_distance_long">Minimum distance between two logged points (meters)</string>
+    <string name="setting_min_time">Minimum time</string>
+    <string name="setting_min_time_long">Minimum time between two logged points (seconds)</string>
 
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
