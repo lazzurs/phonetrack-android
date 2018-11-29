@@ -1,5 +1,6 @@
 package it.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.Manifest;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -46,15 +48,20 @@ import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
 import it.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import it.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
+import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.NoteClickListener {
 
+    private final static int PERMISSION_LOCATION = 1;
+
     public final static String CREATED_NOTE = "it.eneiluj.nextcloud.phonetrack.created_notes";
     public final static String CREDENTIALS_CHANGED = "it.eneiluj.nextcloud.phonetrack.CREDENTIALS_CHANGED";
     public static final String ADAPTER_KEY_RECENT = "recent";
     public static final String ADAPTER_KEY_STARRED = "starred";
+
+    public final static String UPDATED_LOGJOBS = "it.eneiluj.nextcloud.phonetrack.UPDATED_LOGJOBS";
 
     private static final String SAVED_STATE_NAVIGATION_SELECTION = "navigationSelection";
     private static final String SAVED_STATE_NAVIGATION_ADAPTER_SLECTION = "navigationAdapterSelection";
@@ -132,6 +139,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setupNotesList();
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
+
+        ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+
+        Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
+        startService(intent);
     }
 
     @Override

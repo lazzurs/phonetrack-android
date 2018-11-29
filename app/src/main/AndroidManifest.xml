@@ -5,6 +5,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- For auto start -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- For web sync retries -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Needed if app targets API >= 21 -->
+    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature android:name="android.hardware.location.network" />
+
     <application
         android:name="it.eneiluj.nextcloud.phonetrack.util.PhoneTrack"
         android:allowBackup="true"
@@ -96,6 +106,11 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
+
+        <service
+            android:name="it.eneiluj.nextcloud.phonetrack.service.LoggerService"
+            android:enabled="true"
+            android:exported="false" />
 
     </application>
 </manifest>
