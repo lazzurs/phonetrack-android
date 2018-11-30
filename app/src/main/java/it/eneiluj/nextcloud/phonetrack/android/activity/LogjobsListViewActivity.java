@@ -655,7 +655,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         } else {
             DBLogjob logjob = (DBLogjob) adapter.getItem(position);
             Intent intent = new Intent(getApplicationContext(), EditLogjobActivity.class);
-            intent.putExtra(EditLogjobActivity.PARAM_NOTE_ID, logjob.getId());
+            intent.putExtra(EditLogjobActivity.PARAM_LOGJOB_ID, logjob.getId());
             startActivityForResult(intent, show_single_note_cmd);
 
         }

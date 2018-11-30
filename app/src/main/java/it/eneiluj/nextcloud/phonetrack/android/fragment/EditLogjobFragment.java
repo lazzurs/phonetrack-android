@@ -42,10 +42,10 @@ public class EditLogjobFragment extends PreferenceFragment {
         void onLogjobUpdated(DBLogjob logjob);
     }
 
-    public static final String PARAM_NOTE_ID = "noteId";
-    public static final String PARAM_NEWNOTE = "newNote";
-    private static final String SAVEDKEY_NOTE = "logjob";
-    private static final String SAVEDKEY_ORIGINAL_NOTE = "original_note";
+    public static final String PARAM_LOGJOB_ID = "logjobId";
+    public static final String PARAM_NEWLOGJOB = "newLogjob";
+    private static final String SAVEDKEY_LOGJOB = "logjob";
+    private static final String SAVEDKEY_ORIGINAL_LOGJOB = "original_logjob";
 
     protected DBLogjob logjob;
     @Nullable
@@ -88,20 +88,20 @@ public class EditLogjobFragment extends PreferenceFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-            long id = getArguments().getLong(PARAM_NOTE_ID);
+            long id = getArguments().getLong(PARAM_LOGJOB_ID);
             if (id > 0) {
                 logjob = originalLogjob = db.getLogjob(id);
             } else {
-                DBLogjob cloudLogjob = (DBLogjob) getArguments().getSerializable(PARAM_NEWNOTE);
+                DBLogjob cloudLogjob = (DBLogjob) getArguments().getSerializable(PARAM_NEWLOGJOB);
                 if (cloudLogjob == null) {
-                    throw new IllegalArgumentException(PARAM_NOTE_ID + " is not given and argument " + PARAM_NEWNOTE + " is missing.");
+                    throw new IllegalArgumentException(PARAM_LOGJOB_ID + " is not given and argument " + PARAM_NEWLOGJOB + " is missing.");
                 }
                 logjob = db.getLogjob(db.addLogjob(cloudLogjob));
                 originalLogjob = null;
             }
         } else {
-            logjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_NOTE);
-            originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_NOTE);
+            logjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_LOGJOB);
+            originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_LOGJOB);
         }
         setHasOptionsMenu(true);
         System.out.println("AAAAAAAAAAAAAAA on create : "+logjob);
@@ -284,8 +284,8 @@ public class EditLogjobFragment extends PreferenceFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         saveLogjob(null);
-        outState.putSerializable(SAVEDKEY_NOTE, logjob);
-        outState.putSerializable(SAVEDKEY_ORIGINAL_NOTE, originalLogjob);
+        outState.putSerializable(SAVEDKEY_LOGJOB, logjob);
+        outState.putSerializable(SAVEDKEY_ORIGINAL_LOGJOB, originalLogjob);
     }
 
     @Override
@@ -406,7 +406,7 @@ public class EditLogjobFragment extends PreferenceFragment {
     public static EditLogjobFragment newInstance(long logjobId) {
         EditLogjobFragment f = new EditLogjobFragment();
         Bundle b = new Bundle();
-        b.putLong(PARAM_NOTE_ID, logjobId);
+        b.putLong(PARAM_LOGJOB_ID, logjobId);
         f.setArguments(b);
         return f;
     }
@@ -414,7 +414,7 @@ public class EditLogjobFragment extends PreferenceFragment {
     public static EditLogjobFragment newInstanceWithNewLogjob(DBLogjob newLogjob) {
         EditLogjobFragment f = new EditLogjobFragment();
         Bundle b = new Bundle();
-        b.putSerializable(PARAM_NEWNOTE, newLogjob);
+        b.putSerializable(PARAM_NEWLOGJOB, newLogjob);
         f.setArguments(b);
         return f;
     }

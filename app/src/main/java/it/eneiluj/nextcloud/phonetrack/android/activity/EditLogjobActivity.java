@@ -19,7 +19,7 @@ import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 
 public class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
 
-    public static final String PARAM_NOTE_ID = "noteId";
+    public static final String PARAM_LOGJOB_ID = "logjobId";
     public static final String PARAM_CATEGORY = "category";
 
     private EditLogjobFragment fragment;
@@ -42,7 +42,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d(getClass().getSimpleName(), "onNewIntent: " + intent.getLongExtra(PARAM_NOTE_ID, 0));
+        Log.d(getClass().getSimpleName(), "onNewIntent: " + intent.getLongExtra(PARAM_LOGJOB_ID, 0));
         setIntent(intent);
         if (fragment != null) {
             getFragmentManager().beginTransaction().detach(fragment).commit();
@@ -52,7 +52,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
     }
 
     private long getLogjobId() {
-        return getIntent().getLongExtra(PARAM_NOTE_ID, 0);
+        return getIntent().getLongExtra(PARAM_LOGJOB_ID, 0);
     }
 
     /**
