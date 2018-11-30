@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
@@ -21,12 +22,15 @@ import java.util.Map;
 import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import it.eneiluj.nextcloud.phonetrack.model.DBSession;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 /**
  * Helps to add, get, update and delete Notes with the option to trigger a Resync with the Server.
  */
 public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
+
+    private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
     private static final int database_version = 8;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
@@ -45,8 +49,20 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_minAccuracy = "MINACCURACY";
     private static final String key_enabled = "ENABLED";
 
+    private static final String table_locations = "LOCATIONS";
+    private static final String key_lat = "LAT";
+    private static final String key_lon = "LON";
+    private static final String key_time = "TIME";
+    private static final String key_bearing = "BEARING";
+    private static final String key_altitude = "ALTITUDE";
+    private static final String key_speed = "SPEED";
+    private static final String key_accuracy = "ACCURACY";
+    private static final String key_provider = "PROVIDER";
+    private static final String key_battery = "BATTERY";
+
     private static final String[] columnsSessions = {key_id, key_token, key_name, key_nextURL};
     private static final String[] columnsLogjobs = {key_id, key_title, key_nextURL, key_token, key_deviceName, key_minTime, key_minDistance, key_minAccuracy, key_enabled};
+    private static final String[] columnsLocations = {key_id, key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_provider, key_battery};
 
     private static final String default_order = key_id + " DESC";
 
@@ -601,8 +617,31 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)});
     }
 
+    void addLocation(String ljId, Location loc) {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation]"); }
+        ContentValues values = new ContentValues();
+        values.put(DbContract.Positions.COLUMN_TIME, loc.getTime() / 1000);
+        values.put(DbContract.Positions.COLUMN_LATITUDE, loc.getLatitude());
+        values.put(DbContract.Positions.COLUMN_LONGITUDE, loc.getLongitude());
+        if (loc.hasBearing()) {
+            values.put(DbContract.Positions.COLUMN_BEARING, loc.getBearing());
+        }
+        if (loc.hasAltitude()) {
+            values.put(DbContract.Positions.COLUMN_ALTITUDE, loc.getAltitude());
+        }
+        if (loc.hasSpeed()) {
+            values.put(DbContract.Positions.COLUMN_SPEED, loc.getSpeed());
+        }
+        if (loc.hasAccuracy()) {
+            values.put(DbContract.Positions.COLUMN_ACCURACY, loc.getAccuracy());
+        }
+        values.put(DbContract.Positions.COLUMN_PROVIDER, loc.getProvider());
+
+        db.insert(DbContract.Positions.TABLE_NAME, null, values);
+    }
+
     /**
-     * Notify about changed phonetrack.
+     * Notify about changed logjob.
      */
     void notifyLogjobsChanged() {
         //updateSingleNoteWidgets();
