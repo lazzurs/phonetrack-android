@@ -112,7 +112,7 @@ public class DBLogjob implements Item, Serializable {
 
     @Override
     public String toString() {
-        return "#DBLogjob" + getId() + "/" + this.title + ", " +
+        return "#DBLogjob" + getId() + "/" + this.title + ", " + this.enabled + ", " +
                 this.nextURL + ", " + this.token + ", " +
                 this.deviceName;
     }

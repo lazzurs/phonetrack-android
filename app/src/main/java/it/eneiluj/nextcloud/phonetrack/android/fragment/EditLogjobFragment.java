@@ -309,8 +309,6 @@ public class EditLogjobFragment extends PreferenceFragment {
         super.onPrepareOptionsMenu(menu);
         //MenuItem itemFavorite = menu.findItem(R.id.menu_favorite);
         //prepareFavoriteOption(itemFavorite);
-        MenuItem itemEnabled = menu.findItem(R.id.menu_enabled);
-        prepareEnabledOption(itemEnabled);
         if (db.getSessions().size() == 0) {
             MenuItem itemSelectSession = menu.findItem(R.id.menu_selectSession);
             itemSelectSession.setVisible(false);
@@ -322,12 +320,6 @@ public class EditLogjobFragment extends PreferenceFragment {
         item.setChecked(logjob.isFavorite());
     }*/
 
-    private void prepareEnabledOption(MenuItem item) {
-        item.setChecked(logjob.isEnabled());
-        //item.setIcon(logjob.isEnabled() ? R.drawable.menu_ico_checked : R.drawable.check_off);
-        //System.out.println("CHECKEEEEEEEDDDD : "+logjob.isEnabled());
-        //System.out.println("CHECKEEEEEEAAAAAAitem : "+item.isChecked());
-    }
 
     /**
      * Main-Menu-Handler
@@ -339,17 +331,13 @@ public class EditLogjobFragment extends PreferenceFragment {
                 if (originalLogjob == null) {
                     db.deleteLogjobAndSync(logjob.getId());
                 } else {
+                    System.out.println("ORIG ENAB : "+originalLogjob.isEnabled());
                     db.updateLogjobAndSync(originalLogjob, null, null, null, null, 0,0,0,null);
                 }
                 listener.close();
                 return true;
             case R.id.menu_delete:
                 confirmDeleteAlertBuilder.show();
-                return true;
-            case R.id.menu_enabled:
-                db.toggleEnabled(logjob, null);
-                listener.onLogjobUpdated(logjob);
-                prepareEnabledOption(item);
                 return true;
             case R.id.menu_fromLogUrl:
                 fromUrlDialog.show();
