@@ -12,7 +12,7 @@
     <ListPreference
         android:icon="@android:drawable/ic_menu_mylocation"
         android:key="@string/pref_key_providers"
-        android:summary="@string/settings_providers_summary"
+        android:summary=""
         android:title="@string/settings_providers_title"
         android:entries="@array/providersEntries"
         android:entryValues="@array/providersValues"

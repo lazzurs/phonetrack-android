@@ -55,10 +55,11 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-        Preference providersPref = findPreference(getString(R.string.pref_key_providers));
+        final Preference providersPref = findPreference(getString(R.string.pref_key_providers));
         providersPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                setProvidersSummary(providersPref, (String) newValue);
                 Intent intent = new Intent(getActivity(), LoggerService.class);
                 intent.putExtra(PreferencesFragment.UPDATED_PROVIDERS, true);
                 intent.putExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE, (String) newValue);
@@ -66,6 +67,10 @@ public class PreferencesFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        String providersValue = sp.getString(getString(R.string.pref_key_providers), "1");
+
+        setProvidersSummary(providersPref, providersValue);
     }
 
     private void setThemePreferenceSummary(SwitchPreference themePref, Boolean darkTheme) {
@@ -74,5 +79,11 @@ public class PreferencesFragment extends PreferenceFragment {
         } else {
             themePref.setSummary(getString(R.string.pref_value_theme_light));
         }
+    }
+
+    private void setProvidersSummary(Preference providersPref, String value) {
+        String[] names = getResources().getStringArray(R.array.providersEntries);
+        int intVal = Integer.valueOf(value);
+        providersPref.setSummary(names[intVal-1]);
     }
 }
