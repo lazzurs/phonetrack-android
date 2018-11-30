@@ -16,6 +16,7 @@ import it.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 //import it.eneiluj.nextcloud.phonetrack.android.fragment.NotePreviewFragment;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
 
 public class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
 
@@ -196,7 +197,6 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
             actionBar.setTitle(logjob.getTitle());
             actionBar.setSubtitle(logjob.getDeviceName());
         }
-        //hideKeyboard();
     }
 
     public void hideKeyboard() {

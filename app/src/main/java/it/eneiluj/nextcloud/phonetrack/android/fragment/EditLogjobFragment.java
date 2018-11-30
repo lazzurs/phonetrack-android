@@ -27,9 +27,12 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
+import it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
+import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.DBSession;
 import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 //public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
@@ -272,6 +275,14 @@ public class EditLogjobFragment extends PreferenceFragment {
     public void onPause() {
         super.onPause();
         saveLogjob(null);
+        notifyLoggerService(logjob.getId());
+    }
+
+    private void notifyLoggerService(long jobId) {
+        Intent intent = new Intent(getActivity(), LoggerService.class);
+        intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
+        intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, jobId);
+        getActivity().startService(intent);
     }
 
     @Override
@@ -371,6 +382,7 @@ public class EditLogjobFragment extends PreferenceFragment {
         if (originalLogjob == null && getTitle().isEmpty()) {
             //db.deleteNoteAndSync(logjob.getId());
         }
+        Log.d(getClass().getSimpleName(), "onCLOSE()");
     }
 
     /**
@@ -379,6 +391,8 @@ public class EditLogjobFragment extends PreferenceFragment {
      * @param callback Observer which is called after save/synchronization
      */
     protected void saveLogjob(@Nullable ICallback callback) {
+        //String s = null;
+        //int a = Integer.valueOf(s);
         Log.d(getClass().getSimpleName(), "saveData()");
         String newTitle = getTitle();
         String newNextURL = getNextURL();

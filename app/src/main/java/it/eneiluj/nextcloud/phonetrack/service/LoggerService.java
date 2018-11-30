@@ -273,11 +273,13 @@ public class LoggerService extends Service {
         }
         // it has been deleted or disabled
         else {
-            locManager.removeUpdates(locListeners.get(ljId));
-            locListeners.remove(ljId);
-            lastLocations.remove(ljId);
-            lastUpdateRealtime.remove(ljId);
-            logjobs.remove(ljId);
+            if (locListeners.containsKey(ljId)) {
+                locManager.removeUpdates(locListeners.get(ljId));
+                locListeners.remove(ljId);
+                lastLocations.remove(ljId);
+                lastUpdateRealtime.remove(ljId);
+                logjobs.remove(ljId);
+            }
         }
     }
 
