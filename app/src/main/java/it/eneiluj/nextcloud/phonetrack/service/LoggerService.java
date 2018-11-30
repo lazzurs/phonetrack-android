@@ -126,7 +126,7 @@ public class LoggerService extends Service {
         }
 
         // read user preferences
-        //updateLogjobs();
+        updatePreferences();
 
         boolean hasLocationUpdates = false;
         for (DBLogjob lj : ljs) {
@@ -242,15 +242,13 @@ public class LoggerService extends Service {
     /**
      * Reread preferences
      */
-    private void updateLogjobs() {
+    private void updatePreferences() {
         // TODO get logjobs from DB
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        /*minTimeMillis = Long.parseLong(prefs.getString("prefMinTime", getString(R.string.pref_mintime_default))) * 1000;
-        minDistance = Float.parseFloat(prefs.getString("prefMinDistance", getString(R.string.pref_mindistance_default)));
-        maxAccuracy = Integer.parseInt(prefs.getString("prefMinAccuracy", getString(R.string.pref_minaccuracy_default)));
-        */
-        //useGps = prefs.getBoolean("prefUseGps", providerExists(LocationManager.GPS_PROVIDER));
-        //useNet = prefs.getBoolean("prefUseNet", providerExists(LocationManager.NETWORK_PROVIDER));
+        String providersPref = prefs.getString(getString(R.string.pref_key_providers), "1");
+        useGps = (!providersPref.equals("2") && providerExists(LocationManager.GPS_PROVIDER));
+        useNet = (!providersPref.equals("1") && providerExists(LocationManager.NETWORK_PROVIDER));
+        if (DEBUG) { Log.d(TAG, "[update prefs "+providersPref+", gps : "+useGps+", net : "+useNet+"]"); }
         //liveSync = prefs.getBoolean("prefLiveSync", false);
     }
 
