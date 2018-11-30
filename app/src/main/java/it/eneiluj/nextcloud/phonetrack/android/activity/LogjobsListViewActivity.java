@@ -685,7 +685,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     @Override
-    public boolean onNoteLongClick(int position, View v) {
+    public boolean onLogjobLongClick(int position, View v) {
         boolean selected = adapter.select(position);
         if (selected) {
             v.setSelected(true);

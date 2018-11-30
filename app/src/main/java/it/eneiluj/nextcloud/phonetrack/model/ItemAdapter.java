@@ -181,7 +181,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         void onLogjobEnabledClick(int position, View v);
 
-        boolean onNoteLongClick(int position, View v);
+        boolean onLogjobLongClick(int position, View v);
     }
 
     public class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
@@ -230,7 +230,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @Override
         public boolean onLongClick(View v) {
-            return noteClickListener.onNoteLongClick(getAdapterPosition(), v);
+            return noteClickListener.onLogjobLongClick(getAdapterPosition(), v);
         }
 
         public void showSwipe(boolean left) {
