@@ -190,7 +190,7 @@ public class LoggerService extends Service {
     }
 
     /**
-     * When user updated preferences, restart location updates, stop service on failure
+     * When user updated a logjob, restart location updates, stop service on failure
      */
     private void handleLogjobsUpdated(String ljId) {
         boolean wasAlreadyThere = logjobs.containsKey(ljId);
@@ -215,7 +215,7 @@ public class LoggerService extends Service {
         }
         // it was deleted or disabled
         else {
-            if (isRunning && logjobs.isEmpty()) {
+            if (logjobs.isEmpty()) {
                 stopSelf();
             }
         }
