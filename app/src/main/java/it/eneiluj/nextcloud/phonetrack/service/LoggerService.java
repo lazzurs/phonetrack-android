@@ -137,6 +137,9 @@ public class LoggerService extends Service {
 
         if (hasLocationUpdates) {
             isRunning = true;
+            final Notification notification = showNotification(NOTIFICATION_ID);
+            startForeground(NOTIFICATION_ID, notification);
+
             sendBroadcast(BROADCAST_LOCATION_STARTED);
 
             // TODO
@@ -172,11 +175,11 @@ public class LoggerService extends Service {
             String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
             if (DEBUG) { Log.d(TAG, "[onStartCommand : upd]"); }
             handleLogjobsUpdated(ljId);
+
         } else if (isRunning) {
-            // first start
+            // start without parameter
             if (DEBUG) { Log.d(TAG, "[onStartCommand : first start]"); }
-            final Notification notification = showNotification(NOTIFICATION_ID);
-            startForeground(NOTIFICATION_ID, notification);
+
         } else {
             // onCreate failed to start updates
             if (DEBUG) { Log.d(TAG, "[onStartCommand : stop]"); }
