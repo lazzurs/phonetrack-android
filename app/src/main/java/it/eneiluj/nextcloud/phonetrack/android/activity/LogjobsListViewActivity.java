@@ -137,14 +137,14 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
         setupActionBar();
-        setupNotesList();
+        setupLogjobsList();
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
 
         ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
 
-        //Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
-        //startService(intent);
+        Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
+        startService(intent);
     }
 
     @Override
@@ -185,7 +185,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         drawerLayout.addDrawerListener(drawerToggle);
     }
 
-    private void setupNotesList() {
+    private void setupLogjobsList() {
         initList();
         // Pull to Refresh
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

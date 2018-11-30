@@ -57,15 +57,15 @@ import static android.location.LocationProvider.TEMPORARILY_UNAVAILABLE;
 public class LoggerService extends Service {
 
     private static final String TAG = LoggerService.class.getSimpleName();
-    public static final String BROADCAST_LOCATION_STARTED = "net.fabiszewski.ulogger.broadcast.location_started";
-    public static final String BROADCAST_LOCATION_STOPPED = "net.fabiszewski.ulogger.broadcast.location_stopped";
-    public static final String BROADCAST_LOCATION_UPDATED = "net.fabiszewski.ulogger.broadcast.location_updated";
-    public static final String BROADCAST_LOCATION_PERMISSION_DENIED = "net.fabiszewski.ulogger.broadcast.location_permission_denied";
-    public static final String BROADCAST_LOCATION_NETWORK_DISABLED = "net.fabiszewski.ulogger.broadcast.network_disabled";
-    public static final String BROADCAST_LOCATION_GPS_DISABLED = "net.fabiszewski.ulogger.broadcast.gps_disabled";
-    public static final String BROADCAST_LOCATION_NETWORK_ENABLED = "net.fabiszewski.ulogger.broadcast.network_enabled";
-    public static final String BROADCAST_LOCATION_GPS_ENABLED = "net.fabiszewski.ulogger.broadcast.gps_enabled";
-    public static final String BROADCAST_LOCATION_DISABLED = "net.fabiszewski.ulogger.broadcast.location_disabled";
+    public static final String BROADCAST_LOCATION_STARTED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_started";
+    public static final String BROADCAST_LOCATION_STOPPED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_stopped";
+    public static final String BROADCAST_LOCATION_UPDATED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_updated";
+    public static final String BROADCAST_LOCATION_PERMISSION_DENIED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_permission_denied";
+    public static final String BROADCAST_LOCATION_NETWORK_DISABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.network_disabled";
+    public static final String BROADCAST_LOCATION_GPS_DISABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.gps_disabled";
+    public static final String BROADCAST_LOCATION_NETWORK_ENABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.network_enabled";
+    public static final String BROADCAST_LOCATION_GPS_ENABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.gps_enabled";
+    public static final String BROADCAST_LOCATION_DISABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_disabled";
     private boolean liveSync = false;
     private Intent syncIntent;
 
