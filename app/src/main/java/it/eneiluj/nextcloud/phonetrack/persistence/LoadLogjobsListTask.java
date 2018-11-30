@@ -36,7 +36,7 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
     @Override
     protected List<Item> doInBackground(Void... voids) {
         List<DBLogjob> logjobList;
-        NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(context);
+        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
         logjobList = db.searchLogjobs(searchQuery, null);
 
         return fillListTitle(logjobList);

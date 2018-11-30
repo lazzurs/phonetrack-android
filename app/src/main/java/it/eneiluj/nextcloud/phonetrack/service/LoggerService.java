@@ -35,16 +35,14 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
-import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
+import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
 import static android.location.LocationProvider.AVAILABLE;
 import static android.location.LocationProvider.OUT_OF_SERVICE;
@@ -77,7 +75,7 @@ public class LoggerService extends Service {
     private LocationManager locManager;
     private Map<String, mLocationListener> locListeners;
     private Map<String, DBLogjob> logjobs;
-    private NoteSQLiteOpenHelper db;
+    private PhoneTrackSQLiteOpenHelper db;
     //private int maxAccuracy = 100;
     //private float minDistance = 2;
     //private long minTimeMillis = 5000;
@@ -106,7 +104,7 @@ public class LoggerService extends Service {
             mNotificationManager.cancelAll();
         }
 
-        db = NoteSQLiteOpenHelper.getInstance(getApplicationContext());
+        db = PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext());
         //db.open(this);
 
         locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -305,7 +303,7 @@ public class LoggerService extends Service {
         // TODO here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
         int minTimeMillis = lj.getMinTime() * 1000;
-        int minDistance = lj.getMinDist();
+        int minDistance = lj.getMinDistance();
         mLocationListener locListener = locListeners.get(ljId);
         boolean hasLocationUpdates = false;
         if (canAccessLocation()) {
@@ -521,7 +519,7 @@ public class LoggerService extends Service {
          */
         private boolean skipLocation(DBLogjob logjob, Location loc) {
             // TODO adapt to use logjob values
-            int maxAccuracy = logjob.getMaxAccuracy();
+            int maxAccuracy = logjob.getMinAccuracy();
             // accuracy radius too high
             if (loc.hasAccuracy() && loc.getAccuracy() > maxAccuracy) {
                 if (DEBUG) { Log.d(TAG, "[location accuracy above limit: " + loc.getAccuracy() + " > " + maxAccuracy + "]"); }

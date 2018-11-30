@@ -47,7 +47,7 @@ import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
 import it.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import it.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
-import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
+import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
@@ -98,7 +98,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private Category navigationSelection = new Category(null, null);
     private String navigationOpen = "";
     private ActionMode mActionMode;
-    private NoteSQLiteOpenHelper db = null;
+    private PhoneTrackSQLiteOpenHelper db = null;
     private SearchView searchView = null;
     private ICallback syncCallBack = new ICallback() {
         @Override
@@ -134,7 +134,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setContentView(R.layout.drawer_layout);
         ButterKnife.bind(this);
 
-        db = NoteSQLiteOpenHelper.getInstance(this);
+        db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
         setupActionBar();
         setupNotesList();
@@ -143,8 +143,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
 
-        Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
-        startService(intent);
+        //Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
+        //startService(intent);
     }
 
     @Override
@@ -602,7 +602,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             listView.scrollToPosition(0);
         } else if (requestCode == server_settings) {
             // Create new Instance with new URL and credentials
-            db = NoteSQLiteOpenHelper.getInstance(this);
+            db = PhoneTrackSQLiteOpenHelper.getInstance(this);
             if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
                 this.updateUsernameInDrawer();
                 adapter.removeAll();
@@ -664,7 +664,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     /*@Override
     public void onNoteFavoriteClick(int position, View view) {
         DBLogjob note = (DBLogjob) adapter.getItem(position);
-        NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(view.getContext());
+        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
         db.toggleFavorite(note, syncCallBack);
         adapter.notifyItemChanged(position);
         refreshLists();
@@ -673,7 +673,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     @Override
     public void onLogjobEnabledClick(int position, View view) {
         DBLogjob logjob = (DBLogjob) adapter.getItem(position);
-        NoteSQLiteOpenHelper db = NoteSQLiteOpenHelper.getInstance(view.getContext());
+        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
         db.toggleEnabled(logjob, syncCallBack);
         adapter.notifyItemChanged(position);
         refreshLists();

@@ -12,15 +12,21 @@ public class DBLogjob implements Item, Serializable {
     private String nextURL;
     private String token;
     private String deviceName;
+    private int minTime;
+    private int minDistance;
+    private int minAccuracy;
     private Boolean enabled;
     private DBStatus status;
 
-    public DBLogjob(long id, String title, String nextURL, String token, String deviceName, Boolean enabled) {
+    public DBLogjob(long id, String title, String nextURL, String token, String deviceName, int minTime, int minDistance, int minAccuracy, Boolean enabled) {
         this.id = id;
         this.title = title;
         this.nextURL = nextURL;
         this.token = token;
         this.deviceName = deviceName;
+        this.minAccuracy = minAccuracy;
+        this.minDistance = minDistance;
+        this.minTime = minTime;
         this.enabled = enabled;
     }
 
@@ -79,6 +85,16 @@ public class DBLogjob implements Item, Serializable {
 
     public String getDeviceName() {
         return deviceName;
+    }
+
+    public int getMinTime() {
+        return minTime;
+    }
+    public int getMinDistance() {
+        return minDistance;
+    }
+    public int getMinAccuracy() {
+        return minAccuracy;
     }
 
     public Boolean isEnabled() {

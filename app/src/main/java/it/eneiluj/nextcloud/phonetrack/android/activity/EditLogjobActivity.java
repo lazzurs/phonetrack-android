@@ -2,7 +2,6 @@ package it.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -18,7 +17,7 @@ import it.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 
-public class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.NoteFragmentListener {
+public class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
 
     public static final String PARAM_NOTE_ID = "noteId";
     public static final String PARAM_CATEGORY = "category";
@@ -133,7 +132,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
             favorite = categoryPreselection.favorite != null ? categoryPreselection.favorite : false;
         }
 
-        DBLogjob newLogjob = new DBLogjob(0, "New log job",  "https://yournextcloud.org", "supersessiontoken", "mydevname", false);
+        DBLogjob newLogjob = new DBLogjob(0, "New log job",  "https://yournextcloud.org", "supersessiontoken", "mydevname", 60, 5, 50, false);
 
         String url = "";
         if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
@@ -142,7 +141,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         }
 
 
-        fragment = EditLogjobFragment.newInstanceWithNewNote(newLogjob);
+        fragment = EditLogjobFragment.newInstanceWithNewLogjob(newLogjob);
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 

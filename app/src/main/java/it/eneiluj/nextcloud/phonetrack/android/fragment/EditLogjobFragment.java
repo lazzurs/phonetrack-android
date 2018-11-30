@@ -27,17 +27,16 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
-import it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.DBSession;
-import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
+import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 //public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
 //public class EditLogjobFragment extends PreferencesFragment {
 public class EditLogjobFragment extends PreferenceFragment {
 
-    public interface NoteFragmentListener {
+    public interface LogjobFragmentListener {
         void close();
 
         void onLogjobUpdated(DBLogjob logjob);
@@ -51,8 +50,8 @@ public class EditLogjobFragment extends PreferenceFragment {
     protected DBLogjob logjob;
     @Nullable
     private DBLogjob originalLogjob;
-    private NoteSQLiteOpenHelper db;
-    private NoteFragmentListener listener;
+    private PhoneTrackSQLiteOpenHelper db;
+    private LogjobFragmentListener listener;
 
     private static final String LOG_TAG_AUTOSAVE = "AutoSave";
 
@@ -66,6 +65,9 @@ public class EditLogjobFragment extends PreferenceFragment {
     EditTextPreference editNextURL;
     EditTextPreference editToken;
     EditTextPreference editDevicename;
+    EditTextPreference editMintime;
+    EditTextPreference editMindistance;
+    EditTextPreference editMinaccuracy;
     ListPreference editSessionList;
 
     private DialogInterface.OnClickListener dialogClickListener;
@@ -113,8 +115,6 @@ public class EditLogjobFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                //do something
-                System.out.println("LALA "+newValue);
                 EditTextPreference pref = (EditTextPreference) findPreference("title");
                 pref.setSummary((CharSequence) newValue);
                 // trick to make change effective before saving
@@ -167,6 +167,48 @@ public class EditLogjobFragment extends PreferenceFragment {
             }
 
         });
+        Preference minTimePref = findPreference("mintime");
+        minTimePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                EditTextPreference pref = (EditTextPreference) findPreference("mintime");
+                pref.setSummary((CharSequence) newValue);
+                pref.setText((String) newValue);
+                saveLogjob(null);
+                return true;
+            }
+
+        });
+        Preference minDistancePref = findPreference("mindistance");
+        minDistancePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                EditTextPreference pref = (EditTextPreference) preference;
+                pref.setSummary((CharSequence) newValue);
+                pref.setText((String) newValue);
+                saveLogjob(null);
+                return true;
+            }
+
+        });
+        Preference minAccuracyPref = findPreference("minaccuracy");
+        minAccuracyPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                EditTextPreference pref = (EditTextPreference) findPreference("minaccuracy");
+                pref.setSummary((CharSequence) newValue);
+                pref.setText((String) newValue);
+                saveLogjob(null);
+                return true;
+            }
+
+        });
         // session selected
         Preference sessionPref= this.findPreference("sessionList");
         sessionPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -179,7 +221,6 @@ public class EditLogjobFragment extends PreferenceFragment {
                 System.out.println("NEWVAL SESSION : "+newValue);
                 pref.setSummary((CharSequence) s.getName());
                 setFieldsFromSession(s);
-                // TODO call a local method to set fields according to session values
                 saveLogjob(null);
                 return true;
             }
@@ -214,11 +255,11 @@ public class EditLogjobFragment extends PreferenceFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            listener = (NoteFragmentListener) activity;
+            listener = (LogjobFragmentListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.getClass() + " must implement " + NoteFragmentListener.class);
+            throw new ClassCastException(activity.getClass() + " must implement " + LogjobFragmentListener.class);
         }
-        db = NoteSQLiteOpenHelper.getInstance(activity);
+        db = PhoneTrackSQLiteOpenHelper.getInstance(activity);
     }
 
     @Override
@@ -287,13 +328,11 @@ public class EditLogjobFragment extends PreferenceFragment {
                 if (originalLogjob == null) {
                     db.deleteLogjobAndSync(logjob.getId());
                 } else {
-                    db.updateLogjobAndSync(originalLogjob, null, null, null, null, null);
+                    db.updateLogjobAndSync(originalLogjob, null, null, null, null, 0,0,0,null);
                 }
                 listener.close();
                 return true;
             case R.id.menu_delete:
-                //db.deleteLogjobAndSync(logjob.getId());
-                //listener.close();
                 confirmDeleteAlertBuilder.show();
                 return true;
             case R.id.menu_enabled:
@@ -302,23 +341,17 @@ public class EditLogjobFragment extends PreferenceFragment {
                 prepareEnabledOption(item);
                 return true;
             case R.id.menu_fromLogUrl:
-                //fromLogUrl();
                 fromUrlDialog.show();
                 return true;
             case R.id.menu_selectSession:
-                //selectSession();
                 selectDialog.show();
                 return true;
-            //case R.id.menu_category:
-            //    showCategorySelector();
-            //    return true;
             case R.id.menu_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, logjob.getTitle());
                 shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, logjob.getNextURL());
-
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(Intent.createChooser(shareIntent, logjob.getTitle()));
@@ -351,43 +384,24 @@ public class EditLogjobFragment extends PreferenceFragment {
         String newNextURL = getNextURL();
         String newToken = getToken();
         String newDevicename = getDevicename();
-        System.out.println("newtitle : "+newTitle);
+        int newMinTime = Integer.valueOf(getMintime());
+        int newMinDistance = Integer.valueOf(getMindistance());
+        int newMinAccuracy = Integer.valueOf(getMinaccuracy());
         if(logjob.getTitle().equals(newTitle) &&
                 logjob.getNextURL().equals(newNextURL) &&
                 logjob.getToken().equals(newToken) &&
+                logjob.getMinTime() == newMinTime &&
+                logjob.getMinDistance() == newMinDistance &&
+                logjob.getMinAccuracy() == newMinAccuracy &&
                 logjob.getDeviceName().equals(newDevicename)) {
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
             System.out.println("====== update logjob");
-            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newNextURL, newDevicename , callback);
+            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newNextURL, newDevicename, newMinTime, newMinDistance, newMinAccuracy, callback);
             //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
             listener.onLogjobUpdated(logjob);
         }
     }
-
-    /**
-     * Opens a dialog in order to chose a category
-     */
-    /*private void showCategorySelector() {
-        final String fragmentId = "fragment_category";
-        FragmentManager manager = getFragmentManager();
-        Fragment frag = manager.findFragmentByTag(fragmentId);
-        if (frag != null) {
-            manager.beginTransaction().remove(frag).commit();
-        }
-        Bundle arguments = new Bundle();
-        arguments.putString(CategoryDialogFragment.PARAM_CATEGORY, logjob.getCategory());
-        CategoryDialogFragment categoryFragment = new CategoryDialogFragment();
-        categoryFragment.setArguments(arguments);
-        categoryFragment.setTargetFragment(this, 0);
-        categoryFragment.show(manager, fragmentId);
-    }*/
-
-    /*@Override
-    public void onCategoryChosen(String category) {
-        db.setCategory(logjob, category, null);
-        listener.onLogjobUpdated(logjob);
-    }*/
 
     public static EditLogjobFragment newInstance(long logjobId) {
         EditLogjobFragment f = new EditLogjobFragment();
@@ -397,7 +411,7 @@ public class EditLogjobFragment extends PreferenceFragment {
         return f;
     }
 
-    public static EditLogjobFragment newInstanceWithNewNote(DBLogjob newLogjob) {
+    public static EditLogjobFragment newInstanceWithNewLogjob(DBLogjob newLogjob) {
         EditLogjobFragment f = new EditLogjobFragment();
         Bundle b = new Bundle();
         b.putSerializable(PARAM_NEWNOTE, newLogjob);
@@ -413,12 +427,6 @@ public class EditLogjobFragment extends PreferenceFragment {
 
         // hide the keyboard when this window gets the focus
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        //if (logjob.getTitle().isEmpty()) {
-        //    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        //}
-
-        // workaround for issue yydcdut/RxMarkdown#41
-        //logjob.setContent(logjob.getTitle().replace("\r\n", "\n"));
 
         editTitle = (EditTextPreference) this.findPreference("title");
         editTitle.setText(logjob.getTitle());
@@ -432,6 +440,18 @@ public class EditLogjobFragment extends PreferenceFragment {
         editDevicename = (EditTextPreference) this.findPreference("devicename");
         editDevicename.setText(logjob.getDeviceName());
         editDevicename.setSummary(logjob.getDeviceName());
+
+        editMintime = (EditTextPreference) this.findPreference("mintime");
+        editMintime.setText(String.valueOf(logjob.getMinTime()));
+        editMintime.setSummary(String.valueOf(logjob.getMinTime()));
+
+        editMindistance = (EditTextPreference) this.findPreference("mindistance");
+        editMindistance.setText(String.valueOf(logjob.getMinDistance()));
+        editMindistance.setSummary(String.valueOf(logjob.getMinDistance()));
+
+        editMinaccuracy = (EditTextPreference) this.findPreference("minaccuracy");
+        editMinaccuracy.setText(String.valueOf(logjob.getMinAccuracy()));
+        editMinaccuracy.setSummary(String.valueOf(logjob.getMinAccuracy()));
 
         // manage session list
         sessionList = db.getSessions();
@@ -526,6 +546,15 @@ public class EditLogjobFragment extends PreferenceFragment {
     }
     private String getDevicename() {
         return editDevicename.getText();
+    }
+    private String getMintime() {
+        return editMintime.getText();
+    }
+    private String getMindistance() {
+        return editMindistance.getText();
+    }
+    private String getMinaccuracy() {
+        return editMinaccuracy.getText();
     }
 
     private void setFieldsFromSession(DBSession s) {

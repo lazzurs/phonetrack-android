@@ -13,7 +13,7 @@ import java.util.List;
 
 import it.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
-import it.eneiluj.nextcloud.phonetrack.persistence.NoteSQLiteOpenHelper;
+import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
 /**
  * Provides entity classes for handling server responses with a single logjob ({@link SessionResponse}) or a list of phonetrack ({@link SessionsResponse}).
@@ -28,7 +28,7 @@ public class ServerResponse {
             super(response);
         }
 
-        public CloudSession getSession(NoteSQLiteOpenHelper dbHelper) throws JSONException {
+        public CloudSession getSession(PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
             return getSessionFromJSON(new JSONArray(getContent()), dbHelper);
         }
     }
@@ -38,7 +38,7 @@ public class ServerResponse {
             super(response);
         }
 
-        public List<CloudSession> getSessions(NoteSQLiteOpenHelper dbHelper) throws JSONException {
+        public List<CloudSession> getSessions(PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
             List<CloudSession> sessionsList = new ArrayList<>();
             //JSONObject topObj = new JSONObject(getTitle());
             JSONArray sessions = new JSONArray(getContent());
@@ -69,7 +69,7 @@ public class ServerResponse {
         return response.getLastModified();
     }
 
-    protected CloudSession getSessionFromJSON(JSONArray json, NoteSQLiteOpenHelper dbHelper) throws JSONException {
+    protected CloudSession getSessionFromJSON(JSONArray json, PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
         //long id = 0;
         String name = "";
         String token = "";

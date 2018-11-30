@@ -95,4 +95,18 @@ xmlns:tools="http://schemas.android.com/tools"
         android:maxLength="5"
         android:title="@string/setting_min_time" />
 
+    <EditTextPreference
+        android:id="@+id/editMinAccuracy"
+        android:defaultValue="50"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:dialogMessage="@string/setting_min_accuracy_long"
+        android:dialogTitle="@string/setting_min_accuracy"
+        android:key="minaccuracy"
+        android:selectAllOnFocus="true"
+        android:persistent="false"
+        android:summary=""
+        android:numeric="integer"
+        android:maxLength="5"
+        android:title="@string/setting_min_accuracy" />
+
 </PreferenceScreen>
