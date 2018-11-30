@@ -452,6 +452,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
                         db.toggleEnabled(dbLogjob, syncCallBack);
                         refreshLists();
+                        notifyLoggerService(dbLogjob.getId());
                         break;
                     }
                 }
@@ -677,6 +678,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         db.toggleEnabled(logjob, syncCallBack);
         adapter.notifyItemChanged(position);
         refreshLists();
+
+        notifyLoggerService(logjob.getId());
     }
 
     @Override
@@ -704,6 +707,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         swipeRefreshLayout.setRefreshing(true);
         db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         db.getPhonetrackServerSyncHelper().scheduleSync(false);
+    }
+
+    private void notifyLoggerService(long jobId) {
+        Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
+        intent.putExtra(UPDATED_LOGJOBS, true);
+        intent.putExtra(UPDATED_LOGJOB_ID, jobId);
+        startService(intent);
     }
 
     /**

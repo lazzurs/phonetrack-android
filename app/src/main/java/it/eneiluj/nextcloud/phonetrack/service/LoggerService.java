@@ -126,7 +126,7 @@ public class LoggerService extends Service {
         }
 
         // read user preferences
-        updateLogjobs();
+        //updateLogjobs();
 
         boolean hasLocationUpdates = false;
         for (DBLogjob lj : ljs) {
@@ -169,7 +169,7 @@ public class LoggerService extends Service {
 
         final boolean logjobsUpdated = (intent != null) && intent.getBooleanExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, false);
         if (logjobsUpdated) {
-            String ljId = intent.getStringExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID);
+            String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
             if (DEBUG) { Log.d(TAG, "[onStartCommand : upd]"); }
             handleLogjobsUpdated(ljId);
         } else if (isRunning) {
@@ -192,13 +192,13 @@ public class LoggerService extends Service {
     private void handleLogjobsUpdated(String ljId) {
         boolean wasAlreadyThere = logjobs.containsKey(ljId);
         updateLogjob(ljId);
-        // if it was not deleted
+        // if it was not deleted or disabled
         if (logjobs.containsKey(ljId)) {
             if (isRunning) {
                 // it was modified
                 if (wasAlreadyThere) {
                     if (!restartUpdates(ljId)) {
-                        // no valid providers after preferences update
+                        // no valid providers after logjob update
                         stopSelf();
                     }
                 }
@@ -210,9 +210,9 @@ public class LoggerService extends Service {
                 }
             }
         }
-        // it was deleted
+        // it was deleted or disabled
         else {
-            if (logjobs.isEmpty()) {
+            if (isRunning && logjobs.isEmpty()) {
                 stopSelf();
             }
         }
@@ -259,7 +259,7 @@ public class LoggerService extends Service {
      */
     private void updateLogjob(String ljId) {
         DBLogjob lj = db.getLogjob(Long.valueOf(ljId));
-        if (lj != null) {
+        if (lj != null && lj.isEnabled()) {
             // new or modified : update logjob
             logjobs.put(ljId, lj);
 
@@ -271,7 +271,7 @@ public class LoggerService extends Service {
                 lastUpdateRealtime.put(ljId, new Long(0));
             }
         }
-        // it has been deleted
+        // it has been deleted or disabled
         else {
             locManager.removeUpdates(locListeners.get(ljId));
             locListeners.remove(ljId);
@@ -312,7 +312,7 @@ public class LoggerService extends Service {
                 locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTimeMillis, minDistance, locListener, looper);
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { Log.d(TAG, "[Using net provider]"); }
+                    if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using net provider]"); }
                 }
             }
             if (useGps) {
@@ -320,18 +320,18 @@ public class LoggerService extends Service {
                 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis, minDistance, locListener, looper);
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { Log.d(TAG, "[Using gps provider]"); }
+                    if (DEBUG) { Log.d(TAG, "job "+ljId+"[Using gps provider]"); }
                 }
             }
             if (!hasLocationUpdates) {
                 // no location provider available
                 sendBroadcast(BROADCAST_LOCATION_DISABLED);
-                if (DEBUG) { Log.d(TAG, "[No available location updates]"); }
+                if (DEBUG) { Log.d(TAG, "job "+ljId+"[No available location updates]"); }
             }
         } else {
             // can't access location
             sendBroadcast(BROADCAST_LOCATION_PERMISSION_DENIED);
-            if (DEBUG) { Log.d(TAG, "[Location permission denied]"); }
+            if (DEBUG) { Log.d(TAG, "job "+ljId+"[Location permission denied]"); }
         }
 
         return hasLocationUpdates;
