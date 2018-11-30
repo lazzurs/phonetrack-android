@@ -88,14 +88,6 @@
             android:label="@string/simple_about"
             android:parentActivityName="it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity" />
 
-        <activity
-            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.SelectSingleLogjobActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
-
         <service
             android:name="it.eneiluj.nextcloud.phonetrack.android.quicksettings.NewLogjobTileService"
             android:icon="@drawable/ic_quicksettings_new"
