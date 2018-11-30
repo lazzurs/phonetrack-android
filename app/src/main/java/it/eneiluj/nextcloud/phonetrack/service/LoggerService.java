@@ -15,13 +15,16 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.HandlerThread;
@@ -56,6 +59,8 @@ import static android.location.LocationProvider.TEMPORARILY_UNAVAILABLE;
  */
 
 public class LoggerService extends Service {
+
+    public static int battery = -1;
 
     private static final String TAG = LoggerService.class.getSimpleName();
     public static final String BROADCAST_LOCATION_STARTED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_started";
@@ -150,7 +155,9 @@ public class LoggerService extends Service {
             thread.start();
             looper = thread.getLooper();
 
-
+            battery = getBatteryLevelOnce();
+            // register for battry level
+            this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
             // TODO start websync service if needed
             /*if (liveSync && db.needsSync()) {
@@ -380,6 +387,7 @@ public class LoggerService extends Service {
 
         if (thread != null) {
             thread.interrupt();
+            unregisterReceiver(mBatInfoReceiver);
         }
         thread = null;
 
@@ -489,6 +497,28 @@ public class LoggerService extends Service {
         sendBroadcast(intent);
     }
 
+    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context ctxt, Intent intent) {
+            int blevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+            battery = blevel;
+            if (LoggerService.DEBUG) { Log.d(TAG, "[BATT changed " + blevel + "]"); }
+        }
+    };
+
+    private int getBatteryLevelOnce() {
+        Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        // Error checking that probably isn't needed but I added just in case.
+        if(level == -1 || scale == -1) {
+            return 50;
+        }
+
+        return (int)(((float)level / (float)scale) * 100.0f);
+    }
+
     /**
      * Location listener class
      */
@@ -511,7 +541,7 @@ public class LoggerService extends Service {
         @Override
         public void onLocationChanged(Location loc) {
 
-            if (DEBUG) { Log.d(TAG, "[location changed: " + logjobId + "/"+ logjob.getTitle() +" : " + loc + "]"); }
+            if (DEBUG) { Log.d(TAG, "[location changed: " + logjobId + "/"+ logjob.getTitle() +" : bat : "+ battery+", " + loc + "]"); }
 
             if (!skipLocation(logjob, loc)) {
 

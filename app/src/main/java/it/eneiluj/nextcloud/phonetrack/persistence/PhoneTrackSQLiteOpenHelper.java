@@ -617,7 +617,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)});
     }
 
-    void addLocation(String ljId, Location loc) {
+    /*void addLocation(String ljId, Location loc) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation]"); }
         ContentValues values = new ContentValues();
         values.put(DbContract.Positions.COLUMN_TIME, loc.getTime() / 1000);
@@ -638,7 +638,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(DbContract.Positions.COLUMN_PROVIDER, loc.getProvider());
 
         db.insert(DbContract.Positions.TABLE_NAME, null, values);
-    }
+    }*/
 
     /**
      * Notify about changed logjob.
