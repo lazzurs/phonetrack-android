@@ -431,7 +431,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 switch(direction) {
                     case ItemTouchHelper.LEFT: {
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
-                        db.deleteLogjobAndSync((dbLogjob).getId());
+                        db.deleteLogjobAndSync(dbLogjob.getId());
                         adapter.remove(dbLogjob);
                         refreshLists();
                         Log.v("Note", "Item deleted through swipe ----------------------------------------------");
@@ -443,9 +443,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                         refreshLists();
                                         Snackbar.make(swipeRefreshLayout, R.string.action_logjob_restored, Snackbar.LENGTH_SHORT)
                                                 .show();
+                                        notifyLoggerService(dbLogjob.getId());
                                     }
                                 })
                                 .show();
+                        notifyLoggerService(dbLogjob.getId());
                         break;
                     }
                     case ItemTouchHelper.RIGHT: {
@@ -627,7 +629,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     @Override
-    public void onNoteClick(int position, View v) {
+    public void onLogjobClick(int position, View v) {
         if (mActionMode != null) {
             if (!adapter.select(position)) {
                 v.setSelected(false);
@@ -748,6 +750,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         db.deleteLogjobAndSync(logjob.getId());
                         // Not needed because of dbsync
                         //adapter.remove(logjob);
+                        notifyLoggerService(logjob.getId());
                     }
                     mode.finish(); // Action picked, so close the CAB
                     //after delete selection has to be cleared
