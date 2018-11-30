@@ -2,7 +2,10 @@ package it.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -55,6 +58,8 @@ import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.NoteClickListener {
 
     private final static int PERMISSION_LOCATION = 1;
+
+    private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
     public final static String CREATED_NOTE = "it.eneiluj.nextcloud.phonetrack.created_notes";
     public final static String CREDENTIALS_CHANGED = "it.eneiluj.nextcloud.phonetrack.CREDENTIALS_CHANGED";
@@ -143,6 +148,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
 
+        // start loggerservice !
         Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
         startService(intent);
     }
@@ -156,7 +162,25 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             synchronize();
         }
         super.onResume();
+
+        registerBroadcastReceiver();
+        // TODO update number of late positions
+        //updateStatuses();
     }
+
+    /**
+     * On pause
+     */
+    @Override
+    protected void onPause() {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[onPause]"); }
+        unregisterReceiver(mBroadcastReceiver);
+        if (db != null) {
+            db.close();
+        }
+        super.onPause();
+    }
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -769,4 +793,123 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             adapter.notifyDataSetChanged();
         }
     }
+
+    /**
+     * Display toast message
+     * @param text Message
+     */
+    private void showToast(CharSequence text) {
+        showToast(text, Toast.LENGTH_SHORT);
+    }
+
+    /**
+     * Display toast message
+     * @param text Message
+     * @param duration Duration
+     */
+    private void showToast(CharSequence text, int duration) {
+        Context context = getApplicationContext();
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+
+    /**
+     * Register broadcast receiver for synchronization
+     * and tracking status updates
+     */
+    private void registerBroadcastReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(LoggerService.BROADCAST_LOCATION_STARTED);
+        filter.addAction(LoggerService.BROADCAST_LOCATION_STOPPED);
+        filter.addAction(LoggerService.BROADCAST_LOCATION_UPDATED);
+        filter.addAction(LoggerService.BROADCAST_LOCATION_DISABLED);
+        filter.addAction(LoggerService.BROADCAST_LOCATION_GPS_DISABLED);
+        filter.addAction(LoggerService.BROADCAST_LOCATION_NETWORK_DISABLED);
+        filter.addAction(LoggerService.BROADCAST_LOCATION_GPS_ENABLED);
+        filter.addAction(LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED);
+        filter.addAction(LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED);
+        //filter.addAction(WebSyncService.BROADCAST_SYNC_DONE);
+        //filter.addAction(WebSyncService.BROADCAST_SYNC_FAILED);
+        registerReceiver(mBroadcastReceiver, filter);
+    }
+
+    /**
+     * Broadcast receiver
+     */
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast received " + intent + "]"); }
+            if (intent == null || intent.getAction() == null) {
+                return;
+            }
+            switch (intent.getAction()) {
+                case LoggerService.BROADCAST_LOCATION_UPDATED:
+                    /*updateLocationLabel(LoggerService.lastUpdateRealtime());
+                    setLocLed(LED_GREEN);
+                    if (!pref_liveSync) {
+                        updateSyncStatus(db.countUnsynced());
+                    }*/
+                    break;
+                /*case WebSyncService.BROADCAST_SYNC_DONE:
+                    final int unsyncedCount = db.countUnsynced();
+                    updateSyncStatus(unsyncedCount);
+                    setSyncLed(LED_GREEN);
+                    // reset error flag and label
+                    if (syncError) {
+                        syncErrorLabel.setText(null);
+                        syncError = false;
+                    }
+                    // showConfirm message if manual uploading
+                    if (isUploading && unsyncedCount == 0) {
+                        showToast(getString(R.string.uploading_done));
+                        isUploading = false;
+                    }
+                    break;
+                case (WebSyncService.BROADCAST_SYNC_FAILED): {
+                    updateSyncStatus(db.countUnsynced());
+                    setSyncLed(LED_RED);
+                    // set error flag and label
+                    String message = intent.getStringExtra("message");
+                    syncErrorLabel.setText(message);
+                    syncError = true;
+                    // showConfirm message if manual uploading
+                    if (isUploading) {
+                        showToast(getString(R.string.uploading_failed) + "\n" + message, Toast.LENGTH_LONG);
+                        isUploading = false;
+                    }
+                    break;
+                }*/
+                case LoggerService.BROADCAST_LOCATION_STARTED:
+                    showToast(getString(R.string.tracking_started));
+                    //setLocLed(LED_YELLOW);
+                    break;
+                case LoggerService.BROADCAST_LOCATION_STOPPED:
+                    showToast(getString(R.string.tracking_stopped));
+                    //setLocLed(LED_RED);
+                    break;
+                case LoggerService.BROADCAST_LOCATION_GPS_DISABLED:
+                    showToast(getString(R.string.gps_disabled_warning), Toast.LENGTH_LONG);
+                    break;
+                case LoggerService.BROADCAST_LOCATION_NETWORK_DISABLED:
+                    showToast(getString(R.string.net_disabled_warning), Toast.LENGTH_LONG);
+                    break;
+                case LoggerService.BROADCAST_LOCATION_DISABLED:
+                    showToast(getString(R.string.location_disabled), Toast.LENGTH_LONG);
+                    //setLocLed(LED_RED);
+                    break;
+                case LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED:
+                    showToast(getString(R.string.using_network), Toast.LENGTH_LONG);
+                    break;
+                case LoggerService.BROADCAST_LOCATION_GPS_ENABLED:
+                    showToast(getString(R.string.using_gps), Toast.LENGTH_LONG);
+                    break;
+                case LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED:
+                    showToast(getString(R.string.location_permission_denied), Toast.LENGTH_LONG);
+                    //setLocLed(LED_RED);
+                    ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+                    break;
+            }
+        }
+    };
 }

@@ -89,7 +89,7 @@ public class LoggerService extends Service {
     private NotificationManager mNotificationManager;
     private boolean useGps = true;
     private boolean useNet = true;
-    private boolean DEBUG = true;
+    public static boolean DEBUG = true;
 
     /**
      * Basic initializations.
