@@ -1,6 +1,7 @@
 package it.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -12,9 +13,15 @@ import android.widget.Toast;
 
 import at.bitfire.cert4android.CustomCertManager;
 import it.eneiluj.nextcloud.phonetrack.R;
+import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
+import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import it.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
 public class PreferencesFragment extends PreferenceFragment {
+
+    public final static String UPDATED_PROVIDERS = "it.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS";
+    public final static String UPDATED_PROVIDERS_VALUE = "it.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +51,18 @@ public class PreferencesFragment extends PreferenceFragment {
                 getActivity().finish();
                 System.out.println("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTHHH "+darkTheme);
 
+                return true;
+            }
+        });
+
+        Preference providersPref = findPreference(getString(R.string.pref_key_providers));
+        providersPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Intent intent = new Intent(getActivity(), LoggerService.class);
+                intent.putExtra(PreferencesFragment.UPDATED_PROVIDERS, true);
+                intent.putExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE, (String) newValue);
+                getActivity().startService(intent);
                 return true;
             }
         });

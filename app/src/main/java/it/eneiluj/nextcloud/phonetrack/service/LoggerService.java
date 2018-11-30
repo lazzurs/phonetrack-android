@@ -41,6 +41,7 @@ import java.util.Map;
 
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
+import it.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
@@ -126,7 +127,7 @@ public class LoggerService extends Service {
         }
 
         // read user preferences
-        updatePreferences();
+        updatePreferences(null);
 
         boolean hasLocationUpdates = false;
         for (DBLogjob lj : ljs) {
@@ -171,11 +172,21 @@ public class LoggerService extends Service {
         if (DEBUG) { Log.d(TAG, "[onStartCommand]"); }
 
         final boolean logjobsUpdated = (intent != null) && intent.getBooleanExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, false);
+        final boolean providersUpdated = (intent != null) && intent.getBooleanExtra(PreferencesFragment.UPDATED_PROVIDERS, false);
         if (logjobsUpdated) {
             String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
             if (DEBUG) { Log.d(TAG, "[onStartCommand : upd]"); }
             handleLogjobsUpdated(ljId);
-
+        } else if (providersUpdated) {
+            String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
+            updatePreferences(providersValue);
+            boolean hasLocationUpdates = false;
+            for (String ljId : logjobs.keySet()) {
+                hasLocationUpdates = requestLocationUpdates(ljId);
+            }
+            if (!hasLocationUpdates) {
+                stopSelf();
+            }
         } else if (isRunning) {
             // start without parameter
             if (DEBUG) { Log.d(TAG, "[onStartCommand : first start]"); }
@@ -242,10 +253,15 @@ public class LoggerService extends Service {
     /**
      * Reread preferences
      */
-    private void updatePreferences() {
-        // TODO get logjobs from DB
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String providersPref = prefs.getString(getString(R.string.pref_key_providers), "1");
+    private void updatePreferences(String value) {
+        String providersPref;
+        if (value == null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            providersPref = prefs.getString(getString(R.string.pref_key_providers), "1");
+        }
+        else {
+            providersPref = value;
+        }
         useGps = (!providersPref.equals("2") && providerExists(LocationManager.GPS_PROVIDER));
         useNet = (!providersPref.equals("1") && providerExists(LocationManager.NETWORK_PROVIDER));
         if (DEBUG) { Log.d(TAG, "[update prefs "+providersPref+", gps : "+useGps+", net : "+useNet+"]"); }
