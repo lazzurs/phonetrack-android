@@ -175,9 +175,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     protected void onPause() {
         if (LoggerService.DEBUG) { Log.d(TAG, "[onPause]"); }
         unregisterReceiver(mBroadcastReceiver);
-        if (db != null) {
-            db.close();
-        }
         super.onPause();
     }
 
