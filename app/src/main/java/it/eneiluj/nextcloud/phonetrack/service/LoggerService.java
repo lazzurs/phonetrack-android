@@ -552,7 +552,7 @@ public class LoggerService extends Service {
                     lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
                 }
                 // TODO
-                //db.addLocation(logjob.getId(), loc);
+                //db.addLocation(logjob.getId(), loc, battery);
                 sendBroadcast(BROADCAST_LOCATION_UPDATED);
                 // TODO
                 //if (liveSync) {

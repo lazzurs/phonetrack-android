@@ -50,6 +50,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_enabled = "ENABLED";
 
     private static final String table_locations = "LOCATIONS";
+    private static final String key_logjobid = "LOGJOBID";
     private static final String key_lat = "LAT";
     private static final String key_lon = "LON";
     private static final String key_time = "TIME";
@@ -62,7 +63,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String[] columnsSessions = {key_id, key_token, key_name, key_nextURL};
     private static final String[] columnsLogjobs = {key_id, key_title, key_nextURL, key_token, key_deviceName, key_minTime, key_minDistance, key_minAccuracy, key_enabled};
-    private static final String[] columnsLocations = {key_id, key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_provider, key_battery};
+    private static final String[] columnsLocations = {key_id, key_logjobid, key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_provider, key_battery};
 
     private static final String default_order = key_id + " DESC";
 
@@ -578,27 +579,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Marks a Note in the Database as Deleted. In the next Synchronization it will be deleted
-     * from the Server.
-     *
-     * @param id long - ID of the Note that should be deleted
-     * @return Affected rows
-     */
-    /*@SuppressWarnings("UnusedReturnValue")
-    public int deleteNoteAndSync(long id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(key_status, DBStatus.LOCAL_DELETED.getTitle());
-        int i = db.update(table_notes,
-                values,
-                key_id + " = ?",
-                new String[]{String.valueOf(id)});
-        notifyLogjobsChanged();
-        getPhonetrackServerSyncHelper().scheduleSync(true);
-        return i;
-    }*/
-
-    /**
      * Delete a single Logjob from the Database
      *
      * @param id            long - ID of the Logjob that should be deleted.
@@ -617,28 +597,84 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)});
     }
 
-    /*void addLocation(String ljId, Location loc) {
+    /**
+     * key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_provider, key_battery
+     *
+     * @param ljId
+     * @param loc
+     */
+    void addLocation(String ljId, Location loc, int battery) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation]"); }
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(DbContract.Positions.COLUMN_TIME, loc.getTime() / 1000);
-        values.put(DbContract.Positions.COLUMN_LATITUDE, loc.getLatitude());
-        values.put(DbContract.Positions.COLUMN_LONGITUDE, loc.getLongitude());
+        values.put(key_logjobid, ljId);
+        values.put(key_time, loc.getTime() / 1000);
+        values.put(key_lat, loc.getLatitude());
+        values.put(key_lon, loc.getLongitude());
         if (loc.hasBearing()) {
-            values.put(DbContract.Positions.COLUMN_BEARING, loc.getBearing());
+            values.put(key_bearing, loc.getBearing());
         }
         if (loc.hasAltitude()) {
-            values.put(DbContract.Positions.COLUMN_ALTITUDE, loc.getAltitude());
+            values.put(key_altitude, loc.getAltitude());
         }
         if (loc.hasSpeed()) {
-            values.put(DbContract.Positions.COLUMN_SPEED, loc.getSpeed());
+            values.put(key_speed, loc.getSpeed());
         }
         if (loc.hasAccuracy()) {
-            values.put(DbContract.Positions.COLUMN_ACCURACY, loc.getAccuracy());
+            values.put(key_accuracy, loc.getAccuracy());
         }
-        values.put(DbContract.Positions.COLUMN_PROVIDER, loc.getProvider());
+        values.put(key_battery, battery);
+        values.put(key_provider, loc.getProvider());
 
-        db.insert(DbContract.Positions.TABLE_NAME, null, values);
-    }*/
+        db.insert(table_locations, null, values);
+    }
+
+    /**
+     * Get a single logjob by ID
+     *
+     * @param ljId int - ID of the logjob
+     * @return requested locations
+     */
+    public List<DBLocation> getLocationOfLogjob(String ljId) {
+        List<DBLocation> locations = getLocationsCustom(key_logjobid + " = ?", new String[]{ljId}, key_time + " ASC");
+        return locations;
+    }
+
+    /**
+     * Query the database with a custom raw query.
+     *
+     * @param selection     A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE itself).
+     * @param selectionArgs You may include ?s in selection, which will be replaced by the values from selectionArgs, in order that they appear in the selection. The values will be bound as Strings.
+     * @param orderBy       How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself). Passing null will use the default sort order, which may be unordered.
+     * @return List of Notes
+     */
+    @NonNull
+    @WorkerThread
+    private List<DBLocation> getLocationsCustom(@NonNull String selection, @NonNull String[] selectionArgs, @Nullable String orderBy) {
+        SQLiteDatabase db = getReadableDatabase();
+        if (selectionArgs.length > 2) {
+            Log.v("Location", selection + "   ----   " + selectionArgs[0] + " " + selectionArgs[1] + " " + selectionArgs[2]);
+        }
+        Cursor cursor = db.query(table_locations, columnsLocations, selection, selectionArgs, null, null, orderBy);
+        List<DBLocation> locations = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            locations.add(getLocationFromCursor(cursor));
+        }
+        cursor.close();
+        return locations;
+    }
+
+    /**
+     * Creates a DBLocation object from the current row of a Cursor.
+     * key_id, key_logjobid, key_lat, key_lon, 4 key_time, 5 key_bearing, 6 key_altitude, 7 key_speed, 8 key_accuracy, 9 key_provider, 10 key_battery
+     *
+     * @param cursor database cursor
+     * @return DBLocation
+     */
+    @NonNull
+    private DBLocation getLocationFromCursor(@NonNull Cursor cursor) {
+        return new DBLocation(cursor.getLong(0), cursor.getLong(1), cursor.getFloat(2), cursor.getFloat(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getString(9), cursor.getFloat(10));
+    }
 
     /**
      * Notify about changed logjob.
