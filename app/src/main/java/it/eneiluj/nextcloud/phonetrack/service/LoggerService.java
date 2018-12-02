@@ -45,6 +45,7 @@ import java.util.Map;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import it.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
+import it.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
@@ -376,21 +377,18 @@ public class LoggerService extends Service {
                 locManager.removeUpdates(entry.getValue());
             }
         }
-        if (db != null) {
-            //db.close();
-        }
 
         isRunning = false;
 
         mNotificationManager.cancel(NOTIFICATION_ID);
-        sendBroadcast(BROADCAST_LOCATION_STOPPED);
+
 
         if (thread != null) {
             thread.interrupt();
             unregisterReceiver(mBatInfoReceiver);
+            sendBroadcast(BROADCAST_LOCATION_STOPPED);
         }
         thread = null;
-
     }
 
     @Override
@@ -552,8 +550,13 @@ public class LoggerService extends Service {
                     lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
                 }
                 // TODO
-                //db.addLocation(logjob.getId(), loc, battery);
+                db.addLocation(logjobId, loc, battery);
                 sendBroadcast(BROADCAST_LOCATION_UPDATED);
+
+                List<DBLocation> locations = db.getLocationOfLogjob(logjobId);
+                for (DBLocation dbloc : locations) {
+                    Log.d(TAG, "[locations for " +logjobId+" : "+dbloc+"]");
+                }
                 // TODO
                 //if (liveSync) {
                 //    startService(syncIntent);

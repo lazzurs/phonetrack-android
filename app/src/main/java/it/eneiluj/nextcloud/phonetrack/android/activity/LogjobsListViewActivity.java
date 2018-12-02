@@ -46,6 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
+import it.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;

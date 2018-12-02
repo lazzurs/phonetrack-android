@@ -20,6 +20,7 @@ import java.util.Map;
 //import it.eneiluj.nextcloud.phonetrack.android.appwidget.NoteListWidget;
 //import it.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget;
 import it.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import it.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import it.eneiluj.nextcloud.phonetrack.model.DBSession;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
@@ -58,12 +59,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_altitude = "ALTITUDE";
     private static final String key_speed = "SPEED";
     private static final String key_accuracy = "ACCURACY";
-    private static final String key_provider = "PROVIDER";
+    private static final String key_satellites = "SATELLITES";
     private static final String key_battery = "BATTERY";
 
     private static final String[] columnsSessions = {key_id, key_token, key_name, key_nextURL};
     private static final String[] columnsLogjobs = {key_id, key_title, key_nextURL, key_token, key_deviceName, key_minTime, key_minDistance, key_minAccuracy, key_enabled};
-    private static final String[] columnsLocations = {key_id, key_logjobid, key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_provider, key_battery};
+    private static final String[] columnsLocations = {key_id, key_logjobid, key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_satellites, key_battery};
 
     private static final String default_order = key_id + " DESC";
 
@@ -99,6 +100,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         createTableSessions(db, table_sessions);
         createTableLogjobs(db, table_logjobs);
+        createTableLocations(db, table_locations);
         createIndexes(db);
     }
 
@@ -122,6 +124,22 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_minAccuracy + " INTEGER, " +
                 key_enabled + " INTEGER DEFAULT 0, " +
                 key_token + " TEXT)");
+    }
+
+    private void createTableLocations(SQLiteDatabase db, String tableName) {
+        // key_id, key_logjobid, key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_satellites, key_battery
+        db.execSQL("CREATE TABLE " + tableName + " ( " +
+                key_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                key_logjobid + " INTEGER, " +
+                key_lat + " FLOAT, " +
+                key_lon + " FLOAT, " +
+                key_time + " INTEGER, " +
+                key_bearing + " FLOAT, " +
+                key_altitude + " FLOAT, " +
+                key_speed + " FLOAT, " +
+                key_accuracy + " FLOAT, " +
+                key_satellites + " INTEGER, " +
+                key_battery + " FLOAT)");
     }
 
     @Override
@@ -598,12 +616,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_provider, key_battery
+     * key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_satellites, key_battery
      *
      * @param ljId
      * @param loc
      */
-    void addLocation(String ljId, Location loc, int battery) {
+    public void addLocation(String ljId, Location loc, int battery) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation]"); }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -624,7 +642,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             values.put(key_accuracy, loc.getAccuracy());
         }
         values.put(key_battery, battery);
-        values.put(key_provider, loc.getProvider());
+        int sat = 0;
+        if(loc.getExtras() != null) {
+            sat = loc.getExtras().getInt("satellites", 0);
+        }
+        values.put(key_satellites, sat);
 
         db.insert(table_locations, null, values);
     }
@@ -666,14 +688,14 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     /**
      * Creates a DBLocation object from the current row of a Cursor.
-     * key_id, key_logjobid, key_lat, key_lon, 4 key_time, 5 key_bearing, 6 key_altitude, 7 key_speed, 8 key_accuracy, 9 key_provider, 10 key_battery
+     * key_id, key_logjobid, key_lat, key_lon, 4 key_time, 5 key_bearing, 6 key_altitude, 7 key_speed, 8 key_accuracy, 9 key_satellites, 10 key_battery
      *
      * @param cursor database cursor
      * @return DBLocation
      */
     @NonNull
     private DBLocation getLocationFromCursor(@NonNull Cursor cursor) {
-        return new DBLocation(cursor.getLong(0), cursor.getLong(1), cursor.getFloat(2), cursor.getFloat(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getString(9), cursor.getFloat(10));
+        return new DBLocation(cursor.getLong(0), cursor.getLong(1), cursor.getFloat(2), cursor.getFloat(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getInt(9), cursor.getInt(10));
     }
 
     /**
