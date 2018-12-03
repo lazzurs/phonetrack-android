@@ -849,6 +849,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     if (!pref_liveSync) {
                         updateSyncStatus(db.countUnsynced());
                     }*/
+                    String ljId = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
+                    if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast loc updated " + ljId + "]"); }
+                    updateLocationNumber(ljId);
                     break;
                 /*case WebSyncService.BROADCAST_SYNC_DONE:
                     final int unsyncedCount = db.countUnsynced();

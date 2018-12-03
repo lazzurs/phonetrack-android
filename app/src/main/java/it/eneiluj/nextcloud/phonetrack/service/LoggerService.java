@@ -73,6 +73,7 @@ public class LoggerService extends Service {
     public static final String BROADCAST_LOCATION_NETWORK_ENABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.network_enabled";
     public static final String BROADCAST_LOCATION_GPS_ENABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.gps_enabled";
     public static final String BROADCAST_LOCATION_DISABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_disabled";
+    public static final String BROADCAST_EXTRA_PARAM = "it.eneiluj.nextcloud.phonetrack.broadcast.extra_param";
     private boolean liveSync = false;
     private Intent syncIntent;
 
@@ -83,10 +84,6 @@ public class LoggerService extends Service {
     private Map<String, mLocationListener> locListeners;
     private Map<String, DBLogjob> logjobs;
     private PhoneTrackSQLiteOpenHelper db;
-    //private int maxAccuracy = 100;
-    //private float minDistance = 2;
-    //private long minTimeMillis = 5000;
-
 
     private Map<String, Location> lastLocations;
     private static volatile Map<String, Long> lastUpdateRealtime;
@@ -495,6 +492,16 @@ public class LoggerService extends Service {
         sendBroadcast(intent);
     }
 
+    /**
+     * Send broadcast message
+     * @param broadcast Broadcast message
+     */
+    private void sendBroadcast(String broadcast, String ljId) {
+        Intent intent = new Intent(broadcast);
+        intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+        sendBroadcast(intent);
+    }
+
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context ctxt, Intent intent) {
@@ -553,7 +560,7 @@ public class LoggerService extends Service {
                 }
                 // TODO
                 db.addLocation(logjobId, loc, battery);
-                sendBroadcast(BROADCAST_LOCATION_UPDATED);
+                sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
 
                 int nbloc = db.getLogjobLocationCount(logjob.getId());
                 if (DEBUG) { Log.d(TAG, "["+nbloc+" locations for " +logjobId+"]"); }
