@@ -98,19 +98,21 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="bottom|right"
+                android:minWidth="70dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/nbNotSync"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|left"
                     android:text="1" />
 
                 <ImageView
                     android:id="@+id/nosyncIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|left"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/ic_sync_blue_18dp" />
 
@@ -118,12 +120,14 @@
                     android:id="@+id/nbSync"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
                     android:text="2" />
 
                 <ImageView
                     android:id="@+id/syncIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
                     android:layout_marginBottom="3dp"
                     android:adjustViewBounds="false"
                     app:srcCompat="@android:drawable/arrow_up_float" />
