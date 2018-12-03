@@ -145,7 +145,6 @@ public class LoggerService extends Service {
         if (hasLocationUpdates) {
             isRunning = true;
 
-
             sendBroadcast(BROADCAST_LOCATION_STARTED);
 
             // TODO
@@ -156,7 +155,7 @@ public class LoggerService extends Service {
             looper = thread.getLooper();
 
             battery = getBatteryLevelOnce();
-            // register for battry level
+            // register for battery level
             this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
             // TODO start websync service if needed
@@ -196,11 +195,11 @@ public class LoggerService extends Service {
             }
         } else if (isRunning) {
             // start without parameter
-            if (DEBUG) { Log.d(TAG, "[onStartCommand : first start]"); }
+            if (DEBUG) { Log.d(TAG, "[onStartCommand : start without parameter]"); }
 
         } else {
             // onCreate failed to start updates
-            if (DEBUG) { Log.d(TAG, "[onStartCommand : stop]"); }
+            if (DEBUG) { Log.d(TAG, "[onStartCommand : failed to start updates => stop]"); }
             stopSelf();
         }
 

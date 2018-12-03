@@ -148,10 +148,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
 
-        ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.FOREGROUND_SERVICE}, PERMISSION_FOREGROUND_SERVICE);
+            if (LoggerService.DEBUG) { Log.d(TAG, "[request 2 permissions]"); }
+            ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+        }
+        else {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[request 1 permission]"); }
+            ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
         }
 
         Map<String, Integer> enabled = db.getEnabledCount();
