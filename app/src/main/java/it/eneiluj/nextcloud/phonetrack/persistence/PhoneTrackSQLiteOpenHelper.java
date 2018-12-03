@@ -698,6 +698,48 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return new DBLocation(cursor.getLong(0), cursor.getLong(1), cursor.getFloat(2), cursor.getFloat(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getInt(9), cursor.getInt(10));
     }
 
+    @NonNull
+    @WorkerThread
+    public int getLogjobLocationCount(long ljId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(
+                table_locations,
+                new String[]{"COUNT(*)"},
+                key_logjobid " = ?",
+                new String[]{String.valueOf(ljId)},
+                null,
+                null,
+                null);
+        int result = 0;
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+            break;
+        }
+        cursor.close();
+        return result;
+    }
+
+    @NonNull
+    @WorkerThread
+    public int getLocationCount() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(
+                table_locations,
+                new String[]{"COUNT(*)"},
+                null,
+                new String[]{},
+                null,
+                null,
+                null);
+        int result = 0;
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+            break;
+        }
+        cursor.close();
+        return result;
+    }
+
     /**
      * Notify about changed logjob.
      */

@@ -6,7 +6,7 @@ import java.io.Serializable;
  * DBSession represents a single session from the local SQLite database with all attributes.
  * It extends CloudSession with attributes required for local data management.
  */
-public class DBSession extends CloudSession implements Item, Serializable {
+public class DBSession extends CloudSession {
 
     private long id;
     private String name = "";
@@ -20,11 +20,6 @@ public class DBSession extends CloudSession implements Item, Serializable {
 
     public long getId() {
         return id;
-    }
-
-    @Override
-    public boolean isSection() {
-        return false;
     }
 
     @Override
