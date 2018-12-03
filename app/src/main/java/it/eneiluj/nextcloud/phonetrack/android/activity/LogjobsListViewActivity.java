@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.os.AsyncTask;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -46,7 +45,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
-import it.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
@@ -57,7 +55,7 @@ import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 
-public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.NoteClickListener {
+public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
     private final static int PERMISSION_LOCATION = 1;
 
@@ -421,7 +419,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     public void initList() {
-        adapter = new ItemAdapter(this);
+        adapter = new ItemAdapter(this, db);
         listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(this));
         ItemTouchHelper touchHelper = new ItemTouchHelper(new SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -485,16 +483,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
             @Override
             public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                ItemAdapter.NoteViewHolder noteViewHolder = (ItemAdapter.NoteViewHolder) viewHolder;
+                ItemAdapter.LogjobViewHolder logjobViewHolder = (ItemAdapter.LogjobViewHolder) viewHolder;
                 // show swipe icon on the side
-                noteViewHolder.showSwipe(dX>0);
+                logjobViewHolder.showSwipe(dX>0);
                 // move only swipeable part of item (not leave-behind)
-                getDefaultUIUtil().onDraw(c, recyclerView, noteViewHolder.noteSwipeable, dX, dY, actionState, isCurrentlyActive);
+                getDefaultUIUtil().onDraw(c, recyclerView, logjobViewHolder.noteSwipeable, dX, dY, actionState, isCurrentlyActive);
             }
 
             @Override
             public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                getDefaultUIUtil().clearView(((ItemAdapter.NoteViewHolder) viewHolder).noteSwipeable);
+                getDefaultUIUtil().clearView(((ItemAdapter.LogjobViewHolder) viewHolder).noteSwipeable);
             }
         });
         touchHelper.attachToRecyclerView(listView);
@@ -851,7 +849,17 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     }*/
                     String ljId = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
                     if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast loc updated " + ljId + "]"); }
-                    updateLocationNumber(ljId);
+                    // to update all items
+                    //adapter.notifyDataSetChanged();
+                    // but we update just the changed one
+                    DBLogjob lj;
+                    for (int i = 0; i < adapter.getItemCount(); i++) {
+                        lj = (DBLogjob) adapter.getItem(i);
+                        if (String.valueOf(lj.getId()).equals(ljId)) {
+                            adapter.notifyItemChanged(i);
+                            break;
+                        }
+                    }
                     break;
                 /*case WebSyncService.BROADCAST_SYNC_DONE:
                     final int unsyncedCount = db.countUnsynced();

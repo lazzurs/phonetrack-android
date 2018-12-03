@@ -98,7 +98,6 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
                 itemList.add(colorTheLogjob(logjob));
             }
         }
-        System.out.println("PLPLPLPLPLPLPLPLPL");
         return itemList;
     }
 

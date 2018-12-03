@@ -1,5 +1,6 @@
 package it.eneiluj.nextcloud.phonetrack.model;
 
+import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -16,6 +17,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
+import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
+import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
@@ -23,15 +26,17 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int section_type = 0;
     private static final int note_type = 1;
-    private final NoteClickListener noteClickListener;
+    private final LogjobClickListener logjobClickListener;
     private List<Item> itemList = null;
     private boolean showCategory = true;
     private List<Integer> selected = null;
+    private PhoneTrackSQLiteOpenHelper db = null;
 
-    public ItemAdapter(@NonNull NoteClickListener noteClickListener) {
+    public ItemAdapter(@NonNull LogjobClickListener logjobClickListener, PhoneTrackSQLiteOpenHelper db) {
         this.itemList = new ArrayList<>();
         this.selected = new ArrayList<>();
-        this.noteClickListener = noteClickListener;
+        this.logjobClickListener = logjobClickListener;
+        this.db = db;
     }
 
     /**
@@ -47,10 +52,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * Adds the given logjob to the top of the list.
      *
-     * @param note Note that should be added.
+     * @param logjob Note that should be added.
      */
-    public void add(@NonNull DBLogjob note) {
-        itemList.add(0, note);
+    public void add(@NonNull DBLogjob logjob) {
+        itemList.add(0, logjob);
         notifyItemInserted(0);
         notifyItemChanged(0);
     }
@@ -58,11 +63,11 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * Replaces a logjob with an updated version
      *
-     * @param note     Note with the changes.
+     * @param logjob     Note with the changes.
      * @param position position in the list of the node
      */
-    public void replace(@NonNull DBLogjob note, int position) {
-        itemList.set(position, note);
+    public void replace(@NonNull DBLogjob logjob, int position) {
+        itemList.set(position, logjob);
         notifyItemChanged(position);
     }
 
@@ -84,7 +89,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else {
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.fragment_notes_list_note_item, parent, false);
-            return new NoteViewHolder(v);
+            return new LogjobViewHolder(v);
         }
     }
 
@@ -99,7 +104,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((SectionViewHolder) holder).sectionTitle.setText(section.geTitle());
         } else {
             final DBLogjob logjob = (DBLogjob) item;
-            final NoteViewHolder nvHolder = ((NoteViewHolder) holder);
+            final LogjobViewHolder nvHolder = ((LogjobViewHolder) holder);
             //nvHolder.noteSwipeable.setAlpha(DBStatus.LOCAL_DELETED.equals(logjob.getStatus()) ? 0.5f : 1.0f);
             nvHolder.noteSwipeable.setAlpha(1.0f);
             nvHolder.logjobTitle.setText(Html.fromHtml(logjob.getTitle()));
@@ -113,16 +118,19 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             /*nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    noteClickListener.onNoteFavoriteClick(holder.getAdapterPosition(), view);
+                    logjobClickListener.onNoteFavoriteClick(holder.getAdapterPosition(), view);
                 }
             });*/
             nvHolder.logjobEnabled.setChecked(logjob.isEnabled());
             nvHolder.logjobEnabled.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    noteClickListener.onLogjobEnabledClick(holder.getAdapterPosition(), view);
+                    logjobClickListener.onLogjobEnabledClick(holder.getAdapterPosition(), view);
                 }
             });
+
+            int nb = db.getLogjobLocationCount(logjob.getId());
+            nvHolder.nbNotSync.setText(String.valueOf(nb));
         }
     }
 
@@ -151,8 +159,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return false;
     }
 
-    public Item getItem(int notePosition) {
-        return itemList.get(notePosition);
+    public Item getItem(int logjobPosition) {
+        return itemList.get(logjobPosition);
     }
 
     public void remove(@NonNull Item item) {
@@ -174,7 +182,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return getItem(position).isSection() ? section_type : note_type;
     }
 
-    public interface NoteClickListener {
+    public interface LogjobClickListener {
         void onLogjobClick(int position, View v);
 
         //void onNoteFavoriteClick(int position, View v);
@@ -184,7 +192,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         boolean onLogjobLongClick(int position, View v);
     }
 
-    public class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
+    public class LogjobViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
         @BindView(R.id.noteSwipeable)
         public View noteSwipeable;
         View noteSwipeFrame;
@@ -198,12 +206,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView logjobSubtitle;
         @BindView(R.id.noteStatus)
         ImageView noteStatus;
-        //@BindView(R.id.noteFavorite)
-        //ImageView noteFavorite;
         @BindView(R.id.logjobEnabled)
         Switch logjobEnabled;
+        @BindView(R.id.nbNotSync)
+        TextView nbNotSync;
 
-        private NoteViewHolder(View v) {
+        private LogjobViewHolder(View v) {
             super(v);
             this.noteSwipeFrame = v.findViewById(R.id.noteSwipeFrame);
             this.noteSwipeable = v.findViewById(R.id.noteSwipeable);
@@ -216,6 +224,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.noteStatus = v.findViewById(R.id.noteStatus);
             //this.noteFavorite = v.findViewById(R.id.noteFavorite);
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
+            this.nbNotSync = v.findViewById(R.id.nbNotSync);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
@@ -224,13 +233,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public void onClick(View v) {
             final int adapterPosition = getAdapterPosition();
             if (adapterPosition != NO_POSITION) {
-                noteClickListener.onLogjobClick(adapterPosition, v);
+                logjobClickListener.onLogjobClick(adapterPosition, v);
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            return noteClickListener.onLogjobLongClick(getAdapterPosition(), v);
+            return logjobClickListener.onLogjobLongClick(getAdapterPosition(), v);
         }
 
         public void showSwipe(boolean left) {
