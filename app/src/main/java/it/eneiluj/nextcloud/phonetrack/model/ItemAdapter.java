@@ -1,9 +1,9 @@
 package it.eneiluj.nextcloud.phonetrack.model;
 
-import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +17,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
-import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
 public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final String TAG = ItemAdapter.class.getSimpleName();
 
     private static final int section_type = 0;
     private static final int note_type = 1;
@@ -113,7 +115,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //System.out.println("SEARCH nexturl : ");
             //System.out.println(logjob.getDeviceName()+" => "+logjob.getNextURL());
             nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getDeviceName()+" => "+logjob.getNextURL()));
-            //nvHolder.noteStatus.setVisibility(DBStatus.VOID.equals(logjob.getStatus()) ? View.INVISIBLE : View.VISIBLE);
+            //nvHolder.nosyncIcon.setVisibility(DBStatus.VOID.equals(logjob.getStatus()) ? View.INVISIBLE : View.VISIBLE);
             //nvHolder.noteFavorite.setImageResource(logjob.isEnabled() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
             /*nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -133,7 +135,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String nbTxt = (nb == 0) ? "" : String.valueOf(nb);
             nvHolder.nbNotSync.setText(nbTxt);
             int visible = (nb == 0) ? View.GONE : View.VISIBLE;
-            nvHolder.noteStatus.setVisibility(visible);
+            nvHolder.nosyncIcon.setVisibility(visible);
+
+            int nbSent = db.getNbSync(logjob.getId());
+            nbTxt = (nbSent == 0) ? "" : String.valueOf(nbSent);
+            if (LoggerService.DEBUG) { Log.d(TAG, "[onBind : "+nbSent+" nbSync]"); }
+            nvHolder.nbSync.setText(nbTxt);
+            visible = (nbSent == 0) ? View.GONE : View.VISIBLE;
+            nvHolder.syncIcon.setVisibility(visible);
         }
     }
 
@@ -207,12 +216,16 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         //TextView noteCategory;
         @BindView(R.id.noteExcerpt)
         TextView logjobSubtitle;
-        @BindView(R.id.noteStatus)
-        ImageView noteStatus;
+        @BindView(R.id.nosyncIcon)
+        ImageView nosyncIcon;
+        @BindView(R.id.syncIcon)
+        ImageView syncIcon;
         @BindView(R.id.logjobEnabled)
         Switch logjobEnabled;
         @BindView(R.id.nbNotSync)
         TextView nbNotSync;
+        @BindView(R.id.nbSync)
+        TextView nbSync;
 
         private LogjobViewHolder(View v) {
             super(v);
@@ -224,10 +237,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.logjobTitle = v.findViewById(R.id.noteTitle);
             //this.noteCategory = v.findViewById(R.id.noteCategory);
             this.logjobSubtitle = v.findViewById(R.id.noteExcerpt);
-            this.noteStatus = v.findViewById(R.id.noteStatus);
+            this.nosyncIcon = v.findViewById(R.id.nosyncIcon);
+            this.syncIcon = v.findViewById(R.id.syncIcon);
             //this.noteFavorite = v.findViewById(R.id.noteFavorite);
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
+            this.nbSync = v.findViewById(R.id.nbSync);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }

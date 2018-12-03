@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/noteSwipeFrame"
     android:layout_width="match_parent"
@@ -96,7 +97,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="bottom|left"
+                android:gravity="bottom|right"
                 android:orientation="horizontal">
 
                 <TextView
@@ -106,11 +107,25 @@
                     android:text="1" />
 
                 <ImageView
-                    android:id="@+id/noteStatus"
+                    android:id="@+id/nosyncIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/ic_sync_blue_18dp" />
+
+                <TextView
+                    android:id="@+id/nbSync"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2" />
+
+                <ImageView
+                    android:id="@+id/syncIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:adjustViewBounds="false"
+                    app:srcCompat="@android:drawable/arrow_up_float" />
             </LinearLayout>
 
         </FrameLayout>

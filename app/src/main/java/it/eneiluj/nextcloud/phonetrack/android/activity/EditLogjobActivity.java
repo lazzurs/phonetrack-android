@@ -133,7 +133,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
             favorite = categoryPreselection.favorite != null ? categoryPreselection.favorite : false;
         }
 
-        DBLogjob newLogjob = new DBLogjob(0, "New log job",  "https://yournextcloud.org", "supersessiontoken", "mydevname", 60, 5, 50, false);
+        DBLogjob newLogjob = new DBLogjob(0, "New log job",  "https://yournextcloud.org", "supersessiontoken", "mydevname", 60, 5, 50, false, 0);
 
         String url = "";
         if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
