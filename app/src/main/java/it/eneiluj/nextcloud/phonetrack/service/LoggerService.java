@@ -139,10 +139,12 @@ public class LoggerService extends Service {
             }
         }
 
+        final Notification notification = showNotification(NOTIFICATION_ID);
+        startForeground(NOTIFICATION_ID, notification);
+
         if (hasLocationUpdates) {
             isRunning = true;
-            final Notification notification = showNotification(NOTIFICATION_ID);
-            startForeground(NOTIFICATION_ID, notification);
+
 
             sendBroadcast(BROADCAST_LOCATION_STARTED);
 

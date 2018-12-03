@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -58,6 +59,7 @@ import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
     private final static int PERMISSION_LOCATION = 1;
+    private final static int PERMISSION_FOREGROUND_SERVICE = 1;
 
     private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
@@ -148,9 +150,21 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
 
-        // start loggerservice !
-        Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
-        startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.FOREGROUND_SERVICE}, PERMISSION_FOREGROUND_SERVICE);
+        }
+
+        Map<String, Integer> enabled = db.getEnabledCount();
+        int nbEnabledLogjobs = enabled.containsKey("1") ? enabled.get("1") : 0;
+        if (nbEnabledLogjobs > 0) {
+            // start loggerservice !
+            Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                startService(intent);
+            } else {
+                startForegroundService(intent);
+            }
+        }
     }
 
     @Override
