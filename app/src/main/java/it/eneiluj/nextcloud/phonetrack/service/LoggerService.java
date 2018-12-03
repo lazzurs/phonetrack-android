@@ -78,6 +78,7 @@ public class LoggerService extends Service {
     private Intent syncIntent;
 
     private static volatile boolean isRunning = false;
+    private static volatile boolean firstRun = false;
     private LoggerThread thread;
     private Looper looper;
     private LocationManager locManager;
@@ -102,6 +103,7 @@ public class LoggerService extends Service {
         if (DEBUG) {
             Log.d(TAG, "[onCreate]");
         }
+        firstRun = true;
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotificationManager != null) {
@@ -175,15 +177,23 @@ public class LoggerService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DEBUG) { Log.d(TAG, "[onStartCommand]"); }
-
         final boolean logjobsUpdated = (intent != null) && intent.getBooleanExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, false);
         final boolean providersUpdated = (intent != null) && intent.getBooleanExtra(PreferencesFragment.UPDATED_PROVIDERS, false);
         if (logjobsUpdated) {
-            String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
-            if (DEBUG) { Log.d(TAG, "[onStartCommand : upd]"); }
-            handleLogjobsUpdated(ljId);
+            // this to avoid doing two loc upd when service is down and then a logjob is enabled
+            // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
+            if (firstRun) {
+                firstRun = false;
+            }
+            else {
+                String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
+                if (DEBUG) {
+                    Log.d(TAG, "[onStartCommand : upd logjob]");
+                }
+                handleLogjobsUpdated(ljId);
+            }
         } else if (providersUpdated) {
+            if (DEBUG) { Log.d(TAG, "[onStartCommand : upd providers]"); }
             String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
             updatePreferences(providersValue);
             boolean hasLocationUpdates = false;
