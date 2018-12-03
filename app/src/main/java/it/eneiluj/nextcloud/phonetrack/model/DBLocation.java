@@ -19,10 +19,10 @@ public class DBLocation {
     private float speed;
     private float accuracy;
     private int satellites;
-    private int battery;
+    private float battery;
 
     public DBLocation(long id, long logjobId, float lat, float lon, int timestamp, float bearing,
-                      float altitude, float speed, float accuracy, int satellites, int battery) {
+                      float altitude, float speed, float accuracy, int satellites, float battery) {
         this.id = id;
         this.logjobId = logjobId;
         this.lat = lat;
@@ -112,11 +112,11 @@ public class DBLocation {
         this.satellites = satellites;
     }
 
-    public int getBattery() {
+    public float getBattery() {
         return battery;
     }
 
-    public void setBattery(int battery) {
+    public void setBattery(float battery) {
         this.battery = battery;
     }
 

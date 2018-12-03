@@ -61,7 +61,7 @@ import static android.location.LocationProvider.TEMPORARILY_UNAVAILABLE;
 
 public class LoggerService extends Service {
 
-    public static int battery = -1;
+    public static float battery = -1.0f;
 
     private static final String TAG = LoggerService.class.getSimpleName();
     public static final String BROADCAST_LOCATION_STARTED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_started";
@@ -498,23 +498,25 @@ public class LoggerService extends Service {
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context ctxt, Intent intent) {
-            int blevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-            battery = blevel;
-            if (LoggerService.DEBUG) { Log.d(TAG, "[BATT changed " + blevel + "]"); }
+            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+            if(level == -1 || scale == -1) {
+                battery = 0.0f;
+            }
+            battery = ((float)level / (float)scale) * 100.0f;
+            if (LoggerService.DEBUG) { Log.d(TAG, "[BATT changed " + battery + "]"); }
         }
     };
 
-    private int getBatteryLevelOnce() {
+    private float getBatteryLevelOnce() {
         Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        // Error checking that probably isn't needed but I added just in case.
         if(level == -1 || scale == -1) {
-            return 50;
+            return 0.0f;
         }
 
-        return (int)(((float)level / (float)scale) * 100.0f);
+        return ((float)level / (float)scale) * 100.0f;
     }
 
     /**
@@ -553,10 +555,12 @@ public class LoggerService extends Service {
                 db.addLocation(logjobId, loc, battery);
                 sendBroadcast(BROADCAST_LOCATION_UPDATED);
 
-                List<DBLocation> locations = db.getLocationOfLogjob(logjobId);
+                int nbloc = db.getLogjobLocationCount(logjob.getId());
+                if (DEBUG) { Log.d(TAG, "["+nbloc+" locations for " +logjobId+"]"); }
+                /*List<DBLocation> locations = db.getLocationOfLogjob(logjobId);
                 for (DBLocation dbloc : locations) {
                     Log.d(TAG, "[locations for " +logjobId+" : "+dbloc+"]");
-                }
+                }*/
                 // TODO
                 //if (liveSync) {
                 //    startService(syncIntent);

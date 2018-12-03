@@ -621,7 +621,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param ljId
      * @param loc
      */
-    public void addLocation(String ljId, Location loc, int battery) {
+    public void addLocation(String ljId, Location loc, float battery) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation]"); }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -695,7 +695,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     private DBLocation getLocationFromCursor(@NonNull Cursor cursor) {
-        return new DBLocation(cursor.getLong(0), cursor.getLong(1), cursor.getFloat(2), cursor.getFloat(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getInt(9), cursor.getInt(10));
+        return new DBLocation(cursor.getLong(0), cursor.getLong(1), cursor.getFloat(2), cursor.getFloat(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getInt(9), cursor.getFloat(10));
     }
 
     @NonNull
@@ -705,7 +705,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(
                 table_locations,
                 new String[]{"COUNT(*)"},
-                key_logjobid " = ?",
+                key_logjobid +" = ?",
                 new String[]{String.valueOf(ljId)},
                 null,
                 null,
