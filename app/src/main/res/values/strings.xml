@@ -70,8 +70,14 @@
     <string name="using_gps">Using gps location</string>
     <string name="location_permission_denied">Location permission denied</string>
 
-
-
+    <!-- Web errors -->
+    <string name="e_illegal_redirect" translatable="false">Illegal redirect: %d</string>
+    <string name="e_auth_failure" translatable="false">Authorization failure: %d</string>
+    <string name="e_http_code" translatable="false">HTTP error code: %d</string>
+    <string name="e_server_response" translatable="false">Server response error</string>
+    <string name="e_unknown_host" translatable="false">Unknown host: %s</string>
+    <string name="e_bad_url" translatable="false">Bad URL: %s</string>
+    <string name="e_connect" translatable="false">Connection error: %s</string>
 
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Connection security</string>

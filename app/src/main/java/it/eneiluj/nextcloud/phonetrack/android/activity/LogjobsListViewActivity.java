@@ -842,8 +842,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(LoggerService.BROADCAST_LOCATION_GPS_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED);
-        //filter.addAction(WebSyncService.BROADCAST_SYNC_DONE);
-        //filter.addAction(WebSyncService.BROADCAST_SYNC_FAILED);
+        //filter.addAction(WebTrackService.BROADCAST_SYNC_DONE);
+        //filter.addAction(WebTrackService.BROADCAST_SYNC_FAILED);
         registerReceiver(mBroadcastReceiver, filter);
     }
 
@@ -878,7 +878,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         }
                     }
                     break;
-                /*case WebSyncService.BROADCAST_SYNC_DONE:
+                /*case WebTrackService.BROADCAST_SYNC_DONE:
                     final int unsyncedCount = db.countUnsynced();
                     updateSyncStatus(unsyncedCount);
                     setSyncLed(LED_GREEN);
@@ -893,7 +893,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         isUploading = false;
                     }
                     break;
-                case (WebSyncService.BROADCAST_SYNC_FAILED): {
+                case (WebTrackService.BROADCAST_SYNC_FAILED): {
                     updateSyncStatus(db.countUnsynced());
                     setSyncLed(LED_RED);
                     // set error flag and label

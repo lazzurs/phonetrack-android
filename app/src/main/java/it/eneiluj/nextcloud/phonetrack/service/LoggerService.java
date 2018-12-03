@@ -150,7 +150,7 @@ public class LoggerService extends Service {
             sendBroadcast(BROADCAST_LOCATION_STARTED);
 
             // TODO
-            //syncIntent = new Intent(getApplicationContext(), WebSyncService.class);
+            //syncIntent = new Intent(getApplicationContext(), WebTrackService.class);
 
             thread = new LoggerThread();
             thread.start();

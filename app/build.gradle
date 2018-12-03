@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "it.eneiluj.nextcloud.phonetrack"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
         versionName "0.0.1"
