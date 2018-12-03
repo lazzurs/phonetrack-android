@@ -245,7 +245,7 @@ public class SessionServerSyncHelper {
 
         @Override
         protected LoginStatus doInBackground(Void... voids) {
-            client = createNotesClient(); // recreate NoteClients on every sync in case the connection settings was changed
+            client = createPhoneTrackClient(); // recreate NoteClients on every sync in case the connection settings was changed
             Log.i(getClass().getSimpleName(), "STARTING SYNCHRONIZATION");
             //dbHelper.debugPrintFullDB();
             LoginStatus status = LoginStatus.OK;
@@ -348,7 +348,7 @@ public class SessionServerSyncHelper {
         }
     }
 
-    private PhoneTrackClient createNotesClient() {
+    private PhoneTrackClient createPhoneTrackClient() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
         String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
         String username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
