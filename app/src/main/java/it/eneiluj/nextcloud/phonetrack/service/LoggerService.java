@@ -574,16 +574,7 @@ public class LoggerService extends Service {
                 //db.incNbSync(logjob);
                 sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
 
-                int nbloc = db.getLogjobLocationCount(logjob.getId());
-                if (DEBUG) { Log.d(TAG, "["+nbloc+" locations for " +logjobId+"]"); }
-                /*List<DBLocation> locations = db.getLocationOfLogjob(logjobId);
-                for (DBLocation dbloc : locations) {
-                    Log.d(TAG, "[locations for " +logjobId+" : "+dbloc+"]");
-                }*/
-                // TODO
-                //if (liveSync) {
-                //    startService(syncIntent);
-                //}
+                startService(syncIntent);
             }
         }
 

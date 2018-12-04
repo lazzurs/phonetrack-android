@@ -890,6 +890,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         lj2 = (DBLogjob) adapter.getItem(i);
                         if (String.valueOf(lj2.getId()).equals(ljId2)) {
                             adapter.notifyItemChanged(i);
+                            if (LoggerService.DEBUG) { Log.d(TAG, "[notifyItemChanged " + i + "]"); }
                             break;
                         }
                     }
