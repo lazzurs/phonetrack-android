@@ -27,7 +27,6 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
-import it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
 import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.DBSession;
@@ -73,7 +72,7 @@ public class EditLogjobFragment extends PreferenceFragment {
     EditTextPreference editMinaccuracy;
     ListPreference editSessionList;
 
-    private DialogInterface.OnClickListener dialogClickListener;
+    private DialogInterface.OnClickListener deleteDialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
 
     private AlertDialog.Builder selectBuilder;
@@ -231,7 +230,7 @@ public class EditLogjobFragment extends PreferenceFragment {
         });
 
         // delete confirmation
-        dialogClickListener = new DialogInterface.OnClickListener() {
+        deleteDialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
@@ -247,9 +246,9 @@ public class EditLogjobFragment extends PreferenceFragment {
                 }
             }
         };
-        confirmDeleteAlertBuilder = new AlertDialog.Builder(getContext());
-        confirmDeleteAlertBuilder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-               .setNegativeButton("No", dialogClickListener);
+        confirmDeleteAlertBuilder = new AlertDialog.Builder(getActivity());
+        confirmDeleteAlertBuilder.setMessage("Are you sure?").setPositiveButton("Yes", deleteDialogClickListener)
+               .setNegativeButton("No", deleteDialogClickListener);
 
         handler = new Handler(Looper.getMainLooper());
     }
