@@ -16,6 +16,7 @@ import java.net.NoRouteToHostException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.logging.Logger;
 
 import it.eneiluj.nextcloud.phonetrack.BuildConfig;
 import it.eneiluj.nextcloud.phonetrack.R;
+import it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import it.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
@@ -71,6 +73,8 @@ public class WebTrackService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[websync start]"); }
 
+        String logjobId = intent.getStringExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID);
+
         if (pi != null) {
             // cancel pending alarm
             if (LoggerService.DEBUG) { Log.d(TAG, "[websync cancel alarm]"); }
@@ -81,17 +85,27 @@ public class WebTrackService extends IntentService {
             pi = null;
         }
 
-        doSync();
+        doSync(logjobId);
 
     }
 
     /**
      * Send all positions in database
      */
-    private void doSync() {
+    private void doSync(String ljIdToSync) {
         boolean anyError = false;
-        // iterate over positions in db
-        List<DBLogjob> logjobs = db.getLogjobs();
+
+        // get the logjobs
+        List<DBLogjob> logjobs;
+        if (ljIdToSync == null) {
+            // iterate over positions in db
+            logjobs = db.getLogjobs();
+        }
+        // if only one logjob is asked, just get this one
+        else {
+            logjobs = new ArrayList<>();
+            logjobs.add(db.getLogjob(Long.valueOf(ljIdToSync)));
+        }
 
         for (DBLogjob logjob : logjobs) {
             String ljId = String.valueOf(logjob.getId());

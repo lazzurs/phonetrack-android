@@ -574,7 +574,9 @@ public class LoggerService extends Service {
                 //db.incNbSync(logjob);
                 sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
 
-                startService(syncIntent);
+                Intent syncOneDev = new Intent(getApplicationContext(), WebTrackService.class);
+                syncOneDev.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, logjobId);
+                startService(syncOneDev);
             }
         }
 
