@@ -98,6 +98,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="bottom|center_horizontal"
                 android:minWidth="70dp"
                 android:orientation="horizontal">
 
@@ -115,6 +116,11 @@
                     android:layout_gravity="bottom|left"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/ic_sync_blue_18dp" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/nbSync"
