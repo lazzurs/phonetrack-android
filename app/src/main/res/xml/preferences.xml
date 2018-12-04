@@ -25,6 +25,13 @@
         android:summary="@string/pref_autostart_summary"
         android:defaultValue="@string/pref_autostart_default" />
 
+    <CheckBoxPreference
+        android:icon="@android:drawable/arrow_up_float"
+        android:key="@string/pref_key_shownbsynced"
+        android:title="@string/pref_shownbsynced_title"
+        android:summary="@string/pref_shownbsynced_summary"
+        android:defaultValue="@string/pref_shownbsynced_default" />
+
     <SwitchPreference
         android:defaultValue="@string/pref_value_theme_light"
         android:icon="@drawable/ic_brightness_2_grey_24dp"

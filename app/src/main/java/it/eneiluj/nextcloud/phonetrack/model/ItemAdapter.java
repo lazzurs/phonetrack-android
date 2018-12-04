@@ -1,5 +1,7 @@
 package it.eneiluj.nextcloud.phonetrack.model;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Space;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -33,12 +36,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private boolean showCategory = true;
     private List<Integer> selected = null;
     private PhoneTrackSQLiteOpenHelper db = null;
+    private SharedPreferences prefs;
 
     public ItemAdapter(@NonNull LogjobClickListener logjobClickListener, PhoneTrackSQLiteOpenHelper db) {
         this.itemList = new ArrayList<>();
         this.selected = new ArrayList<>();
         this.logjobClickListener = logjobClickListener;
         this.db = db;
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(db.getContext());
     }
 
     /**
@@ -134,15 +139,26 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             int nb = db.getLogjobLocationCount(logjob.getId());
             String nbTxt = (nb == 0) ? "" : String.valueOf(nb);
             nvHolder.nbNotSync.setText(nbTxt);
-            int visible = (nb == 0) ? View.GONE : View.VISIBLE;
+            int visible = (nb == 0) ? View.INVISIBLE : View.VISIBLE;
             nvHolder.nosyncIcon.setVisibility(visible);
 
-            int nbSent = db.getNbSync(logjob.getId());
-            nbTxt = (nbSent == 0) ? "" : String.valueOf(nbSent);
-            if (LoggerService.DEBUG) { Log.d(TAG, "[onBind : "+nbSent+" nbSync]"); }
-            nvHolder.nbSync.setText(nbTxt);
-            visible = (nbSent == 0) ? View.GONE : View.VISIBLE;
-            nvHolder.syncIcon.setVisibility(visible);
+            if (prefs.getBoolean(db.getContext().getString(R.string.pref_key_shownbsynced), false)) {
+                int nbSent = db.getNbSync(logjob.getId());
+                nbTxt = (nbSent == 0) ? "" : String.valueOf(nbSent);
+                if (LoggerService.DEBUG) {
+                    Log.d(TAG, "[onBind : " + nbSent + " nbSync]");
+                }
+                nvHolder.nbSync.setText(nbTxt);
+                visible = (nbSent == 0) ? View.INVISIBLE : View.VISIBLE;
+                nvHolder.syncIcon.setVisibility(visible);
+                nvHolder.nbSync.setVisibility(visible);
+                nvHolder.syncSpacer.setVisibility(View.VISIBLE);
+            }
+            else {
+                nvHolder.syncIcon.setVisibility(View.GONE);
+                nvHolder.nbSync.setVisibility(View.GONE);
+                nvHolder.syncSpacer.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -226,6 +242,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView nbNotSync;
         @BindView(R.id.nbSync)
         TextView nbSync;
+        @BindView(R.id.syncSpacer)
+        Space syncSpacer;
 
         private LogjobViewHolder(View v) {
             super(v);
@@ -243,6 +261,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
             this.nbSync = v.findViewById(R.id.nbSync);
+            this.syncSpacer = v.findViewById(R.id.syncSpacer);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
