@@ -58,7 +58,7 @@ public class WebTrackService extends IntentService {
         super.onCreate();
         if (LoggerService.DEBUG) { Log.d(TAG, "[websync create]"); }
 
-        userAgent = this.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME + "; " + System.getProperty("http.agent");
+        userAgent = this.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME;
 
         web = new WebTrackHelper(this);
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);

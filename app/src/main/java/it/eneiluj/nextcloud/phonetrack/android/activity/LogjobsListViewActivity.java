@@ -236,6 +236,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     swipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
                 }
+                if (db.getLocationCount() > 0) {
+                    Intent syncIntent = new Intent(LogjobsListViewActivity.this, WebTrackService.class);
+                    startService(syncIntent);
+                    showToast(getString(R.string.uploading_started));
+                }
             }
         });
 
@@ -894,6 +899,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     // TODO let the user see the error...
                     String ljId3 = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
+                    showToast(getString(R.string.uploading_failed) + "\n" + errorMessage, Toast.LENGTH_LONG);
                     break;
                 }
                 case LoggerService.BROADCAST_LOCATION_STARTED:

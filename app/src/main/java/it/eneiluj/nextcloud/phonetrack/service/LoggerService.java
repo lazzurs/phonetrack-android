@@ -106,13 +106,18 @@ public class LoggerService extends Service {
         }
         firstRun = true;
 
+        db = PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext());
+
+        syncIntent = new Intent(getApplicationContext(), WebTrackService.class);
+        // start websync service if needed
+        if (db.getLocationCount() > 0) {
+            startService(syncIntent);
+        }
+
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
         }
-
-        db = PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext());
-        //db.open(this);
 
         locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -150,9 +155,6 @@ public class LoggerService extends Service {
 
             sendBroadcast(BROADCAST_LOCATION_STARTED);
 
-            // TODO
-            //syncIntent = new Intent(getApplicationContext(), WebTrackService.class);
-
             thread = new LoggerThread();
             thread.start();
             looper = thread.getLooper();
@@ -160,11 +162,6 @@ public class LoggerService extends Service {
             battery = getBatteryLevelOnce();
             // register for battery level
             this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-
-            // TODO start websync service if needed
-            /*if (liveSync && db.needsSync()) {
-                startService(syncIntent);
-            }*/
         }
     }
 
@@ -185,12 +182,14 @@ public class LoggerService extends Service {
             // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
             if (firstRun) {
                 firstRun = false;
+                if (DEBUG) { Log.d(TAG, "[onStartCommand : upd logjob but firstrun so nothing]"); }
+                if (!isRunning) {
+                    stopSelf();
+                }
             }
             else {
                 String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
-                if (DEBUG) {
-                    Log.d(TAG, "[onStartCommand : upd logjob]");
-                }
+                if (DEBUG) { Log.d(TAG, "[onStartCommand : upd logjob]"); }
                 handleLogjobsUpdated(ljId);
             }
         } else if (providersUpdated) {

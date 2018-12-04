@@ -203,6 +203,9 @@ public class WebTrackHelper {
     }
 
     public URL getUrlFromLogjob(DBLogjob lj) throws MalformedURLException {
-        return new URL(lj.getNextURL() + "/index.php/app/phonetrack/" + lj.getToken() + "/" + lj.getDeviceName());
+        return new URL(
+                lj.getNextURL().replaceAll("/+$", "") +
+                "/index.php/apps/phonetrack/logPost/" + lj.getToken() + "/" + lj.getDeviceName()
+        );
     }
 }

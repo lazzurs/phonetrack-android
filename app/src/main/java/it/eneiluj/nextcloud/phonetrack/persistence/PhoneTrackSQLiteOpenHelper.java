@@ -235,7 +235,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         DBSession dbs = new DBSession(0, session.getName(), session.getToken(), session.getNextURL());
         long id = addSession(dbs);
         notifyLogjobsChanged();
-        getPhonetrackServerSyncHelper().scheduleSync(true);
+        //getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
     }
 
@@ -250,7 +250,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         DBLogjob dblj = new DBLogjob(0, title, nextURL, token, deviceName, minTime, minDistance, minAccuracy, false, nbSync);
         long id = addLogjob(dblj);
         notifyLogjobsChanged();
-        getPhonetrackServerSyncHelper().scheduleSync(true);
+        //getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
     }
 
@@ -498,10 +498,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(key_enabled, logjob.isEnabled() ? "1" : "0");
         db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
-        if (callback != null) {
+        /*if (callback != null) {
             serverSyncHelper.addCallbackPush(callback);
         }
-        serverSyncHelper.scheduleSync(true);
+        serverSyncHelper.scheduleSync(true);*/
     }
 
     /*public void setCategory(@NonNull DBLogjob logjob, @NonNull String category, @Nullable ICallback callback) {
@@ -541,10 +541,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         // if data was changed, set new status and schedule sync (with callback); otherwise invoke callback directly.
         if (rows > 0) {
             notifyLogjobsChanged();
-            if (callback != null) {
+            /*if (callback != null) {
                 serverSyncHelper.addCallbackPush(callback);
             }
-            serverSyncHelper.scheduleSync(true);
+            serverSyncHelper.scheduleSync(true);*/
             return newLogjob;
         } else {
             if (callback != null) {
