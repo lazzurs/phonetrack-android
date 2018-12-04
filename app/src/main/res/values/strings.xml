@@ -110,9 +110,9 @@
     <string name="snackbar_settings">Settings</string>
 
     <!-- URLs -->
-    <string name="url_source" translatable="false">https://gitlab.com/eneiluj/nextcloud-phonetrack</string>
-    <string name="url_issues" translatable="false">https://gitlab.com/eneiluj/nextcloud-phonetrack/issues</string>
-    <string name="url_license" translatable="false">https://gitlab.com/eneiluj/nextcloud-phonetrack/blob/master/LICENSE</string>
+    <string name="url_source" translatable="false">https://gitlab.com/eneiluj/phonetrack-android</string>
+    <string name="url_issues" translatable="false">https://gitlab.com/eneiluj/phonetrack-android/issues</string>
+    <string name="url_license" translatable="false">https://gitlab.com/eneiluj/phonetrack-android/blob/master/LICENSE</string>
     <string name="url_translations" translatable="false">https://crowdin.com/project/phonetrack/</string>
 
     <!-- About -->

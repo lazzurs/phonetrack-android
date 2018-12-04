@@ -46,6 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.eneiluj.nextcloud.phonetrack.R;
 import it.eneiluj.nextcloud.phonetrack.model.Category;
+import it.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import it.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import it.eneiluj.nextcloud.phonetrack.model.Item;
 import it.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
@@ -475,6 +476,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 switch(direction) {
                     case ItemTouchHelper.LEFT: {
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
+                        // get locations
+                        final List<DBLocation> locations = db.getLocationOfLogjob(String.valueOf(dbLogjob.getId()));
                         db.deleteLogjobAndSync(dbLogjob.getId());
                         adapter.remove(dbLogjob);
                         refreshLists();
@@ -484,6 +487,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                     @Override
                                     public void onClick(View v) {
                                         db.addLogjob(dbLogjob);
+                                        for (DBLocation dbloc : locations) {
+                                            db.addLocation(dbloc);
+                                        }
                                         refreshLists();
                                         Snackbar.make(swipeRefreshLayout, R.string.action_logjob_restored, Snackbar.LENGTH_SHORT)
                                                 .show();

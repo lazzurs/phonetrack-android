@@ -97,7 +97,7 @@ public class PhoneTrackClient {
                 "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
         // https://github.com/square/retrofit/issues/805#issuecomment-93426183
         con.setRequestProperty( "Connection", "Close");
-        con.setRequestProperty("User-Agent", "nextcloud-phonetrack/" + BuildConfig.VERSION_NAME + " (Android)");
+        con.setRequestProperty("User-Agent", "phonetrack-android/" + BuildConfig.VERSION_NAME);
         if (lastETag != null && METHOD_GET.equals(method)) {
             con.setRequestProperty("If-None-Match", lastETag);
         }

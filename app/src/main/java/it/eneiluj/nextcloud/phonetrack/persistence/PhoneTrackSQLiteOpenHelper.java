@@ -598,6 +598,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     public void deleteLogjobAndSync(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
+        // delete all locations
+        db.delete(table_locations,
+                key_logjobid + " = ?",
+                new String[]{String.valueOf(id)});
+        // delete the log job
         db.delete(table_logjobs,
                 key_id + " = ?",
                 new String[]{String.valueOf(id)});
@@ -617,7 +622,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param loc
      */
     public void addLocation(String ljId, Location loc, float battery) {
-        if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation]"); }
+        if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation from ljid, loc, battery]"); }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_logjobid, ljId);
@@ -642,6 +647,25 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             sat = loc.getExtras().getInt("satellites", 0);
         }
         values.put(key_satellites, sat);
+
+        db.insert(table_locations, null, values);
+    }
+
+    public void addLocation(DBLocation dbLoc) {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation from dblocation]"); }
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(key_logjobid, dbLoc.getLogjobId());
+        values.put(key_time, dbLoc.getTimestamp());
+        values.put(key_lat, dbLoc.getLat());
+        values.put(key_lon, dbLoc.getLon());
+        values.put(key_bearing, dbLoc.getBearing());
+        values.put(key_altitude, dbLoc.getAltitude());
+        values.put(key_speed, dbLoc.getSpeed());
+        values.put(key_accuracy, dbLoc.getAccuracy());
+        values.put(key_battery, dbLoc.getBattery());
+        values.put(key_satellites, dbLoc.getSatellites());
 
         db.insert(table_locations, null, values);
     }
