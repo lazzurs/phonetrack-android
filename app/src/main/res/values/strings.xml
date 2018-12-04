@@ -69,6 +69,9 @@
     <string name="using_network">Using network location</string>
     <string name="using_gps">Using gps location</string>
     <string name="location_permission_denied">Location permission denied</string>
+    <string name="pref_autostart_title">Auto start</string>
+    <string name="pref_autostart_summary">Logging will start on system boot</string>
+    <string name="pref_autostart_default" translatable="false">false</string>
 
     <!-- Web errors -->
     <string name="e_illegal_redirect" translatable="false">Illegal redirect: %d</string>
@@ -147,6 +150,7 @@
     <string name="pref_key_trust_system_certs" translatable="false">trustSystemCerts</string>
     <string name="pref_key_reset_trust" translatable="false">resetTrust</string>
     <string name="pref_key_theme" translatable="false">darkTheme</string>
+    <string name="pref_key_autostart" translatable="false">autostart</string>
     <string name="pref_value_theme_light">Light</string>
     <string name="pref_value_theme_dark">Dark</string>
     <string name="pref_key_providers" translatable="false">locationProviders</string>
