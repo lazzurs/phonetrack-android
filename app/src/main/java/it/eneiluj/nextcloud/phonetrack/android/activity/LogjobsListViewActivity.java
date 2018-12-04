@@ -53,6 +53,7 @@ import it.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import it.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import it.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import it.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import it.eneiluj.nextcloud.phonetrack.service.WebTrackService;
 import it.eneiluj.nextcloud.phonetrack.util.ICallback;
 import it.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 
@@ -842,8 +843,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(LoggerService.BROADCAST_LOCATION_GPS_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED);
-        //filter.addAction(WebTrackService.BROADCAST_SYNC_DONE);
-        //filter.addAction(WebTrackService.BROADCAST_SYNC_FAILED);
+        filter.addAction(WebTrackService.BROADCAST_SYNC_DONE);
+        filter.addAction(WebTrackService.BROADCAST_SYNC_FAILED);
         registerReceiver(mBroadcastReceiver, filter);
     }
 
@@ -859,11 +860,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
             switch (intent.getAction()) {
                 case LoggerService.BROADCAST_LOCATION_UPDATED:
-                    /*updateLocationLabel(LoggerService.lastUpdateRealtime());
-                    setLocLed(LED_GREEN);
-                    if (!pref_liveSync) {
-                        updateSyncStatus(db.countUnsynced());
-                    }*/
                     String ljId = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
                     if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast loc updated " + ljId + "]"); }
                     // to update all items
@@ -878,35 +874,28 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         }
                     }
                     break;
-                /*case WebTrackService.BROADCAST_SYNC_DONE:
-                    final int unsyncedCount = db.countUnsynced();
-                    updateSyncStatus(unsyncedCount);
-                    setSyncLed(LED_GREEN);
-                    // reset error flag and label
-                    if (syncError) {
-                        syncErrorLabel.setText(null);
-                        syncError = false;
-                    }
-                    // showConfirm message if manual uploading
-                    if (isUploading && unsyncedCount == 0) {
-                        showToast(getString(R.string.uploading_done));
-                        isUploading = false;
+                case WebTrackService.BROADCAST_SYNC_DONE:
+                    String ljId2 = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
+                    if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast loc synced " + ljId2 + "]"); }
+                    // to update all items
+                    //adapter.notifyDataSetChanged();
+                    // but we update just the changed one
+                    DBLogjob lj2;
+                    for (int i = 0; i < adapter.getItemCount(); i++) {
+                        lj2 = (DBLogjob) adapter.getItem(i);
+                        if (String.valueOf(lj2.getId()).equals(ljId2)) {
+                            adapter.notifyItemChanged(i);
+                            break;
+                        }
                     }
                     break;
                 case (WebTrackService.BROADCAST_SYNC_FAILED): {
-                    updateSyncStatus(db.countUnsynced());
-                    setSyncLed(LED_RED);
-                    // set error flag and label
-                    String message = intent.getStringExtra("message");
-                    syncErrorLabel.setText(message);
-                    syncError = true;
-                    // showConfirm message if manual uploading
-                    if (isUploading) {
-                        showToast(getString(R.string.uploading_failed) + "\n" + message, Toast.LENGTH_LONG);
-                        isUploading = false;
-                    }
+                    // TODO show that there was an error for the logjob
+                    // TODO let the user see the error...
+                    String ljId3 = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
+                    String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
                     break;
-                }*/
+                }
                 case LoggerService.BROADCAST_LOCATION_STARTED:
                     showToast(getString(R.string.tracking_started));
                     //setLocLed(LED_YELLOW);

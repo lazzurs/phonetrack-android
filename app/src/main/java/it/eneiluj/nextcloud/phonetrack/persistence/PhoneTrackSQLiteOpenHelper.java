@@ -504,19 +504,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         serverSyncHelper.scheduleSync(true);
     }
 
-    public void incNbSync(@NonNull DBLogjob logjob) {
-        logjob.setNbSync(logjob.getNbSync() + 1);
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(key_nbsync, logjob.getNbSync());
-        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
-    }
-
-    public int getNbSync(long logjobId) {
-        DBLogjob lj = getLogjob(logjobId);
-        return (lj == null) ? 0 : lj.getNbSync();
-    }
-
     /*public void setCategory(@NonNull DBLogjob logjob, @NonNull String category, @Nullable ICallback callback) {
         logjob.setCategory(category);
         logjob.setStatus(DBStatus.LOCAL_EDITED);
@@ -747,6 +734,27 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         cursor.close();
         return result;
     }
+
+    public void deleteLocation(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(table_locations,
+                key_id + " = ?",
+                new String[]{String.valueOf(id)});
+    }
+
+    public void incNbSync(@NonNull DBLogjob logjob) {
+        logjob.setNbSync(logjob.getNbSync() + 1);
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(key_nbsync, logjob.getNbSync());
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
+    }
+
+    public int getNbSync(long logjobId) {
+        DBLogjob lj = getLogjob(logjobId);
+        return (lj == null) ? 0 : lj.getNbSync();
+    }
+
 
     /**
      * Notify about changed logjob.

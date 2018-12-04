@@ -74,6 +74,7 @@ public class LoggerService extends Service {
     public static final String BROADCAST_LOCATION_GPS_ENABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.gps_enabled";
     public static final String BROADCAST_LOCATION_DISABLED = "it.eneiluj.nextcloud.phonetrack.broadcast.location_disabled";
     public static final String BROADCAST_EXTRA_PARAM = "it.eneiluj.nextcloud.phonetrack.broadcast.extra_param";
+    public static final String BROADCAST_ERROR_MESSAGE = "it.eneiluj.nextcloud.phonetrack.broadcast.error_message";
     private boolean liveSync = false;
     private Intent syncIntent;
 
