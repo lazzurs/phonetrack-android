@@ -104,5 +104,9 @@
             android:enabled="true"
             android:exported="false" />
 
+        <service
+            android:name="it.eneiluj.nextcloud.phonetrack.service.WebTrackService"
+            android:exported="false" />
+
     </application>
 </manifest>
