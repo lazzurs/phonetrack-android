@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.eneiluj.nextcloud.phonetrack">
+    package="net.eneiluj.nextcloud.phonetrack">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,7 +16,7 @@
     <uses-feature android:name="android.hardware.location.network" />
 
     <application
-        android:name="it.eneiluj.nextcloud.phonetrack.util.PhoneTrack"
+        android:name="net.eneiluj.nextcloud.phonetrack.util.PhoneTrack"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -27,7 +27,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.SplashscreenActivity"
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.SplashscreenActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +39,7 @@
         </activity>
 
         <activity
-            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -52,27 +52,27 @@
                 android:resource="@xml/searchable" />
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity" />
+                android:value="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity" />
         </activity>
 
         <activity
-            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity"
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity"
             android:label="@string/settings_server_settings"
-            android:parentActivityName="it.eneiluj.nextcloud.phonetrack.android.activity.PreferencesActivity"
+            android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.PreferencesActivity"
             android:windowSoftInputMode="stateVisible" />
 
         <activity
-            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.PreferencesActivity"
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.PreferencesActivity"
             android:label="@string/action_settings"
-            android:parentActivityName="it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
+            android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
             android:theme="@style/Preferences"
             />
 
         <activity
-            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity"
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity"
             android:label="@string/simple_edit"
-            android:parentActivityName="it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
+            android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask">
             <!-- this is to receive share action from other apps -->
@@ -84,12 +84,12 @@
         </activity>
 
         <activity
-            android:name="it.eneiluj.nextcloud.phonetrack.android.activity.AboutActivity"
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.AboutActivity"
             android:label="@string/simple_about"
-            android:parentActivityName="it.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity" />
+            android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity" />
 
         <service
-            android:name="it.eneiluj.nextcloud.phonetrack.android.quicksettings.NewLogjobTileService"
+            android:name="net.eneiluj.nextcloud.phonetrack.android.quicksettings.NewLogjobTileService"
             android:icon="@drawable/ic_quicksettings_new"
             android:label="@string/action_create"
             android:description="@string/action_create"
@@ -100,16 +100,16 @@
         </service>
 
         <service
-            android:name="it.eneiluj.nextcloud.phonetrack.service.LoggerService"
+            android:name="net.eneiluj.nextcloud.phonetrack.service.LoggerService"
             android:enabled="true"
             android:exported="false" />
 
         <service
-            android:name="it.eneiluj.nextcloud.phonetrack.service.WebTrackService"
+            android:name="net.eneiluj.nextcloud.phonetrack.service.WebTrackService"
             android:exported="false" />
 
         <receiver
-            android:name="it.eneiluj.nextcloud.phonetrack.service.BootCompletedReceiver"
+            android:name="net.eneiluj.nextcloud.phonetrack.service.BootCompletedReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

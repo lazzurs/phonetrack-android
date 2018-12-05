@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="?dialogPreferredPadding">
 
-	<it.eneiluj.nextcloud.phonetrack.android.AlwaysAutoCompleteTextView
+	<net.eneiluj.nextcloud.phonetrack.android.AlwaysAutoCompleteTextView
 		android:id="@+id/editCategory"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
