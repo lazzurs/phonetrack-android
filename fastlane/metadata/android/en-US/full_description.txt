@@ -1,20 +1,18 @@
-Companion app to Nextcloud Notes.
+Logging app to Nextcloud PhoneTrack.
 
 Features
 
-    List, create, edit, share, search and delete notes
-    Manage categories
-    Share text and links as new note into the app
-    Mark notes as favorite
-    Bulk delete
-    Formatting with MarkDown (using RxMarkdown)
+    List, create, edit, share, search and delete log jobs
+    Start on system boot
+    Store positions when network is not available
     Multi-Lingual User-Interface
 
 Requirements
 
     Nextcloud instance running
-    Nextcloud Notes app enabled
+    Nextcloud PhoneTrack app enabled
 
 Alternatives
 
-If you dislike this app and you are looking for alternatives: Have a look at MyOwnNotes.
+If you dislike this app and you are looking for alternatives: Have a look at other loggin methods/apps
+in PhoneTrack wiki.

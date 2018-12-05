@@ -48,7 +48,6 @@ public class AlwaysAutoCompleteTextView extends AppCompatAutoCompleteTextView {
             performFiltering(getText(), 0);
             showDropDown();
         } catch (WindowManager.BadTokenException e) {
-            // https://github.com/stefan-niedermann/nextcloud-notes/issues/366
             e.printStackTrace();
             Log.e(AlwaysAutoCompleteTextView.class.getSimpleName(), "Exception", e);
         }

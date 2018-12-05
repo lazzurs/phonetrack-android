@@ -482,7 +482,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         db.deleteLogjobAndSync(dbLogjob.getId());
                         adapter.remove(dbLogjob);
                         refreshLists();
-                        Log.v("Note", "Item deleted through swipe ----------------------------------------------");
+                        Log.v(TAG, "Item deleted through swipe ----------------------------------------------");
                         Snackbar.make(swipeRefreshLayout, R.string.action_logjob_deleted, Snackbar.LENGTH_LONG)
                                 .setAction(R.string.action_undo, new View.OnClickListener() {
                                     @Override
@@ -533,16 +533,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
     private void refreshLists(final boolean scrollToTop) {
         String subtitle = "";
-        if (navigationSelection.category != null) {
-            /*if (navigationSelection.category.isEmpty()) {
-                subtitle = getString(R.string.action_uncategorized);
-            } else {
-                subtitle = NoteUtil.extendCategory(navigationSelection.category);
-            }*/
-        } else if (navigationSelection.favorite != null && navigationSelection.favorite) {
-            subtitle = getString(R.string.label_enabled);
+        if (navigationSelection.favorite != null && navigationSelection.favorite) {
+            subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_enabled);
         } else {
-            subtitle = getString(R.string.app_name);
+            subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_all_logjobs);
         }
         setTitle(subtitle);
         CharSequence query = null;

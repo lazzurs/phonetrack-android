@@ -245,7 +245,7 @@ public class SessionServerSyncHelper {
 
         @Override
         protected LoginStatus doInBackground(Void... voids) {
-            client = createPhoneTrackClient(); // recreate NoteClients on every sync in case the connection settings was changed
+            client = createPhoneTrackClient(); // recreate PhoneTrackClients on every sync in case the connection settings was changed
             Log.i(getClass().getSimpleName(), "STARTING SYNCHRONIZATION");
             //dbHelper.debugPrintFullDB();
             LoginStatus status = LoginStatus.OK;
@@ -276,7 +276,7 @@ public class SessionServerSyncHelper {
                 Set<String> remoteTokens = new HashSet<>();
                 // pull remote changes: update or create each remote logjob
                 for (CloudSession remoteSession : remoteSessions) {
-                    Log.v(getClass().getSimpleName(), "   Process Remote Note: " + remoteSession);
+                    Log.v(getClass().getSimpleName(), "   Process Remote Session: " + remoteSession);
                     remoteTokens.add(remoteSession.getToken());
                     if (locIdMap.containsKey(remoteSession.getToken())) {
                         Log.v(getClass().getSimpleName(), "   ... found -> Update");

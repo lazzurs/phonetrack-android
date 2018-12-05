@@ -12,11 +12,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
-//import net.eneiluj.nextcloud.phonetrack.android.fragment.NoteEditFragment;
-//import net.eneiluj.nextcloud.phonetrack.android.fragment.NotePreviewFragment;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
-import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 
 public class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
 
@@ -70,48 +67,17 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
     }
 
     /**
-     * Starts a {@link NoteEditFragment} or {@link NotePreviewFragment} for an existing logjob.
-     * The type of fragment (view-mode) is chosen based on the user preferences.
-     *
-     * @param noteId ID of the existing logjob.
-     */
-    /*private void launchExistingLogjob(long noteId) {
-        final String prefKeyNoteMode = getString(R.string.pref_key_note_mode);
-        final String prefKeyLastMode = getString(R.string.pref_key_last_note_mode);
-        final String prefValueEdit = getString(R.string.pref_value_mode_edit);
-        final String prefValuePreview = getString(R.string.pref_value_mode_preview);
-        final String prefValueLast = getString(R.string.pref_value_mode_last);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String mode = preferences.getString(prefKeyNoteMode, prefValueEdit);
-        String lastMode = preferences.getString(prefKeyLastMode, prefValueEdit);
-        boolean editMode = true;
-        if (prefValuePreview.equals(mode) || (prefValueLast.equals(mode) && prefValuePreview.equals(lastMode))) {
-            editMode = false;
-        }
-        launchExistingLogjob(noteId, editMode);
-    }*/
-
-    /**
-     * Starts a {@link NoteEditFragment} or {@link NotePreviewFragment} for an existing logjob.
+     * Starts a {@link EditLogjobFragment} for an existing logjob.
      *
      * @param logjobId ID of the existing logjob.
-     * @param edit   View-mode of the fragment:
-     *               <code>true</code> for {@link NoteEditFragment},
-     *               <code>false</code> for {@link NotePreviewFragment}.
      */
     private void launchExistingLogjob(long logjobId) {
-        // save state of the fragment in order to resume with the same logjob and originalNote
+        // save state of the fragment in order to resume with the same logjob and originalLogjob
         Fragment.SavedState savedState = null;
         if (fragment != null) {
             savedState = getFragmentManager().saveFragmentInstanceState(fragment);
         }
         fragment = EditLogjobFragment.newInstance(logjobId);
-        /*if (edit) {
-            fragment = NoteEditFragment.newInstance(logjobId);
-        } else {
-            fragment = NotePreviewFragment.newInstance(logjobId);
-        }*/
         if (savedState != null) {
             fragment.setInitialSavedState(savedState);
         }
@@ -119,7 +85,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
     }
 
     /**
-     * Starts the {@link NoteEditFragment} with a new logjob.
+     * Starts the {@link EditLogjobFragment} with a new logjob.
      * Content ("share" functionality), category and favorite attribute can be preset.
      */
     private void launchNewLogjob() {
@@ -163,12 +129,6 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
             case android.R.id.home:
                 close();
                 return true;
-            /*case R.id.menu_preview:
-                launchExistingLogjob(getLogjobId(), false);
-                return true;
-            case R.id.menu_edit:
-                launchExistingLogjob(getLogjobId(), true);
-                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -179,13 +139,6 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
      * Send result and closes the Activity
      */
     public void close() {
-        /*SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        final String prefKeyLastMode = getString(R.string.pref_key_last_note_mode);
-        if (fragment instanceof NoteEditFragment) {
-            preferences.edit().putString(prefKeyLastMode, getString(R.string.pref_value_mode_edit)).apply();
-        } else {
-            preferences.edit().putString(prefKeyLastMode, getString(R.string.pref_value_mode_preview)).apply();
-        }*/
         fragment.onCloseLogjob();
         finish();
     }
