@@ -80,7 +80,7 @@ public class PhoneTrackClientUtil {
      */
     public static LoginStatus isValidLogin(CustomCertManager ccm, String url, String username, String password) {
         try {
-            String targetURL = url + "index.php/apps/notes/api/v0.2/notes";
+            String targetURL = url + "index.php/apps/phonetrack/api/ping";
             HttpURLConnection con = SupportUtil.getHttpURLConnection(ccm, targetURL);
             con.setRequestMethod("GET");
             con.setRequestProperty(

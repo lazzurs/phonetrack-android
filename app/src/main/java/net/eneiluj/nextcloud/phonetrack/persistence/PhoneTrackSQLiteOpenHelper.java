@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import net.eneiluj.nextcloud.phonetrack.android.appwidget.NoteListWidget;
-//import net.eneiluj.nextcloud.phonetrack.android.appwidget.SingleNoteWidget;
 import net.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
@@ -27,7 +25,7 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 /**
- * Helps to add, get, update and delete Notes with the option to trigger a Resync with the Server.
+ * Helps to add, get, update and delete log jobs, sessions, locations with the option to trigger a session Resync with the Server.
  */
 public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 

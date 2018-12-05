@@ -30,7 +30,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = ItemAdapter.class.getSimpleName();
 
     private static final int section_type = 0;
-    private static final int note_type = 1;
+    private static final int logjob_type = 1;
     private final LogjobClickListener logjobClickListener;
     private List<Item> itemList = null;
     private boolean showCategory = true;
@@ -59,7 +59,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * Adds the given logjob to the top of the list.
      *
-     * @param logjob Note that should be added.
+     * @param logjob log job that should be added.
      */
     public void add(@NonNull DBLogjob logjob) {
         itemList.add(0, logjob);
@@ -70,7 +70,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * Replaces a logjob with an updated version
      *
-     * @param logjob     Note with the changes.
+     * @param logjob     log job with the changes.
      * @param position position in the list of the node
      */
     public void replace(@NonNull DBLogjob logjob, int position) {
@@ -91,11 +91,11 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
         if (viewType == section_type) {
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_notes_list_section_item, parent, false);
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_logjobs_list_section_item, parent, false);
             return new SectionViewHolder(v);
         } else {
             v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.fragment_notes_list_note_item, parent, false);
+                    .inflate(R.layout.fragment_logjobs_list_logjob_item, parent, false);
             return new LogjobViewHolder(v);
         }
     }
@@ -112,22 +112,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else {
             final DBLogjob logjob = (DBLogjob) item;
             final LogjobViewHolder nvHolder = ((LogjobViewHolder) holder);
-            //nvHolder.noteSwipeable.setAlpha(DBStatus.LOCAL_DELETED.equals(logjob.getStatus()) ? 0.5f : 1.0f);
-            nvHolder.noteSwipeable.setAlpha(1.0f);
+            nvHolder.logjobSwipeable.setAlpha(1.0f);
             nvHolder.logjobTitle.setText(Html.fromHtml(logjob.getTitle()));
-            //nvHolder.noteCategory.setVisibility(showCategory && !logjob.getCategory().isEmpty() ? View.VISIBLE : View.GONE);
-            //nvHolder.noteCategory.setText(Html.fromHtml(logjob.getCategory()));
-            //System.out.println("SEARCH nexturl : ");
-            //System.out.println(logjob.getDeviceName()+" => "+logjob.getNextURL());
             nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getDeviceName()+" => "+logjob.getNextURL()));
-            //nvHolder.nosyncIcon.setVisibility(DBStatus.VOID.equals(logjob.getStatus()) ? View.INVISIBLE : View.VISIBLE);
-            //nvHolder.noteFavorite.setImageResource(logjob.isEnabled() ? R.drawable.ic_star_yellow_24dp : R.drawable.ic_star_grey_ccc_24dp);
-            /*nvHolder.noteFavorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    logjobClickListener.onNoteFavoriteClick(holder.getAdapterPosition(), view);
-                }
-            });*/
+
             nvHolder.logjobEnabled.setChecked(logjob.isEnabled());
             nvHolder.logjobEnabled.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -207,13 +195,11 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return getItem(position).isSection() ? section_type : note_type;
+        return getItem(position).isSection() ? section_type : logjob_type;
     }
 
     public interface LogjobClickListener {
         void onLogjobClick(int position, View v);
-
-        //void onNoteFavoriteClick(int position, View v);
 
         void onLogjobEnabledClick(int position, View v);
 
@@ -221,16 +207,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public class LogjobViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
-        @BindView(R.id.noteSwipeable)
-        public View noteSwipeable;
-        View noteSwipeFrame;
-        //ImageView noteFavoriteLeft;
-        TextView noteTextToggleLeft;
-        ImageView noteDeleteRight;
+        @BindView(R.id.logjobSwipeable)
+        public View logjobSwipeable;
+        View logjobSwipeFrame;
+        TextView logjobTextToggleLeft;
+        ImageView logjobDeleteRight;
         TextView logjobTitle;
-        //@BindView(R.id.noteCategory)
-        //TextView noteCategory;
-        @BindView(R.id.noteExcerpt)
+        @BindView(R.id.logjobExcerpt)
         TextView logjobSubtitle;
         @BindView(R.id.nosyncIcon)
         ImageView nosyncIcon;
@@ -247,17 +230,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private LogjobViewHolder(View v) {
             super(v);
-            this.noteSwipeFrame = v.findViewById(R.id.noteSwipeFrame);
-            this.noteSwipeable = v.findViewById(R.id.noteSwipeable);
-            //this.noteFavoriteLeft = v.findViewById(R.id.noteFavoriteLeft);
-            this.noteTextToggleLeft = v.findViewById(R.id.noteTextToggleLeft);
-            this.noteDeleteRight = v.findViewById(R.id.noteDeleteRight);
-            this.logjobTitle = v.findViewById(R.id.noteTitle);
-            //this.noteCategory = v.findViewById(R.id.noteCategory);
-            this.logjobSubtitle = v.findViewById(R.id.noteExcerpt);
+            this.logjobSwipeFrame = v.findViewById(R.id.logjobSwipeFrame);
+            this.logjobSwipeable = v.findViewById(R.id.logjobSwipeable);
+            this.logjobTextToggleLeft = v.findViewById(R.id.logjobTextToggleLeft);
+            this.logjobDeleteRight = v.findViewById(R.id.logjobDeleteRight);
+            this.logjobTitle = v.findViewById(R.id.logjobTitle);
+            this.logjobSubtitle = v.findViewById(R.id.logjobExcerpt);
             this.nosyncIcon = v.findViewById(R.id.nosyncIcon);
             this.syncIcon = v.findViewById(R.id.syncIcon);
-            //this.noteFavorite = v.findViewById(R.id.noteFavorite);
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
             this.nbSync = v.findViewById(R.id.nbSync);
@@ -280,10 +260,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         public void showSwipe(boolean left) {
-            //noteFavoriteLeft.setVisibility(left ? View.VISIBLE : View.INVISIBLE);
-            noteTextToggleLeft.setVisibility(left ? View.VISIBLE : View.INVISIBLE);
-            noteDeleteRight.setVisibility(left ? View.INVISIBLE : View.VISIBLE);
-            noteSwipeFrame.setBackgroundResource(left ? R.color.bg_warning : R.color.bg_attention);
+            logjobTextToggleLeft.setVisibility(left ? View.VISIBLE : View.INVISIBLE);
+            logjobDeleteRight.setVisibility(left ? View.INVISIBLE : View.VISIBLE);
+            logjobSwipeFrame.setBackgroundResource(left ? R.color.bg_warning : R.color.bg_attention);
         }
     }
 

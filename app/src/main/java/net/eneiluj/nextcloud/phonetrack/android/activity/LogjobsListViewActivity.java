@@ -61,11 +61,12 @@ import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
     private final static int PERMISSION_LOCATION = 1;
+
     private final static int PERMISSION_FOREGROUND_SERVICE = 1;
 
     private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
-    public final static String CREATED_NOTE = "net.eneiluj.nextcloud.phonetrack.created_notes";
+    public final static String CREATED_LOGJOB = "net.eneiluj.nextcloud.phonetrack.created_logjob";
     public final static String CREDENTIALS_CHANGED = "net.eneiluj.nextcloud.phonetrack.CREDENTIALS_CHANGED";
     public static final String ADAPTER_KEY_RECENT = "recent";
     public static final String ADAPTER_KEY_STARRED = "starred";
@@ -77,13 +78,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private static final String SAVED_STATE_NAVIGATION_ADAPTER_SLECTION = "navigationAdapterSelection";
     private static final String SAVED_STATE_NAVIGATION_OPEN = "navigationOpen";
 
-    private final static int create_note_cmd = 0;
-    private final static int show_single_note_cmd = 1;
+    private final static int create_logjob_cmd = 0;
+    private final static int show_single_logjob_cmd = 1;
     private final static int server_settings = 2;
     private final static int about = 3;
 
 
-    @BindView(R.id.notesListActivityActionBar)
+    @BindView(R.id.logjobsListActivityActionBar)
     Toolbar toolbar;
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
@@ -251,7 +252,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             public void onClick(View view) {
                 Intent createIntent = new Intent(getApplicationContext(), EditLogjobActivity.class);
                 createIntent.putExtra(EditLogjobActivity.PARAM_CATEGORY, navigationSelection);
-                startActivityForResult(createIntent, create_note_cmd);
+                startActivityForResult(createIntent, create_logjob_cmd);
             }
         });
     }
@@ -516,12 +517,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 // show swipe icon on the side
                 logjobViewHolder.showSwipe(dX>0);
                 // move only swipeable part of item (not leave-behind)
-                getDefaultUIUtil().onDraw(c, recyclerView, logjobViewHolder.noteSwipeable, dX, dY, actionState, isCurrentlyActive);
+                getDefaultUIUtil().onDraw(c, recyclerView, logjobViewHolder.logjobSwipeable, dX, dY, actionState, isCurrentlyActive);
             }
 
             @Override
             public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                getDefaultUIUtil().clearView(((ItemAdapter.LogjobViewHolder) viewHolder).noteSwipeable);
+                getDefaultUIUtil().clearView(((ItemAdapter.LogjobViewHolder) viewHolder).logjobSwipeable);
             }
         });
         touchHelper.attachToRecyclerView(listView);
@@ -644,13 +645,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == create_note_cmd) {
+        if (requestCode == create_logjob_cmd) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 //not need because of db.synchronisation in createActivity
 
-                DBLogjob createdNote = (DBLogjob) data.getExtras().getSerializable(CREATED_NOTE);
-                adapter.add(createdNote);
+                DBLogjob createdLogjob = (DBLogjob) data.getExtras().getSerializable(CREATED_LOGJOB);
+                adapter.add(createdLogjob);
             }
             listView.scrollToPosition(0);
         } else if (requestCode == server_settings) {
@@ -709,16 +710,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             DBLogjob logjob = (DBLogjob) adapter.getItem(position);
             Intent intent = new Intent(getApplicationContext(), EditLogjobActivity.class);
             intent.putExtra(EditLogjobActivity.PARAM_LOGJOB_ID, logjob.getId());
-            startActivityForResult(intent, show_single_note_cmd);
+            startActivityForResult(intent, show_single_logjob_cmd);
 
         }
     }
 
     /*@Override
     public void onNoteFavoriteClick(int position, View view) {
-        DBLogjob note = (DBLogjob) adapter.getItem(position);
+        DBLogjob logjob = (DBLogjob) adapter.getItem(position);
         PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
-        db.toggleFavorite(note, syncCallBack);
+        db.toggleFavorite(logjob, syncCallBack);
         adapter.notifyItemChanged(position);
         refreshLists();
     }*/

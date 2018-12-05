@@ -66,12 +66,6 @@ public class PhoneTrackClient {
     public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
         String target = "APIgetSessions";
         return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_GET, null, lastETag));
-        /*String url = "notes";
-        if (lastModified > 0) {
-            url += "?pruneBefore=" + lastModified;
-        }
-        return new SessionsResponse(requestServer(ccm, url, METHOD_GET, null, lastETag));
-        */
     }
 
 

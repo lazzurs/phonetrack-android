@@ -16,7 +16,7 @@ public class DBLogjob implements Item, Serializable {
     private int minDistance;
     private int minAccuracy;
     private Boolean enabled;
-    private DBStatus status;
+    //private DBStatus status;
     private int nbSync;
 
     public DBLogjob(long id, String title, String nextURL, String token, String deviceName, int minTime, int minDistance, int minAccuracy, Boolean enabled, int nbSync) {

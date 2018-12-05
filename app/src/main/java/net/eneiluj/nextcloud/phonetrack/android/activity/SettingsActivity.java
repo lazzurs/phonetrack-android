@@ -37,8 +37,8 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String SETTINGS_URL = "settingsUrl";
     public static final String SETTINGS_USERNAME = "settingsUsername";
     public static final String SETTINGS_PASSWORD = "settingsPassword";
-    public static final String SETTINGS_KEY_ETAG = "notes_last_etag";
-    public static final String SETTINGS_KEY_LAST_MODIFIED = "notes_last_modified";
+    public static final String SETTINGS_KEY_ETAG = "sessions_last_etag";
+    public static final String SETTINGS_KEY_LAST_MODIFIED = "sessions_last_modified";
     public static final String DEFAULT_SETTINGS = "";
     public static final int CREDENTIALS_CHANGED = 3;
 
@@ -273,7 +273,7 @@ public class SettingsActivity extends AppCompatActivity {
                 setResult(RESULT_OK, data);
                 finish();
             } else {
-                Log.e("Note", "invalid login");
+                Log.e("PhoneTrack", "invalid login");
                 btn_submit.setText(R.string.settings_submit);
                 setInputsEnabled(true);
                 Toast.makeText(getApplicationContext(), getString(R.string.error_invalid_login, getString(status.str)), Toast.LENGTH_LONG).show();
