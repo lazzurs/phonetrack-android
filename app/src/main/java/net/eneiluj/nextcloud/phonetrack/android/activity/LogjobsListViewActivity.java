@@ -630,7 +630,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     /**
-     * Handles the Results of started Sub Activities (Created Note, Edited Note)
+     * Handles the Results of started Sub Activities (Created Logjob, Edited Logjob)
      *
      * @param requestCode int to distinguish between the different Sub Activities
      * @param resultCode  int Return Code
@@ -708,15 +708,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         }
     }
-
-    /*@Override
-    public void onNoteFavoriteClick(int position, View view) {
-        DBLogjob logjob = (DBLogjob) adapter.getItem(position);
-        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
-        db.toggleFavorite(logjob, syncCallBack);
-        adapter.notifyItemChanged(position);
-        refreshLists();
-    }*/
 
     @Override
     public void onLogjobEnabledClick(int position, View view) {

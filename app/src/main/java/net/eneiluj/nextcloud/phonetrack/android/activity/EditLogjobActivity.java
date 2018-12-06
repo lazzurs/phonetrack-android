@@ -119,7 +119,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu_note_activity, menu);
+        //getMenuInflater().inflate(R.menu.menu_logjob_activity, menu);
         //return super.onCreateOptionsMenu(menu);
     }*/
 

@@ -300,7 +300,7 @@ public class EditLogjobFragment extends PreferenceFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_note_fragment, menu);
+        inflater.inflate(R.menu.menu_logjob_fragment, menu);
     }
 
     @Override
