@@ -117,6 +117,7 @@
                     android:layout_marginEnd="2dp"
                     android:layout_marginBottom="1dp"
                     android:adjustViewBounds="false"
+                    android:tint="#990000"
                     android:src="@drawable/ic_notify_grey_24dp" />
 
                 <Space
@@ -134,12 +135,13 @@
 
                 <ImageView
                     android:id="@+id/syncIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_gravity="bottom|right"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="1dp"
                     android:adjustViewBounds="false"
-                    app:srcCompat="@android:drawable/arrow_up_float" />
+                    android:tint="#009900"
+                    android:src="@drawable/ic_notify_grey_24dp" />
             </LinearLayout>
 
         </FrameLayout>
