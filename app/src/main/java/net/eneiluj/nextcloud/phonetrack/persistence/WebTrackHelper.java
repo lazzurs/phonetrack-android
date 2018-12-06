@@ -207,18 +207,27 @@ public class WebTrackHelper {
     public void sendGETPosition(String urlStr, Map<String, String> params) throws IOException {
         String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
                 .replace("%LON", params.get(PARAM_LON))
-                .replace("%TIME", params.get(PARAM_TIME))
+                .replace("%TIMESTAMP", params.get(PARAM_TIME))
                 .replace("%ALT", params.get(PARAM_ALT))
                 .replace("%ACC", params.get(PARAM_ACCURACY))
                 .replace("%SPD", params.get(PARAM_SPEED))
-                .replace("%BEA", params.get(PARAM_BEARING))
+                .replace("%DIR", params.get(PARAM_BEARING))
                 .replace("%SAT", params.get(PARAM_SATELLITES))
-                .replace("%BAT", params.get(PARAM_BATTERY))
+                .replace("%BATT", params.get(PARAM_BATTERY))
                 .replace("%UA", params.get(PARAM_USERAGENT));
 
         URL url = new URL(urlWithValues);
         // TODO do the GET request
-
+        StringBuilder result = new StringBuilder();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String line;
+        while ((line = rd.readLine()) != null) {
+            result.append(line);
+        }
+        rd.close();
+        if (LoggerService.DEBUG) { Log.d(TAG, "[GET request response: " + result + "]"); }
     }
 
     public URL getUrlFromPhoneTrackLogjob(DBLogjob lj) throws MalformedURLException {
