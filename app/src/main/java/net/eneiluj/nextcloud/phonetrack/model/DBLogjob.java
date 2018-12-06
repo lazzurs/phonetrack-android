@@ -56,8 +56,9 @@ public class DBLogjob implements Item, Serializable {
         this.deviceName = deviceName;
     }
 
-    public void setAttrFromUrl(String url) {
-        String[] spl = url.split("/app/phonetrack/");
+    public boolean setAttrFromUrl(String url) {
+        boolean worked = false;
+        String[] spl = url.split("/apps/phonetrack/");
         System.out.println(spl.length);
         if (spl.length == 2) {
             String nextURL = spl[0];
@@ -76,9 +77,11 @@ public class DBLogjob implements Item, Serializable {
                     this.deviceName = devname;
                     this.token = token;
                     this.nextURL = nextURL;
+                    worked = true;
                 }
             }
         }
+        return worked;
     }
 
     public String getToken() {

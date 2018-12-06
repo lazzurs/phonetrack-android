@@ -6,7 +6,7 @@
     <string name="label_all_logjobs">All log jobs</string>
     <string name="label_enabled">Enabled</string>
     <string name="action_create">New log job</string>
-    <string name="action_create_share">New log job from URL</string>
+    <string name="action_create_share">Import PhTrk logging URL</string>
     <string name="action_settings">Settings</string>
     <string name="setting_title">Title</string>
     <string name="setting_title_long">Log job title</string>

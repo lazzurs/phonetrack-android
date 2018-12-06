@@ -2,6 +2,7 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -10,7 +11,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
+import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -104,7 +107,9 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         String url = "";
         if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
             url = intent.getStringExtra(Intent.EXTRA_TEXT);
-            newLogjob.setAttrFromUrl(url);
+            if (!newLogjob.setAttrFromUrl(url)) {
+                showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
+            }
         }
 
 
@@ -160,5 +165,11 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
             //inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private void showToast(CharSequence text, int duration) {
+        Context context = getApplicationContext();
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 }

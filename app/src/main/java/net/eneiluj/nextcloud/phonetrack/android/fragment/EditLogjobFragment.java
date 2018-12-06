@@ -569,7 +569,7 @@ public class EditLogjobFragment extends PreferenceFragment {
 
     private void setFieldsFromUrl(String url) {
         //System.out.println("UUUUUUUUUUUUU : "+url);
-        String[] spl = url.split("/app/phonetrack/");
+        String[] spl = url.split("/apps/phonetrack/");
         System.out.println(spl.length);
         if (spl.length == 2) {
             String nextURL = spl[0];
