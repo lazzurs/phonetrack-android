@@ -312,6 +312,7 @@ public class EditLogjobFragment extends PreferenceFragment {
             MenuItem itemSelectSession = menu.findItem(R.id.menu_selectSession);
             itemSelectSession.setVisible(false);
         }
+        menu.findItem(R.id.menu_share).setVisible(false);
     }
 
     /*private void prepareFavoriteOption(MenuItem item) {
