@@ -156,26 +156,26 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             clearDatabase(db);
         }
         if (oldVersion < 5) {
-            db.execSQL("ALTER TABLE " + table_notes + " ADD COLUMN " + key_remote_id + " INTEGER");
-            db.execSQL("UPDATE " + table_notes + " SET " + key_remote_id + "=" + key_id + " WHERE (" + key_remote_id + " IS NULL OR " + key_remote_id + "=0) AND " + key_status + "!=?", new String[]{DBStatus.LOCAL_CREATED.getTitle()});
-            db.execSQL("UPDATE " + table_notes + " SET " + key_remote_id + "=0, " + key_status + "=? WHERE " + key_status + "=?", new String[]{DBStatus.LOCAL_EDITED.getTitle(), DBStatus.LOCAL_CREATED.getTitle()});
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_remote_id + " INTEGER");
+            db.execSQL("UPDATE " + table_logjobs + " SET " + key_remote_id + "=" + key_id + " WHERE (" + key_remote_id + " IS NULL OR " + key_remote_id + "=0) AND " + key_status + "!=?", new String[]{DBStatus.LOCAL_CREATED.getTitle()});
+            db.execSQL("UPDATE " + table_logjobs + " SET " + key_remote_id + "=0, " + key_status + "=? WHERE " + key_status + "=?", new String[]{DBStatus.LOCAL_EDITED.getTitle(), DBStatus.LOCAL_CREATED.getTitle()});
         }
         if (oldVersion < 6) {
-            db.execSQL("ALTER TABLE " + table_notes + " ADD COLUMN " + key_favorite + " INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_favorite + " INTEGER DEFAULT 0");
         }
         if (oldVersion < 7) {
             dropIndexes(db);
-            db.execSQL("ALTER TABLE " + table_notes + " ADD COLUMN " + key_category + " TEXT NOT NULL DEFAULT ''");
-            db.execSQL("ALTER TABLE " + table_notes + " ADD COLUMN " + key_etag + " TEXT");
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_category + " TEXT NOT NULL DEFAULT ''");
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_etag + " TEXT");
             createIndexes(db);
         }
         if (oldVersion < 8) {
-            final String table_temp = "NOTES_TEMP";
+            final String table_temp = "LOGJOBS_TEMP";
             createTable(db, table_temp);
             db.execSQL(String.format("INSERT INTO %s(%s,%s,%s,%s,%s,%s,%s,%s,%s) ", table_temp, key_id, key_remote_id, key_status, key_title, key_modified, key_content, key_favorite, key_category, key_etag)
-                    + String.format("SELECT %s,%s,%s,%s,strftime('%%s',%s),%s,%s,%s,%s FROM %s", key_id, key_remote_id, key_status, key_title, key_modified, key_content, key_favorite, key_category, key_etag, table_notes));
-            db.execSQL(String.format("DROP TABLE %s", table_notes));
-            db.execSQL(String.format("ALTER TABLE %s RENAME TO %s", table_temp, table_notes));
+                    + String.format("SELECT %s,%s,%s,%s,strftime('%%s',%s),%s,%s,%s,%s FROM %s", key_id, key_remote_id, key_status, key_title, key_modified, key_content, key_favorite, key_category, key_etag, table_logjobs));
+            db.execSQL(String.format("DROP TABLE %s", table_logjobs));
+            db.execSQL(String.format("ALTER TABLE %s RENAME TO %s", table_temp, table_logjobs));
         }
     }*/
 
@@ -238,9 +238,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Creates a new session in the Database and adds a Synchronization Flag.
-     *
-     * @param session Note
+     * Creates a new logjob in the Database and adds a Synchronization Flag.
      */
     @SuppressWarnings("UnusedReturnValue")
     public long addLogjobAndSync(String title, String nextURL, String token, String deviceName, int minTime, int minDistance, int minAccuracy, int nbSync) {
@@ -287,8 +285,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     /**
      * Get a single logjob by ID
      *
-     * @param id int - ID of the requested Note
-     * @return requested Note
+     * @param id int - ID of the requested log job
+     * @return requested log job
      */
     public DBLogjob getLogjob(long id) {
         List<DBLogjob> logjobs = getLogjobsCustom(key_id + " = ?", new String[]{String.valueOf(id)}, null);
@@ -301,7 +299,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param selection     A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE itself).
      * @param selectionArgs You may include ?s in selection, which will be replaced by the values from selectionArgs, in order that they appear in the selection. The values will be bound as Strings.
      * @param orderBy       How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself). Passing null will use the default sort order, which may be unordered.
-     * @return List of Notes
+     * @return List of log jobs
      */
     @NonNull
     @WorkerThread
@@ -333,8 +331,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     /**
      * Get a single session by ID
      *
-     * @param id int - ID of the requested Note
-     * @return requested Note
+     * @param id int - ID of the requested session
+     * @return requested session
      */
     public DBSession getSession(long id) {
         List<DBSession> sessions = getSessionsCustom(key_id + " = ?", new String[]{String.valueOf(id)}, null);
@@ -347,7 +345,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param selection     A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE itself).
      * @param selectionArgs You may include ?s in selection, which will be replaced by the values from selectionArgs, in order that they appear in the selection. The values will be bound as Strings.
      * @param orderBy       How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself). Passing null will use the default sort order, which may be unordered.
-     * @return List of Notes
+     * @return List of sessions
      */
     @NonNull
     @WorkerThread
@@ -470,26 +468,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return enabled;
     }
 
-    /*@NonNull
-    @WorkerThread
-    public List<NavigationAdapter.NavigationItem> getCategories() {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(
-                table_notes,
-                new String[]{key_category, "COUNT(*)"},
-                key_status + " != ?",
-                new String[]{DBStatus.LOCAL_DELETED.getTitle()},
-                key_category,
-                null,
-                key_category);
-        List<NavigationAdapter.NavigationItem> categories = new ArrayList<>(cursor.getCount());
-        while (cursor.moveToNext()) {
-            categories.add(new NavigationAdapter.NavigationItem("category:" + cursor.getString(0), cursor.getString(0), cursor.getInt(1), NavigationAdapter.ICON_FOLDER));
-        }
-        cursor.close();
-        return categories;
-    }*/
-
     public void toggleEnabled(@NonNull DBLogjob logjob, @Nullable ICallback callback) {
         logjob.setEnabled(!logjob.isEnabled());
         SQLiteDatabase db = this.getWritableDatabase();
@@ -501,21 +479,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         }
         serverSyncHelper.scheduleSync(true);*/
     }
-
-    /*public void setCategory(@NonNull DBLogjob logjob, @NonNull String category, @Nullable ICallback callback) {
-        logjob.setCategory(category);
-        logjob.setStatus(DBStatus.LOCAL_EDITED);
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(key_status, logjob.getStatus().getTitle());
-        values.put(key_category, logjob.getCategory());
-        db.update(table_notes, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
-        if (callback != null) {
-            serverSyncHelper.addCallbackPush(callback);
-        }
-        serverSyncHelper.scheduleSync(true);
-    }*/
-
 
     public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken, @Nullable String newNextURL, @Nullable String newDevicename, int newMinTime, int newMinDistance, int newMinAccuracy, @Nullable ICallback callback) {
         //debugPrintFullDB();
@@ -553,34 +516,22 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Updates a single Note with data from the server, (if it was not modified locally).
-     * Thereby, an optimistic concurrency control is realized in order to prevent conflicts arising due to parallel changes from the UI and synchronization.
-     * This is used by the synchronization task, hence no Synchronization will be triggered. Use updateNoteAndSync() instead!
+     * Updates a single session with data from the server
      *
-     * @param id                        local ID of Note
-     * @param remoteSession                Note from the server.
-     * @param forceUnchangedDBNoteState is not null, then the local logjob is updated only if it was not modified meanwhile
+     * @param id                        local ID of session
+     * @param remoteSession                session from the server.
      * @return The number of the Rows affected.
      */
     int updateSession(long id, @NonNull CloudSession remoteSession) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // First, update the remote ID, since this field cannot be changed in parallel, but have to be updated always.
         ContentValues values = new ContentValues();
-        //values.put(key_remote_id, remoteSession.getRemoteId());
-        //db.update(table_notes, values, key_id + " = ?", new String[]{String.valueOf(id)});
-
-        // The other columns have to be updated in dependency of forceUnchangedDBNoteState,
-        // since the Synchronization-Task must not overwrite locales changes!
-        //values.clear();
         values.put(key_name, remoteSession.getName());
         values.put(key_token, remoteSession.getToken());
         values.put(key_nextURL, remoteSession.getNextURL());
         String whereClause;
         String[] whereArgs;
 
-        // used by: SessionServerSyncHelper.SyncTask.pullRemoteChanges()
-        // update only, if not modified locally (i.e. STATUS="") and if modified remotely (i.e. any (!) column has changed)
         whereClause = key_id + " = ?";
         whereArgs = new String[]{String.valueOf(id)};
 
@@ -685,7 +636,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param selection     A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE itself).
      * @param selectionArgs You may include ?s in selection, which will be replaced by the values from selectionArgs, in order that they appear in the selection. The values will be bound as Strings.
      * @param orderBy       How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself). Passing null will use the default sort order, which may be unordered.
-     * @return List of Notes
+     * @return List of locations
      */
     @NonNull
     @WorkerThread
@@ -777,30 +728,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return (lj == null) ? 0 : lj.getNbSync();
     }
 
-
     /**
      * Notify about changed logjob.
      */
     void notifyLogjobsChanged() {
-        //updateSingleNoteWidgets();
-        //updateNoteListWidgets();
+        // update the widgets
     }
-
-    /**
-     * Update single logjob widget, if the logjob data was changed.
-     */
-    /*private void updateSingleNoteWidgets() {
-        Intent intent = new Intent(getContext(), SingleNoteWidget.class);
-        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
-        getContext().sendBroadcast(intent);
-    }*/
-
-    /**
-     * Update logjob list widgets, if the logjob data was changed.
-     */
-    /*private void updateNoteListWidgets() {
-        Intent intent = new Intent(getContext(), NoteListWidget.class);
-        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
-        getContext().sendBroadcast(intent);
-    }*/
 }

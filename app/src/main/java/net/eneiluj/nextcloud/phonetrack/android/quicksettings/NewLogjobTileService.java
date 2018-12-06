@@ -25,15 +25,15 @@ public class NewLogjobTileService extends TileService {
     @Override
     public void onClick() {
         // create new logjob intent
-        final Intent newNoteIntent = new Intent(getApplicationContext(), EditLogjobActivity.class);
+        final Intent newLogjobIntent = new Intent(getApplicationContext(), EditLogjobActivity.class);
         // ensure it won't open twice if already running
-        newNoteIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        newLogjobIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         // ask to unlock the screen if locked, then start new logjob intent
         unlockAndRun(new Runnable() {
             @Override
             public void run() {
-                startActivityAndCollapse(newNoteIntent);
+                startActivityAndCollapse(newLogjobIntent);
             }
         });
 

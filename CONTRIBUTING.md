@@ -2,7 +2,7 @@
 
 ## Submitting bug reports
 
-If you find a bug, feel free to [open an issue](https://github.com/stefan-niedermann/OwnCloud-Notes/issues/new). But please provide these information in the comment:
+If you find a bug, feel free to [open an issue](https://gitlab.com/eneiluj/phonetrack-android/issues). But please provide these information in the comment:
 
 **Android version:** e. g. 6.0.1 Marshmallow
 
@@ -33,7 +33,7 @@ If you find a bug, feel free to [open an issue](https://github.com/stefan-nieder
 
     **Steps to reproduce:**
       1. open the app
-      2. click on a note
+      2. click on a log job
       3. use the top left back-arrow
       4. ...
 
