@@ -39,7 +39,7 @@
     <string name="setting_min_accuracy">Minimum Accuracy</string>
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters)</string>
 
-    <string name="is_running">%s is running</string>
+    <string name="is_running">%s is running (%s late, %s sent)</string>
 
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>

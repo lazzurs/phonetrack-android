@@ -728,6 +728,25 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return (lj == null) ? 0 : lj.getNbSync();
     }
 
+    public int getNbTotalSync() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(
+                table_logjobs,
+                new String[]{"SUM("+key_nbsync+")"},
+                null,
+                new String[]{},
+                null,
+                null,
+                null);
+        int result = 0;
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+            break;
+        }
+        cursor.close();
+        return result;
+    }
+
     /**
      * Notify about changed logjob.
      */

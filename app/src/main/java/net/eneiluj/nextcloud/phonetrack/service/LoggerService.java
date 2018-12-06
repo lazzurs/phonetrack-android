@@ -74,6 +74,7 @@ public class LoggerService extends Service {
     public static final String BROADCAST_LOCATION_DISABLED = "net.eneiluj.nextcloud.phonetrack.broadcast.location_disabled";
     public static final String BROADCAST_EXTRA_PARAM = "net.eneiluj.nextcloud.phonetrack.broadcast.extra_param";
     public static final String BROADCAST_ERROR_MESSAGE = "net.eneiluj.nextcloud.phonetrack.broadcast.error_message";
+    public static final String UPDATE_NOTIFICATION = "net.eneiluj.nextcloud.phonetrack.UPDATE_NOTIFICATION";
     private boolean liveSync = false;
     private Intent syncIntent;
 
@@ -91,6 +92,7 @@ public class LoggerService extends Service {
 
     private final int NOTIFICATION_ID = 1526756640;
     private NotificationManager mNotificationManager;
+    private NotificationCompat.Builder mNotificationBuilder;
     private boolean useGps = true;
     private boolean useNet = true;
     public static boolean DEBUG = true;
@@ -148,6 +150,7 @@ public class LoggerService extends Service {
 
         final Notification notification = showNotification(NOTIFICATION_ID);
         startForeground(NOTIFICATION_ID, notification);
+        updateNotificationContent();
 
         if (hasLocationUpdates) {
             isRunning = true;
@@ -176,6 +179,7 @@ public class LoggerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         final boolean logjobsUpdated = (intent != null) && intent.getBooleanExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, false);
         final boolean providersUpdated = (intent != null) && intent.getBooleanExtra(PreferencesFragment.UPDATED_PROVIDERS, false);
+        final boolean updateNotif = (intent != null) && intent.getBooleanExtra(UPDATE_NOTIFICATION, false);
         if (logjobsUpdated) {
             // this to avoid doing two loc upd when service is down and then a logjob is enabled
             // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
@@ -202,6 +206,8 @@ public class LoggerService extends Service {
             if (!hasLocationUpdates) {
                 stopSelf();
             }
+        } else if (updateNotif && isRunning) {
+            updateNotificationContent();
         } else if (isRunning) {
             // start without parameter
             if (DEBUG) { Log.d(TAG, "[onStartCommand : start without parameter]"); }
@@ -467,13 +473,17 @@ public class LoggerService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(channelId);
         }
+        String nbLocations = String.valueOf(db.getLocationCount());
+        String nbSent = String.valueOf(db.getNbTotalSync());
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_notify_24dp)
                         .setContentTitle(getString(R.string.app_name))
-                        .setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name)));
+                        .setOnlyAlertOnce(true)
+                        .setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name), nbLocations, nbSent));
                         //.setSmallIcon(R.drawable.ic_stat_notify_24dp)
                         //.setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name)));
+        mNotificationBuilder = mBuilder;
 
         Intent resultIntent = new Intent(this, LogjobsListViewActivity.class);
 
@@ -485,6 +495,13 @@ public class LoggerService extends Service {
         Notification mNotification = mBuilder.build();
         mNotificationManager.notify(mId, mNotification);
         return mNotification;
+    }
+
+    private void updateNotificationContent() {
+        String nbLocations = String.valueOf(db.getLocationCount());
+        String nbSent = String.valueOf(db.getNbTotalSync());
+        mNotificationBuilder.setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name), nbLocations, nbSent));
+        mNotificationManager.notify(this.NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -572,6 +589,7 @@ public class LoggerService extends Service {
                 // TODO remove next line
                 //db.incNbSync(logjob);
                 sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
+                updateNotificationContent();
 
                 Intent syncOneDev = new Intent(getApplicationContext(), WebTrackService.class);
                 syncOneDev.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, logjobId);

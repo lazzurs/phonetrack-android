@@ -141,6 +141,12 @@ public class WebTrackService extends IntentService {
                 am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + FIVE_MINUTES, pi);
             }
         }
+        // notify loggerservice to update notification content
+        if (LoggerService.isRunning()) {
+            Intent intent = new Intent(this, LoggerService.class);
+            intent.putExtra(LoggerService.UPDATE_NOTIFICATION, true);
+            startService(intent);
+        }
     }
 
     /**
