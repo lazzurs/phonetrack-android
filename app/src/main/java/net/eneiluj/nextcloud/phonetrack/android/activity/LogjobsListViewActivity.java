@@ -479,7 +479,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
                         // get locations
                         final List<DBLocation> locations = db.getLocationOfLogjob(String.valueOf(dbLogjob.getId()));
-                        db.deleteLogjobAndSync(dbLogjob.getId());
+                        db.deleteLogjob(dbLogjob.getId());
                         adapter.remove(dbLogjob);
                         refreshLists();
                         Log.v(TAG, "Item deleted through swipe ----------------------------------------------");
@@ -783,7 +783,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     List<Integer> selection = adapter.getSelected();
                     for (Integer i : selection) {
                         DBLogjob logjob = (DBLogjob) adapter.getItem(i);
-                        db.deleteLogjobAndSync(logjob.getId());
+                        db.deleteLogjob(logjob.getId());
                         // Not needed because of dbsync
                         //adapter.remove(logjob);
                         notifyLoggerService(logjob.getId());

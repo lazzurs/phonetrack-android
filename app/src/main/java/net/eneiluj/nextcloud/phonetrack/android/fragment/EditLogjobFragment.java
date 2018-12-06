@@ -236,7 +236,7 @@ public class EditLogjobFragment extends PreferenceFragment {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
-                        db.deleteLogjobAndSync(logjob.getId());
+                        db.deleteLogjob(logjob.getId());
                         listener.close();
                         break;
 
@@ -328,7 +328,7 @@ public class EditLogjobFragment extends PreferenceFragment {
         switch (item.getItemId()) {
             case R.id.menu_cancel:
                 if (originalLogjob == null) {
-                    db.deleteLogjobAndSync(logjob.getId());
+                    db.deleteLogjob(logjob.getId());
                 } else {
                     System.out.println("ORIG ENAB : "+originalLogjob.isEnabled());
                     db.updateLogjobAndSync(originalLogjob, null, null, null, null, 0,0,0,null);
@@ -367,7 +367,7 @@ public class EditLogjobFragment extends PreferenceFragment {
     public void onCloseLogjob() {
         // TODO if all fields are empty (or just title/URL) : delete
         if (originalLogjob == null && getTitle().isEmpty()) {
-            //db.deleteNoteAndSync(logjob.getId());
+            db.deleteLogjob(logjob.getId());
         }
         Log.d(getClass().getSimpleName(), "onCLOSE()");
     }

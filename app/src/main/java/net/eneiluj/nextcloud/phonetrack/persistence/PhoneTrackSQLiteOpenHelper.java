@@ -594,7 +594,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      *
      * @param id            long - ID of the Logjob that should be deleted.
      */
-    public void deleteLogjobAndSync(long id) {
+    public void deleteLogjob(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         // delete all locations
         db.delete(table_locations,
