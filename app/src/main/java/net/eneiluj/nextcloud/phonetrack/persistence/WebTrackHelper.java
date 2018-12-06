@@ -184,25 +184,47 @@ public class WebTrackHelper {
      * @param params Map of parameters (position properties)
      * @throws IOException Connection error
      */
-    public void postPosition(URL url, Map<String, String> params) throws IOException {
-        if (LoggerService.DEBUG) { Log.d(TAG, "[postPosition]"); }
+    public void postPositionToPhoneTrack(URL url, Map<String, String> params) throws IOException {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToPhoneTrack]"); }
         String response = postWithParams(url, params);
         int done = 0;
         try {
             JSONObject json = new JSONObject(response);
             done = json.getInt("done");
         } catch (JSONException e) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[postPosition json failed: " + e + "]"); }
+            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToPhoneTrack json failed: " + e + "]"); }
         }
         if (done != 1) {
             throw new IOException(context.getString(R.string.e_server_response));
         }
     }
 
-    public URL getUrlFromLogjob(DBLogjob lj) throws MalformedURLException {
+    /**
+     * Upload position to server
+     * @param params Map of parameters (position properties)
+     * @throws IOException Connection error
+     */
+    public void sendGETPosition(String urlStr, Map<String, String> params) throws IOException {
+        String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
+                .replace("%LON", params.get(PARAM_LON))
+                .replace("%TIME", params.get(PARAM_TIME))
+                .replace("%ALT", params.get(PARAM_ALT))
+                .replace("%ACC", params.get(PARAM_ACCURACY))
+                .replace("%SPD", params.get(PARAM_SPEED))
+                .replace("%BEA", params.get(PARAM_BEARING))
+                .replace("%SAT", params.get(PARAM_SATELLITES))
+                .replace("%BAT", params.get(PARAM_BATTERY))
+                .replace("%UA", params.get(PARAM_USERAGENT));
+
+        URL url = new URL(urlWithValues);
+        // TODO do the GET request
+
+    }
+
+    public URL getUrlFromPhoneTrackLogjob(DBLogjob lj) throws MalformedURLException {
         return new URL(
                 lj.getNextURL().replaceAll("/+$", "") +
-                "/index.php/apps/phonetrack/logPost/" + lj.getToken() + "/" + lj.getDeviceName()
+                        "/index.php/apps/phonetrack/logPost/" + lj.getToken() + "/" + lj.getDeviceName()
         );
     }
 }

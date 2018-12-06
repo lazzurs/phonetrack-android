@@ -107,17 +107,37 @@ public class WebTrackService extends IntentService {
         for (DBLogjob logjob : logjobs) {
             String ljId = String.valueOf(logjob.getId());
             try {
-                URL url = web.getUrlFromLogjob(logjob);
-                List<DBLocation> locations = db.getLocationOfLogjob(ljId);
-                for (DBLocation loc : locations) {
-                    long locId = loc.getId();
-                    Map<String, String> params = dbLocationToMap(loc);
-                    web.postPosition(url, params);
-                    db.deleteLocation(locId);
-                    db.incNbSync(logjob);
-                    Intent intent = new Intent(BROADCAST_SYNC_DONE);
-                    intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
-                    sendBroadcast(intent);
+                // PhoneTrack logjob
+                if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
+                    URL url = web.getUrlFromPhoneTrackLogjob(logjob);
+                    List<DBLocation> locations = db.getLocationOfLogjob(ljId);
+                    for (DBLocation loc : locations) {
+                        long locId = loc.getId();
+                        Map<String, String> params = dbLocationToMap(loc);
+                        web.postPositionToPhoneTrack(url, params);
+                        db.deleteLocation(locId);
+                        db.incNbSync(logjob);
+                        Intent intent = new Intent(BROADCAST_SYNC_DONE);
+                        intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                        sendBroadcast(intent);
+                    }
+                }
+                // custom logjob
+                else {
+                    String destUrl = logjob.getNextURL();
+                    List<DBLocation> locations = db.getLocationOfLogjob(ljId);
+                    for (DBLocation loc : locations) {
+                        long locId = loc.getId();
+                        Map<String, String> params = dbLocationToMap(loc);
+                        web.sendGETPosition(destUrl, params);
+                        // TODO
+                        // web.sendPOSTPosition(url, params);
+                        db.deleteLocation(locId);
+                        db.incNbSync(logjob);
+                        Intent intent = new Intent(BROADCAST_SYNC_DONE);
+                        intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                        sendBroadcast(intent);
+                    }
                 }
             } catch (IOException e) {
                 // handle web errors
