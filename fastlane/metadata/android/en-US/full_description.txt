@@ -2,7 +2,8 @@ Logging app to Nextcloud PhoneTrack.
 
 Features
 
-    List, create, edit, share, search and delete log jobs
+    List, create, edit, search and delete log jobs
+    Log to multiple destinations with multiple settings (frequency, min distance, min accuracy)
     Start on system boot
     Store positions when network is not available
     Multi-Lingual User-Interface

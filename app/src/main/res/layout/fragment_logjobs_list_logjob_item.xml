@@ -90,7 +90,7 @@
 
             <Switch
                 android:id="@+id/logjobEnabled"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="4dp" />
@@ -111,11 +111,13 @@
 
                 <ImageView
                     android:id="@+id/nosyncIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_gravity="bottom|left"
-                    android:layout_marginEnd="4dp"
-                    android:src="@drawable/ic_sync_blue_18dp" />
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="1dp"
+                    android:adjustViewBounds="false"
+                    android:src="@drawable/ic_notify_grey_24dp" />
 
                 <Space
                     android:id="@+id/syncSpacer"
