@@ -1,7 +1,8 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.app.Activity;
-import android.app.Fragment;
+//import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +33,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         if (savedInstanceState == null) {
             launchLogjobFragment();
         } else {
-            fragment = (EditLogjobFragment) getFragmentManager().findFragmentById(android.R.id.content);
+            fragment = (EditLogjobFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
         }
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -46,7 +47,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         Log.d(getClass().getSimpleName(), "onNewIntent: " + intent.getLongExtra(PARAM_LOGJOB_ID, 0));
         setIntent(intent);
         if (fragment != null) {
-            getFragmentManager().beginTransaction().detach(fragment).commit();
+            getSupportFragmentManager().beginTransaction().detach(fragment).commit();
             fragment = null;
         }
         launchLogjobFragment();
@@ -78,13 +79,13 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         // save state of the fragment in order to resume with the same logjob and originalLogjob
         Fragment.SavedState savedState = null;
         if (fragment != null) {
-            savedState = getFragmentManager().saveFragmentInstanceState(fragment);
+            savedState = getSupportFragmentManager().saveFragmentInstanceState(fragment);
         }
         fragment = EditLogjobFragment.newInstance(logjobId);
         if (savedState != null) {
             fragment.setInitialSavedState(savedState);
         }
-        getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 
     /**
@@ -114,7 +115,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
 
 
         fragment = EditLogjobFragment.newInstanceWithNewLogjob(newLogjob);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 
     @Override
