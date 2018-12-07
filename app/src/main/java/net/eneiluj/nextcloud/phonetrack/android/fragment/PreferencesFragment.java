@@ -4,12 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
+//import android.preference.Preference;
+import android.support.v7.preference.Preference;
+//import android.preference.PreferenceFragment;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
-import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
+//import android.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceManager;
+//import android.preference.SwitchPreference;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Toast;
 
 import at.bitfire.cert4android.CustomCertManager;
@@ -18,10 +25,24 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
-public class PreferencesFragment extends PreferenceFragment {
+public class PreferencesFragment extends PreferenceFragmentCompat {
 
     public final static String UPDATED_PROVIDERS = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS";
     public final static String UPDATED_PROVIDERS_VALUE = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootkey) {
+
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        RecyclerView recyclerView = getListView();
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,7 +59,7 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-        final SwitchPreference themePref = (SwitchPreference) findPreference(getString(R.string.pref_key_theme));
+        final SwitchPreferenceCompat themePref = (SwitchPreferenceCompat) findPreference(getString(R.string.pref_key_theme));
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         Boolean darkTheme = sp.getBoolean(getString(R.string.pref_key_theme), false);
 
@@ -50,7 +71,7 @@ public class PreferencesFragment extends PreferenceFragment {
                 PhoneTrack.setAppTheme(darkTheme);
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
-                System.out.println("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTHHH "+darkTheme);
+                //System.out.println("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTHHH "+darkTheme);
 
                 return true;
             }
@@ -74,7 +95,7 @@ public class PreferencesFragment extends PreferenceFragment {
         setProvidersSummary(providersPref, providersValue);
     }
 
-    private void setThemePreferenceSummary(SwitchPreference themePref, Boolean darkTheme) {
+    private void setThemePreferenceSummary(SwitchPreferenceCompat themePref, Boolean darkTheme) {
         if (darkTheme) {
             themePref.setSummary(getString(R.string.pref_value_theme_dark));
         } else {

@@ -32,7 +32,7 @@
         android:summary="@string/pref_shownbsynced_summary"
         android:defaultValue="@string/pref_shownbsynced_default" />
 
-    <SwitchPreference
+    <android.support.v7.preference.SwitchPreferenceCompat
         android:defaultValue="@string/pref_value_theme_light"
         android:icon="@drawable/ic_brightness_2_grey_24dp"
         android:key="@string/pref_key_theme"
