@@ -77,7 +77,7 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
     EditTextPreference editMintime;
     EditTextPreference editMindistance;
     EditTextPreference editMinaccuracy;
-    ListPreference editSessionList;
+    //ListPreference editSessionList;
 
     private DialogInterface.OnClickListener deleteDialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
@@ -227,23 +227,6 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
                 EditTextPreference pref = (EditTextPreference) findPreference("minaccuracy");
                 pref.setSummary((CharSequence) newValue);
                 pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
-            }
-
-        });
-        // session selected
-        Preference sessionPref= this.findPreference("sessionList");
-        sessionPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                ListPreference pref = (ListPreference) findPreference("sessionList");
-                DBSession s = db.getSession(Long.valueOf((String)newValue));
-                System.out.println("NEWVAL SESSION : "+newValue);
-                pref.setSummary((CharSequence) s.getName());
-                setFieldsFromSession(s);
                 saveLogjob(null);
                 return true;
             }
@@ -477,22 +460,6 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
             sessionNameList.add(session.getName());
             sessionIdList.add(String.valueOf(session.getId()));
         }
-
-        // manage session list PREFERENCE
-        // it's better to do it with a dialog triggered by a menu entry
-        // rather than a confusing fake preference field...
-        editSessionList = (ListPreference) this.findPreference("sessionList");
-
-        /*if (sessionNameList.size() > 0) {
-            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
-            CharSequence[] valcs = sessionIdList.toArray(new CharSequence[sessionIdList.size()]);
-            editSessionList.setEntries(entcs);
-            editSessionList.setEntryValues(valcs);
-        }
-        else {
-            getPreferenceScreen().removePreference(editSessionList);
-        }*/
-        getPreferenceScreen().removePreference(editSessionList);
 
         // manage session list DIALOG
         selectBuilder = new AlertDialog.Builder(getContext());
