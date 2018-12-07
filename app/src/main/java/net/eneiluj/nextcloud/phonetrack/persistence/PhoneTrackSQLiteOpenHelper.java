@@ -583,7 +583,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_accuracy, loc.hasAccuracy() ? loc.getAccuracy() : -1.0);
         values.put(key_battery, battery);
         int sat = -1;
-        if(loc.getExtras() != null) {
+        //if (LoggerService.DEBUG) { Log.d(TAG, "[PROVIDER "+loc.getProvider()+"]"); }
+        if(loc.getProvider() == "gps" && loc.getExtras() != null) {
             sat = loc.getExtras().getInt("satellites", -1);
         }
         values.put(key_satellites, sat);
