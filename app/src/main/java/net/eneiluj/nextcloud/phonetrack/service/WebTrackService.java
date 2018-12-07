@@ -124,7 +124,7 @@ public class WebTrackService extends IntentService {
                 }
                 // custom logjob
                 else {
-                    String destUrl = logjob.getNextURL();
+                    String destUrl = logjob.getUrl();
                     List<DBLocation> locations = db.getLocationOfLogjob(ljId);
                     for (DBLocation loc : locations) {
                         long locId = loc.getId();

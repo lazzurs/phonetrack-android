@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="logjob_preferences">
-<!--
-xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:key="logjob_preferences"
-    android:summary="Logjob settings"
-    android:title="Logjob settings"
--->
 
     <EditTextPreference
         android:id="@+id/editTitle"
@@ -24,43 +16,17 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_title" />
 
     <EditTextPreference
-        android:id="@+id/editDevicename"
-        android:defaultValue="plop"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:dialogMessage="@string/setting_devicename_long"
-        android:dialogTitle="@string/setting_devicename"
-        android:key="devicename"
-        android:singleLine="true"
-        android:selectAllOnFocus="true"
-        android:persistent="false"
-        android:summary=""
-        android:title="@string/setting_devicename" />
-
-    <EditTextPreference
         android:id="@+id/editUrl"
         android:defaultValue="plop"
         android:icon="@android:drawable/ic_menu_edit"
-        android:dialogMessage="@string/setting_nexturl_long"
-        android:dialogTitle="@string/setting_nexturl"
+        android:dialogMessage="@string/setting_url_long"
+        android:dialogTitle="@string/setting_url"
         android:key="URL"
         android:singleLine="true"
         android:selectAllOnFocus="true"
         android:persistent="false"
         android:summary=""
-        android:title="@string/setting_nexturl" />
-
-    <EditTextPreference
-        android:id="@+id/editToken"
-        android:defaultValue=""
-        android:icon="@android:drawable/ic_menu_edit"
-        android:dialogMessage="@string/setting_token_long"
-        android:dialogTitle="@string/setting_token"
-        android:key="token"
-        android:singleLine="true"
-        android:selectAllOnFocus="true"
-        android:persistent="false"
-        android:summary=""
-        android:title="@string/setting_token" />
+        android:title="@string/setting_url" />
 
     <EditTextPreference
         android:id="@+id/editMinDistance"

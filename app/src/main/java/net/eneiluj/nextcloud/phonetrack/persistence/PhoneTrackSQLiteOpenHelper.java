@@ -221,7 +221,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     /**
      * Creates a new session in the Database and adds a Synchronization Flag.
      *
-     * @param content String
      */
     @SuppressWarnings("UnusedReturnValue")
     public long addSessionAndSync(String name, String token, String nextURL) {
@@ -268,7 +267,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_minDistance, logjob.getMinDistance());
         values.put(key_minAccuracy, logjob.getMinAccuracy());
         values.put(key_enabled, logjob.isEnabled() ? "1" : "0");
-        values.put(key_nextURL, logjob.getNextURL());
+        values.put(key_nextURL, logjob.getUrl());
         values.put(key_nbsync, logjob.getNbSync());
         return db.insert(table_logjobs, null, values);
     }
@@ -484,7 +483,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         //debugPrintFullDB();
         DBLogjob newLogjob;
         if (newTitle == null) {
-            newLogjob = new DBLogjob(oldLogjob.getId(), oldLogjob.getTitle(), oldLogjob.getNextURL(), oldLogjob.getToken(), oldLogjob.getDeviceName(), oldLogjob.getMinTime(), oldLogjob.getMinDistance(), oldLogjob.getMinAccuracy(), oldLogjob.isEnabled(), oldLogjob.getNbSync());
+            newLogjob = new DBLogjob(oldLogjob.getId(), oldLogjob.getTitle(), oldLogjob.getUrl(), oldLogjob.getToken(), oldLogjob.getDeviceName(), oldLogjob.getMinTime(), oldLogjob.getMinDistance(), oldLogjob.getMinAccuracy(), oldLogjob.isEnabled(), oldLogjob.getNbSync());
         }
         else {
             newLogjob = new DBLogjob(oldLogjob.getId(), newTitle, newNextURL, newToken, newDevicename, newMinTime, newMinDistance, newMinAccuracy, oldLogjob.isEnabled(), oldLogjob.getNbSync());
@@ -492,7 +491,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_title, newLogjob.getTitle());
-        values.put(key_nextURL, newLogjob.getNextURL());
+        values.put(key_nextURL, newLogjob.getUrl());
         values.put(key_token, newLogjob.getToken());
         values.put(key_minTime, newLogjob.getMinTime());
         values.put(key_minDistance, newLogjob.getMinDistance());

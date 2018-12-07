@@ -16,12 +16,11 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 
-public class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
+public abstract class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
 
     public static final String PARAM_LOGJOB_ID = "logjobId";
-    public static final String PARAM_TYPE = "type";
 
-    private EditLogjobFragment fragment;
+    protected EditLogjobFragment fragment;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -50,7 +49,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         launchLogjobFragment();
     }
 
-    private long getLogjobId() {
+    protected long getLogjobId() {
         return getIntent().getLongExtra(PARAM_LOGJOB_ID, 0);
     }
 
@@ -72,39 +71,13 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
      *
      * @param logjobId ID of the existing logjob.
      */
-    private void launchExistingLogjob(long logjobId) {
-        // save state of the fragment in order to resume with the same logjob and originalLogjob
-        Fragment.SavedState savedState = null;
-        if (fragment != null) {
-            savedState = getSupportFragmentManager().saveFragmentInstanceState(fragment);
-        }
-        fragment = EditLogjobFragment.newInstance(logjobId);
-        if (savedState != null) {
-            fragment.setInitialSavedState(savedState);
-        }
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
-    }
+    protected abstract void launchExistingLogjob(long logjobId);
 
     /**
      * Starts the {@link EditLogjobFragment} with a new logjob.
      *
      */
-    private void launchNewLogjob() {
-        Intent intent = getIntent();
-
-        DBLogjob newLogjob = new DBLogjob(0, "",  "https://yournextcloud.org", "supersessiontoken", "mydevname", 60, 5, 50, false, 0);
-
-        String url = "";
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
-            url = intent.getStringExtra(Intent.EXTRA_TEXT);
-            if (!newLogjob.setAttrFromUrl(url)) {
-                showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
-            }
-        }
-
-        fragment = EditLogjobFragment.newInstanceWithNewLogjob(newLogjob);
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
-    }
+    protected abstract void launchNewLogjob();
 
     @Override
     public void onBackPressed() {
@@ -146,7 +119,7 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         }
     }
 
-    private void showToast(CharSequence text, int duration) {
+    protected void showToast(CharSequence text, int duration) {
         Context context = getApplicationContext();
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();

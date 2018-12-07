@@ -7,6 +7,7 @@
     <string name="label_enabled">Enabled</string>
     <string name="action_create">New log job</string>
     <string name="action_create_share">Import PhTrk logging URL</string>
+    <string name="action_create_custom_share">Import custom logging URL</string>
     <string name="action_settings">Settings</string>
     <string name="setting_title">Title</string>
     <string name="setting_title_long">Log job title</string>
@@ -16,6 +17,8 @@
     <string name="setting_token_long">Session identification token</string>
     <string name="setting_nexturl">Nextcloud URL</string>
     <string name="setting_nexturl_long">Nextcloud URL of target PhoneTrack instance hosting the session</string>
+    <string name="setting_url">Target URL</string>
+    <string name="setting_url_long">Target URL to be requested with value replacement</string>
     <string name="setting_list">Use a session from PhoneTrack</string>
     <string name="action_search">Search</string>
     <string name="simple_cancel">Cancel</string>
@@ -106,6 +109,7 @@
     <string name="error_url_malformed">Wrong server address</string>
     <string name="error_username_password_invalid">Wrong username or password</string>
     <string name="error_invalid_pt_url">Invalid PhoneTrack logging URL</string>
+    <string name="error_invalid_url">Invalid URL</string>
 
     <!-- Snackbar Actions -->
     <string name="snackbar_settings">Settings</string>

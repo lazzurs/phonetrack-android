@@ -251,7 +251,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         fabCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent createIntent = new Intent(getApplicationContext(), EditLogjobActivity.class);
+                Intent createIntent = new Intent(getApplicationContext(), EditPhoneTrackLogjobActivity.class);
                 //createIntent.putExtra(EditLogjobActivity.PARAM_CATEGORY, navigationSelection);
                 startActivityForResult(createIntent, create_logjob_cmd);
             }
@@ -703,7 +703,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         } else {
             DBLogjob logjob = (DBLogjob) adapter.getItem(position);
-            Intent intent = new Intent(getApplicationContext(), EditLogjobActivity.class);
+            Intent intent;
+            if (logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty()) {
+                intent = new Intent(getApplicationContext(), EditCustomLogjobActivity.class);
+            }
+            else {
+                intent = new Intent(getApplicationContext(), EditPhoneTrackLogjobActivity.class);
+            }
             intent.putExtra(EditLogjobActivity.PARAM_LOGJOB_ID, logjob.getId());
             startActivityForResult(intent, show_single_logjob_cmd);
 

@@ -70,13 +70,27 @@
             />
 
         <activity
-            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity"
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.EditPhoneTrackLogjobActivity"
             android:label="@string/simple_edit"
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask">
             <!-- this is to receive share action from other apps -->
             <intent-filter android:label="@string/action_create_share">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.EditCustomLogjobActivity"
+            android:label="@string/simple_edit"
+            android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTask">
+            <!-- this is to receive share action from other apps -->
+            <intent-filter android:label="@string/action_create_custom_share">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />

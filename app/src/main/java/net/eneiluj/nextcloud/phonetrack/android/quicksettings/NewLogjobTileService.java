@@ -7,6 +7,7 @@ import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
+import net.eneiluj.nextcloud.phonetrack.android.activity.EditPhoneTrackLogjobActivity;
 
 /**
  * This {@link TileService} adds a quick settings tile that leads to the new logjob view.
@@ -25,7 +26,7 @@ public class NewLogjobTileService extends TileService {
     @Override
     public void onClick() {
         // create new logjob intent
-        final Intent newLogjobIntent = new Intent(getApplicationContext(), EditLogjobActivity.class);
+        final Intent newLogjobIntent = new Intent(getApplicationContext(), EditPhoneTrackLogjobActivity.class);
         // ensure it won't open twice if already running
         newLogjobIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 

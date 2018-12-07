@@ -2,6 +2,7 @@ package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -43,7 +44,7 @@ import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 //public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
 //public class EditLogjobFragment extends PreferencesFragment {
-public class EditLogjobFragment extends PreferenceFragmentCompat {
+public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
     public interface LogjobFragmentListener {
         void close();
@@ -58,9 +59,9 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
 
     protected DBLogjob logjob;
     @Nullable
-    private DBLogjob originalLogjob;
-    private PhoneTrackSQLiteOpenHelper db;
-    private LogjobFragmentListener listener;
+    protected DBLogjob originalLogjob;
+    protected PhoneTrackSQLiteOpenHelper db;
+    protected LogjobFragmentListener listener;
 
     private static final String LOG_TAG_AUTOSAVE = "AutoSave";
 
@@ -70,28 +71,16 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
     private Handler handler;
     private boolean saveActive, unsavedEdit;
 
-    EditTextPreference editTitle;
-    EditTextPreference editNextURL;
-    EditTextPreference editToken;
-    EditTextPreference editDevicename;
-    EditTextPreference editMintime;
-    EditTextPreference editMindistance;
-    EditTextPreference editMinaccuracy;
-    //ListPreference editSessionList;
+    protected EditTextPreference editTitle;
+    protected EditTextPreference editURL;
+    protected EditTextPreference editToken;
+    protected EditTextPreference editDevicename;
+    protected EditTextPreference editMintime;
+    protected EditTextPreference editMindistance;
+    protected EditTextPreference editMinaccuracy;
 
     private DialogInterface.OnClickListener deleteDialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
-
-    private AlertDialog.Builder selectBuilder;
-    private AlertDialog selectDialog;
-
-    private AlertDialog.Builder fromUrlBuilder;
-    private AlertDialog fromUrlDialog;
-    private EditText fromUrlEdit;
-
-    private List<DBSession> sessionList;
-    private List<String> sessionNameList;
-    private List<String> sessionIdList;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootkey) {
@@ -127,11 +116,14 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
             originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_LOGJOB);
         }
         setHasOptionsMenu(true);
-        System.out.println("AAAAAAAAAAAAAAA on create : "+logjob);
+        System.out.println("SUPERCLASS on create : " + logjob);
 
         ///////////////
-        addPreferencesFromResource(R.xml.activity_edit);
+        //addPreferencesFromResource(R.xml.activity_edit);
 
+    }
+
+    public void endOnCreate() {
         Preference titlePref = findPreference("title");
         titlePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
@@ -148,41 +140,13 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
             }
 
         });
-        Preference nextURLPref = findPreference("nextURL");
-        nextURLPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        Preference URLPref = findPreference("URL");
+        URLPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("nextURL");
-                pref.setSummary((CharSequence) newValue);
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
-            }
-
-        });
-        Preference tokenPref = findPreference("token");
-        tokenPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("token");
-                pref.setSummary((CharSequence) newValue);
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
-            }
-
-        });
-        Preference devicenamePref = findPreference("devicename");
-        devicenamePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("devicename");
+                EditTextPreference pref = (EditTextPreference) findPreference("URL");
                 pref.setSummary((CharSequence) newValue);
                 pref.setText((String) newValue);
                 saveLogjob(null);
@@ -258,14 +222,14 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            listener = (LogjobFragmentListener) activity;
+            listener = (LogjobFragmentListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.getClass() + " must implement " + LogjobFragmentListener.class);
+            throw new ClassCastException(context.getClass() + " must implement " + LogjobFragmentListener.class);
         }
-        db = PhoneTrackSQLiteOpenHelper.getInstance(activity);
+        db = PhoneTrackSQLiteOpenHelper.getInstance(context);
     }
 
     @Override
@@ -310,12 +274,6 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        //MenuItem itemFavorite = menu.findItem(R.id.menu_favorite);
-        //prepareFavoriteOption(itemFavorite);
-        if (db.getSessions().size() == 0) {
-            MenuItem itemSelectSession = menu.findItem(R.id.menu_selectSession);
-            itemSelectSession.setVisible(false);
-        }
         menu.findItem(R.id.menu_share).setVisible(false);
     }
 
@@ -337,18 +295,12 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
             case R.id.menu_delete:
                 confirmDeleteAlertBuilder.show();
                 return true;
-            case R.id.menu_fromLogUrl:
-                fromUrlDialog.show();
-                return true;
-            case R.id.menu_selectSession:
-                selectDialog.show();
-                return true;
             case R.id.menu_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, logjob.getTitle());
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, logjob.getNextURL());
+                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, logjob.getUrl());
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(Intent.createChooser(shareIntent, logjob.getTitle()));
@@ -375,48 +327,7 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
      *
      * @param callback Observer which is called after save/synchronization
      */
-    protected void saveLogjob(@Nullable ICallback callback) {
-        //String s = null;
-        //int a = Integer.valueOf(s);
-        Log.d(getClass().getSimpleName(), "saveData()");
-        String newTitle = getTitle();
-        String newNextURL = getNextURL();
-        String newToken = getToken();
-        String newDevicename = getDevicename();
-        int newMinTime = Integer.valueOf(getMintime());
-        int newMinDistance = Integer.valueOf(getMindistance());
-        int newMinAccuracy = Integer.valueOf(getMinaccuracy());
-        if(logjob.getTitle().equals(newTitle) &&
-                logjob.getNextURL().equals(newNextURL) &&
-                logjob.getToken().equals(newToken) &&
-                logjob.getMinTime() == newMinTime &&
-                logjob.getMinDistance() == newMinDistance &&
-                logjob.getMinAccuracy() == newMinAccuracy &&
-                logjob.getDeviceName().equals(newDevicename)) {
-            Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
-        } else {
-            System.out.println("====== update logjob");
-            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newNextURL, newDevicename, newMinTime, newMinDistance, newMinAccuracy, callback);
-            //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
-            listener.onLogjobUpdated(logjob);
-        }
-    }
-
-    public static EditLogjobFragment newInstance(long logjobId) {
-        EditLogjobFragment f = new EditLogjobFragment();
-        Bundle b = new Bundle();
-        b.putLong(PARAM_LOGJOB_ID, logjobId);
-        f.setArguments(b);
-        return f;
-    }
-
-    public static EditLogjobFragment newInstanceWithNewLogjob(DBLogjob newLogjob) {
-        EditLogjobFragment f = new EditLogjobFragment();
-        Bundle b = new Bundle();
-        b.putSerializable(PARAM_NEWLOGJOB, newLogjob);
-        f.setArguments(b);
-        return f;
-    }
+    protected abstract void saveLogjob(@Nullable ICallback callback);
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -430,15 +341,9 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
         editTitle = (EditTextPreference) this.findPreference("title");
         editTitle.setText(logjob.getTitle());
         editTitle.setSummary(logjob.getTitle());
-        editNextURL = (EditTextPreference) this.findPreference("nextURL");
-        editNextURL.setText(logjob.getNextURL());
-        editNextURL.setSummary(logjob.getNextURL());
-        editToken = (EditTextPreference) this.findPreference("token");
-        editToken.setText(logjob.getToken());
-        editToken.setSummary(logjob.getToken());
-        editDevicename = (EditTextPreference) this.findPreference("devicename");
-        editDevicename.setText(logjob.getDeviceName());
-        editDevicename.setSummary(logjob.getDeviceName());
+        editURL = (EditTextPreference) this.findPreference("URL");
+        editURL.setText(logjob.getUrl());
+        editURL.setSummary(logjob.getUrl());
 
         editMintime = (EditTextPreference) this.findPreference("mintime");
         editMintime.setText(String.valueOf(logjob.getMinTime()));
@@ -451,132 +356,21 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
         editMinaccuracy = (EditTextPreference) this.findPreference("minaccuracy");
         editMinaccuracy.setText(String.valueOf(logjob.getMinAccuracy()));
         editMinaccuracy.setSummary(String.valueOf(logjob.getMinAccuracy()));
-
-        // manage session list
-        sessionList = db.getSessions();
-        sessionNameList = new ArrayList<>();
-        sessionIdList = new ArrayList<>();
-        for (DBSession session : sessionList) {
-            sessionNameList.add(session.getName());
-            sessionIdList.add(String.valueOf(session.getId()));
-        }
-
-        // manage session list DIALOG
-        selectBuilder = new AlertDialog.Builder(getContext());
-        selectBuilder.setTitle("Choose a session");
-
-        if (sessionNameList.size() > 0) {
-            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
-            selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // user checked an item
-                    System.out.println("CHECKED :" + which);
-                    setFieldsFromSession(sessionList.get(which));
-                    saveLogjob(null);
-                    dialog.dismiss();
-                }
-            });
-
-            // add OK and Cancel buttons
-            selectBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // user clicked OK
-                    System.out.println("CHECKED OK :" + which);
-                }
-            });
-            selectBuilder.setNegativeButton("Cancel", null);
-
-            // create the alert dialog
-            selectDialog = selectBuilder.create();
-        }
-
-        // manage from URL DIALOG
-        fromUrlEdit = new EditText(getContext());
-        fromUrlBuilder = new AlertDialog.Builder(getContext());
-        fromUrlBuilder.setMessage("Enter Your Message");
-        fromUrlBuilder.setTitle("Enter Your Title");
-
-        fromUrlBuilder.setView(fromUrlEdit);
-
-        fromUrlBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                setFieldsFromUrl(fromUrlEdit.getText().toString());
-                saveLogjob(null);
-            }
-        });
-
-        fromUrlBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // what ever you want to do with No option.
-            }
-        });
-
-        // create the alert dialog
-        fromUrlDialog = fromUrlBuilder.create();
-
     }
 
-    private String getTitle() {
+    protected String getTitle() {
         return editTitle.getText();
     }
-    private String getNextURL() {
-        return editNextURL.getText();
+    protected String getURL() {
+        return editURL.getText();
     }
-    private String getToken() {
-        return editToken.getText();
-    }
-    private String getDevicename() {
-        return editDevicename.getText();
-    }
-    private String getMintime() {
+    protected String getMintime() {
         return editMintime.getText();
     }
-    private String getMindistance() {
+    protected String getMindistance() {
         return editMindistance.getText();
     }
-    private String getMinaccuracy() {
+    protected String getMinaccuracy() {
         return editMinaccuracy.getText();
     }
-
-    private void setFieldsFromSession(DBSession s) {
-        editTitle.setText("Log to "+s.getName());
-        editTitle.setSummary("Log to "+s.getName());
-        editNextURL.setText(s.getNextURL());
-        editNextURL.setSummary(s.getNextURL());
-        editToken.setText(s.getToken());
-        editToken.setSummary(s.getToken());
-    }
-
-    private void setFieldsFromUrl(String url) {
-        //System.out.println("UUUUUUUUUUUUU : "+url);
-        String[] spl = url.split("/apps/phonetrack/");
-        System.out.println(spl.length);
-        if (spl.length == 2) {
-            String nextURL = spl[0];
-            if (nextURL.contains("index.php")) {
-                nextURL = nextURL.replace("index.php", "");
-            }
-
-            String right = spl[1];
-            String[] spl2 = right.split("/");
-            if (spl2.length > 2) {
-                String token = spl2[1];
-                String[] spl3 = spl2[2].split("\\?");
-                if (spl3.length > 1) {
-                    String devname = spl3[0];
-                    editTitle.setText("From logging URL");
-                    editTitle.setSummary("From logging URL");
-                    editDevicename.setText(devname);
-                    editDevicename.setSummary(devname);
-                    editToken.setText(token);
-                    editToken.setSummary(token);
-                    editNextURL.setText(nextURL);
-                    editNextURL.setSummary(nextURL);
-                }
-            }
-        }
-    }
-
 }

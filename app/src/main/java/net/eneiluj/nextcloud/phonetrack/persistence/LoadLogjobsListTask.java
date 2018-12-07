@@ -67,14 +67,14 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
 
             dbLogjob.setCategory(Html.toHtml(spannableString));
             */
-            spannableString = new SpannableString(dbLogjob.getNextURL());
+            spannableString = new SpannableString(dbLogjob.getUrl());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
             while (matcher.find()) {
                 spannableString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.primary_dark)),
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbLogjob.setNextURL(Html.toHtml(spannableString));
+            dbLogjob.setUrl(Html.toHtml(spannableString));
 
             spannableString = new SpannableString(dbLogjob.getDeviceName());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);

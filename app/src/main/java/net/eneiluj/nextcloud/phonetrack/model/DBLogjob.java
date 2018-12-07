@@ -9,7 +9,7 @@ public class DBLogjob implements Item, Serializable {
 
     private long id;
     private String title = "";
-    private String nextURL;
+    private String url;
     private String token;
     private String deviceName;
     private int minTime;
@@ -19,10 +19,10 @@ public class DBLogjob implements Item, Serializable {
     //private DBStatus status;
     private int nbSync;
 
-    public DBLogjob(long id, String title, String nextURL, String token, String deviceName, int minTime, int minDistance, int minAccuracy, Boolean enabled, int nbSync) {
+    public DBLogjob(long id, String title, String url, String token, String deviceName, int minTime, int minDistance, int minAccuracy, Boolean enabled, int nbSync) {
         this.id = id;
         this.title = title;
-        this.nextURL = nextURL;
+        this.url = url;
         this.token = token;
         this.deviceName = deviceName;
         this.minAccuracy = minAccuracy;
@@ -48,17 +48,17 @@ public class DBLogjob implements Item, Serializable {
         this.nbSync = nbSync;
     }
 
-    public void setNextURL(String nextURL) {
-        this.nextURL = nextURL;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
 
-    public boolean setAttrFromUrl(String url) {
+    public boolean setAttrFromLoggingUrl(String loggingUrl) {
         boolean worked = false;
-        String[] spl = url.split("/apps/phonetrack/");
+        String[] spl = loggingUrl.split("/apps/phonetrack/");
         System.out.println(spl.length);
         if (spl.length == 2) {
             String nextURL = spl[0];
@@ -76,7 +76,7 @@ public class DBLogjob implements Item, Serializable {
                     this.title = "From logging URL";
                     this.deviceName = devname;
                     this.token = token;
-                    this.nextURL = nextURL;
+                    this.url = nextURL;
                     worked = true;
                 }
             }
@@ -92,8 +92,8 @@ public class DBLogjob implements Item, Serializable {
         return nbSync;
     }
 
-    public String getNextURL() {
-        return nextURL;
+    public String getUrl() {
+        return url;
     }
 
     public String getDeviceName() {
@@ -126,7 +126,7 @@ public class DBLogjob implements Item, Serializable {
     @Override
     public String toString() {
         return "#DBLogjob" + getId() + "/" + this.title + ", " + this.enabled + ", " +
-                this.nextURL + ", " + this.token + ", " +
+                this.url + ", " + this.token + ", " +
                 this.deviceName;
     }
 }
