@@ -252,7 +252,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onClick(View view) {
                 Intent createIntent = new Intent(getApplicationContext(), EditLogjobActivity.class);
-                createIntent.putExtra(EditLogjobActivity.PARAM_CATEGORY, navigationSelection);
+                //createIntent.putExtra(EditLogjobActivity.PARAM_CATEGORY, navigationSelection);
                 startActivityForResult(createIntent, create_logjob_cmd);
             }
         });

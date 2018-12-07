@@ -1,7 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.app.Activity;
-//import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -10,19 +9,17 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+
 import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
-import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 
 public class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
 
     public static final String PARAM_LOGJOB_ID = "logjobId";
-    public static final String PARAM_CATEGORY = "category";
+    public static final String PARAM_TYPE = "type";
 
     private EditLogjobFragment fragment;
 
@@ -90,18 +87,10 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
 
     /**
      * Starts the {@link EditLogjobFragment} with a new logjob.
-     * Content ("share" functionality), category and favorite attribute can be preset.
+     *
      */
     private void launchNewLogjob() {
         Intent intent = getIntent();
-
-        String category = null;
-        boolean favorite = false;
-        if (intent.hasExtra(PARAM_CATEGORY)) {
-            Category categoryPreselection = (Category) intent.getSerializableExtra(PARAM_CATEGORY);
-            category = categoryPreselection.category;
-            favorite = categoryPreselection.favorite != null ? categoryPreselection.favorite : false;
-        }
 
         DBLogjob newLogjob = new DBLogjob(0, "",  "https://yournextcloud.org", "supersessiontoken", "mydevname", 60, 5, 50, false, 0);
 
@@ -112,7 +101,6 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
                 showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
             }
         }
-
 
         fragment = EditLogjobFragment.newInstanceWithNewLogjob(newLogjob);
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
@@ -155,16 +143,6 @@ public class EditLogjobActivity extends AppCompatActivity implements EditLogjobF
         if (actionBar != null) {
             actionBar.setTitle(logjob.getTitle());
             actionBar.setSubtitle(logjob.getDeviceName());
-        }
-    }
-
-    public void hideKeyboard() {
-        View view = getCurrentFocus();
-        System.out.println("HHHHHHHHHHHHHHHHHHHIDE : "+view);
-        if (view != null) {
-            InputMethodManager inputManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-            //inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 

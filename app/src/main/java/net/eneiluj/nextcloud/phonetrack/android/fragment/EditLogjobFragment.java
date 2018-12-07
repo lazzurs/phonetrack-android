@@ -336,12 +336,6 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
         menu.findItem(R.id.menu_share).setVisible(false);
     }
 
-    /*private void prepareFavoriteOption(MenuItem item) {
-        item.setIcon(logjob.isFavorite() ? R.drawable.ic_star_white_24dp : R.drawable.ic_star_border_white_24dp);
-        item.setChecked(logjob.isFavorite());
-    }*/
-
-
     /**
      * Main-Menu-Handler
      */
@@ -387,7 +381,6 @@ public class EditLogjobFragment extends PreferenceFragmentCompat {
     }
 
     public void onCloseLogjob() {
-        // TODO if all fields are empty (or just title/URL) : delete
         if (originalLogjob == null && getTitle().isEmpty()) {
             db.deleteLogjob(logjob.getId());
         }
