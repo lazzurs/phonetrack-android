@@ -48,9 +48,9 @@
         fab:menu_fab_label="Cancel"
         fab:menu_backgroundColor="#cc888888"
         fab:menu_animationDelayPerItem="0"
-        fab:menu_colorNormal="#00C29F"
-        fab:menu_colorPressed="#00C29F"
-        fab:menu_colorRipple="#00C29F"
+        fab:menu_colorNormal="@color/primary"
+        fab:menu_colorPressed="@color/primary"
+        fab:menu_colorRipple="#ffffff"
         android:padding="8dp">
 
 
@@ -60,6 +60,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_notify_24dp"
             fab:fab_size="normal"
+            app:fab_colorNormal="@color/primary"
             fab:fab_label="@string/fab_create_phonetrack"/>
 
         <com.github.clans.fab.FloatingActionButton
@@ -68,6 +69,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_link_white_24dp"
             fab:fab_size="normal"
+            app:fab_colorNormal="@color/primary"
             fab:fab_label="@string/fab_create_custom"/>
 
     </com.github.clans.fab.FloatingActionMenu>
