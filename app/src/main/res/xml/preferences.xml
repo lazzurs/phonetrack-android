@@ -25,7 +25,7 @@
         android:summary="@string/pref_autostart_summary"
         android:defaultValue="@string/pref_autostart_default" />
 
-    <CheckBoxPreference
+    <android.support.v7.preference.CheckBoxPreference
         android:icon="@android:drawable/arrow_up_float"
         android:key="@string/pref_key_shownbsynced"
         android:title="@string/pref_shownbsynced_title"
@@ -39,7 +39,7 @@
         android:summary="%s"
         android:title="@string/settings_theme_title" />
 
-    <PreferenceScreen
+    <android.support.v7.preference.PreferenceScreen
         android:key="@string/pref_key_certs"
         android:persistent="false"
         android:icon="@drawable/ic_https_grey_24dp"
@@ -54,6 +54,6 @@
             android:key="@string/pref_key_reset_trust"
             android:title="@string/settings_cert_reset"
             android:summary="@string/settings_cert_reset_summary" />
-    </PreferenceScreen>
+    </android.support.v7.preference.PreferenceScreen>
 
 </PreferenceScreen>

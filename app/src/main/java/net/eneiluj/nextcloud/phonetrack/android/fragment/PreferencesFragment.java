@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 //import android.preference.Preference;
+import android.support.v4.app.Fragment;
 import android.support.v7.preference.Preference;
 //import android.preference.PreferenceFragment;
 import android.support.v7.preference.PreferenceFragmentCompat;
@@ -12,6 +13,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 //import android.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceManager;
 //import android.preference.SwitchPreference;
+import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
@@ -25,10 +27,21 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
-public class PreferencesFragment extends PreferenceFragmentCompat {
+public class PreferencesFragment extends PreferenceFragmentCompat implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback{
 
     public final static String UPDATED_PROVIDERS = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS";
     public final static String UPDATED_PROVIDERS_VALUE = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
+
+    @Override
+    public Fragment getCallbackFragment() {
+        return this;
+    }
+
+    @Override
+    public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
+        caller.setPreferenceScreen(pref);
+        return true;
+    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootkey) {
