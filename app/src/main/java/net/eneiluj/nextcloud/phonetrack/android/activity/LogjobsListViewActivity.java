@@ -93,8 +93,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     TextView account;
     @BindView(R.id.swiperefreshlayout)
     SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.fab_create)
-    FloatingActionButton fabCreate;
+    @BindView(R.id.fab_create_phonetrack)
+    com.github.clans.fab.FloatingActionButton fabCreatePhoneTrack;
+    @BindView(R.id.fab_create_custom)
+    com.github.clans.fab.FloatingActionButton fabCreateCustom;
+    @BindView(R.id.floatingMenu)
+    com.github.clans.fab.FloatingActionMenu fabMenu;
     @BindView(R.id.navigationList)
     RecyclerView listNavigationCategories;
     @BindView(R.id.navigationMenu)
@@ -247,13 +251,20 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         });
 
-        // Floating Action Button
-        fabCreate.setOnClickListener(new View.OnClickListener() {
+        fabCreateCustom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent createIntent = new Intent(getApplicationContext(), EditCustomLogjobActivity.class);
+                startActivityForResult(createIntent, create_logjob_cmd);
+                fabMenu.close(false);
+            }
+        });
+        fabCreatePhoneTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent createIntent = new Intent(getApplicationContext(), EditPhoneTrackLogjobActivity.class);
-                //createIntent.putExtra(EditLogjobActivity.PARAM_CATEGORY, navigationSelection);
                 startActivityForResult(createIntent, create_logjob_cmd);
+                fabMenu.close(false);
             }
         });
     }
@@ -591,12 +602,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
                 if (currentVisibility != oldVisibility) {
                     if (currentVisibility == View.VISIBLE) {
-                        fabCreate.hide();
+                        fabMenu.setVisibility(View.INVISIBLE);
                     } else {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                fabCreate.show();
+                                fabMenu.setVisibility(View.VISIBLE);
                             }
                         }, 150);
                     }
