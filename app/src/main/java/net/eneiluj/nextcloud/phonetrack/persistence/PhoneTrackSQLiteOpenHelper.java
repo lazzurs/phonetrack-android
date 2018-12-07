@@ -577,22 +577,14 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_time, loc.getTime() / 1000);
         values.put(key_lat, loc.getLatitude());
         values.put(key_lon, loc.getLongitude());
-        if (loc.hasBearing()) {
-            values.put(key_bearing, loc.getBearing());
-        }
-        if (loc.hasAltitude()) {
-            values.put(key_altitude, loc.getAltitude());
-        }
-        if (loc.hasSpeed()) {
-            values.put(key_speed, loc.getSpeed());
-        }
-        if (loc.hasAccuracy()) {
-            values.put(key_accuracy, loc.getAccuracy());
-        }
+        values.put(key_bearing, loc.hasBearing() ? loc.getBearing() : -1.0);
+        values.put(key_altitude, loc.hasAltitude() ? loc.getAltitude() : -1.0);
+        values.put(key_speed, loc.hasSpeed() ? loc.getSpeed() : -1.0);
+        values.put(key_accuracy, loc.hasAccuracy() ? loc.getAccuracy() : -1.0);
         values.put(key_battery, battery);
-        int sat = 0;
+        int sat = -1;
         if(loc.getExtras() != null) {
-            sat = loc.getExtras().getInt("satellites", 0);
+            sat = loc.getExtras().getInt("satellites", -1);
         }
         values.put(key_satellites, sat);
 

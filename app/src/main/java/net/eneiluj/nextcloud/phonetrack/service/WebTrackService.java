@@ -202,15 +202,16 @@ public class WebTrackService extends IntentService {
      * @return Map of parameters
      */
     private Map<String, String> dbLocationToMap(DBLocation loc) {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[DBLOC to map "+loc+"]"); }
         Map<String, String> params = new HashMap<>();
         params.put(WebTrackHelper.PARAM_TIME, String.valueOf(loc.getTimestamp()));
         params.put(WebTrackHelper.PARAM_LAT, String.valueOf(loc.getLat()));
         params.put(WebTrackHelper.PARAM_LON, String.valueOf(loc.getLon()));
-        params.put(WebTrackHelper.PARAM_ALT, String.valueOf(loc.getAltitude()));
-        params.put(WebTrackHelper.PARAM_ACCURACY, String.valueOf(loc.getAccuracy()));
-        params.put(WebTrackHelper.PARAM_SPEED, String.valueOf(loc.getSpeed()));
-        params.put(WebTrackHelper.PARAM_BEARING, String.valueOf(loc.getBearing()));
-        params.put(WebTrackHelper.PARAM_SATELLITES, String.valueOf(loc.getSatellites()));
+        params.put(WebTrackHelper.PARAM_ALT, (loc.getAltitude() != -1.0) ? String.valueOf(loc.getAltitude()) : "");
+        params.put(WebTrackHelper.PARAM_ACCURACY, (loc.getAccuracy() != -1.0) ? String.valueOf(loc.getAccuracy()): "");
+        params.put(WebTrackHelper.PARAM_SPEED, (loc.getSpeed() != -1.0) ? String.valueOf(loc.getSpeed()) : "");
+        params.put(WebTrackHelper.PARAM_BEARING, (loc.getBearing() != -1.0) ? String.valueOf(loc.getBearing()) : "");
+        params.put(WebTrackHelper.PARAM_SATELLITES, (loc.getSatellites() != -1) ? String.valueOf(loc.getSatellites()) : "");
         params.put(WebTrackHelper.PARAM_BATTERY, String.valueOf(loc.getBattery()));
         params.put(WebTrackHelper.PARAM_USERAGENT, userAgent);
         return params;
