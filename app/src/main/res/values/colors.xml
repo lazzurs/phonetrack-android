@@ -10,13 +10,14 @@
     <color name="bg_transparent">#aa000000</color>
     <color name="bg_highlighted">#f3f3f3</color>
     <color name="bg_normal">#ffffff</color>
+    <color name="bg_normal_transparent">#aaffffff</color>
     <color name="bg_attention">#d40000</color>
     <color name="bg_warning">#0082C9</color>
     <color name="fg_default">#000000</color>
     <color name="fg_default_selection">#333333</color>
     <color name="fg_default_low">#666666</color>
     <color name="fg_default_high">#cccccc</color>
-    <color name="fg_contrast">#8888ff</color>
+    <color name="fg_contrast">#ffffff</color>
     <color name="icon_grey">#757575</color>
 
     <color name="widget_background">#DFFFFFFF</color>
