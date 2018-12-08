@@ -115,7 +115,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             final LogjobViewHolder nvHolder = ((LogjobViewHolder) holder);
             nvHolder.logjobSwipeable.setAlpha(1.0f);
             nvHolder.logjobTitle.setText(Html.fromHtml(logjob.getTitle()));
-            nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getDeviceName()+" => "+logjob.getUrl()));
+            if (!logjob.getDeviceName().isEmpty()) {
+                nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getDeviceName() + " => " + logjob.getUrl()));
+            }
+            else {
+                nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getUrl()));
+            }
 
             nvHolder.logjobEnabled.setChecked(logjob.isEnabled());
             nvHolder.logjobEnabled.setOnClickListener(new View.OnClickListener() {
