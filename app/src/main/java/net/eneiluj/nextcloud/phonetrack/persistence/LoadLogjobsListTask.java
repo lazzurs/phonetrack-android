@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.Item;
@@ -94,7 +95,16 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
     private List<Item> fillListTitle(@NonNull List<DBLogjob> logjobList) {
         List<Item> itemList = new ArrayList<>();
         for (DBLogjob logjob : logjobList) {
-            if (category.favorite == null || logjob.isEnabled()) {
+            if (category.favorite != null && category.favorite && logjob.isEnabled()) {
+                itemList.add(colorTheLogjob(logjob));
+            }
+            else if (category.category == LogjobsListViewActivity.CATEGORY_PHONETRACK && !logjob.getToken().isEmpty() && !logjob.getDeviceName().isEmpty()) {
+                itemList.add(colorTheLogjob(logjob));
+            }
+            else if (category.category == LogjobsListViewActivity.CATEGORY_CUSTOM && logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty()) {
+                itemList.add(colorTheLogjob(logjob));
+            }
+            else if (category.favorite == null && category.category == null) {
                 itemList.add(colorTheLogjob(logjob));
             }
         }

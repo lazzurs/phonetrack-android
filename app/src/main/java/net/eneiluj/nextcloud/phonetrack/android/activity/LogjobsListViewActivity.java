@@ -16,7 +16,6 @@ import android.os.Handler;
 //import android.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -69,8 +68,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     public final static String CREATED_LOGJOB = "net.eneiluj.nextcloud.phonetrack.created_logjob";
     public final static String CREDENTIALS_CHANGED = "net.eneiluj.nextcloud.phonetrack.CREDENTIALS_CHANGED";
-    public static final String ADAPTER_KEY_RECENT = "recent";
-    public static final String ADAPTER_KEY_STARRED = "starred";
+    public static final String ADAPTER_KEY_ALL = "all";
+    public static final String ADAPTER_KEY_ENABLED = "enabled";
+    public static final String ADAPTER_KEY_PHONETRACK = "pt";
+    public static final String ADAPTER_KEY_CUSTOM = "custom";
+    public static final String CATEGORY_PHONETRACK = "pt";
+    public static final String CATEGORY_CUSTOM = "cu";
 
     public final static String UPDATED_LOGJOBS = "net.eneiluj.nextcloud.phonetrack.UPDATED_LOGJOBS";
     public final static String UPDATED_LOGJOB_ID = "net.eneiluj.nextcloud.phonetrack.UPDATED_LOGJOB_ID";
@@ -109,7 +112,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private ActionBarDrawerToggle drawerToggle;
     private ItemAdapter adapter = null;
     private NavigationAdapter adapterCategories;
-    private NavigationAdapter.NavigationItem itemRecent, itemEnabled, itemUncategorized;
+    private NavigationAdapter.NavigationItem itemAll, itemEnabled, itemPhonetrack, itemCustom, itemUncategorized;
     private Category navigationSelection = new Category(null, null);
     private String navigationOpen = "";
     private ActionMode mActionMode;
@@ -139,7 +142,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, server_settings);
         }*/
-        String categoryAdapterSelectedItem = ADAPTER_KEY_RECENT;
+        String categoryAdapterSelectedItem = ADAPTER_KEY_ALL;
         if (savedInstanceState != null) {
             navigationSelection = (Category) savedInstanceState.getSerializable(SAVED_STATE_NAVIGATION_SELECTION);
             navigationOpen = savedInstanceState.getString(SAVED_STATE_NAVIGATION_OPEN);
@@ -270,8 +273,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     private void setupNavigationList(final String selectedItem) {
-        itemRecent = new NavigationAdapter.NavigationItem(ADAPTER_KEY_RECENT, getString(R.string.label_all_logjobs), null, android.R.drawable.ic_input_get);
-        itemEnabled = new NavigationAdapter.NavigationItem(ADAPTER_KEY_STARRED, getString(R.string.label_enabled), null, android.R.drawable.ic_media_play);
+        itemAll = new NavigationAdapter.NavigationItem(ADAPTER_KEY_ALL, getString(R.string.label_all_logjobs), null, android.R.drawable.ic_input_get);
+        itemEnabled = new NavigationAdapter.NavigationItem(ADAPTER_KEY_ENABLED, getString(R.string.label_enabled), null, android.R.drawable.ic_media_play);
+        itemPhonetrack = new NavigationAdapter.NavigationItem(ADAPTER_KEY_PHONETRACK, getString(R.string.label_phonetrack_lj), null, android.R.drawable.ic_media_play);
+        itemCustom = new NavigationAdapter.NavigationItem(ADAPTER_KEY_CUSTOM, getString(R.string.label_custom_lj), null, android.R.drawable.ic_media_play);
         adapterCategories = new NavigationAdapter(new NavigationAdapter.ClickListener() {
             @Override
             public void onItemClick(NavigationAdapter.NavigationItem item) {
@@ -282,12 +287,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 adapterCategories.setSelectedItem(item.id);
 
                 // update current selection
-                if (itemRecent == item) {
+                if (itemAll == item) {
                     navigationSelection = new Category(null, null);
                 } else if (itemEnabled == item) {
                     navigationSelection = new Category(null, true);
                 } else if (itemUncategorized == item) {
                     navigationSelection = new Category("", null);
+                } else if (itemPhonetrack == item) {
+                    navigationSelection = new Category(CATEGORY_PHONETRACK, null);
+                } else if (itemCustom == item) {
+                    navigationSelection = new Category(CATEGORY_CUSTOM, null);
                 } else {
                     navigationSelection = new Category(item.label, null);
                 }
@@ -339,15 +348,31 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }*/
             itemUncategorized = null;
 
+            int nbPT = 0;
+            int nbCU = 0;
+            List<DBLogjob> ljs = db.getLogjobs();
+            for (DBLogjob lj : ljs) {
+                if (lj.getToken().isEmpty() && lj.getDeviceName().isEmpty()) {
+                    nbCU++;
+                }
+                else {
+                    nbPT++;
+                }
+            }
+
             Map<String, Integer> favorites = db.getEnabledCount();
             int numFavorites = favorites.containsKey("1") ? favorites.get("1") : 0;
             int numNonFavorites = favorites.containsKey("0") ? favorites.get("0") : 0;
             itemEnabled.count = numFavorites;
-            itemRecent.count = numFavorites + numNonFavorites;
+            itemAll.count = numFavorites + numNonFavorites;
+            itemPhonetrack.count = nbPT;
+            itemCustom.count = nbCU;
 
             ArrayList<NavigationAdapter.NavigationItem> items = new ArrayList<>();
-            items.add(itemRecent);
+            items.add(itemAll);
             items.add(itemEnabled);
+            items.add(itemPhonetrack);
+            items.add(itemCustom);
             NavigationAdapter.NavigationItem lastPrimaryCategory = null, lastSecondaryCategory = null;
             /*for (NavigationAdapter.NavigationItem item : categories) {
                 int slashIndex = item.label.indexOf('/');
@@ -547,6 +572,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         String subtitle = "";
         if (navigationSelection.favorite != null && navigationSelection.favorite) {
             subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_enabled);
+        } else if (navigationSelection.category == CATEGORY_PHONETRACK) {
+            subtitle = getString(R.string.app_name);
+        } else if (navigationSelection.category == CATEGORY_CUSTOM) {
+            subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_custom);
         } else {
             subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_all_logjobs);
         }
