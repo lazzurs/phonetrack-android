@@ -273,10 +273,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     private void setupNavigationList(final String selectedItem) {
-        itemAll = new NavigationAdapter.NavigationItem(ADAPTER_KEY_ALL, getString(R.string.label_all_logjobs), null, android.R.drawable.ic_input_get);
-        itemEnabled = new NavigationAdapter.NavigationItem(ADAPTER_KEY_ENABLED, getString(R.string.label_enabled), null, android.R.drawable.ic_media_play);
-        itemPhonetrack = new NavigationAdapter.NavigationItem(ADAPTER_KEY_PHONETRACK, getString(R.string.label_phonetrack_lj), null, android.R.drawable.ic_media_play);
-        itemCustom = new NavigationAdapter.NavigationItem(ADAPTER_KEY_CUSTOM, getString(R.string.label_custom_lj), null, android.R.drawable.ic_media_play);
+        itemAll = new NavigationAdapter.NavigationItem(ADAPTER_KEY_ALL, getString(R.string.label_all_logjobs), null, R.drawable.ic_allgrey_24dp);
+        itemEnabled = new NavigationAdapter.NavigationItem(ADAPTER_KEY_ENABLED, getString(R.string.label_enabled), null, R.drawable.ic_check_box_grey_24dp);
+        itemPhonetrack = new NavigationAdapter.NavigationItem(ADAPTER_KEY_PHONETRACK, getString(R.string.label_phonetrack_lj), null, R.drawable.ic_phonetrack_grey_24dp);
+        itemCustom = new NavigationAdapter.NavigationItem(ADAPTER_KEY_CUSTOM, getString(R.string.label_custom_lj), null, R.drawable.ic_link_menu_grey_24dp);
         adapterCategories = new NavigationAdapter(new NavigationAdapter.ClickListener() {
             @Override
             public void onItemClick(NavigationAdapter.NavigationItem item) {

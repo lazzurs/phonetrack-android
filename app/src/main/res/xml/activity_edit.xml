@@ -13,7 +13,7 @@ xmlns:tools="http://schemas.android.com/tools"
     <EditTextPreference
         android:id="@+id/editTitle"
         android:defaultValue="plop"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_title_grey_24dp"
         android:dialogMessage="@string/setting_title_long"
         android:dialogTitle="@string/setting_title"
         android:key="title"
@@ -24,22 +24,9 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_title" />
 
     <EditTextPreference
-        android:id="@+id/editDevicename"
-        android:defaultValue="plop"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:dialogMessage="@string/setting_devicename_long"
-        android:dialogTitle="@string/setting_devicename"
-        android:key="devicename"
-        android:singleLine="true"
-        android:selectAllOnFocus="true"
-        android:persistent="false"
-        android:summary=""
-        android:title="@string/setting_devicename" />
-
-    <EditTextPreference
         android:id="@+id/editUrl"
         android:defaultValue="plop"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_cloud_grey_24dp"
         android:dialogMessage="@string/setting_lj_url_long"
         android:dialogTitle="@string/setting_lj_url"
         android:key="URL"
@@ -52,7 +39,7 @@ xmlns:tools="http://schemas.android.com/tools"
     <EditTextPreference
         android:id="@+id/editToken"
         android:defaultValue=""
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_lock_grey_24dp"
         android:dialogMessage="@string/setting_token_long"
         android:dialogTitle="@string/setting_token"
         android:key="token"
@@ -63,9 +50,22 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_token" />
 
     <EditTextPreference
+        android:id="@+id/editDevicename"
+        android:defaultValue="plop"
+        android:icon="@drawable/ic_phone_android_grey_24dp"
+        android:dialogMessage="@string/setting_devicename_long"
+        android:dialogTitle="@string/setting_devicename"
+        android:key="devicename"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:persistent="false"
+        android:summary=""
+        android:title="@string/setting_devicename" />
+
+    <EditTextPreference
         android:id="@+id/editMinDistance"
         android:defaultValue="5"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_length_grey_24dp"
         android:dialogMessage="@string/setting_min_distance_long"
         android:dialogTitle="@string/setting_min_distance"
         android:key="mindistance"
@@ -79,7 +79,7 @@ xmlns:tools="http://schemas.android.com/tools"
     <EditTextPreference
         android:id="@+id/editMinTime"
         android:defaultValue="60"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_timer_grey_24dp"
         android:dialogMessage="@string/setting_min_time_long"
         android:dialogTitle="@string/setting_min_time"
         android:key="mintime"
@@ -93,7 +93,7 @@ xmlns:tools="http://schemas.android.com/tools"
     <EditTextPreference
         android:id="@+id/editMinAccuracy"
         android:defaultValue="50"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_accuracy_grey_24dp"
         android:dialogMessage="@string/setting_min_accuracy_long"
         android:dialogTitle="@string/setting_min_accuracy"
         android:key="minaccuracy"

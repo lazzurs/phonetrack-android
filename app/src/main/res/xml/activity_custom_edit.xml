@@ -5,7 +5,7 @@
     <EditTextPreference
         android:id="@+id/editTitle"
         android:defaultValue="plop"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_title_grey_24dp"
         android:dialogMessage="@string/setting_title_long"
         android:dialogTitle="@string/setting_title"
         android:key="title"
@@ -18,7 +18,7 @@
     <EditTextPreference
         android:id="@+id/editUrl"
         android:defaultValue="plop"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_link_grey_24dp"
         android:dialogMessage="@string/setting_url_long"
         android:dialogTitle="@string/setting_url"
         android:key="URL"
@@ -29,7 +29,7 @@
         android:title="@string/setting_url" />
 
     <CheckBoxPreference
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_http_grey_24dp"
         android:key="post"
         android:title="@string/setting_post_title"
         android:summary="@string/setting_post_summary" />
@@ -37,7 +37,7 @@
     <EditTextPreference
         android:id="@+id/editMinDistance"
         android:defaultValue="5"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_length_grey_24dp"
         android:dialogMessage="@string/setting_min_distance_long"
         android:dialogTitle="@string/setting_min_distance"
         android:key="mindistance"
@@ -51,7 +51,7 @@
     <EditTextPreference
         android:id="@+id/editMinTime"
         android:defaultValue="60"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_timer_grey_24dp"
         android:dialogMessage="@string/setting_min_time_long"
         android:dialogTitle="@string/setting_min_time"
         android:key="mintime"
@@ -65,7 +65,7 @@
     <EditTextPreference
         android:id="@+id/editMinAccuracy"
         android:defaultValue="50"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_accuracy_grey_24dp"
         android:dialogMessage="@string/setting_min_accuracy_long"
         android:dialogTitle="@string/setting_min_accuracy"
         android:key="minaccuracy"
