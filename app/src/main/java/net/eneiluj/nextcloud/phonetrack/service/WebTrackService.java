@@ -129,9 +129,13 @@ public class WebTrackService extends IntentService {
                     for (DBLocation loc : locations) {
                         long locId = loc.getId();
                         Map<String, String> params = dbLocationToMap(loc);
-                        web.sendGETPosition(destUrl, params);
-                        // TODO
-                        // web.sendPOSTPosition(url, params);
+                        if (logjob.getPost()) {
+                            web.sendPOSTPosition(destUrl, params);
+                        }
+                        else {
+                            web.sendGETPosition(destUrl, params);
+                        }
+
                         db.deleteLocation(locId);
                         db.incNbSync(logjob);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
@@ -203,6 +207,7 @@ public class WebTrackService extends IntentService {
      */
     private Map<String, String> dbLocationToMap(DBLocation loc) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[DBLOC to map "+loc+"]"); }
+
         Map<String, String> params = new HashMap<>();
         params.put(WebTrackHelper.PARAM_TIME, String.valueOf(loc.getTimestamp()));
         params.put(WebTrackHelper.PARAM_LAT, String.valueOf(loc.getLat()));

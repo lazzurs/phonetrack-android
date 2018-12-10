@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 //import android.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceManager;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -229,6 +230,51 @@ public class WebTrackHelper {
         }
         rd.close();
         if (LoggerService.DEBUG) { Log.d(TAG, "[GET request response: " + result + "]"); }
+    }
+
+    public void sendPOSTPosition(String urlStr, Map<String, String> params) throws IOException {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[SENDPOS  "+params+"]"); }
+        String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
+                .replace("%LON", params.get(PARAM_LON))
+                .replace("%TIMESTAMP", params.get(PARAM_TIME))
+                .replace("%ALT", params.getOrDefault(PARAM_ALT, ""))
+                .replace("%ACC", params.getOrDefault(PARAM_ACCURACY, ""))
+                .replace("%SPD", params.getOrDefault(PARAM_SPEED, ""))
+                .replace("%DIR", params.getOrDefault(PARAM_BEARING, ""))
+                .replace("%SAT", params.getOrDefault(PARAM_SATELLITES, ""))
+                .replace("%BATT", params.getOrDefault(PARAM_BATTERY, ""))
+                .replace("%UA", params.getOrDefault(PARAM_USERAGENT, ""));
+
+        String[] urlSplit;
+        String[] paramSplit;
+        String baseUrl = "";
+        Map<String, String> paramsToSend = new ArrayMap<>();
+        if (urlWithValues.contains("?")) {
+            urlSplit = urlWithValues.split("\\?");
+            if (urlSplit.length == 2) {
+                baseUrl = urlSplit[0];
+                paramSplit = urlSplit[1].split("\\&");
+                for (int i = 0; i < paramSplit.length; i++) {
+                    if (paramSplit[i].contains("=")) {
+                        String[] oneParamSplit = paramSplit[i].split("=");
+                        if (oneParamSplit.length == 2) {
+                            paramsToSend.put(oneParamSplit[0], oneParamSplit[1]);
+                        }
+                    }
+                }
+                postWithParams(new URL(baseUrl), paramsToSend);
+            }
+            else {
+                if (LoggerService.DEBUG) { Log.d(TAG, "[POST URL ERROR "+urlSplit+"]"); }
+                throw new IOException(context.getString(R.string.malformed_post_url));
+            }
+        }
+        else {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[POST URL ERROR]"); }
+            throw new IOException(context.getString(R.string.malformed_post_url));
+        }
+
+
     }
 
     public URL getUrlFromPhoneTrackLogjob(DBLogjob lj) throws MalformedURLException {

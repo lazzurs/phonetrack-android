@@ -94,6 +94,7 @@
     <string name="e_unknown_host" translatable="false">Unknown host: %s</string>
     <string name="e_bad_url" translatable="false">Bad URL: %s</string>
     <string name="e_connect" translatable="false">Connection error: %s</string>
+    <string name="malformed_post_url" translatable="false">Malformed POST URL</string>
     <string name="uploading_failed" translatable="false">Uploading failed:</string>
     <string name="uploading_started" translatable="false">Uploading started</string>
 
