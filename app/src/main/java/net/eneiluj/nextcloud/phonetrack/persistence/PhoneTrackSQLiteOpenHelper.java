@@ -42,6 +42,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String table_logjobs = "LOGJOBS";
     private static final String key_title = "TITLE";
+    private static final String key_url = "URL";
     private static final String key_deviceName = "DEVICENAME";
     private static final String key_minTime = "MINTIME";
     private static final String key_minDistance = "MINDISTANCE";
@@ -62,7 +63,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_battery = "BATTERY";
 
     private static final String[] columnsSessions = {key_id, key_token, key_name, key_nextURL};
-    private static final String[] columnsLogjobs = {key_id, key_title, key_nextURL, key_token, key_deviceName, key_minTime, key_minDistance, key_minAccuracy, key_enabled, key_nbsync};
+    private static final String[] columnsLogjobs = {key_id, key_title, key_url, key_token, key_deviceName, key_minTime, key_minDistance, key_minAccuracy, key_enabled, key_nbsync};
     private static final String[] columnsLocations = {key_id, key_logjobid, key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_satellites, key_battery};
 
     private static final String default_order = key_id + " DESC";
@@ -116,7 +117,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + tableName + " ( " +
                 key_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 key_title + " TEXT, " +
-                key_nextURL + " TEXT, " +
+                key_url + " TEXT, " +
                 key_deviceName + " TEXT, " +
                 key_minTime + " INTEGER, " +
                 key_minDistance + " INTEGER, " +
@@ -240,9 +241,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * Creates a new logjob in the Database and adds a Synchronization Flag.
      */
     @SuppressWarnings("UnusedReturnValue")
-    public long addLogjobAndSync(String title, String nextURL, String token, String deviceName, int minTime, int minDistance, int minAccuracy, int nbSync) {
+    public long addLogjobAndSync(String title, String url, String token, String deviceName, int minTime, int minDistance, int minAccuracy, int nbSync) {
         // TODO there is an 'enabled' field
-        DBLogjob dblj = new DBLogjob(0, title, nextURL, token, deviceName, minTime, minDistance, minAccuracy, false, nbSync);
+        DBLogjob dblj = new DBLogjob(0, title, url, token, deviceName, minTime, minDistance, minAccuracy, false, nbSync);
         long id = addLogjob(dblj);
         notifyLogjobsChanged();
         //getPhonetrackServerSyncHelper().scheduleSync(true);
@@ -267,7 +268,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_minDistance, logjob.getMinDistance());
         values.put(key_minAccuracy, logjob.getMinAccuracy());
         values.put(key_enabled, logjob.isEnabled() ? "1" : "0");
-        values.put(key_nextURL, logjob.getUrl());
+        values.put(key_url, logjob.getUrl());
         values.put(key_nbsync, logjob.getNbSync());
         return db.insert(table_logjobs, null, values);
     }
@@ -429,8 +430,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         List<String> args = new ArrayList<>();
 
         if (query != null) {
-            // TODO search with nextURL
-            where.add("(" + key_title + " LIKE ? OR " + key_nextURL + " LIKE ? OR " + key_deviceName + " LIKE ?)");
+            where.add("(" + key_title + " LIKE ? OR " + key_url + " LIKE ? OR " + key_deviceName + " LIKE ?)");
             args.add("%" + query + "%");
             args.add("%" + query + "%");
             args.add("%" + query + "%");
@@ -479,19 +479,19 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         serverSyncHelper.scheduleSync(true);*/
     }
 
-    public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken, @Nullable String newNextURL, @Nullable String newDevicename, int newMinTime, int newMinDistance, int newMinAccuracy, @Nullable ICallback callback) {
+    public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken, @Nullable String newUrl, @Nullable String newDevicename, int newMinTime, int newMinDistance, int newMinAccuracy, @Nullable ICallback callback) {
         //debugPrintFullDB();
         DBLogjob newLogjob;
         if (newTitle == null) {
             newLogjob = new DBLogjob(oldLogjob.getId(), oldLogjob.getTitle(), oldLogjob.getUrl(), oldLogjob.getToken(), oldLogjob.getDeviceName(), oldLogjob.getMinTime(), oldLogjob.getMinDistance(), oldLogjob.getMinAccuracy(), oldLogjob.isEnabled(), oldLogjob.getNbSync());
         }
         else {
-            newLogjob = new DBLogjob(oldLogjob.getId(), newTitle, newNextURL, newToken, newDevicename, newMinTime, newMinDistance, newMinAccuracy, oldLogjob.isEnabled(), oldLogjob.getNbSync());
+            newLogjob = new DBLogjob(oldLogjob.getId(), newTitle, newUrl, newToken, newDevicename, newMinTime, newMinDistance, newMinAccuracy, oldLogjob.isEnabled(), oldLogjob.getNbSync());
         }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_title, newLogjob.getTitle());
-        values.put(key_nextURL, newLogjob.getUrl());
+        values.put(key_url, newLogjob.getUrl());
         values.put(key_token, newLogjob.getToken());
         values.put(key_minTime, newLogjob.getMinTime());
         values.put(key_minDistance, newLogjob.getMinDistance());

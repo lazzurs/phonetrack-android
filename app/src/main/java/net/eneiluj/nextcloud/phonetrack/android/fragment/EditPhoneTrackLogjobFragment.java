@@ -1,44 +1,26 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 //import android.preference.EditTextPreference;
 import android.support.v7.preference.EditTextPreference;
 //import android.preference.ListPreference;
-import android.support.v7.preference.ListPreference;
 //import android.preference.Preference;
 import android.support.v7.preference.Preference;
 //import android.preference.PreferenceFragment;
-import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
-import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
-import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
-import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 //public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
@@ -117,14 +99,14 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     protected void saveLogjob(@Nullable ICallback callback) {
         Log.d(getClass().getSimpleName(), "saveData()");
         String newTitle = getTitle();
-        String newNextURL = getURL();
+        String newUrl = getURL();
         String newToken = getToken();
         String newDevicename = getDevicename();
         int newMinTime = Integer.valueOf(getMintime());
         int newMinDistance = Integer.valueOf(getMindistance());
         int newMinAccuracy = Integer.valueOf(getMinaccuracy());
         if(logjob.getTitle().equals(newTitle) &&
-                logjob.getUrl().equals(newNextURL) &&
+                logjob.getUrl().equals(newUrl) &&
                 logjob.getToken().equals(newToken) &&
                 logjob.getMinTime() == newMinTime &&
                 logjob.getMinDistance() == newMinDistance &&
@@ -133,7 +115,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
             System.out.println("====== update logjob");
-            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newNextURL, newDevicename, newMinTime, newMinDistance, newMinAccuracy, callback);
+            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename, newMinTime, newMinDistance, newMinAccuracy, callback);
             listener.onLogjobUpdated(logjob);
         }
     }
@@ -234,7 +216,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         fromUrlBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                setFieldsFromUrl(fromUrlEdit.getText().toString());
+                setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString());
                 saveLogjob(null);
             }
         });
@@ -265,10 +247,8 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         editToken.setSummary(s.getToken());
     }
 
-    private void setFieldsFromUrl(String url) {
-        //System.out.println("UUUUUUUUUUUUU : "+url);
+    private void setFieldsFromPhoneTrackLoggingUrl(String url) {
         String[] spl = url.split("/apps/phonetrack/");
-        System.out.println(spl.length);
         if (spl.length == 2) {
             String nextURL = spl[0];
             if (nextURL.contains("index.php")) {

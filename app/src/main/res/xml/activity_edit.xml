@@ -40,14 +40,14 @@ xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/editUrl"
         android:defaultValue="plop"
         android:icon="@android:drawable/ic_menu_edit"
-        android:dialogMessage="@string/setting_nexturl_long"
-        android:dialogTitle="@string/setting_nexturl"
+        android:dialogMessage="@string/setting_lj_url_long"
+        android:dialogTitle="@string/setting_lj_url"
         android:key="URL"
         android:singleLine="true"
         android:selectAllOnFocus="true"
         android:persistent="false"
         android:summary=""
-        android:title="@string/setting_nexturl" />
+        android:title="@string/setting_lj_url" />
 
     <EditTextPreference
         android:id="@+id/editToken"

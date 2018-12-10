@@ -14,8 +14,8 @@
     <string name="setting_devicename_long">Device name or reservation token</string>
     <string name="setting_token">Session token</string>
     <string name="setting_token_long">Session identification token</string>
-    <string name="setting_nexturl">Nextcloud URL</string>
-    <string name="setting_nexturl_long">Nextcloud URL of target PhoneTrack instance hosting the session</string>
+    <string name="setting_lj_url">Nextcloud URL</string>
+    <string name="setting_lj_url_long">Nextcloud URL of target PhoneTrack instance hosting the session</string>
     <string name="setting_list">Use a session from PhoneTrack</string>
     <string name="action_search">Search</string>
     <string name="simple_cancel">Cancelar</string>
