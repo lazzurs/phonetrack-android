@@ -26,7 +26,7 @@
         android:defaultValue="@string/pref_autostart_default" />
 
     <android.support.v7.preference.CheckBoxPreference
-        android:icon="@android:drawable/arrow_up_float"
+        android:icon="@drawable/ic_filter_3_grey_24dp"
         android:key="@string/pref_key_shownbsynced"
         android:title="@string/pref_shownbsynced_title"
         android:summary="@string/pref_shownbsynced_summary"
