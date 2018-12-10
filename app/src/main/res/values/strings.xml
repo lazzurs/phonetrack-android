@@ -23,6 +23,8 @@
     <string name="setting_url">Target URL</string>
     <string name="setting_url_long">Target URL to be requested with value replacement</string>
     <string name="setting_list">Use a session from PhoneTrack</string>
+    <string name="setting_post_title">Use POST method</string>
+    <string name="setting_post_summary">instead of GET. Parameters will be converted from GET to POST.</string>
     <string name="action_search">Search</string>
     <string name="simple_cancel">Cancel</string>
     <string name="simple_edit">Edit</string>

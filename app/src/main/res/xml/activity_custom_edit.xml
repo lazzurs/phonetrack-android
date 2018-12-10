@@ -28,6 +28,12 @@
         android:summary=""
         android:title="@string/setting_url" />
 
+    <CheckBoxPreference
+        android:icon="@android:drawable/ic_menu_edit"
+        android:key="post"
+        android:title="@string/setting_post_title"
+        android:summary="@string/setting_post_summary" />
+
     <EditTextPreference
         android:id="@+id/editMinDistance"
         android:defaultValue="5"

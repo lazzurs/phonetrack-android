@@ -288,7 +288,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                     db.deleteLogjob(logjob.getId());
                 } else {
                     System.out.println("ORIG ENAB : "+originalLogjob.isEnabled());
-                    db.updateLogjobAndSync(originalLogjob, null, null, null, null, 0,0,0,null);
+                    db.updateLogjobAndSync(originalLogjob, null, null, null, null, false,0,0,0,null);
                 }
                 listener.close();
                 return true;

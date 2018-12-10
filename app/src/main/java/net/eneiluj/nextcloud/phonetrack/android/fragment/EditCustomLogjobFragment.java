@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 //import android.preference.EditTextPreference;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
 //import android.preference.ListPreference;
 import android.support.v7.preference.ListPreference;
@@ -43,6 +44,8 @@ import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 public class EditCustomLogjobFragment extends EditLogjobFragment {
 
+    private CheckBoxPreference editPost;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,20 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         endOnCreate();
 
         System.out.println("CUSTOM on create : "+logjob);
+
+        Preference postPref = findPreference("post");
+        postPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                CheckBoxPreference pref = (CheckBoxPreference) findPreference("post");
+                pref.setChecked((Boolean) newValue);
+                saveLogjob(null);
+                return true;
+            }
+
+        });
     }
 
     @Override
@@ -74,11 +91,13 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         Log.d(getClass().getSimpleName(), "CUSTOM saveData()");
         String newTitle = getTitle();
         String newURL = getURL();
+        boolean newPost = getPost();
         int newMinTime = Integer.valueOf(getMintime());
         int newMinDistance = Integer.valueOf(getMindistance());
         int newMinAccuracy = Integer.valueOf(getMinaccuracy());
         if(logjob.getTitle().equals(newTitle) &&
                 logjob.getUrl().equals(newURL) &&
+                logjob.getPost() == newPost &&
                 logjob.getMinTime() == newMinTime &&
                 logjob.getMinDistance() == newMinDistance &&
                 logjob.getMinAccuracy() == newMinAccuracy
@@ -86,7 +105,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
             System.out.println("====== update logjob");
-            logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "", newMinTime, newMinDistance, newMinAccuracy, callback);
+            logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "", newPost, newMinTime, newMinDistance, newMinAccuracy, callback);
             //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
             listener.onLogjobUpdated(logjob);
         }
@@ -112,6 +131,13 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         System.out.println("CUSTOM ACT CREATEDDDDDDD");
+
+        editPost = (CheckBoxPreference) this.findPreference("post");
+        editPost.setChecked(logjob.getPost());
+    }
+
+    private boolean getPost() {
+        return editPost.isChecked();
     }
 
 }

@@ -115,7 +115,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
         } else {
             System.out.println("====== update logjob");
-            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename, newMinTime, newMinDistance, newMinAccuracy, callback);
+            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename, false, newMinTime, newMinDistance, newMinAccuracy, callback);
             listener.onLogjobUpdated(logjob);
         }
     }
