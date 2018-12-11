@@ -45,7 +45,10 @@ public class ServerResponse {
             JSONArray sessions = new JSONArray(getContent());
             for (int i = 0; i < sessions.length(); i++) {
                 JSONArray json = sessions.getJSONArray(i);
-                sessionsList.add(getSessionFromJSON(json, dbHelper));
+                // if session is not shared
+                if (json.length() > 4) {
+                    sessionsList.add(getSessionFromJSON(json, dbHelper));
+                }
             }
             return sessionsList;
         }
