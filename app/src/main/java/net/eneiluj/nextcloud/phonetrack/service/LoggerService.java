@@ -507,7 +507,7 @@ public class LoggerService extends Service {
     private void updateNotificationContent() {
         String nbLocations = String.valueOf(db.getLocationCount());
         String nbSent = String.valueOf(db.getNbTotalSync());
-        mNotificationBuilder.setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name), nbLocations, nbSent));
+        mNotificationBuilder.setContentText(String.format(getString(R.string.is_running), nbLocations, nbSent));
         mNotificationManager.notify(this.NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
