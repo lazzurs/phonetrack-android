@@ -234,7 +234,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     public long addSessionAndSync(CloudSession session) {
         DBSession dbs = new DBSession(0, session.getName(), session.getToken(), session.getNextURL());
         long id = addSession(dbs);
-        notifyLogjobsChanged();
+        notifySessionsChanged();
         //getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
     }
@@ -247,7 +247,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         // TODO there is an 'enabled' field
         DBLogjob dblj = new DBLogjob(0, title, url, token, deviceName, minTime, minDistance, minAccuracy, post,false, nbSync);
         long id = addLogjob(dblj);
-        notifyLogjobsChanged();
         //getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
     }
@@ -515,11 +514,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         int rows = db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(newLogjob.getId())});
         // if data was changed, set new status and schedule sync (with callback); otherwise invoke callback directly.
         if (rows > 0) {
-            notifyLogjobsChanged();
-            /*if (callback != null) {
-                serverSyncHelper.addCallbackPush(callback);
-            }
-            serverSyncHelper.scheduleSync(true);*/
             return newLogjob;
         } else {
             if (callback != null) {
@@ -757,7 +751,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     /**
      * Notify about changed logjob.
      */
-    void notifyLogjobsChanged() {
+    void notifySessionsChanged() {
         // update the widgets
     }
 }

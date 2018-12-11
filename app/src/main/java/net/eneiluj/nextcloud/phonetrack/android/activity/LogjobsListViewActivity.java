@@ -902,6 +902,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(WebTrackService.BROADCAST_SYNC_STARTED);
         filter.addAction(WebTrackService.BROADCAST_SYNC_DONE);
         filter.addAction(WebTrackService.BROADCAST_SYNC_FAILED);
+        filter.addAction(SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED);
+        filter.addAction(SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED);
         registerReceiver(mBroadcastReceiver, filter);
     }
 
@@ -969,6 +971,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     showToast(getString(R.string.uploading_failed) + "\n" + errorMessage, Toast.LENGTH_LONG);
                     break;
                 }
+                case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED:
+                    String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
+                    showToast(errorMessage, Toast.LENGTH_LONG);
+                    break;
+                case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED:
+                    showToast(getString(R.string.sessions_sync_success));
+                    break;
                 case LoggerService.BROADCAST_LOCATION_STARTED:
                     showToast(getString(R.string.tracking_started));
                     //setLocLed(LED_YELLOW);

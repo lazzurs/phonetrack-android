@@ -75,6 +75,7 @@
     <string name="using_network">Using network location</string>
     <string name="using_gps">Using gps location</string>
     <string name="location_permission_denied">Location permission denied</string>
+    <string name="sessions_sync_success">Sessions synchronized</string>
     <string name="pref_autostart_title">Auto start</string>
     <string name="pref_autostart_summary">Logging will start on system boot</string>
     <string name="pref_autostart_default" translatable="false">false</string>

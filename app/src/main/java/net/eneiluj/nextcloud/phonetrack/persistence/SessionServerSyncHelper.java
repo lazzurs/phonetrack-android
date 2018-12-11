@@ -30,6 +30,7 @@ import at.bitfire.cert4android.CustomCertService;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil.LoginStatus;
@@ -40,6 +41,9 @@ import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
  * Helps to synchronize the Database to the Server.
  */
 public class SessionServerSyncHelper {
+
+    public static final String BROADCAST_SESSIONS_SYNC_FAILED = "net.eneiluj.nextcloud.phonetrack.broadcast.sessions_sync_failed";
+    public static final String BROADCAST_SESSIONS_SYNCED = "net.eneiluj.nextcloud.phonetrack.broadcast.sessions_synced";
 
     private static SessionServerSyncHelper instance;
 
@@ -331,17 +335,30 @@ public class SessionServerSyncHelper {
         protected void onPostExecute(LoginStatus status) {
             super.onPostExecute(status);
             if (status != LoginStatus.OK) {
-                Toast.makeText(appContext, appContext.getString(R.string.error_sync, appContext.getString(status.str)), Toast.LENGTH_LONG).show();
+                String errorString = appContext.getString(
+                        R.string.error_sync,
+                        appContext.getString(status.str)
+                );
+                errorString += "\n\n";
                 for (Throwable e : exceptions) {
-                    Toast.makeText(appContext, e.getClass().getName() + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    errorString += e.getClass().getName() + ": " + e.getMessage();
                 }
+                // broadcast the error
+                // if the log job list is not visible, no toast
+                Intent intent = new Intent(BROADCAST_SESSIONS_SYNC_FAILED);
+                intent.putExtra(LoggerService.BROADCAST_ERROR_MESSAGE, errorString);
+                appContext.sendBroadcast(intent);
+            }
+            else {
+                Intent intent = new Intent(BROADCAST_SESSIONS_SYNCED);
+                appContext.sendBroadcast(intent);
             }
             syncActive = false;
             // notify callbacks
             for (ICallback callback : callbacks) {
                 callback.onFinish();
             }
-            dbHelper.notifyLogjobsChanged();
+            dbHelper.notifySessionsChanged();
             // start next sync if scheduled meanwhile
             if (syncScheduled) {
                 scheduleSync(false);
