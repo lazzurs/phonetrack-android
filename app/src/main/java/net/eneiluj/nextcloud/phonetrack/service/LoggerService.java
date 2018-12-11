@@ -135,7 +135,7 @@ public class LoggerService extends Service {
                 locListeners.put(String.valueOf(ljob.getId()), ll);
                 logjobs.put(String.valueOf(ljob.getId()), ljob);
                 lastLocations.put(String.valueOf(ljob.getId()), null);
-                lastUpdateRealtime.put(String.valueOf(ljob.getId()), new Long(0));
+                lastUpdateRealtime.put(String.valueOf(ljob.getId()), Long.valueOf(0));
             }
         }
 
@@ -307,7 +307,7 @@ public class LoggerService extends Service {
                 mLocationListener ll = new mLocationListener(lj);
                 locListeners.put(ljId, ll);
                 lastLocations.put(ljId, null);
-                lastUpdateRealtime.put(ljId, new Long(0));
+                lastUpdateRealtime.put(ljId, Long.valueOf(0));
             }
         }
         // it has been deleted or disabled
@@ -432,7 +432,7 @@ public class LoggerService extends Service {
      * Reset realtime of last update
      */
     public static void resetUpdateRealtime(String ljId) {
-        lastUpdateRealtime.put(ljId, new Long(0));
+        lastUpdateRealtime.put(ljId, Long.valueOf(0));
     }
 
     /**
