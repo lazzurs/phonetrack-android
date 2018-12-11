@@ -148,12 +148,12 @@ public class LoggerService extends Service {
                 hasLocationUpdates = requestLocationUpdates(String.valueOf(lj.getId()));
             }
         }
-
-        final Notification notification = showNotification(NOTIFICATION_ID);
-        startForeground(NOTIFICATION_ID, notification);
-        updateNotificationContent();
-
+        
         if (hasLocationUpdates) {
+            final Notification notification = showNotification(NOTIFICATION_ID);
+            startForeground(NOTIFICATION_ID, notification);
+            updateNotificationContent();
+
             isRunning = true;
 
             sendBroadcast(BROADCAST_LOCATION_STARTED);
@@ -165,6 +165,10 @@ public class LoggerService extends Service {
             battery = getBatteryLevelOnce();
             // register for battery level
             this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        }
+        else {
+            if (DEBUG) { Log.d(TAG, "[onCreate : stop because no loc upd]"); }
+            stopSelf();
         }
     }
 
@@ -178,45 +182,56 @@ public class LoggerService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final boolean logjobsUpdated = (intent != null) && intent.getBooleanExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, false);
-        final boolean providersUpdated = (intent != null) && intent.getBooleanExtra(PreferencesFragment.UPDATED_PROVIDERS, false);
-        final boolean updateNotif = (intent != null) && intent.getBooleanExtra(UPDATE_NOTIFICATION, false);
-        if (logjobsUpdated) {
-            // this to avoid doing two loc upd when service is down and then a logjob is enabled
-            // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
-            if (firstRun) {
-                firstRun = false;
-                if (DEBUG) { Log.d(TAG, "[onStartCommand : upd logjob but firstrun so nothing]"); }
-                if (!isRunning) {
+        if (isRunning) {
+            final boolean logjobsUpdated = (intent != null) && intent.getBooleanExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, false);
+            final boolean providersUpdated = (intent != null) && intent.getBooleanExtra(PreferencesFragment.UPDATED_PROVIDERS, false);
+            final boolean updateNotif = (intent != null) && intent.getBooleanExtra(UPDATE_NOTIFICATION, false);
+            if (logjobsUpdated) {
+                // this to avoid doing two loc upd when service is down and then a logjob is enabled
+                // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
+                if (firstRun) {
+                    firstRun = false;
+                    if (DEBUG) {
+                        Log.d(TAG, "[onStartCommand : upd logjob but firstrun so nothing]");
+                    }
+                    if (!isRunning) {
+                        stopSelf();
+                    }
+                } else {
+                    String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
+                    if (DEBUG) {
+                        Log.d(TAG, "[onStartCommand : upd logjob]");
+                    }
+                    handleLogjobsUpdated(ljId);
+                }
+            } else if (providersUpdated) {
+                if (DEBUG) {
+                    Log.d(TAG, "[onStartCommand : upd providers]");
+                }
+                String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
+                updatePreferences(providersValue);
+                boolean hasLocationUpdates = false;
+                for (String ljId : logjobs.keySet()) {
+                    hasLocationUpdates = requestLocationUpdates(ljId);
+                }
+                if (!hasLocationUpdates) {
                     stopSelf();
                 }
-            }
-            else {
-                String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
-                if (DEBUG) { Log.d(TAG, "[onStartCommand : upd logjob]"); }
-                handleLogjobsUpdated(ljId);
-            }
-        } else if (providersUpdated) {
-            if (DEBUG) { Log.d(TAG, "[onStartCommand : upd providers]"); }
-            String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
-            updatePreferences(providersValue);
-            boolean hasLocationUpdates = false;
-            for (String ljId : logjobs.keySet()) {
-                hasLocationUpdates = requestLocationUpdates(ljId);
-            }
-            if (!hasLocationUpdates) {
+            } else if (updateNotif && isRunning) {
+                updateNotificationContent();
+            } else if (isRunning) {
+                // start without parameter
+                if (DEBUG) {
+                    Log.d(TAG, "[onStartCommand : start without parameter]");
+                }
+
+            } else {
+                // onCreate failed to start updates
+                if (DEBUG) {
+                    Log.d(TAG, "[onStartCommand : failed to start updates => stop]");
+                }
                 stopSelf();
             }
-        } else if (updateNotif && isRunning) {
-            updateNotificationContent();
-        } else if (isRunning) {
-            // start without parameter
-            if (DEBUG) { Log.d(TAG, "[onStartCommand : start without parameter]"); }
-
-        } else {
-            // onCreate failed to start updates
-            if (DEBUG) { Log.d(TAG, "[onStartCommand : failed to start updates => stop]"); }
-            stopSelf();
         }
 
         return START_STICKY;
