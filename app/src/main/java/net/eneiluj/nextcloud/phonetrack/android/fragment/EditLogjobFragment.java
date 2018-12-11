@@ -333,7 +333,12 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
         editTitle = (EditTextPreference) this.findPreference("title");
         editTitle.setText(logjob.getTitle());
-        editTitle.setSummary(logjob.getTitle());
+        if (logjob.getTitle().isEmpty()) {
+            editTitle.setSummary(getString(R.string.mandatory));
+        }
+        else {
+            editTitle.setSummary(logjob.getTitle());
+        }
         editURL = (EditTextPreference) this.findPreference("URL");
         editURL.setText(logjob.getUrl());
         editURL.setSummary(logjob.getUrl());
