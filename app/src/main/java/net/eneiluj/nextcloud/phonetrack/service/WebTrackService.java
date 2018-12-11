@@ -171,6 +171,9 @@ public class WebTrackService extends IntentService {
             intent.putExtra(LoggerService.UPDATE_NOTIFICATION, true);
             startService(intent);
         }
+        // stop loading animation in logjob list
+        Intent intent = new Intent(BROADCAST_SYNC_DONE);
+        sendBroadcast(intent);
     }
 
     /**

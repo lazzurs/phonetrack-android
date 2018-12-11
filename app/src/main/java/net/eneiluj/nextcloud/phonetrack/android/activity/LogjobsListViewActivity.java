@@ -127,7 +127,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 mActionMode.finish();
             }
             refreshLists();
-            swipeRefreshLayout.setRefreshing(false);
+            //swipeRefreshLayout.setRefreshing(false);
         }
 
         @Override
@@ -244,7 +244,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
                     synchronize();
                 } else {
-                    swipeRefreshLayout.setRefreshing(false);
+                    //swipeRefreshLayout.setRefreshing(false);
                     // don't bother user if no conf
                     if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
                         Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
@@ -254,6 +254,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     Intent syncIntent = new Intent(LogjobsListViewActivity.this, WebTrackService.class);
                     startService(syncIntent);
                     showToast(getString(R.string.uploading_started));
+                }
+                else {
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
         });
@@ -765,12 +768,14 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     @Override
     public void onLogjobEnabledClick(int position, View view) {
         DBLogjob logjob = (DBLogjob) adapter.getItem(position);
-        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
-        db.toggleEnabled(logjob, syncCallBack);
-        adapter.notifyItemChanged(position);
-        refreshLists();
+        if (logjob != null) {
+            PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
+            db.toggleEnabled(logjob, syncCallBack);
+            adapter.notifyItemChanged(position);
+            refreshLists();
 
-        notifyLoggerService(logjob.getId());
+            notifyLoggerService(logjob.getId());
+        }
     }
 
     @Override
@@ -795,7 +800,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     private void synchronize() {
-        swipeRefreshLayout.setRefreshing(true);
+        //swipeRefreshLayout.setRefreshing(true);
         db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         db.getPhonetrackServerSyncHelper().scheduleSync(false);
     }
@@ -926,18 +931,28 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case WebTrackService.BROADCAST_SYNC_DONE:
                     String ljId2 = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
-                    if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast loc synced " + ljId2 + "]"); }
-                    // to update all items
-                    //adapter.notifyDataSetChanged();
-                    // but we update just the changed one
-                    DBLogjob lj2;
-                    for (int i = 0; i < adapter.getItemCount(); i++) {
-                        lj2 = (DBLogjob) adapter.getItem(i);
-                        if (String.valueOf(lj2.getId()).equals(ljId2)) {
-                            adapter.notifyItemChanged(i);
-                            if (LoggerService.DEBUG) { Log.d(TAG, "[notifyItemChanged " + i + "]"); }
-                            break;
+                    if (ljId2 != null) {
+                        if (LoggerService.DEBUG) {
+                            Log.d(TAG, "[broadcast loc synced " + ljId2 + "]");
                         }
+                        // to update all items
+                        //adapter.notifyDataSetChanged();
+                        // but we update just the changed one
+                        DBLogjob lj2;
+                        for (int i = 0; i < adapter.getItemCount(); i++) {
+                            lj2 = (DBLogjob) adapter.getItem(i);
+                            if (String.valueOf(lj2.getId()).equals(ljId2)) {
+                                adapter.notifyItemChanged(i);
+                                if (LoggerService.DEBUG) {
+                                    Log.d(TAG, "[notifyItemChanged " + i + "]");
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    // without parameter : end of sync service
+                    else {
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                     break;
                 case (WebTrackService.BROADCAST_SYNC_FAILED): {

@@ -184,7 +184,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public Item getItem(int logjobPosition) {
-        return itemList.get(logjobPosition);
+        if (logjobPosition >= 0 && logjobPosition < itemList.size()) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[GETITEM " + logjobPosition + "/"+itemList.size()+"]"); }
+            return itemList.get(logjobPosition);
+        }
+        else {
+            return null;
+        }
     }
 
     public void remove(@NonNull Item item) {

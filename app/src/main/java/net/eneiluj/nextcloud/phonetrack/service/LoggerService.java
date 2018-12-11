@@ -190,7 +190,6 @@ public class LoggerService extends Service {
                 // this to avoid doing two loc upd when service is down and then a logjob is enabled
                 // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
                 if (firstRun) {
-                    firstRun = false;
                     if (DEBUG) {
                         Log.d(TAG, "[onStartCommand : upd logjob but firstrun so nothing]");
                     }
@@ -222,6 +221,8 @@ public class LoggerService extends Service {
                     Log.d(TAG, "[onStartCommand : start without parameter]");
                 }
             }
+            // anyway, first run is over
+            firstRun = false;
         }
 
         return START_STICKY;
