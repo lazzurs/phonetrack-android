@@ -487,7 +487,7 @@ public class LoggerService extends Service {
                         .setSmallIcon(R.drawable.ic_notify_24dp)
                         .setContentTitle(getString(R.string.app_name))
                         .setOnlyAlertOnce(true)
-                        .setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name), nbLocations, nbSent));
+                        .setContentText(String.format(getString(R.string.is_running), nbLocations, nbSent));
                         //.setSmallIcon(R.drawable.ic_stat_notify_24dp)
                         //.setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name)));
         mNotificationBuilder = mBuilder;
