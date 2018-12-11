@@ -71,8 +71,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static PhoneTrackSQLiteOpenHelper instance;
 
-    private SessionServerSyncHelper serverSyncHelper = null;
-    private Context context = null;
+    private SessionServerSyncHelper serverSyncHelper;
+    private Context context;
 
     private PhoneTrackSQLiteOpenHelper(Context context) {
         super(context, database_name, null, database_version);

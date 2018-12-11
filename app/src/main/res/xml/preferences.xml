@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
         android:icon="@drawable/ic_account_circle_grey_24dp"
@@ -25,21 +26,21 @@
         android:summary="@string/pref_autostart_summary"
         android:defaultValue="@string/pref_autostart_default" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <CheckBoxPreference
         android:icon="@drawable/ic_filter_3_grey_24dp"
         android:key="@string/pref_key_shownbsynced"
         android:title="@string/pref_shownbsynced_title"
         android:summary="@string/pref_shownbsynced_summary"
         android:defaultValue="@string/pref_shownbsynced_default" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <SwitchPreferenceCompat
         android:defaultValue="@string/pref_value_theme_light"
         android:icon="@drawable/ic_brightness_2_grey_24dp"
         android:key="@string/pref_key_theme"
         android:summary="%s"
         android:title="@string/settings_theme_title" />
 
-    <android.support.v7.preference.PreferenceScreen
+    <PreferenceScreen
         android:key="@string/pref_key_certs"
         android:persistent="false"
         android:icon="@drawable/ic_https_grey_24dp"
@@ -54,6 +55,6 @@
             android:key="@string/pref_key_reset_trust"
             android:title="@string/settings_cert_reset"
             android:summary="@string/settings_cert_reset_summary" />
-    </android.support.v7.preference.PreferenceScreen>
+    </PreferenceScreen>
 
 </PreferenceScreen>

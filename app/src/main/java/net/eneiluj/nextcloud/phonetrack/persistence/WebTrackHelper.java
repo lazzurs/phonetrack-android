@@ -247,16 +247,16 @@ public class WebTrackHelper {
 
         String[] urlSplit;
         String[] paramSplit;
-        String baseUrl = "";
+        String baseUrl;
         Map<String, String> paramsToSend = new ArrayMap<>();
         if (urlWithValues.contains("?")) {
             urlSplit = urlWithValues.split("\\?");
             if (urlSplit.length == 2) {
                 baseUrl = urlSplit[0];
                 paramSplit = urlSplit[1].split("\\&");
-                for (int i = 0; i < paramSplit.length; i++) {
-                    if (paramSplit[i].contains("=")) {
-                        String[] oneParamSplit = paramSplit[i].split("=");
+                for (String aParamSplit : paramSplit) {
+                    if (aParamSplit.contains("=")) {
+                        String[] oneParamSplit = aParamSplit.split("=");
                         if (oneParamSplit.length == 2) {
                             paramsToSend.put(oneParamSplit[0], oneParamSplit[1]);
                         }

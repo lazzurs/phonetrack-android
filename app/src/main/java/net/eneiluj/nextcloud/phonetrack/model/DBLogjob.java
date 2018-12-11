@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class DBLogjob implements Item, Serializable {
 
     private long id;
-    private String title = "";
+    private String title;
     private String url;
     private String token;
     private String deviceName;

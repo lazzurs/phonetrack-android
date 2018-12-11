@@ -40,7 +40,7 @@ public class EditPhoneTrackLogjobActivity extends EditLogjobActivity {
 
         DBLogjob newLogjob = new DBLogjob(0, "",  "https://yournextcloud.org", "supersessiontoken", "mydevname", 60, 5, 50, false,false, 0);
 
-        String url = "";
+        String url;
         if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
             url = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (!newLogjob.setAttrFromLoggingUrl(url)) {

@@ -53,9 +53,9 @@ public class PhoneTrackClient {
     public static final String JSON_TITLE = "title";
     public static final String JSON_ETAG = "etag";
     private static final String application_json = "application/json";
-    private String url = "";
-    private String username = "";
-    private String password = "";
+    private String url;
+    private String username;
+    private String password;
 
     public PhoneTrackClient(String url, String username, String password) {
         this.url = url;

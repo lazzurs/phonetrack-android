@@ -569,7 +569,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         refreshLists(false);
     }
     private void refreshLists(final boolean scrollToTop) {
-        String subtitle = "";
+        String subtitle;
         if (navigationSelection.favorite != null && navigationSelection.favorite) {
             subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_enabled);
         } else if (navigationSelection.category == CATEGORY_PHONETRACK) {

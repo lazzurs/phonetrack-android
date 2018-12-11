@@ -7,9 +7,9 @@ import java.io.Serializable;
  * It can be directly generated from the JSON answer from the server.
  */
 public class CloudSession implements Serializable {
-    private String name = "";
-    private String token = "";
-    private String nextURL = "";
+    private String name;
+    private String token;
+    private String nextURL;
 
     public CloudSession(String name, String token, String nextURL) {
         this.name = name;

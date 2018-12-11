@@ -33,10 +33,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int section_type = 0;
     private static final int logjob_type = 1;
     private final LogjobClickListener logjobClickListener;
-    private List<Item> itemList = null;
+    private List<Item> itemList;
     private boolean showCategory = true;
-    private List<Integer> selected = null;
-    private PhoneTrackSQLiteOpenHelper db = null;
+    private List<Integer> selected;
+    private PhoneTrackSQLiteOpenHelper db;
     private SharedPreferences prefs;
 
     public ItemAdapter(@NonNull LogjobClickListener logjobClickListener, PhoneTrackSQLiteOpenHelper db) {
