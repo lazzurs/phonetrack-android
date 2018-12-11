@@ -899,6 +899,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(LoggerService.BROADCAST_LOCATION_GPS_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED);
+        filter.addAction(WebTrackService.BROADCAST_SYNC_STARTED);
         filter.addAction(WebTrackService.BROADCAST_SYNC_DONE);
         filter.addAction(WebTrackService.BROADCAST_SYNC_FAILED);
         registerReceiver(mBroadcastReceiver, filter);
@@ -930,6 +931,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         }
                     }
                     break;
+                case WebTrackService.BROADCAST_SYNC_STARTED:
+                    swipeRefreshLayout.setRefreshing(true);
+                    break;
+                // when sync is finished (fail or success)
                 case WebTrackService.BROADCAST_SYNC_DONE:
                     String ljId2 = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
                     if (ljId2 != null) {

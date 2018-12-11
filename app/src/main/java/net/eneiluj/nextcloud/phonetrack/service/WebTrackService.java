@@ -38,6 +38,7 @@ public class WebTrackService extends IntentService {
 
     private static final String TAG = WebTrackService.class.getSimpleName();
     public static final String BROADCAST_SYNC_FAILED = "net.eneiluj.nextcloud.phonetrack.broadcast.sync_failed";
+    public static final String BROADCAST_SYNC_STARTED = "net.eneiluj.nextcloud.phonetrack.broadcast.sync_started";
     public static final String BROADCAST_SYNC_DONE = "net.eneiluj.nextcloud.phonetrack.broadcast.sync_done";
 
     private PhoneTrackSQLiteOpenHelper db;
@@ -102,6 +103,12 @@ public class WebTrackService extends IntentService {
         else {
             logjobs = new ArrayList<>();
             logjobs.add(db.getLogjob(Long.valueOf(ljIdToSync)));
+        }
+
+        if (logjobs.size() > 0) {
+            // start loading animation in logjob list
+            Intent intent = new Intent(BROADCAST_SYNC_STARTED);
+            sendBroadcast(intent);
         }
 
         for (DBLogjob logjob : logjobs) {
