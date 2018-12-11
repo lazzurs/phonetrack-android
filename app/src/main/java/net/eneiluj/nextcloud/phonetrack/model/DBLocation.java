@@ -1,7 +1,5 @@
 package net.eneiluj.nextcloud.phonetrack.model;
 
-import java.io.Serializable;
-
 /**
  * DBLocation represents a location from the local SQLite database with all attributes.
  * key_id, key_logjobid, key_lat, key_lon, 4 key_time, 5 key_bearing,

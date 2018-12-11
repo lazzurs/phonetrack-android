@@ -6,7 +6,6 @@ import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
-import net.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
 import net.eneiluj.nextcloud.phonetrack.android.activity.EditPhoneTrackLogjobActivity;
 
 /**

@@ -1,7 +1,5 @@
 package net.eneiluj.nextcloud.phonetrack.model;
 
-import java.io.Serializable;
-
 /**
  * DBSession represents a single session from the local SQLite database with all attributes.
  * It extends CloudSession with attributes required for local data management.

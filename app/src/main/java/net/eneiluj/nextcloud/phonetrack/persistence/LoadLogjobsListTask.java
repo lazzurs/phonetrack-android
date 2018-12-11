@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -53,11 +54,15 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
             SpannableString spannableString = new SpannableString(dbLogjob.getTitle());
             Matcher matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
             while (matcher.find()) {
-                spannableString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.primary_dark)),
+                spannableString.setSpan(
+                        new ForegroundColorSpan(
+                                //context.getResources().getColor(R.color.primary_dark)
+                                ContextCompat.getColor(context, R.color.bg_attention)
+                        ),
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbLogjob.setTitle(Html.toHtml(spannableString));
+            dbLogjob.setTitle(Html.toHtml(spannableString, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE));
             // TODO search by sub title
             /*spannableString = new SpannableString(dbLogjob.getCategory());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
@@ -71,20 +76,28 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
             spannableString = new SpannableString(dbLogjob.getUrl());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
             while (matcher.find()) {
-                spannableString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.primary_dark)),
+                spannableString.setSpan(
+                        new ForegroundColorSpan(
+                                //context.getResources().getColor(R.color.primary_dark)
+                                ContextCompat.getColor(context, R.color.bg_attention)
+                        ),
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbLogjob.setUrl(Html.toHtml(spannableString));
+            dbLogjob.setUrl(Html.toHtml(spannableString, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE));
 
             spannableString = new SpannableString(dbLogjob.getDeviceName());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
             while (matcher.find()) {
-                spannableString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.primary_dark)),
+                spannableString.setSpan(
+                        new ForegroundColorSpan(
+                                //context.getResources().getColor(R.color.primary_dark)
+                                ContextCompat.getColor(context, R.color.bg_attention)
+                        ),
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbLogjob.setDeviceName(Html.toHtml(spannableString));
+            dbLogjob.setDeviceName(Html.toHtml(spannableString, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE));
         }
 
         return dbLogjob;

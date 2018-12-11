@@ -73,7 +73,7 @@
                     android:layout_gravity="start"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
-                    app:layoutManager="LinearLayoutManager" />
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
                 <View
                     android:layout_width="match_parent"
@@ -87,7 +87,7 @@
                     android:layout_gravity="start"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
-                    app:layoutManager="LinearLayoutManager" />
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
             </LinearLayout>
 

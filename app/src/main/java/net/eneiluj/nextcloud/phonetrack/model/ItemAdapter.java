@@ -114,12 +114,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             final DBLogjob logjob = (DBLogjob) item;
             final LogjobViewHolder nvHolder = ((LogjobViewHolder) holder);
             nvHolder.logjobSwipeable.setAlpha(1.0f);
-            nvHolder.logjobTitle.setText(Html.fromHtml(logjob.getTitle()));
+            nvHolder.logjobTitle.setText(Html.fromHtml(logjob.getTitle(), Html.FROM_HTML_MODE_COMPACT));
             if (!logjob.getDeviceName().isEmpty()) {
-                nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getDeviceName() + " => " + logjob.getUrl()));
+                nvHolder.logjobSubtitle.setText(Html.fromHtml(
+                        logjob.getDeviceName() + " => " + logjob.getUrl(), Html.FROM_HTML_MODE_COMPACT)
+                );
             }
             else {
-                nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getUrl()));
+                nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getUrl(), Html.FROM_HTML_MODE_COMPACT));
             }
 
             nvHolder.logjobEnabled.setChecked(logjob.isEnabled());

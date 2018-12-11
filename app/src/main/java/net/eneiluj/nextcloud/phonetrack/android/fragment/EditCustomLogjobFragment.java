@@ -1,45 +1,19 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 //import android.preference.EditTextPreference;
 import android.support.v7.preference.CheckBoxPreference;
-import android.support.v7.preference.EditTextPreference;
 //import android.preference.ListPreference;
-import android.support.v7.preference.ListPreference;
 //import android.preference.Preference;
 import android.support.v7.preference.Preference;
 //import android.preference.PreferenceFragment;
-import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.EditText;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
-import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
-import net.eneiluj.nextcloud.phonetrack.model.DBSession;
-import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
-import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 public class EditCustomLogjobFragment extends EditLogjobFragment {

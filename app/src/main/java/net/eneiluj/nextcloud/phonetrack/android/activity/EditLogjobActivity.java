@@ -1,7 +1,5 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
-import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +10,6 @@ import android.view.MenuItem;
 
 import android.widget.Toast;
 
-import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 

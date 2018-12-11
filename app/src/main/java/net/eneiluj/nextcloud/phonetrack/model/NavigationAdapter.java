@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,13 +92,18 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
             count.setVisibility(item.count == null ? View.GONE : View.VISIBLE);
             count.setText(String.valueOf(item.count));
             if (item.icon > 0) {
-                icon.setImageDrawable(icon.getResources().getDrawable(item.icon));
+                icon.setImageDrawable(
+                        //icon.getResources().getDrawable(item.icon)
+                        ContextCompat.getDrawable(icon.getContext(), item.icon)
+                );
                 icon.setVisibility(View.VISIBLE);
             } else {
                 icon.setVisibility(View.GONE);
             }
-            view.setBackgroundColor(isSelected ? view.getResources().getColor(R.color.bg_highlighted) : Color.TRANSPARENT);
-            int textColor = view.getResources().getColor(isSelected ? R.color.primary_dark : R.color.fg_default);
+            //view.setBackgroundColor(isSelected ? view.getResources().getColor(R.color.bg_highlighted) : Color.TRANSPARENT);
+            view.setBackgroundColor(isSelected ? ContextCompat.getColor(view.getContext(), R.color.bg_highlighted) : Color.TRANSPARENT);
+            //int textColor = view.getResources().getColor(isSelected ? R.color.primary_dark : R.color.fg_default);
+            int textColor = ContextCompat.getColor(view.getContext(), isSelected ? R.color.primary : R.color.fg_default);
 
             name.setTextColor(textColor);
             count.setTextColor(textColor);
