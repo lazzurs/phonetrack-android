@@ -186,6 +186,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     protected void onResume() {
         // refresh and sync every time the activity gets visible
         refreshLists();
+        swipeRefreshLayout.setRefreshing(false);
         db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
             synchronize();
