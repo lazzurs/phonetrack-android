@@ -202,7 +202,6 @@ public class WebTrackService extends IntentService {
     /**
      * Convert cursor to map of request parameters
      *
-     * @param cursor Cursor
      * @return Map of parameters
      */
     private Map<String, String> dbLocationToMap(DBLocation loc) {

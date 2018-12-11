@@ -28,7 +28,6 @@
     <string name="menu_delete">Vymazať</string>
     <string name="menu_select_session">Use session from Nextcloud</string>
     <string name="menu_from_url">From PhoneTrack logging URL</string>
-    <string name="menu_preview" tools:keep="@string/menu_preview">Preview</string>
     <string name="menu_share">Share</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
