@@ -72,7 +72,7 @@
 
         <activity
             android:name="net.eneiluj.nextcloud.phonetrack.android.activity.EditPhoneTrackLogjobActivity"
-            android:label="@string/simple_edit"
+            android:label="@string/simple_edit_pt"
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask">
@@ -86,7 +86,7 @@
 
         <activity
             android:name="net.eneiluj.nextcloud.phonetrack.android.activity.EditCustomLogjobActivity"
-            android:label="@string/simple_edit"
+            android:label="@string/simple_edit_cu"
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask">
