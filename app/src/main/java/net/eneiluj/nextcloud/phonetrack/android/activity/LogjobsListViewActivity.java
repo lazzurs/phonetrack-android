@@ -53,6 +53,7 @@ import net.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -244,7 +245,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     synchronize();
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
+                    // don't bother user if no conf
+                    if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
+                    }
                 }
                 if (db.getLocationCount() > 0) {
                     Intent syncIntent = new Intent(LogjobsListViewActivity.this, WebTrackService.class);
@@ -697,7 +701,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 adapter.removeAll();
                 synchronize();
             } else {
-                Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
+                if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
