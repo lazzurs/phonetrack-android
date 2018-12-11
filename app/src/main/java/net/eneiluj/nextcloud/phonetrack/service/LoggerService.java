@@ -148,7 +148,7 @@ public class LoggerService extends Service {
                 hasLocationUpdates = requestLocationUpdates(String.valueOf(lj.getId()));
             }
         }
-        
+
         if (hasLocationUpdates) {
             final Notification notification = showNotification(NOTIFICATION_ID);
             startForeground(NOTIFICATION_ID, notification);
@@ -194,9 +194,6 @@ public class LoggerService extends Service {
                     if (DEBUG) {
                         Log.d(TAG, "[onStartCommand : upd logjob but firstrun so nothing]");
                     }
-                    if (!isRunning) {
-                        stopSelf();
-                    }
                 } else {
                     String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
                     if (DEBUG) {
@@ -219,18 +216,11 @@ public class LoggerService extends Service {
                 }
             } else if (updateNotif && isRunning) {
                 updateNotificationContent();
-            } else if (isRunning) {
+            } else {
                 // start without parameter
                 if (DEBUG) {
                     Log.d(TAG, "[onStartCommand : start without parameter]");
                 }
-
-            } else {
-                // onCreate failed to start updates
-                if (DEBUG) {
-                    Log.d(TAG, "[onStartCommand : failed to start updates => stop]");
-                }
-                stopSelf();
             }
         }
 
