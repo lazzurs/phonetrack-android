@@ -22,7 +22,6 @@
     <string name="setting_lj_url_long">Nextcloud URL of target PhoneTrack instance hosting the session</string>
     <string name="setting_url">Target URL</string>
     <string name="setting_url_long">Target URL to be requested with value replacement</string>
-    <string name="setting_list">Use a session from PhoneTrack</string>
     <string name="setting_post_title">Use POST method</string>
     <string name="setting_post_summary">instead of GET. Parameters will be converted from GET to POST.</string>
     <string name="action_search">Search</string>
@@ -37,7 +36,6 @@
     <string name="menu_delete">Delete</string>
     <string name="menu_select_session">Use session from Nextcloud</string>
     <string name="menu_from_url">From PhoneTrack logging URL</string>
-    <string name="menu_enabled">Enabled</string>
     <string name="menu_preview" tools:keep="@string/menu_preview">Preview</string>
     <string name="menu_share">Share</string>
     <string name="fab_create_phonetrack">New PhoneTrack log job</string>
@@ -54,7 +52,6 @@
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
     <string name="settings_url">Server address</string>
-    <string name="settings_url_check_description">Shows whether the address can be pinged.</string>
     <string name="settings_url_warn_http">WARNING: "http" is unsafe. Please use "https".</string>
     <string name="settings_username">Username</string>
     <string name="settings_password">Password</string>
@@ -63,7 +60,6 @@
     <string name="settings_submitting">Connecting &#8230;</string>
     <string name="settings_theme_title">Theme</string>
     <string name="settings_providers_title">Location providers</string>
-    <string name="settings_providers_title_long">Gps, network, or both.</string>
     <string name="settings_cert_category">Manage certificates</string>
     <string name="settings_cert_trust_system">Trust system certificates</string>
     <string name="settings_cert_trust_system_on">System and user-added CAs will be trusted (recommended)</string>
@@ -103,9 +99,6 @@
     <string name="trust_certificate_unknown_certificate_found">PhoneTrack has encountered an unknown certificate. Do you want to trust it?</string>
 
     <!-- Network -->
-    <string name="network_connecting">Connecting</string>
-    <string name="network_connected">Connected</string>
-    <string name="network_disconnected">No network available</string>
 
     <!-- Error -->
     <string name="error_sync">Synchronization failed: %1$s</string>
@@ -114,13 +107,11 @@
     <string name="error_io">server connection is broken</string>
     <string name="error_no_network">no network connection</string>
     <string name="error_server">URL/Server has errors</string>
-    <string name="error_url_malformed">Wrong server address</string>
     <string name="error_username_password_invalid">Wrong username or password</string>
     <string name="error_invalid_pt_url">Invalid PhoneTrack logging URL</string>
     <string name="error_invalid_url">Invalid URL</string>
 
     <!-- Snackbar Actions -->
-    <string name="snackbar_settings">Settings</string>
 
     <!-- URLs -->
     <string name="url_source" translatable="false">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -155,8 +146,6 @@
     <string name="about_contribution_tab_title">Contribution</string>
     <string name="about_license_tab_title">License</string>
 
-
-    <string name="activity_select_single_logjob">Select log job</string>
 
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Create a new log job</string>

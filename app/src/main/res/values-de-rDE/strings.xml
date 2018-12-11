@@ -16,7 +16,6 @@
     <string name="setting_token_long">Session identification token</string>
     <string name="setting_lj_url">Nextcloud URL</string>
     <string name="setting_lj_url_long">Nextcloud URL of target PhoneTrack instance hosting the session</string>
-    <string name="setting_list">Use a session from PhoneTrack</string>
     <string name="action_search">Search</string>
     <string name="simple_cancel">Abbrechen</string>
     <string name="simple_edit">Edit</string>
@@ -29,13 +28,11 @@
     <string name="menu_delete">Löschen</string>
     <string name="menu_select_session">Use session from Nextcloud</string>
     <string name="menu_from_url">From PhoneTrack logging URL</string>
-    <string name="menu_enabled">Enabled</string>
     <string name="menu_preview" tools:keep="@string/menu_preview">Preview</string>
     <string name="menu_share">Share</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
     <string name="settings_url">Server address</string>
-    <string name="settings_url_check_description">Shows whether the address can be pinged.</string>
     <string name="settings_url_warn_http">WARNING: \"http\" is unsafe. Please use \"https\".</string>
     <string name="settings_username">Username</string>
     <string name="settings_password">Password</string>
@@ -54,9 +51,6 @@
     <string name="certificate_notification_connection_security">PhoneTrack - Connection security</string>
     <string name="trust_certificate_unknown_certificate_found">PhoneTrack has encountered an unknown certificate. Do you want to trust it?</string>
     <!-- Network -->
-    <string name="network_connecting">Connecting</string>
-    <string name="network_connected">Connected</string>
-    <string name="network_disconnected">No network available</string>
     <!-- Error -->
     <string name="error_sync">Synchronization failed: %1$s</string>
     <string name="error_invalid_login">Invalid login: %1$s</string>
@@ -64,10 +58,8 @@
     <string name="error_io">server connection is broken</string>
     <string name="error_no_network">no network connection</string>
     <string name="error_server">URL/Server has errors</string>
-    <string name="error_url_malformed">Wrong server address</string>
     <string name="error_username_password_invalid">Wrong username or password</string>
     <!-- Snackbar Actions -->
-    <string name="snackbar_settings">Settings</string>
     <!-- URLs -->
     <!-- About -->
     <string name="about_version_title">Version</string>
@@ -91,7 +83,6 @@
     <string name="about_credits_tab_title">Credits</string>
     <string name="about_contribution_tab_title">Contribution</string>
     <string name="about_license_tab_title">License</string>
-    <string name="activity_select_single_logjob">Select log job</string>
     <!-- Shortcuts -->
     <string name="shortcut_create_long">Create a new log job</string>
     <!-- Key / Values for preferences -->
