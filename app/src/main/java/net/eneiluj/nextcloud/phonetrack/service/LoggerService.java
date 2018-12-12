@@ -593,8 +593,7 @@ public class LoggerService extends Service {
                     lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
                 }
                 db.addLocation(logjobId, loc, battery);
-                // TODO remove next line
-                //db.incNbSync(logjob);
+
                 sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
                 updateNotificationContent();
 

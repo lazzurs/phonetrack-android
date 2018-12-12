@@ -102,6 +102,12 @@
                 android:minWidth="70dp"
                 android:orientation="horizontal">
 
+                <Space
+                    android:id="@+id/syncSpacer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
                 <TextView
                     android:id="@+id/nbNotSync"
                     android:layout_width="wrap_content"
@@ -119,12 +125,6 @@
                     android:adjustViewBounds="false"
                     android:tint="#990000"
                     android:src="@drawable/ic_notify_grey_24dp" />
-
-                <Space
-                    android:id="@+id/syncSpacer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/nbSync"
