@@ -222,6 +222,9 @@ public class WebTrackHelper {
         // TODO do the GET request
         StringBuilder result = new StringBuilder();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setInstanceFollowRedirects(false);
+        conn.setConnectTimeout(SOCKET_TIMEOUT);
+        conn.setReadTimeout(SOCKET_TIMEOUT);
         conn.setRequestMethod("GET");
         BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line;
