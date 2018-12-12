@@ -9,8 +9,8 @@
     <string name="label_custom_lj">Jobs personnalisés</string>
     <string name="label_custom">Personnalisé</string>
     <string name="action_create">Nouveau log job</string>
-    <string name="action_create_share">Importer une URL de logging de PhoneTrack</string>
-    <string name="action_create_custom_share">Importer une URL de logging personnalisée</string>
+    <string name="action_create_share">Importer URL PT</string>
+    <string name="action_create_custom_share">Importer URL personnalisée</string>
     <string name="action_settings">Paramètres</string>
     <string name="setting_title">Titre</string>
     <string name="setting_title_long">Titre du log job</string>

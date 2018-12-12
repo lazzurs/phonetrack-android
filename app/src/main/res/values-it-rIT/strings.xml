@@ -23,7 +23,7 @@
     <string name="setting_url">URL destinazione</string>
     <string name="setting_url_long">URL di destinazione da richiedere con sostituzione del valore</string>
     <string name="setting_post_title">Usa il metodo Post</string>
-    <string name="setting_post_summary">instead of GET method. GET parameters will be converted to POST.</string>
+    <string name="setting_post_summary">invece del metodo GET. I parametri GET saranno convertiti in POST.</string>
     <string name="action_search">Ricerca</string>
     <string name="simple_cancel">Annulla</string>
     <string name="simple_edit_pt">Modifica log job di PhoneTrack</string>
@@ -35,8 +35,8 @@
     <string name="action_drawer_open">apri menu laterale</string>
     <string name="action_drawer_close">chiudi menu laterale</string>
     <string name="menu_delete">Cancella</string>
-    <string name="menu_select_session">Use Nextcloud PhoneTrack session</string>
-    <string name="menu_from_url">Use Nextcloud PhoneTrack logging URL</string>
+    <string name="menu_select_session">Utilizzare la sessione PhoneTrack di Nextcloud</string>
+    <string name="menu_from_url">Utilizzare l\'URL di registrazione Nextcloud PhoneTrack</string>
     <string name="menu_share">Condividi</string>
     <string name="fab_create_phonetrack">Nuovo log job di PhoneTrack</string>
     <string name="fab_create_custom">Nuovo log job personalizzato</string>
@@ -46,7 +46,7 @@
     <string name="setting_min_time_long">Tempo minimo tra due punti registrati (secondi)</string>
     <string name="setting_min_accuracy">Precisione minima</string>
     <string name="setting_min_accuracy_long">Precisione minima per i punti registrati (metri)</string>
-    <string name="is_running">running (%s pending, %s sent)</string>
+    <string name="is_running">in esecuzione (%s in sospeso, %s inviato)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
     <string name="settings_url">Indirizzo Server</string>
@@ -83,13 +83,13 @@
     <string name="trust_certificate_unknown_certificate_found">PhoneTrack ha riscontrato un certificato sconosciuto. Vuoi fidarti di esso?</string>
     <!-- Network -->
     <!-- Error -->
-    <string name="error_sync">Session retrieval failed: %1$s</string>
+    <string name="error_sync">Recupero della sessione non riuscito: %1$s</string>
     <string name="error_invalid_login">Accesso non valido: %1$s</string>
     <string name="error_json">l\'app PhoneTrack è attiva sul server?</string>
     <string name="error_io">la connessione al server è interrotta</string>
     <string name="error_no_network">nessuna connessione di rete</string>
-    <string name="error_server">server error</string>
-    <string name="error_username_password_invalid">wrong username or password</string>
+    <string name="error_server">errore del server</string>
+    <string name="error_username_password_invalid">username o password sbagliati</string>
     <string name="error_invalid_pt_url">URL di registrazione PhoneTrack non valido</string>
     <string name="error_invalid_url">URL non valido</string>
     <!-- Snackbar Actions -->
