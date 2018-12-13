@@ -795,7 +795,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             long tsLastSync = db.getLastSyncTimestamp(ljId);
             SyncError lastSyncErr = db.getLastSyncError(ljId);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
             if (LoggerService.DEBUG) { Log.d(TAG, "[LAST " + tsLastLoc + " "+tsLastSync+ "]"); }
 
