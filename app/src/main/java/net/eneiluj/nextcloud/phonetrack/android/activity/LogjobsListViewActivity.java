@@ -40,7 +40,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +58,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.Item;
 import net.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
+import net.eneiluj.nextcloud.phonetrack.model.SyncError;
 import net.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
@@ -787,10 +793,34 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         if (logjob != null) {
             String ljId = String.valueOf(logjob.getId());
             PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
+            long tsLastLoc = db.getLastLocTimestamp(ljId);
+            long tsLastSync = db.getLastSyncTimestamp(ljId);
+            SyncError lastSyncErr = db.getLastSyncError(ljId);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
+
+            if (LoggerService.DEBUG) { Log.d(TAG, "[LAST " + tsLastLoc + " "+tsLastSync+ "]"); }
 
             String infoText = view.getContext().getString(R.string.logjob_info_nbsync, logjob.getNbSync());
             infoText += "\n";
             infoText += view.getContext().getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationCount(logjob.getId()));
+
+            if (tsLastLoc != 0) {
+                Date d = new Date(tsLastLoc*1000);
+                infoText += "\n\n";
+                infoText += view.getContext().getString(R.string.logjob_info_lastloc, sdf.format(d));
+            }
+            if (tsLastSync != 0) {
+                infoText += "\n\n";
+                Date d = new Date(tsLastSync*1000);
+                infoText += view.getContext().getString(R.string.logjob_info_lastsync, sdf.format(d));
+            }
+
+            if (lastSyncErr.getTimestamp() != 0) {
+                infoText += "\n\n";
+                Date d = new Date(lastSyncErr.getTimestamp()*1000);
+                infoText += view.getContext().getString(R.string.logjob_info_lastsync_error, sdf.format(d), lastSyncErr.getMessage());
+            }
 
             AlertDialog.Builder builder;
             builder = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_Material_Dialog_Alert);

@@ -21,6 +21,7 @@ import net.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.SyncError;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
@@ -49,7 +50,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_minAccuracy = "MINACCURACY";
     private static final String key_post = "POST";
     private static final String key_enabled = "ENABLED";
+    private static final String key_lastLocTimestamp = "LASTLOC";
     private static final String key_nbsync = "NBSYNC";
+    private static final String key_lastSyncTimestamp = "LASTSYNC";
+    private static final String key_lastSyncErrorTimestamp = "LASTSYNCERRTIME";
+    private static final String key_lastSyncErrorText = "LASTSYNCERR";
 
     private static final String table_locations = "LOCATIONS";
     private static final String key_logjobid = "LOGJOBID";
@@ -64,8 +69,15 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_battery = "BATTERY";
 
     private static final String[] columnsSessions = {key_id, key_token, key_name, key_nextURL};
-    private static final String[] columnsLogjobs = {key_id, key_title, key_url, key_token, key_deviceName, key_minTime, key_minDistance, key_minAccuracy, key_post, key_enabled, key_nbsync};
-    private static final String[] columnsLocations = {key_id, key_logjobid, key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_satellites, key_battery};
+    private static final String[] columnsLogjobs = {
+            key_id, key_title, key_url, key_token, key_deviceName,
+            key_minTime, key_minDistance, key_minAccuracy, key_post, key_enabled,
+            key_nbsync, key_lastSyncTimestamp, key_lastLocTimestamp,
+            key_lastSyncErrorTimestamp, key_lastSyncErrorText};
+    private static final String[] columnsLocations = {
+            key_id, key_logjobid, key_lat, key_lon, key_time,
+            key_bearing, key_altitude, key_speed, key_accuracy,
+            key_satellites, key_battery};
 
     private static final String default_order = key_id + " DESC";
 
@@ -126,6 +138,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_post + " INTEGER DEFAULT 0, " +
                 key_enabled + " INTEGER DEFAULT 0, " +
                 key_nbsync + " INTEGER DEFAULT 0, " +
+                key_lastSyncTimestamp + " INTEGER DEFAULT 0, " +
+                key_lastLocTimestamp + " INTEGER DEFAULT 0, " +
+                key_lastSyncErrorTimestamp + " INTEGER DEFAULT 0, " +
+                key_lastSyncErrorText + " TEXT, " +
                 key_token + " TEXT)");
     }
 
@@ -599,6 +615,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_satellites, sat);
 
         db.insert(table_locations, null, values);
+
+        setLastLocTimestamp(ljId, loc.getTime() / 1000);
     }
 
     public void addLocation(DBLocation dbLoc) {
@@ -746,6 +764,66 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return result;
+    }
+
+    public void setLastLocTimestamp(String ljId, long ts) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(key_lastLocTimestamp, ts);
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{ljId});
+    }
+
+    public long getLastLocTimestamp(String ljId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(table_logjobs, new String[]{key_lastLocTimestamp}, key_id + " = ?", new String[]{ljId}, null, null, null);
+        long res = 0;
+        while (cursor.moveToNext()) {
+            res = cursor.getLong(0);
+            break;
+        }
+        cursor.close();
+        return res;
+    }
+
+    public void setLastSyncTimestamp(String ljId, long ts) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(key_lastSyncTimestamp, ts);
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{ljId});
+    }
+
+    public long getLastSyncTimestamp(String ljId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(table_logjobs, new String[]{key_lastSyncTimestamp}, key_id + " = ?", new String[]{ljId}, null, null, null);
+        long res = 0;
+        while (cursor.moveToNext()) {
+            res = cursor.getLong(0);
+            break;
+        }
+        cursor.close();
+        return res;
+    }
+
+    public void setLastSyncError(String ljId, long ts, String message) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(key_lastSyncErrorTimestamp, ts);
+        values.put(key_lastSyncErrorText, message);
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{ljId});
+    }
+
+    public SyncError getLastSyncError(String ljId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(table_logjobs, new String[]{key_lastSyncErrorTimestamp, key_lastSyncErrorText}, key_id + " = ?", new String[]{ljId}, null, null, null);
+        long ts = 0;
+        String msg = "";
+        while (cursor.moveToNext()) {
+            ts = cursor.getLong(0);
+            msg = cursor.getString(1);
+            break;
+        }
+        cursor.close();
+        return new SyncError(ts, msg);
     }
 
     /**

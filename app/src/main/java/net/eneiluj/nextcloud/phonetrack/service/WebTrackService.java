@@ -124,6 +124,7 @@ public class WebTrackService extends IntentService {
                         web.postPositionToPhoneTrack(url, params);
                         db.deleteLocation(locId);
                         db.incNbSync(logjob);
+                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis()/1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                         sendBroadcast(intent);
@@ -145,6 +146,7 @@ public class WebTrackService extends IntentService {
 
                         db.deleteLocation(locId);
                         db.incNbSync(logjob);
+                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis()/1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                         sendBroadcast(intent);
@@ -202,6 +204,7 @@ public class WebTrackService extends IntentService {
         }
         if (LoggerService.DEBUG) { Log.d(TAG, "[websync retry: " + message + "]"); }
 
+        db.setLastSyncError(ljId, System.currentTimeMillis()/1000, message);
         //db.setError(message);
         Intent intent = new Intent(BROADCAST_SYNC_FAILED);
         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
