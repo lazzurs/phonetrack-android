@@ -32,6 +32,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.support.v7.widget.helper.ItemTouchHelper.SimpleCallback;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,10 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -801,31 +799,55 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
             if (LoggerService.DEBUG) { Log.d(TAG, "[LAST " + tsLastLoc + " "+tsLastSync+ "]"); }
 
-            String infoText = view.getContext().getString(R.string.logjob_info_nbsync, logjob.getNbSync());
-            infoText += "\n";
-            infoText += view.getContext().getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationCount(logjob.getId()));
+            String nbsyncText = view.getContext().getString(R.string.logjob_info_nbsync, logjob.getNbSync());
+            String nbnotsyncText = view.getContext().getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationCount(logjob.getId()));
+            String lastLocText = "";
+            String lastSyncText = "";
+            String lastSyncErrText = "";
+
+            View iView = LayoutInflater.from(this).inflate(R.layout.items_infodialog, null);
+            TextView tv = iView.findViewById(R.id.infoNbsyncText);
+            tv.setText(nbsyncText);
+            TextView tv2 = iView.findViewById(R.id.infoNbnotsyncText);
+            tv2.setText(nbnotsyncText);
 
             if (tsLastLoc != 0) {
                 Date d = new Date(tsLastLoc*1000);
-                infoText += "\n\n";
-                infoText += view.getContext().getString(R.string.logjob_info_lastloc, sdf.format(d));
+                lastLocText = view.getContext().getString(R.string.logjob_info_lastloc, sdf.format(d));
+
+                TextView tv3 = iView.findViewById(R.id.infoLastLocText);
+                tv3.setText(lastLocText);
+            }
+            else {
+                iView.findViewById(R.id.infoLastLocLayout).setVisibility(View.GONE);
             }
             if (tsLastSync != 0) {
-                infoText += "\n\n";
                 Date d = new Date(tsLastSync*1000);
-                infoText += view.getContext().getString(R.string.logjob_info_lastsync, sdf.format(d));
+                lastSyncText = view.getContext().getString(R.string.logjob_info_lastsync, sdf.format(d));
+
+                TextView tv4 = iView.findViewById(R.id.infoLastSyncText);
+                tv4.setText(lastSyncText);
+            }
+            else {
+                iView.findViewById(R.id.infoLastSyncLayout).setVisibility(View.GONE);
             }
 
             if (lastSyncErr.getTimestamp() != 0) {
-                infoText += "\n\n";
                 Date d = new Date(lastSyncErr.getTimestamp()*1000);
-                infoText += view.getContext().getString(R.string.logjob_info_lastsync_error, sdf.format(d), lastSyncErr.getMessage());
+                lastSyncErrText = view.getContext().getString(R.string.logjob_info_lastsync_error, sdf.format(d), lastSyncErr.getMessage());
+
+                TextView tv5 = iView.findViewById(R.id.infoLastSyncErrText);
+                tv5.setText(lastSyncErrText);
+            }
+            else {
+                iView.findViewById(R.id.infoLastSyncErrLayout).setVisibility(View.GONE);
             }
 
             AlertDialog.Builder builder;
             builder = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_Material_Dialog_Alert);
             builder.setTitle(view.getContext().getString(R.string.logjob_info_dialog_title, logjob.getTitle()))
-                    .setMessage(infoText)
+                    //.setMessage(infoText)
+                    .setView(iView)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
