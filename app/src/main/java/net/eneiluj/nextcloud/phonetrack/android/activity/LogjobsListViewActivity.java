@@ -1,9 +1,11 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -776,6 +778,31 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             refreshLists();
 
             notifyLoggerService(logjob.getId());
+        }
+    }
+
+    @Override
+    public void onLogjobInfoButtonClick(int position, View view) {
+        DBLogjob logjob = (DBLogjob) adapter.getItem(position);
+        if (logjob != null) {
+            String ljId = String.valueOf(logjob.getId());
+            PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
+
+            String infoText = view.getContext().getString(R.string.logjob_info_nbsync, logjob.getNbSync());
+            infoText += "\n";
+            infoText += view.getContext().getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationCount(logjob.getId()));
+
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_Material_Dialog_Alert);
+            builder.setTitle(view.getContext().getString(R.string.logjob_info_dialog_title, logjob.getTitle()))
+                    .setMessage(infoText)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .show();
         }
     }
 

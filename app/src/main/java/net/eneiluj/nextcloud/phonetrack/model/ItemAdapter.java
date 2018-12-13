@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Space;
 import android.widget.Switch;
@@ -132,6 +134,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
 
+            nvHolder.infoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    logjobClickListener.onLogjobInfoButtonClick(holder.getAdapterPosition(), view);
+                }
+            });
+
             int nb = db.getLogjobLocationCount(logjob.getId());
             String nbTxt = (nb == 0) ? "" : String.valueOf(nb);
             nvHolder.nbNotSync.setText(nbTxt);
@@ -148,12 +157,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 visible = (nbSent == 0) ? View.INVISIBLE : View.VISIBLE;
                 nvHolder.syncIcon.setVisibility(visible);
                 nvHolder.nbSync.setVisibility(visible);
-                nvHolder.syncSpacer.setVisibility(View.VISIBLE);
+                //nvHolder.syncSpacer.setVisibility(View.VISIBLE);
             }
             else {
                 nvHolder.syncIcon.setVisibility(View.GONE);
                 nvHolder.nbSync.setVisibility(View.GONE);
-                nvHolder.syncSpacer.setVisibility(View.GONE);
+                //nvHolder.syncSpacer.setVisibility(View.GONE);
             }
         }
     }
@@ -217,6 +226,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         void onLogjobEnabledClick(int position, View v);
 
+        void onLogjobInfoButtonClick(int position, View v);
+
         boolean onLogjobLongClick(int position, View v);
     }
 
@@ -241,6 +252,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView nbSync;
         @BindView(R.id.syncSpacer)
         Space syncSpacer;
+        @BindView(R.id.infoButton)
+        ImageButton infoButton;
 
         private LogjobViewHolder(View v) {
             super(v);
@@ -256,6 +269,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
             this.nbSync = v.findViewById(R.id.nbSync);
             this.syncSpacer = v.findViewById(R.id.syncSpacer);
+            this.infoButton = v.findViewById(R.id.infoButton);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }

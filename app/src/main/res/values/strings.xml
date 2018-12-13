@@ -47,6 +47,10 @@
     <string name="setting_min_time_long">Minimum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Minimum Accuracy</string>
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters)</string>
+    <string name="logjob_info_dialog_title">About %s</string>
+    <string name="logjob_info_nbsync">%d locations sent</string>
+    <string name="logjob_info_nbnotsync">%d locations pending</string>
+
 
     <string name="is_running">running (%s pending, %s sent)</string>
 
