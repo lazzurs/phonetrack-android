@@ -14,6 +14,7 @@
     <string name="action_settings">Paramètres</string>
     <string name="setting_title">Titre</string>
     <string name="setting_title_long">Titre du log job</string>
+    <string name="mandatory">(obligatoire)</string>
     <string name="setting_devicename">Nom de l\'appareil</string>
     <string name="setting_devicename_long">Nom d\'appareil ou token de réservation</string>
     <string name="setting_token">Token de session</string>
@@ -46,6 +47,12 @@
     <string name="setting_min_time_long">Temps minimum entre deux points logués (secondes)</string>
     <string name="setting_min_accuracy">Précision minimum</string>
     <string name="setting_min_accuracy_long">Précision minimum pour les points logués (mètres)</string>
+    <string name="logjob_info_dialog_title">À propos de %s</string>
+    <string name="logjob_info_nbsync">%d positions envoyées</string>
+    <string name="logjob_info_nbnotsync">%d positions en attente</string>
+    <string name="logjob_info_lastloc">Dernière position acquise le %s</string>
+    <string name="logjob_info_lastsync">Dernière synchronisation de position réussie le %s</string>
+    <string name="logjob_info_lastsync_error">Dernière erreur de synchronisation le %s\n\n%s</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>
@@ -73,6 +80,7 @@
     <string name="using_network">Utilise la localisation par le réseau</string>
     <string name="using_gps">Utilise la localisation Gps</string>
     <string name="location_permission_denied">Permission de localisation refusée</string>
+    <string name="sessions_sync_success">Sessions synchronisées</string>
     <string name="pref_autostart_title">Démarrage auto</string>
     <string name="pref_autostart_summary">Le logging commencera au démarrage du système</string>
     <string name="pref_shownbsynced_title">Montrer le nombre de points synchronisés</string>
@@ -96,7 +104,7 @@
     <!-- URLs -->
     <!-- About -->
     <string name="about_version_title">Version</string>
-    <string name="about_version">Vous utilisez &lt;strong&gt;%1$s&lt;/strong&gt;</string>
+    <string name="about_version">Vous utilisez actuellement la &lt;strong&gt;%1$s&lt;/strong&gt;</string>
     <string name="about_maintainer_title">Mainteneur</string>
     <string name="about_developers_title">Développeurs</string>
     <string name="about_translators_title">Traducteurs</string>

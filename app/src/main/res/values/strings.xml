@@ -52,7 +52,7 @@
     <string name="logjob_info_nbnotsync">%d locations pending</string>
     <string name="logjob_info_lastloc">Last location acquired at %s</string>
     <string name="logjob_info_lastsync">Last successfull sync at %s</string>
-    <string name="logjob_info_lastsync_error">Last synchronization error at : %s\n\n%s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error at %s\n\n%s</string>
 
 
     <string name="is_running">running (%s pending, %s sent)</string>

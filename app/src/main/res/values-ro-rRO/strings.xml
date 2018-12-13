@@ -14,6 +14,7 @@
     <string name="action_settings">Settings</string>
     <string name="setting_title">Title</string>
     <string name="setting_title_long">Log job title</string>
+    <string name="mandatory">(mandatory)</string>
     <string name="setting_devicename">Nume aparat</string>
     <string name="setting_devicename_long">Device name or reservation token</string>
     <string name="setting_token">Session token</string>
@@ -46,6 +47,12 @@
     <string name="setting_min_time_long">Minimum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Minimum Accuracy</string>
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters)</string>
+    <string name="logjob_info_dialog_title">About %s</string>
+    <string name="logjob_info_nbsync">%d locations sent</string>
+    <string name="logjob_info_nbnotsync">%d locations pending</string>
+    <string name="logjob_info_lastloc">Last location acquired at %s</string>
+    <string name="logjob_info_lastsync">Last successfull sync at %s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error at %s\n\n%s</string>
     <string name="is_running">running (%s pending, %s sent)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -73,6 +80,7 @@
     <string name="using_network">Using network location</string>
     <string name="using_gps">Using gps location</string>
     <string name="location_permission_denied">Location permission denied</string>
+    <string name="sessions_sync_success">Sessions synchronized</string>
     <string name="pref_autostart_title">Auto start</string>
     <string name="pref_autostart_summary">Logging will start on system boot</string>
     <string name="pref_shownbsynced_title">Show number of synced points</string>

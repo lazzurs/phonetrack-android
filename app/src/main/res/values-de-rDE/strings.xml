@@ -14,6 +14,7 @@
     <string name="action_settings">Einstellungen</string>
     <string name="setting_title">Titel</string>
     <string name="setting_title_long">Titel des Protokollierungsauftrags</string>
+    <string name="mandatory">(obligatorisch)</string>
     <string name="setting_devicename">Gerätename</string>
     <string name="setting_devicename_long">Gerätename oder Reservierungstoken</string>
     <string name="setting_token">Sitzungstoken</string>
@@ -46,6 +47,12 @@
     <string name="setting_min_time_long">Mindestzeit (in Sekunden) zwischen zwei erfassten Punkten</string>
     <string name="setting_min_accuracy">Mindestgenauigkeit</string>
     <string name="setting_min_accuracy_long">Minimale Genauigkeit (in Meter) der erfassten Punkte</string>
+    <string name="logjob_info_dialog_title">Über %s</string>
+    <string name="logjob_info_nbsync">%d Standorte gesendet</string>
+    <string name="logjob_info_nbnotsync">%d Standorte ausstehend</string>
+    <string name="logjob_info_lastloc">Letzer Standort erworben bei %s</string>
+    <string name="logjob_info_lastsync">Letzte erfolgreiche Synchronisierung bei %s</string>
+    <string name="logjob_info_lastsync_error">Letzter Synchronisierungsfehler bei: %s\n\n%s</string>
     <string name="is_running">wird ausgeführt (%s ausstehend, %s gesendet)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
@@ -73,6 +80,7 @@
     <string name="using_network">Netzwerkerfassung Ihres Standorts verwenden</string>
     <string name="using_gps">GPS-Standortbestimmung verwenden</string>
     <string name="location_permission_denied">Standortbestimmungsberechtigung verweigert</string>
+    <string name="sessions_sync_success">Sitzungen synchronisiert</string>
     <string name="pref_autostart_title">Automatisch starten</string>
     <string name="pref_autostart_summary">Protokollierung wird beim Systemstart gestartet</string>
     <string name="pref_shownbsynced_title">Anzahl der synchronisierten Punkte anzeigen</string>

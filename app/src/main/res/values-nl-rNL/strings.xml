@@ -14,6 +14,7 @@
     <string name="action_settings">Instellingen</string>
     <string name="setting_title">Naam</string>
     <string name="setting_title_long">Naam logboek</string>
+    <string name="mandatory">(mandatory)</string>
     <string name="setting_devicename">Apparaatnaam</string>
     <string name="setting_devicename_long">Toestelnaam of reserveringsbewijs</string>
     <string name="setting_token">Sessie bewijs</string>
@@ -46,6 +47,12 @@
     <string name="setting_min_time_long">Minimale tijd tussen twee gelogde punten (seconden)</string>
     <string name="setting_min_accuracy">Minimale nauwkeurigheid</string>
     <string name="setting_min_accuracy_long">Minimale nauwkeurigheid voor gelogde punten (meters)</string>
+    <string name="logjob_info_dialog_title">About %s</string>
+    <string name="logjob_info_nbsync">%d locations sent</string>
+    <string name="logjob_info_nbnotsync">%d locations pending</string>
+    <string name="logjob_info_lastloc">Last location acquired at %s</string>
+    <string name="logjob_info_lastsync">Last successfull sync at %s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error at %s\n\n%s</string>
     <string name="is_running">draaiend (%s in behandeling, %s verzonden)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -73,6 +80,7 @@
     <string name="using_network">Netwerklocatie in gebruik</string>
     <string name="using_gps">GPS-locatie in gebruik</string>
     <string name="location_permission_denied">Locatie toestemming geweigerd</string>
+    <string name="sessions_sync_success">Sessions synchronized</string>
     <string name="pref_autostart_title">Automatisch starten</string>
     <string name="pref_autostart_summary">Logboekregistratie begint als systeem opstart</string>
     <string name="pref_shownbsynced_title">Toon aantal gesynchroniseerde punten</string>

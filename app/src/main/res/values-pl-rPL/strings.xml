@@ -14,6 +14,7 @@
     <string name="action_settings">Ustawienia</string>
     <string name="setting_title">Tytuł</string>
     <string name="setting_title_long">Tytuł zadania dziennika</string>
+    <string name="mandatory">(mandatory)</string>
     <string name="setting_devicename">Nazwa urządzenia</string>
     <string name="setting_devicename_long">Nazwa urządzenia lub token rezerwacji</string>
     <string name="setting_token">Token sesji</string>
@@ -46,6 +47,12 @@
     <string name="setting_min_time_long">Minimalny czas między dwoma zarejestrowanymi punktami (sekundy)</string>
     <string name="setting_min_accuracy">Minimalna dokładność</string>
     <string name="setting_min_accuracy_long">Minimalna dokładność dla zarejestrowanych punktów (metry)</string>
+    <string name="logjob_info_dialog_title">About %s</string>
+    <string name="logjob_info_nbsync">%d locations sent</string>
+    <string name="logjob_info_nbnotsync">%d locations pending</string>
+    <string name="logjob_info_lastloc">Last location acquired at %s</string>
+    <string name="logjob_info_lastsync">Last successfull sync at %s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error at %s\n\n%s</string>
     <string name="is_running">uruchomionych (%s oczekujących, %s wysłanych)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
@@ -73,6 +80,7 @@
     <string name="using_network">Korzystanie z lokalizacji sieciowej</string>
     <string name="using_gps">Korzystanie z lokalizacji GPS</string>
     <string name="location_permission_denied">Odmowa dostępu do lokalizacji</string>
+    <string name="sessions_sync_success">Sessions synchronized</string>
     <string name="pref_autostart_title">Automatyczny start</string>
     <string name="pref_autostart_summary">Rejestrowanie rozpocznie się po uruchomieniu systemu</string>
     <string name="pref_shownbsynced_title">Pokaż liczbę zsynchronizowanych punktów</string>
