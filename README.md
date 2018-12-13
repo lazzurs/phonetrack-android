@@ -1,11 +1,21 @@
 # Nextcloud PhoneTrack for Android
-An android app to log locations to [Nextcloud PhoneTrack App](https://gitlab.com/eneiluj/phonetrack-oc) or any custom server.
+An android app to log locations to [PhoneTrack Nextcloud app](https://gitlab.com/eneiluj/phonetrack-oc) or any custom server.
+
+[![Crowdin](https://d322cqt584bo4o.cloudfront.net/phonetrack/localized.svg)](https://crowdin.com/project/phonetrack)
 
 This is still a beta version.
 
 This app is originally a fork of [Nextcloud Notes for Android](https://github.com/stefan-niedermann/nextcloud-notes).
 It is also largely insired by [µLogger for Android](https://github.com/bfabiszewski/ulogger-android).
 Many thanks to their developers :heart: !
+
+What's different from other logging apps ?
+
+PhoneTrack Android app can manage multiple configurations (called log jobs)
+and log locations at different frequencies to different destinations at the same time.
+
+It can log to [PhoneTrack Nextcloud app](https://gitlab.com/eneiluj/phonetrack-oc) with a `PhoneTrack log job`
+or to any server which can receive HTTP GET or POST requests with a `custom log job`.
 
 ## User documentation
 
