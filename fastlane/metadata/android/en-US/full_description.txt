@@ -1,4 +1,8 @@
-This app periodically log positions to PhoneTrack Nextcloud app or to any server with GET/POST requests to a custom URL.
+PhoneTrack is an application for continuous logging of location coordinates.
+Application works in background. Points are saved at chosen frequency and
+uploaded to a server in real time. This logger works with
+[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
+custom server (GET or POST HTTP requests).
 
 Features
 
@@ -8,7 +12,7 @@ Features
     Start on system boot
     Store positions when network is not available
     Dark theme
-    Multi-Lingual User-Interface
+    Multi-Lingual User-Interface (translated on [https://crowdin.com/project/phonetrack Crowdin])
 
 Requirements
 

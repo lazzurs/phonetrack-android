@@ -1,1 +1,1 @@
-Log positions to Nextcloud PhoneTrack or any custom URL
+Log positions to Nextcloud PhoneTrack app or any custom server

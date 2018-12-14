@@ -1,1 +1,1 @@
-Logger des positions vers PhoneTrack sur Nextcloud ou vers n'importe quel serveur
+Logger des positions vers l'appli PhoneTrack sur Nextcloud ou vers n'importe quel serveur
