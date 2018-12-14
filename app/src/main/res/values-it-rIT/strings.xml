@@ -14,7 +14,7 @@
     <string name="action_settings">Impostazioni</string>
     <string name="setting_title">Titolo</string>
     <string name="setting_title_long">Titolo log job</string>
-    <string name="mandatory">(mandatory)</string>
+    <string name="mandatory">(obbligatorio)</string>
     <string name="setting_devicename">Nome del dispositivo</string>
     <string name="setting_devicename_long">Nome del dispositivo o token di prenotazione</string>
     <string name="setting_token">Token di sessione</string>
@@ -47,12 +47,12 @@
     <string name="setting_min_time_long">Tempo minimo tra due punti registrati (secondi)</string>
     <string name="setting_min_accuracy">Precisione minima</string>
     <string name="setting_min_accuracy_long">Precisione minima per i punti registrati (metri)</string>
-    <string name="logjob_info_dialog_title">About %s</string>
-    <string name="logjob_info_nbsync">%d locations sent</string>
-    <string name="logjob_info_nbnotsync">%d locations pending</string>
-    <string name="logjob_info_lastloc">Last location acquired at %s</string>
-    <string name="logjob_info_lastsync">Last successfull sync at %s</string>
-    <string name="logjob_info_lastsync_error">Last synchronization error at %s\n\n%s</string>
+    <string name="logjob_info_dialog_title">Circa %s</string>
+    <string name="logjob_info_nbsync">%d posizioni inviate</string>
+    <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
+    <string name="logjob_info_lastloc">Ultima posizione acquisita a %s</string>
+    <string name="logjob_info_lastsync">Ultima sincronizzazione riuscita a %s</string>
+    <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione a %s\n\n%s</string>
     <string name="is_running">in esecuzione (%s in sospeso, %s inviato)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -80,7 +80,7 @@
     <string name="using_network">Utilizzando la posizione di rete</string>
     <string name="using_gps">Usando la posizione Gps</string>
     <string name="location_permission_denied">Autorizzazione di posizione negata</string>
-    <string name="sessions_sync_success">Sessions synchronized</string>
+    <string name="sessions_sync_success">Sessioni sincronizzate</string>
     <string name="pref_autostart_title">Avvio automatico</string>
     <string name="pref_autostart_summary">La registrazione inizierà all\'avvio del sistema</string>
     <string name="pref_shownbsynced_title">Mostra il numero di punti sincronizzati</string>
