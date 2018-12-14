@@ -1,19 +1,25 @@
-Logging app to Nextcloud PhoneTrack.
+This app periodically log positions to PhoneTrack Nextcloud app or to any server with GET/POST requests to a custom URL.
 
 Features
 
-    List, create, edit, search and delete log jobs
     Log to multiple destinations with multiple settings (frequency, min distance, min accuracy)
+    Log to PhoneTrack Nextcloud app (PhoneTrack log job)
+    Log to any server which can receive HTTP GET or POST requests (custom log job)
     Start on system boot
     Store positions when network is not available
+    Dark theme
     Multi-Lingual User-Interface
 
 Requirements
 
+If you want to log to Nextcloud PhoneTrack app :
+
     Nextcloud instance running
     Nextcloud PhoneTrack app enabled
 
+Otherwise, no requirements !
+
 Alternatives
 
-If you dislike this app and you are looking for alternatives: Have a look at other loggin methods/apps
-in PhoneTrack wiki.
+If you don't this app and you are looking for alternatives: Have a look at the logging methods/apps
+in PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .
