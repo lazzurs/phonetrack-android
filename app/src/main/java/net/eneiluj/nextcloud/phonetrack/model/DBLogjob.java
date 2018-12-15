@@ -1,5 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.model;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 /**
@@ -74,16 +76,25 @@ public class DBLogjob implements Item, Serializable {
             String right = spl[1];
             String[] spl2 = right.split("/");
             if (spl2.length > 2) {
-                String token = spl2[1];
-                String[] spl3 = spl2[2].split("\\?");
-                if (spl3.length > 1) {
-                    String devname = spl3[0];
-                    this.title = "From logging URL";
-                    this.deviceName = devname;
-                    this.token = token;
-                    this.url = nextURL;
-                    worked = true;
+                Log.v("DBLogjob", right);
+                String token;
+                String[] splEnd;
+                // example .../apps/phonetrack/logGet/token/devname?lat=0.1...
+                if (spl2.length == 3) {
+                    token = spl2[1];
+                    splEnd = spl2[2].split("\\?");
                 }
+                // example .../apps/phonetrack/log/osmand/token/devname?lat=0.1...
+                else {
+                    token = spl2[2];
+                    splEnd = spl2[3].split("\\?");
+                }
+                String devname = splEnd[0];
+                this.title = "From PhoneTrack logging URL";
+                this.deviceName = devname;
+                this.token = token;
+                this.url = nextURL;
+                worked = true;
             }
         }
         return worked;
