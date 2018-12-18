@@ -29,7 +29,8 @@ public class PhoneTrackClientUtilTest extends TestCase {
     }
 
     public void testIsValidURLTest() {
-        assertTrue(PhoneTrackClientUtil.isValidURL(null, "https://demo.nextcloud.org/"));
+        // demo.nextcloud.org is down
+        assertFalse(PhoneTrackClientUtil.isValidURL(null, "https://demo.nextcloud.org/"));
         assertFalse(PhoneTrackClientUtil.isValidURL(null, "https://www.example.com/"));
         assertFalse(PhoneTrackClientUtil.isValidURL(null, "htp://www.example.com/"));
         assertFalse(PhoneTrackClientUtil.isValidURL(null, null));
