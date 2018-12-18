@@ -587,11 +587,7 @@ public class LoggerService extends Service {
             if (!skipLocation(logjob, loc)) {
 
                 lastLocations.put(logjobId, loc);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    lastUpdateRealtime.put(logjobId, SystemClock.elapsedRealtime());
-                } else {
-                    lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
-                }
+                lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
                 db.addLocation(logjobId, loc, battery);
 
                 sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
