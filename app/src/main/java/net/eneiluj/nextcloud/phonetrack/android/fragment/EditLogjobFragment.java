@@ -17,6 +17,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
@@ -207,7 +208,8 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                 }
             }
         };
-        confirmDeleteAlertBuilder = new AlertDialog.Builder(getActivity());
+        //confirmDeleteAlertBuilder = new AlertDialog.Builder(getActivity());
+        confirmDeleteAlertBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.Theme_AppCompat_DayNight_Dialog));
         confirmDeleteAlertBuilder.setMessage("Are you sure?").setPositiveButton("Yes", deleteDialogClickListener)
                .setNegativeButton("No", deleteDialogClickListener);
 

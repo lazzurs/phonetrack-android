@@ -16,6 +16,7 @@ import android.support.v7.preference.Preference;
 //import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
@@ -235,7 +236,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         }
 
         // manage session list DIALOG
-        selectBuilder = new AlertDialog.Builder(getContext());
+        selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.Theme_AppCompat_DayNight_Dialog));
         selectBuilder.setTitle("Choose a session");
 
         if (sessionNameList.size() > 0) {
@@ -268,7 +269,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         // manage from URL DIALOG
         fromUrlEdit = new EditText(getContext());
-        fromUrlBuilder = new AlertDialog.Builder(getContext());
+        fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.Theme_AppCompat_DayNight_Dialog));
         fromUrlBuilder.setMessage(getString(R.string.dialog_msg_import_pt_url));
         fromUrlBuilder.setTitle(getString(R.string.dialog_title_import_pt_url));
 
