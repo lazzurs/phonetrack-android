@@ -1,6 +1,6 @@
-PhoneTrack est une application pour logger en continu des coordonnées géographique.
+PhoneTrack est une application pour loguer en continu des coordonnées géographiques.
 L'application fonctionne en arrière-plan. Les points sont sauvés à une fréquence
-choisie et envoyés à un serveur en temps réel. Ce logger fonctionne avec
+choisie et envoyés à un serveur en temps réel. Ce logueur fonctionne avec
 [https://gitlab.com/eneiluj/phonetrack-oc l'appli Nextcloud PhoneTrack] ou n'importe
 quel serveur personnalisé (requêtes HTTP GET ou POST).
 
@@ -10,7 +10,7 @@ Fonctionnalités
     Loguer vers l'appli PhoneTrack Nextcloud (log job PhoneTrack)
     Loguer vers n'importe quel serveur capable de recevoir des requêtes HTTP GET ou POST (log job personnalisé)
     Démarrer au lancement du système
-    Stocker les positions quand le réseau est inaccesible
+    Stocker les positions quand le réseau est inaccessible
     Thème sombre
     Interface utilisateur multilingue (traduit sur [https://crowdin.com/project/phonetrack Crowdin])
 
