@@ -53,6 +53,10 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     private List<String> sessionIdList;
 
     @Override
+    public void onCreatePreferencesFix(Bundle savedInstanceState, String rootkey) {
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

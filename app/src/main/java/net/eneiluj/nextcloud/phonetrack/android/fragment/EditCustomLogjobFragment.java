@@ -21,6 +21,10 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
     private CheckBoxPreference editPost;
 
     @Override
+    public void onCreatePreferencesFix(Bundle savedInstanceState, String rootkey) {
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
