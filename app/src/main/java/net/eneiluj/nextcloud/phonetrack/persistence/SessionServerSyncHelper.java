@@ -8,7 +8,10 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.os.AsyncTask;
 import android.os.IBinder;
 //import android.preference.PreferenceManager;
@@ -42,6 +45,8 @@ import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
  */
 public class SessionServerSyncHelper {
 
+    private static final String TAG = SessionServerSyncHelper.class.getSimpleName();
+
     public static final String BROADCAST_SESSIONS_SYNC_FAILED = "net.eneiluj.nextcloud.phonetrack.broadcast.sessions_sync_failed";
     public static final String BROADCAST_SESSIONS_SYNCED = "net.eneiluj.nextcloud.phonetrack.broadcast.sessions_synced";
 
@@ -69,15 +74,6 @@ public class SessionServerSyncHelper {
 
     // Track network connection changes using a BroadcastReceiver
     private boolean networkConnected = false;
-    private final BroadcastReceiver networkReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateNetworkStatus();
-            if (isSyncPossible()) {
-                scheduleSync(false);
-            }
-        }
-    };
 
     private boolean cert4androidReady = false;
     private final ServiceConnection certService = new ServiceConnection() {
@@ -103,6 +99,7 @@ public class SessionServerSyncHelper {
     private List<ICallback> callbacksPush = new ArrayList<>();
     private List<ICallback> callbacksPull = new ArrayList<>();
 
+    private ConnectionStateMonitor connectionMonitor;
 
     private SessionServerSyncHelper(PhoneTrackSQLiteOpenHelper db) {
         this.dbHelper = db;
@@ -114,8 +111,9 @@ public class SessionServerSyncHelper {
             }
         }.start();
 
-        // Registers BroadcastReceiver to track network connection changes.
-        appContext.registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        // track network connectivity changes
+        connectionMonitor = new ConnectionStateMonitor();
+        connectionMonitor.enable(appContext);
         updateNetworkStatus();
         // bind to certifciate service to block sync attempts if service is not ready
         appContext.bindService(new Intent(appContext, CustomCertService.class), certService, Context.BIND_AUTO_CREATE);
@@ -123,12 +121,42 @@ public class SessionServerSyncHelper {
 
     @Override
     protected void finalize() throws Throwable {
-        appContext.unregisterReceiver(networkReceiver);
+        connectionMonitor.disable(appContext);
         appContext.unbindService(certService);
         if (customCertManager != null) {
             customCertManager.close();
         }
         super.finalize();
+    }
+
+    private class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback {
+
+        final NetworkRequest networkRequest;
+
+        public ConnectionStateMonitor() {
+            networkRequest = new NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build();
+        }
+
+        public void enable(Context context) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            connectivityManager.registerNetworkCallback(networkRequest , this);
+        }
+
+        // Likewise, you can have a disable method that simply calls ConnectivityManager#unregisterCallback(networkRequest) too.
+
+        public void disable(Context context) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            connectivityManager.unregisterNetworkCallback(this);
+        }
+
+        @Override
+        public void onAvailable(Network network) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "NETWORK AVAILABLE : SYNC SESSIONS"); }
+            updateNetworkStatus();
+            if (isSyncPossible()) {
+                scheduleSync(false);
+            }
+        }
     }
 
     public static boolean isConfigured(Context context) {
