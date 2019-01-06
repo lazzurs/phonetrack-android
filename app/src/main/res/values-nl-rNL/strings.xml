@@ -53,8 +53,8 @@
     <string name="logjob_info_lastloc">Laatste locatie verworven op %s</string>
     <string name="logjob_info_lastsync">Laatste succesvolle synchronisatie op %s</string>
     <string name="logjob_info_lastsync_error">Laatste synchronisatiefout op %s\n\n%s</string>
-    <string name="dialog_title_import_pt_url">Import PhoneTrack logging URL</string>
-    <string name="dialog_msg_import_pt_url">Any compatible logging URL given in PhoneTrack web interface</string>
+    <string name="dialog_title_import_pt_url">Importeer een PhoneTrack logging URL</string>
+    <string name="dialog_msg_import_pt_url">Elke compatibele logging URL die in de PhoneTrack-webinterface wordt gegeven</string>
     <string name="is_running">draaiend (%s in behandeling, %s verzonden)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -87,12 +87,12 @@
     <string name="pref_autostart_summary">Logboekregistratie begint als systeem opstart</string>
     <string name="pref_shownbsynced_title">Toon aantal gesynchroniseerde punten</string>
     <string name="pref_shownbsynced_summary">gesynchroniseerd = naar de server verzonden</string>
-    <string name="share_dev_title">Share public PhoneTrack URL</string>
-    <string name="menu_share_dev_title">Share public PhoneTrack URL</string>
-    <string name="error_share_dev_same_url">Nextcloud URL must be the same as in Account settings to be able to share</string>
-    <string name="error_share_dev_configured">Account settings must be configured</string>
-    <string name="error_share_dev_network">Failed to share device\nNetwork unavailable</string>
-    <string name="error_share_dev_helper">Error when sharing device : %s</string>
+    <string name="share_dev_title">Deel publieke PhoneTrack URL</string>
+    <string name="menu_share_dev_title">Deel publieke PhoneTrack URL</string>
+    <string name="error_share_dev_same_url">Nextcloud URL moet hetzelfde zijn als in account instellingen om het delen mogelijk te maken</string>
+    <string name="error_share_dev_configured">Account instellingen moeten geconfigureerd zijn</string>
+    <string name="error_share_dev_network">Delen apparaat mislukt\nNetwerk niet beschikbaar</string>
+    <string name="error_share_dev_helper">Fout bij delen van apparaat : %s</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - beveiliging van de verbinding</string>
