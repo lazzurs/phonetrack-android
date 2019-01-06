@@ -24,6 +24,10 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -98,6 +102,8 @@ public class LoggerService extends Service {
     private boolean useNet = true;
     public static boolean DEBUG = true;
 
+    private ConnectionStateMonitor connectionMonitor;
+
     /**
      * Basic initializations.
      */
@@ -107,6 +113,8 @@ public class LoggerService extends Service {
             Log.d(TAG, "[onCreate]");
         }
         firstRun = true;
+
+        connectionMonitor = null;
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext());
 
@@ -165,6 +173,9 @@ public class LoggerService extends Service {
             battery = getBatteryLevelOnce();
             // register for battery level
             this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            // track network connectivity changes
+            connectionMonitor = new ConnectionStateMonitor();
+            connectionMonitor.enable(getApplicationContext());
         }
         else {
             if (DEBUG) { Log.d(TAG, "[onCreate : stop because no loc upd]"); }
@@ -409,6 +420,10 @@ public class LoggerService extends Service {
             sendBroadcast(BROADCAST_LOCATION_STOPPED);
         }
         thread = null;
+
+        if (connectionMonitor != null) {
+            connectionMonitor.disable(getApplicationContext());
+        }
     }
 
     @Override
@@ -683,6 +698,32 @@ public class LoggerService extends Service {
                 }
                 if (DEBUG) { Log.d(TAG, "[location status for " + provider + " changed: " + statusString + "]"); }
             }
+        }
+    }
+
+    private class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback {
+
+        final NetworkRequest networkRequest;
+
+        public ConnectionStateMonitor() {
+            networkRequest = new NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build();
+        }
+
+        public void enable(Context context) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            connectivityManager.registerNetworkCallback(networkRequest , this);
+        }
+
+        // Likewise, you can have a disable method that simply calls ConnectivityManager#unregisterCallback(networkRequest) too.
+
+        public void disable(Context context) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            connectivityManager.unregisterNetworkCallback(this);
+        }
+
+        @Override
+        public void onAvailable(Network network) {
+            startService(syncIntent);
         }
     }
 }
