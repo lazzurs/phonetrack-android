@@ -24,7 +24,7 @@ or to any server which can receive HTTP GET or POST requests with a `custom log 
 ## Install
 
 * APK Direct download : [releases in project wiki](https://gitlab.com/eneiluj/phonetrack-android/wikis/home#releases)
-* Coming soon : [![PhoneTrack App on fdroid.org](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/57bb389a0c40f5cb81dc1ae21a314adb/fd.png)](https://f-droid.org/)
+* [![PhoneTrack App on fdroid.org](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/57bb389a0c40f5cb81dc1ae21a314adb/fd.png)](https://f-droid.org/packages/net.eneiluj.nextcloud.phonetrack/)
 
 ## Build
 
