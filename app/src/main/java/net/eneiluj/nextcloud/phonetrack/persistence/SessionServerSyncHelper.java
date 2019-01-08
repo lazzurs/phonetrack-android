@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.persistence;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.IBinder;
 //import android.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceManager;
@@ -111,9 +113,11 @@ public class SessionServerSyncHelper {
             }
         }.start();
 
-        // track network connectivity changes
-        connectionMonitor = new ConnectionStateMonitor();
-        connectionMonitor.enable(appContext);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // track network connectivity changes
+            connectionMonitor = new ConnectionStateMonitor();
+            connectionMonitor.enable(appContext);
+        }
         updateNetworkStatus();
         // bind to certifciate service to block sync attempts if service is not ready
         appContext.bindService(new Intent(appContext, CustomCertService.class), certService, Context.BIND_AUTO_CREATE);
@@ -121,7 +125,9 @@ public class SessionServerSyncHelper {
 
     @Override
     protected void finalize() throws Throwable {
-        connectionMonitor.disable(appContext);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            connectionMonitor.disable(appContext);
+        }
         appContext.unbindService(certService);
         if (customCertManager != null) {
             customCertManager.close();
@@ -129,6 +135,7 @@ public class SessionServerSyncHelper {
         super.finalize();
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback {
 
         final NetworkRequest networkRequest;
@@ -151,7 +158,7 @@ public class SessionServerSyncHelper {
 
         @Override
         public void onAvailable(Network network) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "NETWORK AVAILABLE : SYNC SESSIONS"); }
+            if (LoggerService.DEBUG) { Log.d(TAG, "NETWORK AVAILABLE : SYNC SESSIONS from synchelper"); }
             updateNetworkStatus();
             if (isSyncPossible()) {
                 scheduleSync(false);

@@ -10,6 +10,7 @@
 package net.eneiluj.nextcloud.phonetrack.service;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -173,9 +174,12 @@ public class LoggerService extends Service {
             battery = getBatteryLevelOnce();
             // register for battery level
             this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            // track network connectivity changes
-            connectionMonitor = new ConnectionStateMonitor();
-            connectionMonitor.enable(getApplicationContext());
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // track network connectivity changes
+                connectionMonitor = new ConnectionStateMonitor();
+                connectionMonitor.enable(getApplicationContext());
+            }
         }
         else {
             if (DEBUG) { Log.d(TAG, "[onCreate : stop because no loc upd]"); }
@@ -421,8 +425,10 @@ public class LoggerService extends Service {
         }
         thread = null;
 
-        if (connectionMonitor != null) {
-            connectionMonitor.disable(getApplicationContext());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (connectionMonitor != null) {
+                connectionMonitor.disable(getApplicationContext());
+            }
         }
     }
 
@@ -602,7 +608,12 @@ public class LoggerService extends Service {
             if (!skipLocation(logjob, loc)) {
 
                 lastLocations.put(logjobId, loc);
-                lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    lastUpdateRealtime.put(logjobId, SystemClock.elapsedRealtime());
+                }
+                else {
+                    lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
+                }
                 db.addLocation(logjobId, loc, battery);
 
                 sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
@@ -701,6 +712,7 @@ public class LoggerService extends Service {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback {
 
         final NetworkRequest networkRequest;
@@ -723,6 +735,7 @@ public class LoggerService extends Service {
 
         @Override
         public void onAvailable(Network network) {
+            if (DEBUG) { Log.d(TAG, "Network is available again : launch sync from loggerservice"); }
             startService(syncIntent);
         }
     }
