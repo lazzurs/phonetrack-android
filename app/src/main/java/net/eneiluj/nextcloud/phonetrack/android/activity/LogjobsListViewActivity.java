@@ -195,6 +195,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     @Override
     protected void onResume() {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[onResume]"); }
         // refresh and sync every time the activity gets visible
         refreshLists();
         swipeRefreshLayout.setRefreshing(false);

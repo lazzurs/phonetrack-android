@@ -82,10 +82,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Boolean darkTheme = (Boolean) newValue;
                 PhoneTrack.setAppTheme(darkTheme);
-                getActivity().setResult(Activity.RESULT_OK);
-                getActivity().finish();
-                //System.out.println("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTHHH "+darkTheme);
-
+                setThemePreferenceSummary(themePref, darkTheme);
+                //getActivity().setResult(Activity.RESULT_OK);
+                //getActivity().finish();
                 return true;
             }
         });

@@ -62,7 +62,7 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbLogjob.setTitle(Html.toHtml(spannableString, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE));
+            dbLogjob.setTitle(Html.toHtml(spannableString));
             // TODO search by sub title
             /*spannableString = new SpannableString(dbLogjob.getCategory());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
@@ -84,7 +84,7 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbLogjob.setUrl(Html.toHtml(spannableString, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE));
+            dbLogjob.setUrl(Html.toHtml(spannableString));
 
             spannableString = new SpannableString(dbLogjob.getDeviceName());
             matcher = Pattern.compile("(" + searchQuery + ")", Pattern.CASE_INSENSITIVE).matcher(spannableString);
@@ -97,7 +97,7 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
                         matcher.start(), matcher.end(), 0);
             }
 
-            dbLogjob.setDeviceName(Html.toHtml(spannableString, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE));
+            dbLogjob.setDeviceName(Html.toHtml(spannableString));
         }
 
         return dbLogjob;
