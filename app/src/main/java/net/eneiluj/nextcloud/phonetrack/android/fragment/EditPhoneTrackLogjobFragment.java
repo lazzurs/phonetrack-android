@@ -73,10 +73,17 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
                 EditTextPreference pref = (EditTextPreference) findPreference("token");
-                pref.setSummary((CharSequence) newValue);
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
+                String newValueString = (String) newValue;
+                if (newValueString == null || newValueString.equals("")) {
+                    showToast(getString(R.string.error_invalid_token), Toast.LENGTH_LONG);
+                    return false;
+                }
+                else {
+                    pref.setText((String) newValue);
+                    pref.setSummary((CharSequence) newValue);
+                    saveLogjob(null);
+                    return true;
+                }
             }
 
         });
@@ -87,10 +94,17 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
                 EditTextPreference pref = (EditTextPreference) findPreference("devicename");
-                pref.setSummary((CharSequence) newValue);
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
+                String newValueString = (String) newValue;
+                if (newValueString == null || newValueString.equals("")) {
+                    showToast(getString(R.string.error_invalid_devname), Toast.LENGTH_LONG);
+                    return false;
+                }
+                else {
+                    pref.setText((String) newValue);
+                    pref.setSummary((CharSequence) newValue);
+                    saveLogjob(null);
+                    return true;
+                }
             }
 
         });
@@ -347,11 +361,4 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             }
         }
     }
-
-    protected void showToast(CharSequence text, int duration) {
-        Context context = getActivity();
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-    }
-
 }

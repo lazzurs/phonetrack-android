@@ -28,6 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -36,6 +37,8 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
+
+import static android.webkit.URLUtil.isValidUrl;
 
 //public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
 //public class EditLogjobFragment extends PreferencesFragment {
@@ -126,12 +129,19 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
                 EditTextPreference pref = (EditTextPreference) findPreference("title");
-                pref.setSummary((CharSequence) newValue);
-                // trick to make change effective before saving
-                // otherwise edittext is not up to date when saving...
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
+                String newValueString = (String) newValue;
+                if (newValueString == null || newValueString.equals("")) {
+                    showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
+                    return false;
+                }
+                else {
+                    // trick to make change effective before saving
+                    // otherwise edittext is not up to date when saving...
+                    pref.setText((String) newValue);
+                    pref.setSummary((CharSequence) newValue);
+                    saveLogjob(null);
+                    return true;
+                }
             }
 
         });
@@ -142,10 +152,19 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
                 EditTextPreference pref = (EditTextPreference) findPreference("URL");
-                pref.setSummary((CharSequence) newValue);
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
+                String newValueString = (String) newValue;
+                if (newValueString == null
+                        || newValueString.equals("")
+                        || !isValidUrl(newValueString)) {
+                    showToast(getString(R.string.error_invalid_url), Toast.LENGTH_LONG);
+                    return false;
+                }
+                else {
+                    pref.setSummary((CharSequence) newValue);
+                    pref.setText((String) newValue);
+                    saveLogjob(null);
+                    return true;
+                }
             }
 
         });
@@ -156,10 +175,17 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
                 EditTextPreference pref = (EditTextPreference) findPreference("mintime");
-                pref.setSummary((CharSequence) newValue);
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
+                try {
+                    int newMinTime = Integer.valueOf((String)newValue);
+                    pref.setSummary(String.valueOf(newMinTime));
+                    pref.setText(String.valueOf(newMinTime));
+                    saveLogjob(null);
+                    return true;
+                }
+                catch (Exception e) {
+                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+                    return false;
+                }
             }
 
         });
@@ -170,10 +196,17 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
                 EditTextPreference pref = (EditTextPreference) preference;
-                pref.setSummary((CharSequence) newValue);
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
+                try {
+                    int newMinDistance = Integer.valueOf((String)newValue);
+                    pref.setSummary(String.valueOf(newMinDistance));
+                    pref.setText(String.valueOf(newMinDistance));
+                    saveLogjob(null);
+                    return true;
+                }
+                catch (Exception e) {
+                    showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
+                    return false;
+                }
             }
 
         });
@@ -184,12 +217,18 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
                 EditTextPreference pref = (EditTextPreference) findPreference("minaccuracy");
-                pref.setSummary((CharSequence) newValue);
-                pref.setText((String) newValue);
-                saveLogjob(null);
-                return true;
+                try {
+                    int newMinAccuracy = Integer.valueOf((String)newValue);
+                    pref.setSummary(String.valueOf(newMinAccuracy));
+                    pref.setText(String.valueOf(newMinAccuracy));
+                    saveLogjob(null);
+                    return true;
+                }
+                catch (Exception e) {
+                    showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
+                    return false;
+                }
             }
-
         });
 
         // delete confirmation
@@ -373,5 +412,11 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     }
     protected String getMinaccuracy() {
         return editMinaccuracy.getText();
+    }
+
+    protected void showToast(CharSequence text, int duration) {
+        Context context = getActivity();
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 }
