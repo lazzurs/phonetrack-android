@@ -108,6 +108,12 @@
     <string name="error_username_password_invalid">błędna nazwa użytkownika lub hasło</string>
     <string name="error_invalid_pt_url">Nieprawidłowy adres URL logowania do PhoneTrack</string>
     <string name="error_invalid_url">Nieprawidłowy adres URL</string>
+    <string name="error_invalid_token">Invalid token</string>
+    <string name="error_invalid_title">Invalid title</string>
+    <string name="error_invalid_devname">Invalid device name</string>
+    <string name="error_invalid_mintime">Invalid minimum time</string>
+    <string name="error_invalid_mindistance">Invalid minimum distance</string>
+    <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->
