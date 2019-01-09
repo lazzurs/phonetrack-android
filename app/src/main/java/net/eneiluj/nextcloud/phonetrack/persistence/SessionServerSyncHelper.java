@@ -82,9 +82,9 @@ public class SessionServerSyncHelper {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             cert4androidReady = true;
-            if (isSyncPossible()) {
+            /*if (isSyncPossible()) {
                 scheduleSync(false);
-            }
+            }*/
         }
 
         @Override

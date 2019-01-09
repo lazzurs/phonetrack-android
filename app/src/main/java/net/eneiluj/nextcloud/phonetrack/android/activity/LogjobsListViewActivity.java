@@ -887,6 +887,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     private void synchronize() {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[call synchronize()]"); }
         //swipeRefreshLayout.setRefreshing(true);
         db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         db.getPhonetrackServerSyncHelper().scheduleSync(false);
