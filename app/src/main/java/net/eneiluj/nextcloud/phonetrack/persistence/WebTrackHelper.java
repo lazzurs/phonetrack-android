@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 //import android.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceManager;
-import android.util.ArrayMap;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -21,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.BuildConfig;
@@ -240,18 +240,18 @@ public class WebTrackHelper {
         String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
                 .replace("%LON", params.get(PARAM_LON))
                 .replace("%TIMESTAMP", params.get(PARAM_TIME))
-                .replace("%ALT", params.getOrDefault(PARAM_ALT, ""))
-                .replace("%ACC", params.getOrDefault(PARAM_ACCURACY, ""))
-                .replace("%SPD", params.getOrDefault(PARAM_SPEED, ""))
-                .replace("%DIR", params.getOrDefault(PARAM_BEARING, ""))
-                .replace("%SAT", params.getOrDefault(PARAM_SATELLITES, ""))
-                .replace("%BATT", params.getOrDefault(PARAM_BATTERY, ""))
-                .replace("%UA", params.getOrDefault(PARAM_USERAGENT, ""));
+                .replace("%ALT", params.get(PARAM_ALT))
+                .replace("%ACC", params.get(PARAM_ACCURACY))
+                .replace("%SPD", params.get(PARAM_SPEED))
+                .replace("%DIR", params.get(PARAM_BEARING))
+                .replace("%SAT", params.get(PARAM_SATELLITES))
+                .replace("%BATT", params.get(PARAM_BATTERY))
+                .replace("%UA", params.get(PARAM_USERAGENT));
 
         String[] urlSplit;
         String[] paramSplit;
         String baseUrl;
-        Map<String, String> paramsToSend = new ArrayMap<>();
+        Map<String, String> paramsToSend = new HashMap<>();
         if (urlWithValues.contains("?")) {
             urlSplit = urlWithValues.split("\\?");
             if (urlSplit.length == 2) {
