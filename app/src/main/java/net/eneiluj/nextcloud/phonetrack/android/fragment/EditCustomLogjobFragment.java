@@ -42,7 +42,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                                               Object newValue) {
                 CheckBoxPreference pref = (CheckBoxPreference) findPreference("post");
                 pref.setChecked((Boolean) newValue);
-                saveLogjob(null);
+                //saveLogjob(null);
                 return true;
             }
 
@@ -70,22 +70,35 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         String newTitle = getTitle();
         String newURL = getURL();
         boolean newPost = getPost();
-        int newMinTime = Integer.valueOf(getMintime());
-        int newMinDistance = Integer.valueOf(getMindistance());
-        int newMinAccuracy = Integer.valueOf(getMinaccuracy());
-        if(logjob.getTitle().equals(newTitle) &&
-                logjob.getUrl().equals(newURL) &&
-                logjob.getPost() == newPost &&
-                logjob.getMinTime() == newMinTime &&
-                logjob.getMinDistance() == newMinDistance &&
-                logjob.getMinAccuracy() == newMinAccuracy
-                ) {
-            Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
-        } else {
-            System.out.println("====== update logjob");
-            logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "", newPost, newMinTime, newMinDistance, newMinAccuracy, callback);
-            //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
-            listener.onLogjobUpdated(logjob);
+        int newMinTime = getMintime();
+        int newMinDistance = getMindistance();
+        int newMinAccuracy = getMinaccuracy();
+
+        // if this is an existing logjob
+        if (logjob.getId() != 0) {
+            if (logjob.getTitle().equals(newTitle) &&
+                    logjob.getUrl().equals(newURL) &&
+                    logjob.getPost() == newPost &&
+                    logjob.getMinTime() == newMinTime &&
+                    logjob.getMinDistance() == newMinDistance &&
+                    logjob.getMinAccuracy() == newMinAccuracy
+                    ) {
+                Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
+            } else {
+                System.out.println("====== update logjob");
+                logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "", newPost, newMinTime, newMinDistance, newMinAccuracy, callback);
+                notifyLoggerService(logjob.getId());
+                //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
+                //listener.onLogjobUpdated(logjob);
+            }
+        }
+        // this is a new logjob
+        else {
+            DBLogjob newLogjob = new DBLogjob(0, newTitle, newURL, "", "",
+                    newMinTime, newMinDistance, newMinAccuracy,
+                    newPost, false, 0);
+            long newId = db.addLogjob(newLogjob);
+            notifyLoggerService(newId);
         }
     }
 

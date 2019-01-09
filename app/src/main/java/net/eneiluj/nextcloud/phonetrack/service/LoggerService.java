@@ -374,7 +374,7 @@ public class LoggerService extends Service {
                 locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTimeMillis, minDistance, locListener, looper);
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using net provider]"); }
+                    if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using net provider, freq "+lj.getMinTime()+"]"); }
                 }
             }
             if (useGps) {
@@ -382,7 +382,7 @@ public class LoggerService extends Service {
                 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis, minDistance, locListener, looper);
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { Log.d(TAG, "job "+ljId+"[Using gps provider]"); }
+                    if (DEBUG) { Log.d(TAG, "job "+ljId+"[Using gps provider, freq "+lj.getMinTime()+"]"); }
                 }
             }
             if (!hasLocationUpdates) {

@@ -56,8 +56,8 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     private static final String SAVEDKEY_ORIGINAL_LOGJOB = "original_logjob";
 
     protected DBLogjob logjob;
-    @Nullable
-    protected DBLogjob originalLogjob;
+    //@Nullable
+    //protected DBLogjob originalLogjob;
     protected PhoneTrackSQLiteOpenHelper db;
     protected LogjobFragmentListener listener;
 
@@ -81,8 +81,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     private AlertDialog.Builder confirmDeleteAlertBuilder;
 
     @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootkey) {
-
+    public void onCreatePreferencesFix(Bundle savedInstanceState, String rootkey) {
     }
 
     @Override
@@ -100,18 +99,18 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         if (savedInstanceState == null) {
             long id = getArguments().getLong(PARAM_LOGJOB_ID);
             if (id > 0) {
-                logjob = originalLogjob = db.getLogjob(id);
+                logjob = db.getLogjob(id);
             } else {
-                DBLogjob cloudLogjob = (DBLogjob) getArguments().getSerializable(PARAM_NEWLOGJOB);
-                if (cloudLogjob == null) {
+                DBLogjob newLogjob = (DBLogjob) getArguments().getSerializable(PARAM_NEWLOGJOB);
+                if (newLogjob == null) {
                     throw new IllegalArgumentException(PARAM_LOGJOB_ID + " is not given and argument " + PARAM_NEWLOGJOB + " is missing.");
                 }
-                logjob = db.getLogjob(db.addLogjob(cloudLogjob));
-                originalLogjob = null;
+                //logjob = db.getLogjob(db.addLogjob(newLogjob));
+                logjob = newLogjob;
             }
         } else {
             logjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_LOGJOB);
-            originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_LOGJOB);
+            //originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_LOGJOB);
         }
         setHasOptionsMenu(true);
         System.out.println("SUPERCLASS on create : " + logjob);
@@ -139,7 +138,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                     // otherwise edittext is not up to date when saving...
                     pref.setText((String) newValue);
                     pref.setSummary((CharSequence) newValue);
-                    saveLogjob(null);
+                    //saveLogjob(null);
                     return true;
                 }
             }
@@ -162,7 +161,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                 else {
                     pref.setSummary((CharSequence) newValue);
                     pref.setText((String) newValue);
-                    saveLogjob(null);
+                    //saveLogjob(null);
                     return true;
                 }
             }
@@ -179,7 +178,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                     int newMinTime = Integer.valueOf((String)newValue);
                     pref.setSummary(String.valueOf(newMinTime));
                     pref.setText(String.valueOf(newMinTime));
-                    saveLogjob(null);
+                    //saveLogjob(null);
                     return true;
                 }
                 catch (Exception e) {
@@ -200,7 +199,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                     int newMinDistance = Integer.valueOf((String)newValue);
                     pref.setSummary(String.valueOf(newMinDistance));
                     pref.setText(String.valueOf(newMinDistance));
-                    saveLogjob(null);
+                    //saveLogjob(null);
                     return true;
                 }
                 catch (Exception e) {
@@ -221,7 +220,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                     int newMinAccuracy = Integer.valueOf((String)newValue);
                     pref.setSummary(String.valueOf(newMinAccuracy));
                     pref.setText(String.valueOf(newMinAccuracy));
-                    saveLogjob(null);
+                    //saveLogjob(null);
                     return true;
                 }
                 catch (Exception e) {
@@ -250,8 +249,9 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         };
         //confirmDeleteAlertBuilder = new AlertDialog.Builder(getActivity());
         confirmDeleteAlertBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.Theme_AppCompat_DayNight_Dialog));
-        confirmDeleteAlertBuilder.setMessage("Are you sure?").setPositiveButton("Yes", deleteDialogClickListener)
-               .setNegativeButton("No", deleteDialogClickListener);
+        confirmDeleteAlertBuilder.setMessage(getString(R.string.confirm_delete_logjob_dialog_title))
+                .setPositiveButton(getString(R.string.simple_yes), deleteDialogClickListener)
+                .setNegativeButton(getString(R.string.simple_no), deleteDialogClickListener);
 
         handler = new Handler(Looper.getMainLooper());
     }
@@ -276,11 +276,11 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     @Override
     public void onPause() {
         super.onPause();
-        saveLogjob(null);
-        notifyLoggerService(logjob.getId());
+        //saveLogjob(null);
+        //notifyLoggerService(logjob.getId());
     }
 
-    private void notifyLoggerService(long jobId) {
+    protected void notifyLoggerService(long jobId) {
         Intent intent = new Intent(getActivity(), LoggerService.class);
         intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
         intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, jobId);
@@ -296,9 +296,8 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        saveLogjob(null);
+        //saveLogjob(null);
         outState.putSerializable(SAVEDKEY_LOGJOB, logjob);
-        outState.putSerializable(SAVEDKEY_ORIGINAL_LOGJOB, originalLogjob);
     }
 
     @Override
@@ -318,24 +317,41 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_cancel:
-                if (originalLogjob == null) {
-                    db.deleteLogjob(logjob.getId());
-                } else {
-                    System.out.println("ORIG ENAB : "+originalLogjob.isEnabled());
-                    db.updateLogjobAndSync(originalLogjob, null, null, null, null, false,0,0,0,null);
+            case R.id.menu_save:
+                if (getTitle() == null || getTitle().equals("")) {
+                    showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
                 }
-                listener.close();
+                else if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
+                    showToast(getString(R.string.error_invalid_url), Toast.LENGTH_LONG);
+                }
+                else if (getMindistance() == 0) {
+                    showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
+                }
+                else if (getMintime() == 0) {
+                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+                }
+                else if (getMinaccuracy() == 0) {
+                    showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
+                }
+                else {
+                    saveLogjob(null);
+                    listener.close();
+                }
                 return true;
             case R.id.menu_delete:
-                confirmDeleteAlertBuilder.show();
+                if (logjob.getId() != 0) {
+                    confirmDeleteAlertBuilder.show();
+                }
+                else {
+                    listener.close();
+                }
                 return true;
             case R.id.menu_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, logjob.getTitle());
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, logjob.getUrl());
+                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getTitle());
+                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, getURL());
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(Intent.createChooser(shareIntent, logjob.getTitle()));
@@ -351,9 +367,6 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     }
 
     public void onCloseLogjob() {
-        if (originalLogjob == null && getTitle().isEmpty()) {
-            db.deleteLogjob(logjob.getId());
-        }
         Log.d(getClass().getSimpleName(), "onCLOSE()");
     }
 
@@ -404,14 +417,23 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     protected String getURL() {
         return editURL.getText();
     }
-    protected String getMintime() {
-        return editMintime.getText();
+    protected int getMintime() {
+        if (editMintime.getText() == null || editMintime.getText().equals("")) {
+            return 0;
+        }
+        return Integer.valueOf(editMintime.getText());
     }
-    protected String getMindistance() {
-        return editMindistance.getText();
+    protected int getMindistance() {
+        if (editMindistance.getText() == null || editMindistance.getText().equals("")) {
+            return 0;
+        }
+        return Integer.valueOf(editMindistance.getText());
     }
-    protected String getMinaccuracy() {
-        return editMinaccuracy.getText();
+    protected int getMinaccuracy() {
+        if (editMinaccuracy.getText() == null || editMinaccuracy.getText().equals("")) {
+            return 0;
+        }
+        return Integer.valueOf(editMinaccuracy.getText());
     }
 
     protected void showToast(CharSequence text, int duration) {

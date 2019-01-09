@@ -34,6 +34,8 @@ import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
+import static android.webkit.URLUtil.isValidUrl;
+
 //public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
 //public class EditLogjobFragment extends PreferencesFragment {
 public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
@@ -81,7 +83,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 else {
                     pref.setText((String) newValue);
                     pref.setSummary((CharSequence) newValue);
-                    saveLogjob(null);
+                    //saveLogjob(null);
                     return true;
                 }
             }
@@ -102,7 +104,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 else {
                     pref.setText((String) newValue);
                     pref.setSummary((CharSequence) newValue);
-                    saveLogjob(null);
+                    //saveLogjob(null);
                     return true;
                 }
             }
@@ -133,21 +135,34 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         String newUrl = getURL();
         String newToken = getToken();
         String newDevicename = getDevicename();
-        int newMinTime = Integer.valueOf(getMintime());
-        int newMinDistance = Integer.valueOf(getMindistance());
-        int newMinAccuracy = Integer.valueOf(getMinaccuracy());
-        if(logjob.getTitle().equals(newTitle) &&
-                logjob.getUrl().equals(newUrl) &&
-                logjob.getToken().equals(newToken) &&
-                logjob.getMinTime() == newMinTime &&
-                logjob.getMinDistance() == newMinDistance &&
-                logjob.getMinAccuracy() == newMinAccuracy &&
-                logjob.getDeviceName().equals(newDevicename)) {
-            Log.v(getClass().getSimpleName(), "... not saving, since nothing has changed");
-        } else {
-            System.out.println("====== update logjob");
-            logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename, false, newMinTime, newMinDistance, newMinAccuracy, callback);
-            listener.onLogjobUpdated(logjob);
+        int newMinTime = getMintime();
+        int newMinDistance = getMindistance();
+        int newMinAccuracy = getMinaccuracy();
+
+        // if this is an existing logjob
+        if (logjob.getId() != 0) {
+            if (logjob.getTitle().equals(newTitle) &&
+                    logjob.getUrl().equals(newUrl) &&
+                    logjob.getToken().equals(newToken) &&
+                    logjob.getMinTime() == newMinTime &&
+                    logjob.getMinDistance() == newMinDistance &&
+                    logjob.getMinAccuracy() == newMinAccuracy &&
+                    logjob.getDeviceName().equals(newDevicename)) {
+                Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
+            } else {
+                System.out.println("====== update logjob");
+                logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename, false, newMinTime, newMinDistance, newMinAccuracy, callback);
+                notifyLoggerService(logjob.getId());
+                //listener.onLogjobUpdated(logjob);
+            }
+        }
+        // this is a new logjob
+        else {
+            DBLogjob newLogjob = new DBLogjob(0, newTitle, newUrl, newToken, newDevicename,
+                    newMinTime, newMinDistance, newMinAccuracy,
+                    false, false, 0);
+            long newId = db.addLogjob(newLogjob);
+            notifyLoggerService(newId);
         }
     }
 
@@ -197,6 +212,33 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_save:
+                if (getTitle() == null || getTitle().equals("")) {
+                    showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
+                }
+                else if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
+                    showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
+                }
+                else if (getToken() == null || getToken().equals("")) {
+                    showToast(getString(R.string.error_invalid_token), Toast.LENGTH_LONG);
+                }
+                else if (getDevicename() == null || getDevicename().equals("")) {
+                    showToast(getString(R.string.error_invalid_devname), Toast.LENGTH_LONG);
+                }
+                else if (getMindistance() == 0) {
+                    showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
+                }
+                else if (getMintime() == 0) {
+                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+                }
+                else if (getMinaccuracy() == 0) {
+                    showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
+                }
+                else {
+                    saveLogjob(null);
+                    listener.close();
+                }
+                return true;
             case R.id.menu_fromLogUrl:
                 fromUrlDialog.show();
                 return true;
@@ -265,7 +307,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                     // user checked an item
                     System.out.println("CHECKED :" + which);
                     setFieldsFromSession(sessionList.get(which));
-                    saveLogjob(null);
+                    //saveLogjob(null);
                     dialog.dismiss();
                 }
             });
@@ -293,14 +335,14 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         fromUrlBuilder.setView(fromUrlEdit);
 
-        fromUrlBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString());
-                saveLogjob(null);
+                //saveLogjob(null);
             }
         });
 
-        fromUrlBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // what ever you want to do with No option.
             }

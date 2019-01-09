@@ -81,12 +81,6 @@ public abstract class EditLogjobActivity extends AppCompatActivity implements Ed
         close();
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu_logjob_activity, menu);
-        //return super.onCreateOptionsMenu(menu);
-    }*/
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -97,7 +91,6 @@ public abstract class EditLogjobActivity extends AppCompatActivity implements Ed
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
     /**
      * Send result and closes the Activity
