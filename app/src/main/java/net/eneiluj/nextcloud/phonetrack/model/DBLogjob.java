@@ -18,10 +18,13 @@ public class DBLogjob implements Item, Serializable {
     private int minTime;
     private int minDistance;
     private int minAccuracy;
-    private Boolean enabled;
+    private boolean keepGpsOnBetweenFixes;
+    private boolean enabled;
     private int nbSync;
 
-    public DBLogjob(long id, String title, String url, String token, String deviceName, int minTime, int minDistance, int minAccuracy, boolean post, Boolean enabled, int nbSync) {
+    public DBLogjob(long id, String title, String url, String token, String deviceName,
+                    int minTime, int minDistance, int minAccuracy, boolean keepGpsOnBetweenFixes,
+                    boolean post, boolean enabled, int nbSync) {
         this.id = id;
         this.title = title;
         this.url = url;
@@ -32,6 +35,7 @@ public class DBLogjob implements Item, Serializable {
         this.minDistance = minDistance;
         this.minTime = minTime;
         this.enabled = enabled;
+        this.keepGpsOnBetweenFixes = keepGpsOnBetweenFixes;
         this.nbSync = nbSync;
     }
 
@@ -61,6 +65,14 @@ public class DBLogjob implements Item, Serializable {
 
     public void setPost(boolean post) {
         this.post = post;
+    }
+
+    public boolean keepGpsOnBetweenFixes() {
+        return keepGpsOnBetweenFixes;
+    }
+
+    public void setKeepGpsOnBetweenFixes(boolean keepGpsOnBetweenFixes) {
+        this.keepGpsOnBetweenFixes = keepGpsOnBetweenFixes;
     }
 
     public boolean setAttrFromLoggingUrl(String loggingUrl) {

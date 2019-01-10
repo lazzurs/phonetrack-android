@@ -112,7 +112,7 @@ public class WebTrackService extends IntentService {
         }
 
         for (DBLogjob logjob : logjobs) {
-            String ljId = String.valueOf(logjob.getId());
+            long ljId = logjob.getId();
             try {
                 // PhoneTrack logjob
                 if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
@@ -124,7 +124,7 @@ public class WebTrackService extends IntentService {
                         web.postPositionToPhoneTrack(url, params);
                         db.deleteLocation(locId);
                         db.incNbSync(logjob);
-                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis()/1000);
+                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                         sendBroadcast(intent);
@@ -146,7 +146,7 @@ public class WebTrackService extends IntentService {
 
                         db.deleteLocation(locId);
                         db.incNbSync(logjob);
-                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis()/1000);
+                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                         sendBroadcast(intent);
@@ -191,7 +191,7 @@ public class WebTrackService extends IntentService {
      *
      * @param e Exception
      */
-    private void handleError(Exception e, String ljId) {
+    private void handleError(Exception e, long ljId) {
         String message;
         if (e instanceof UnknownHostException) {
             message = getString(R.string.e_unknown_host, e.getMessage());

@@ -32,7 +32,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 8;
+    private static final int database_version = 9;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -48,6 +48,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_minTime = "MINTIME";
     private static final String key_minDistance = "MINDISTANCE";
     private static final String key_minAccuracy = "MINACCURACY";
+    private static final String key_keepGpsOn = "KEEPGPSON";
     private static final String key_post = "POST";
     private static final String key_enabled = "ENABLED";
     private static final String key_lastLocTimestamp = "LASTLOC";
@@ -71,7 +72,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String[] columnsSessions = {key_id, key_token, key_name, key_nextURL};
     private static final String[] columnsLogjobs = {
             key_id, key_title, key_url, key_token, key_deviceName,
-            key_minTime, key_minDistance, key_minAccuracy, key_post, key_enabled,
+            key_minTime, key_minDistance, key_minAccuracy,
+            key_keepGpsOn, key_post, key_enabled,
             key_nbsync, key_lastSyncTimestamp, key_lastLocTimestamp,
             key_lastSyncErrorTimestamp, key_lastSyncErrorText};
     private static final String[] columnsLocations = {
@@ -135,6 +137,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_minTime + " INTEGER, " +
                 key_minDistance + " INTEGER, " +
                 key_minAccuracy + " INTEGER, " +
+                key_keepGpsOn + " INTEGER DEFAULT 0, " +
                 key_post + " INTEGER DEFAULT 0, " +
                 key_enabled + " INTEGER DEFAULT 0, " +
                 key_nbsync + " INTEGER DEFAULT 0, " +
@@ -163,7 +166,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (oldVersion < 9) {
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_keepGpsOn + " INTEGER DEFAULT 0");
+        }
     }
 
     /*@Override
@@ -259,9 +264,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * Creates a new logjob in the Database and adds a Synchronization Flag.
      */
     @SuppressWarnings("UnusedReturnValue")
-    public long addLogjobAndSync(String title, String url, String token, String deviceName, int minTime, int minDistance, int minAccuracy, int nbSync, boolean post) {
+    public long addLogjobAndSync(String title, String url, String token, String deviceName, int minTime, int minDistance, int minAccuracy, boolean keepGpsOn, int nbSync, boolean post) {
         // TODO there is an 'enabled' field
-        DBLogjob dblj = new DBLogjob(0, title, url, token, deviceName, minTime, minDistance, minAccuracy, post,false, nbSync);
+        DBLogjob dblj = new DBLogjob(0, title, url, token, deviceName, minTime, minDistance, minAccuracy, keepGpsOn, post,false, nbSync);
         long id = addLogjob(dblj);
         //getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
@@ -284,6 +289,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_minTime, logjob.getMinTime());
         values.put(key_minDistance, logjob.getMinDistance());
         values.put(key_minAccuracy, logjob.getMinAccuracy());
+        values.put(key_keepGpsOn, logjob.keepGpsOnBetweenFixes() ? "1" : "0");
         values.put(key_enabled, logjob.isEnabled() ? "1" : "0");
         values.put(key_post, logjob.getPost() ? "1" : "0");
         values.put(key_url, logjob.getUrl());
@@ -353,7 +359,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 cursor.getInt(7),
                 cursor.getInt(8) == 1,
                 cursor.getInt(9) == 1,
-                cursor.getInt(10)
+                cursor.getInt(10) == 1,
+                cursor.getInt(11)
         );
     }
 
@@ -508,14 +515,26 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         serverSyncHelper.scheduleSync(true);*/
     }
 
-    public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken, @Nullable String newUrl, @Nullable String newDevicename, boolean newPost, int newMinTime, int newMinDistance, int newMinAccuracy, @Nullable ICallback callback) {
+    public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken,
+                                        @Nullable String newUrl, @Nullable String newDevicename, boolean newPost,
+                                        int newMinTime, int newMinDistance, int newMinAccuracy,
+                                        boolean newKeepGpsOn, @Nullable ICallback callback) {
         //debugPrintFullDB();
         DBLogjob newLogjob;
         if (newTitle == null) {
-            newLogjob = new DBLogjob(oldLogjob.getId(), oldLogjob.getTitle(), oldLogjob.getUrl(), oldLogjob.getToken(), oldLogjob.getDeviceName(), oldLogjob.getMinTime(), oldLogjob.getMinDistance(), oldLogjob.getMinAccuracy(), oldLogjob.getPost(), oldLogjob.isEnabled(), oldLogjob.getNbSync());
+            newLogjob = new DBLogjob(
+                    oldLogjob.getId(), oldLogjob.getTitle(), oldLogjob.getUrl(),
+                    oldLogjob.getToken(), oldLogjob.getDeviceName(),
+                    oldLogjob.getMinTime(), oldLogjob.getMinDistance(), oldLogjob.getMinAccuracy(),
+                    oldLogjob.keepGpsOnBetweenFixes(), oldLogjob.getPost(),
+                    oldLogjob.isEnabled(), oldLogjob.getNbSync()
+            );
         }
         else {
-            newLogjob = new DBLogjob(oldLogjob.getId(), newTitle, newUrl, newToken, newDevicename, newMinTime, newMinDistance, newMinAccuracy, newPost, oldLogjob.isEnabled(), oldLogjob.getNbSync());
+            newLogjob = new DBLogjob(
+                    oldLogjob.getId(), newTitle, newUrl, newToken, newDevicename,
+                    newMinTime, newMinDistance, newMinAccuracy,
+                    newKeepGpsOn, newPost, oldLogjob.isEnabled(), oldLogjob.getNbSync());
         }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -523,6 +542,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_url, newLogjob.getUrl());
         values.put(key_token, newLogjob.getToken());
         values.put(key_post, newLogjob.getPost() ? 1 : 0);
+        values.put(key_keepGpsOn, newLogjob.keepGpsOnBetweenFixes() ? 1 : 0);
         values.put(key_minTime, newLogjob.getMinTime());
         values.put(key_minDistance, newLogjob.getMinDistance());
         values.put(key_minAccuracy, newLogjob.getMinAccuracy());
@@ -594,7 +614,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param ljId
      * @param loc
      */
-    public void addLocation(String ljId, Location loc, float battery) {
+    public void addLocation(long ljId, Location loc, float battery) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation from ljid, loc, battery]"); }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -609,7 +629,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_battery, battery);
         int sat = -1;
         //if (LoggerService.DEBUG) { Log.d(TAG, "[PROVIDER "+loc.getProvider()+"]"); }
-        if(loc.getProvider() == "gps" && loc.getExtras() != null) {
+        if(loc.getProvider().equals("gps") && loc.getExtras() != null) {
             sat = loc.getExtras().getInt("satellites", -1);
         }
         values.put(key_satellites, sat);
@@ -644,8 +664,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param ljId int - ID of the logjob
      * @return requested locations
      */
-    public List<DBLocation> getLocationOfLogjob(String ljId) {
-        List<DBLocation> locations = getLocationsCustom(key_logjobid + " = ?", new String[]{ljId}, key_time + " ASC");
+    public List<DBLocation> getLocationOfLogjob(long ljId) {
+        List<DBLocation> locations = getLocationsCustom(key_logjobid + " = ?", new String[]{String.valueOf(ljId)}, key_time + " ASC");
         return locations;
     }
 
@@ -682,7 +702,19 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     private DBLocation getLocationFromCursor(@NonNull Cursor cursor) {
-        return new DBLocation(cursor.getLong(0), cursor.getLong(1), cursor.getFloat(2), cursor.getFloat(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getInt(9), cursor.getFloat(10));
+        return new DBLocation(
+                cursor.getLong(0),
+                cursor.getLong(1),
+                cursor.getFloat(2),
+                cursor.getFloat(3),
+                cursor.getInt(4),
+                cursor.getFloat(5),
+                cursor.getFloat(6),
+                cursor.getFloat(7),
+                cursor.getFloat(8),
+                cursor.getInt(9),
+                cursor.getFloat(10)
+        );
     }
 
     @NonNull
@@ -766,16 +798,16 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public void setLastLocTimestamp(String ljId, long ts) {
+    public void setLastLocTimestamp(long ljId, long ts) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_lastLocTimestamp, ts);
-        db.update(table_logjobs, values, key_id + " = ?", new String[]{ljId});
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
     }
 
-    public long getLastLocTimestamp(String ljId) {
+    public long getLastLocTimestamp(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(table_logjobs, new String[]{key_lastLocTimestamp}, key_id + " = ?", new String[]{ljId}, null, null, null);
+        Cursor cursor = db.query(table_logjobs, new String[]{key_lastLocTimestamp}, key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null);
         long res = 0;
         while (cursor.moveToNext()) {
             res = cursor.getLong(0);
@@ -785,16 +817,16 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public void setLastSyncTimestamp(String ljId, long ts) {
+    public void setLastSyncTimestamp(long ljId, long ts) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_lastSyncTimestamp, ts);
-        db.update(table_logjobs, values, key_id + " = ?", new String[]{ljId});
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
     }
 
-    public long getLastSyncTimestamp(String ljId) {
+    public long getLastSyncTimestamp(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(table_logjobs, new String[]{key_lastSyncTimestamp}, key_id + " = ?", new String[]{ljId}, null, null, null);
+        Cursor cursor = db.query(table_logjobs, new String[]{key_lastSyncTimestamp}, key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null);
         long res = 0;
         while (cursor.moveToNext()) {
             res = cursor.getLong(0);
@@ -804,17 +836,17 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public void setLastSyncError(String ljId, long ts, String message) {
+    public void setLastSyncError(long ljId, long ts, String message) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_lastSyncErrorTimestamp, ts);
         values.put(key_lastSyncErrorText, message);
-        db.update(table_logjobs, values, key_id + " = ?", new String[]{ljId});
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
     }
 
-    public SyncError getLastSyncError(String ljId) {
+    public SyncError getLastSyncError(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(table_logjobs, new String[]{key_lastSyncErrorTimestamp, key_lastSyncErrorText}, key_id + " = ?", new String[]{ljId}, null, null, null);
+        Cursor cursor = db.query(table_logjobs, new String[]{key_lastSyncErrorTimestamp, key_lastSyncErrorText}, key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null);
         long ts = 0;
         String msg = "";
         while (cursor.moveToNext()) {

@@ -103,4 +103,10 @@ xmlns:tools="http://schemas.android.com/tools"
         android:maxLength="5"
         android:title="@string/setting_min_accuracy" />
 
+    <CheckBoxPreference
+        android:icon="@android:drawable/ic_menu_mylocation"
+        android:key="keepgpson"
+        android:title="@string/setting_keepgps_title"
+        android:summary="@string/setting_keepgps_summary" />
+
 </PreferenceScreen>

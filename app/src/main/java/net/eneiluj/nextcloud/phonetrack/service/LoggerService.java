@@ -81,7 +81,7 @@ public class LoggerService extends Service {
     public static final String BROADCAST_EXTRA_PARAM = "net.eneiluj.nextcloud.phonetrack.broadcast.extra_param";
     public static final String BROADCAST_ERROR_MESSAGE = "net.eneiluj.nextcloud.phonetrack.broadcast.error_message";
     public static final String UPDATE_NOTIFICATION = "net.eneiluj.nextcloud.phonetrack.UPDATE_NOTIFICATION";
-    private boolean liveSync = false;
+
     private Intent syncIntent;
 
     private static volatile boolean isRunning = false;
@@ -89,12 +89,12 @@ public class LoggerService extends Service {
     private LoggerThread thread;
     private Looper looper;
     private LocationManager locManager;
-    private Map<String, mLocationListener> locListeners;
-    private Map<String, DBLogjob> logjobs;
+    private Map<Long, mLocationListener> locListeners;
+    private Map<Long, DBLogjob> logjobs;
     private PhoneTrackSQLiteOpenHelper db;
 
-    private Map<String, Location> lastLocations;
-    private static volatile Map<String, Long> lastUpdateRealtime;
+    private Map<Long, Location> lastLocations;
+    private static volatile Map<Long, Long> lastUpdateRealtime;
 
     private final int NOTIFICATION_ID = 1526756640;
     private NotificationManager mNotificationManager;
@@ -141,10 +141,10 @@ public class LoggerService extends Service {
         for (DBLogjob ljob : ljs) {
             if (ljob.isEnabled()) {
                 mLocationListener ll = new mLocationListener(ljob);
-                locListeners.put(String.valueOf(ljob.getId()), ll);
-                logjobs.put(String.valueOf(ljob.getId()), ljob);
-                lastLocations.put(String.valueOf(ljob.getId()), null);
-                lastUpdateRealtime.put(String.valueOf(ljob.getId()), Long.valueOf(0));
+                locListeners.put(ljob.getId(), ll);
+                logjobs.put(ljob.getId(), ljob);
+                lastLocations.put(ljob.getId(), null);
+                lastUpdateRealtime.put(ljob.getId(), Long.valueOf(0));
             }
         }
 
@@ -154,7 +154,7 @@ public class LoggerService extends Service {
         boolean hasLocationUpdates = false;
         for (DBLogjob lj : ljs) {
             if (lj.isEnabled()) {
-                hasLocationUpdates = requestLocationUpdates(String.valueOf(lj.getId()));
+                hasLocationUpdates = requestLocationUpdates(lj.getId());
             }
         }
 
@@ -209,7 +209,7 @@ public class LoggerService extends Service {
                         Log.d(TAG, "[onStartCommand : upd logjob but firstrun so nothing]");
                     }
                 } else {
-                    String ljId = String.valueOf(intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0));
+                    long ljId = intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0);
                     if (DEBUG) {
                         Log.d(TAG, "[onStartCommand : upd logjob]");
                     }
@@ -222,7 +222,7 @@ public class LoggerService extends Service {
                 String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
                 updatePreferences(providersValue);
                 boolean hasLocationUpdates = false;
-                for (String ljId : logjobs.keySet()) {
+                for (long ljId : logjobs.keySet()) {
                     hasLocationUpdates = requestLocationUpdates(ljId);
                 }
                 if (!hasLocationUpdates) {
@@ -246,7 +246,7 @@ public class LoggerService extends Service {
     /**
      * When user updated a logjob, restart location updates, stop service on failure
      */
-    private void handleLogjobsUpdated(String ljId) {
+    private void handleLogjobsUpdated(long ljId) {
         boolean wasAlreadyThere = logjobs.containsKey(ljId);
         updateLogjob(ljId);
         // if it was not deleted or disabled
@@ -281,7 +281,12 @@ public class LoggerService extends Service {
      * @return True if permission granted, false otherwise
      */
     private boolean canAccessLocation() {
-        return (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+        return (
+                ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+        );
     }
 
     /**
@@ -308,7 +313,6 @@ public class LoggerService extends Service {
         useGps = (!providersPref.equals("2") && providerExists(LocationManager.GPS_PROVIDER));
         useNet = (!providersPref.equals("1") && providerExists(LocationManager.NETWORK_PROVIDER));
         if (DEBUG) { Log.d(TAG, "[update prefs "+providersPref+", gps : "+useGps+", net : "+useNet+"]"); }
-        //liveSync = prefs.getBoolean("prefLiveSync", false);
     }
 
     /**
@@ -317,8 +321,8 @@ public class LoggerService extends Service {
      * logjob might have been added, modified or deleted
      *
      */
-    private void updateLogjob(String ljId) {
-        DBLogjob lj = db.getLogjob(Long.valueOf(ljId));
+    private void updateLogjob(long ljId) {
+        DBLogjob lj = db.getLogjob(ljId);
         if (lj != null && lj.isEnabled()) {
             // new or modified : update logjob
             logjobs.put(ljId, lj);
@@ -348,8 +352,8 @@ public class LoggerService extends Service {
      *
      * @return True if succeeded, false otherwise (eg. disabled all providers)
      */
-    private boolean restartUpdates(String jobId) {
-        if (DEBUG) { Log.d(TAG, "[job "+jobId+"location updates restart]"); }
+    private boolean restartUpdates(long jobId) {
+        if (DEBUG) { Log.d(TAG, "[job "+jobId+" location updates restart]"); }
 
         locManager.removeUpdates(locListeners.get(jobId));
 
@@ -361,11 +365,12 @@ public class LoggerService extends Service {
      * @return True if succeeded from at least one provider
      */
     @SuppressWarnings({"MissingPermission"})
-    private boolean requestLocationUpdates(String ljId) {
-        // TODO here we start a location request for each activated logjob
+    private boolean requestLocationUpdates(long ljId) {
+        // here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
         int minTimeMillis = lj.getMinTime() * 1000;
         int minDistance = lj.getMinDistance();
+        boolean keepGpsOn = lj.keepGpsOnBetweenFixes();
         mLocationListener locListener = locListeners.get(ljId);
         boolean hasLocationUpdates = false;
         if (canAccessLocation()) {
@@ -379,10 +384,13 @@ public class LoggerService extends Service {
             }
             if (useGps) {
                 //noinspection MissingPermission
+                if (keepGpsOn) {
+                    minTimeMillis = 1000;
+                }
                 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis, minDistance, locListener, looper);
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { Log.d(TAG, "job "+ljId+"[Using gps provider, freq "+lj.getMinTime()+"]"); }
+                    if (DEBUG) { Log.d(TAG, "job "+ljId+"[Using gps provider, freq "+(minTimeMillis/1000)+"]"); }
                 }
             }
             if (!hasLocationUpdates) {
@@ -408,8 +416,8 @@ public class LoggerService extends Service {
 
         if (canAccessLocation()) {
             //noinspection MissingPermission
-            for (Map.Entry<String, mLocationListener> entry : locListeners.entrySet()) {
-                locManager.removeUpdates(entry.getValue());
+            for (long ljId : locListeners.keySet()) {
+                locManager.removeUpdates(locListeners.get(ljId));
             }
         }
 
@@ -451,14 +459,14 @@ public class LoggerService extends Service {
      *
      * @return Time or zero if not set
      */
-    public static long lastUpdateRealtime(String ljId) {
+    public static long lastUpdateRealtime(long ljId) {
         return lastUpdateRealtime.get(ljId);
     }
 
     /**
      * Reset realtime of last update
      */
-    public static void resetUpdateRealtime(String ljId) {
+    public static void resetUpdateRealtime(long ljId) {
         lastUpdateRealtime.put(ljId, Long.valueOf(0));
     }
 
@@ -551,7 +559,7 @@ public class LoggerService extends Service {
      * Send broadcast message
      * @param broadcast Broadcast message
      */
-    private void sendBroadcast(String broadcast, String ljId) {
+    private void sendBroadcast(String broadcast, long ljId) {
         Intent intent = new Intent(broadcast);
         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
         sendBroadcast(intent);
@@ -587,15 +595,18 @@ public class LoggerService extends Service {
     private class mLocationListener implements LocationListener {
 
         private DBLogjob logjob;
-        private String logjobId;
+        private long logjobId;
         private long minTimeTolerance;
         private long maxTimeMillis;
+        private long minTimeMillis;
+        private boolean keepGpsOn;
 
         public mLocationListener(DBLogjob logjob) {
             this.logjob = logjob;
-            this.logjobId = String.valueOf(logjob.getId());
+            this.logjobId = logjob.getId();
+            this.keepGpsOn = logjob.keepGpsOnBetweenFixes();
             // max time tolerance is half min time, but not more that 5 min
-            int minTimeMillis = logjob.getMinTime() * 1000;
+            this.minTimeMillis = logjob.getMinTime() * 1000;
             minTimeTolerance = Math.min(minTimeMillis / 2, 5 * 60 * 1000);
             maxTimeMillis = minTimeMillis + minTimeTolerance;
         }
@@ -631,7 +642,20 @@ public class LoggerService extends Service {
          * @return True if skipped
          */
         private boolean skipLocation(DBLogjob logjob, Location loc) {
-            // TODO adapt to use logjob values
+            // if we keep gps on, we take care of the timing between points
+            if (keepGpsOn) {
+                long elapsedMillisSinceLastUpdate;
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    elapsedMillisSinceLastUpdate = SystemClock.elapsedRealtime() - lastUpdateRealtime.get(logjobId);
+                }
+                else {
+                    elapsedMillisSinceLastUpdate = (loc.getElapsedRealtimeNanos() / 1000000) - lastUpdateRealtime.get(logjobId);
+                }
+                if (elapsedMillisSinceLastUpdate < minTimeMillis) {
+                    if (DEBUG) { Log.d(TAG,"skip because "+elapsedMillisSinceLastUpdate + " < "+ minTimeMillis); }
+                    return true;
+                }
+            }
             int maxAccuracy = logjob.getMinAccuracy();
             // accuracy radius too high
             if (loc.hasAccuracy() && loc.getAccuracy() > maxAccuracy) {

@@ -535,7 +535,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     case ItemTouchHelper.LEFT: {
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
                         // get locations
-                        final List<DBLocation> locations = db.getLocationOfLogjob(String.valueOf(dbLogjob.getId()));
+                        final List<DBLocation> locations = db.getLocationOfLogjob(dbLogjob.getId());
                         db.deleteLogjob(dbLogjob.getId());
                         adapter.remove(dbLogjob);
                         refreshLists();
@@ -795,7 +795,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     public void onLogjobInfoButtonClick(int position, View view) {
         DBLogjob logjob = (DBLogjob) adapter.getItem(position);
         if (logjob != null) {
-            String ljId = String.valueOf(logjob.getId());
+            long ljId = logjob.getId();
             PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
             long tsLastLoc = db.getLastLocTimestamp(ljId);
             long tsLastSync = db.getLastSyncTimestamp(ljId);
@@ -1006,7 +1006,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
             switch (intent.getAction()) {
                 case LoggerService.BROADCAST_LOCATION_UPDATED:
-                    String ljId = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
+                    long ljId = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast loc updated " + ljId + "]"); }
                     // to update all items
                     //adapter.notifyDataSetChanged();
@@ -1014,7 +1014,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     DBLogjob lj;
                     for (int i = 0; i < adapter.getItemCount(); i++) {
                         lj = (DBLogjob) adapter.getItem(i);
-                        if (String.valueOf(lj.getId()).equals(ljId)) {
+                        if (lj.getId() == ljId) {
                             adapter.notifyItemChanged(i);
                             break;
                         }
@@ -1025,8 +1025,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 // when sync is finished (fail or success)
                 case WebTrackService.BROADCAST_SYNC_DONE:
-                    String ljId2 = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
-                    if (ljId2 != null) {
+                    long ljId2 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
+                    if (ljId2 != 0) {
                         if (LoggerService.DEBUG) {
                             Log.d(TAG, "[broadcast loc synced " + ljId2 + "]");
                         }
@@ -1036,7 +1036,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         DBLogjob lj2;
                         for (int i = 0; i < adapter.getItemCount(); i++) {
                             lj2 = (DBLogjob) adapter.getItem(i);
-                            if (String.valueOf(lj2.getId()).equals(ljId2)) {
+                            if (lj2.getId() == ljId2) {
                                 adapter.notifyItemChanged(i);
                                 if (LoggerService.DEBUG) {
                                     Log.d(TAG, "[notifyItemChanged " + i + "]");
@@ -1051,9 +1051,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     }
                     break;
                 case (WebTrackService.BROADCAST_SYNC_FAILED): {
-                    // TODO show that there was an error for the logjob
-                    // TODO let the user see the error...
-                    String ljId3 = intent.getStringExtra(LoggerService.BROADCAST_EXTRA_PARAM);
+                    long ljId3 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
                     showToast(getString(R.string.uploading_failed) + "\n" + errorMessage, Toast.LENGTH_LONG);
                     break;

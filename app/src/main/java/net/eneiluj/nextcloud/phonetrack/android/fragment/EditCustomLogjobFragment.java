@@ -73,6 +73,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         int newMinTime = getMintime();
         int newMinDistance = getMindistance();
         int newMinAccuracy = getMinaccuracy();
+        boolean newKeepGpsOn = getKeepGpsOn();
 
         // if this is an existing logjob
         if (logjob.getId() != 0) {
@@ -80,13 +81,15 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                     logjob.getUrl().equals(newURL) &&
                     logjob.getPost() == newPost &&
                     logjob.getMinTime() == newMinTime &&
+                    logjob.keepGpsOnBetweenFixes() == newKeepGpsOn &&
                     logjob.getMinDistance() == newMinDistance &&
                     logjob.getMinAccuracy() == newMinAccuracy
                     ) {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
                 System.out.println("====== update logjob");
-                logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "", newPost, newMinTime, newMinDistance, newMinAccuracy, callback);
+                logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "",
+                        newPost, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, callback);
                 notifyLoggerService(logjob.getId());
                 //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
                 //listener.onLogjobUpdated(logjob);
@@ -95,7 +98,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         // this is a new logjob
         else {
             DBLogjob newLogjob = new DBLogjob(0, newTitle, newURL, "", "",
-                    newMinTime, newMinDistance, newMinAccuracy,
+                    newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                     newPost, false, 0);
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);

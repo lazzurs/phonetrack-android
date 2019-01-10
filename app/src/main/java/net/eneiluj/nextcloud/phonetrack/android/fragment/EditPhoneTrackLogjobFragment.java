@@ -138,6 +138,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         int newMinTime = getMintime();
         int newMinDistance = getMindistance();
         int newMinAccuracy = getMinaccuracy();
+        boolean newKeepGpsOn = getKeepGpsOn();
 
         // if this is an existing logjob
         if (logjob.getId() != 0) {
@@ -145,13 +146,15 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                     logjob.getUrl().equals(newUrl) &&
                     logjob.getToken().equals(newToken) &&
                     logjob.getMinTime() == newMinTime &&
+                    logjob.keepGpsOnBetweenFixes() == newKeepGpsOn &&
                     logjob.getMinDistance() == newMinDistance &&
                     logjob.getMinAccuracy() == newMinAccuracy &&
                     logjob.getDeviceName().equals(newDevicename)) {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
                 System.out.println("====== update logjob");
-                logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename, false, newMinTime, newMinDistance, newMinAccuracy, callback);
+                logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename,
+                        false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, callback);
                 notifyLoggerService(logjob.getId());
                 //listener.onLogjobUpdated(logjob);
             }
@@ -159,7 +162,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         // this is a new logjob
         else {
             DBLogjob newLogjob = new DBLogjob(0, newTitle, newUrl, newToken, newDevicename,
-                    newMinTime, newMinDistance, newMinAccuracy,
+                    newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn ,
                     false, false, 0);
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 //import android.preference.EditTextPreference;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
 //import android.preference.ListPreference;
 //import android.preference.Preference;
@@ -76,6 +77,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     protected EditTextPreference editMintime;
     protected EditTextPreference editMindistance;
     protected EditTextPreference editMinaccuracy;
+    protected CheckBoxPreference editKeepGpsOn;
 
     private DialogInterface.OnClickListener deleteDialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
@@ -409,6 +411,9 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         editMinaccuracy = (EditTextPreference) this.findPreference("minaccuracy");
         editMinaccuracy.setText(String.valueOf(logjob.getMinAccuracy()));
         editMinaccuracy.setSummary(String.valueOf(logjob.getMinAccuracy()));
+
+        editKeepGpsOn = (CheckBoxPreference) this.findPreference("keepgpson");
+        editKeepGpsOn.setChecked(logjob.keepGpsOnBetweenFixes());
     }
 
     protected String getTitle() {
@@ -434,6 +439,10 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             return 0;
         }
         return Integer.valueOf(editMinaccuracy.getText());
+    }
+
+    protected boolean getKeepGpsOn() {
+        return editKeepGpsOn.isChecked();
     }
 
     protected void showToast(CharSequence text, int duration) {
