@@ -51,6 +51,8 @@
     <string name="setting_min_time_long">Minimale tijd tussen twee gelogde punten (seconden)</string>
     <string name="setting_min_accuracy">Minimale nauwkeurigheid</string>
     <string name="setting_min_accuracy_long">Minimale nauwkeurigheid voor gelogde punten (meters)</string>
+    <string name="setting_keepgps_title">Keep GPS on between fixes</string>
+    <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
     <string name="logjob_info_dialog_title">Over %s</string>
     <string name="logjob_info_nbsync">%d posities verzonden</string>
     <string name="logjob_info_nbnotsync">%d uitstaande posities</string>
