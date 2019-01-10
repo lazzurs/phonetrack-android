@@ -27,6 +27,9 @@
     <string name="setting_post_summary">au lieu de la méthode GET. Les paramètres GET seront convertis en POST.</string>
     <string name="action_search">Rechercher</string>
     <string name="simple_cancel">Annuler</string>
+    <string name="simple_yes">Oui</string>
+    <string name="simple_no">Non</string>
+    <string name="simple_ok">Ok</string>
     <string name="simple_edit_pt">Éditer un log job PhoneTrack</string>
     <string name="simple_edit_cu">Éditer un log job personnalisé</string>
     <string name="simple_about">À propos</string>
@@ -36,6 +39,7 @@
     <string name="action_drawer_open">ouvrir le menu latéral</string>
     <string name="action_drawer_close">fermer le menu latéral</string>
     <string name="menu_delete">Supprimer</string>
+    <string name="menu_save">Enregistrer</string>
     <string name="menu_select_session">Utiliser une session PhoneTrack Nextcloud</string>
     <string name="menu_from_url">Utiliser une URL de logging PhoneTrack Nextcloud</string>
     <string name="menu_share">Partager</string>
@@ -55,6 +59,7 @@
     <string name="logjob_info_lastsync_error">Dernière erreur de synchronisation le %s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Importer une URL de logging de PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">N\'importe quelle URL de logging fournie dans l\'interface web de PhoneTrack</string>
+    <string name="confirm_delete_logjob_dialog_title">Êtes-vous sûr(e) ?</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>

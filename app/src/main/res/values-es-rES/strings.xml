@@ -27,6 +27,9 @@
     <string name="setting_post_summary">alternativa al método GET. Los parámetros GET se convertirán a POST.</string>
     <string name="action_search">Buscar</string>
     <string name="simple_cancel">Cancelar</string>
+    <string name="simple_yes">Yes</string>
+    <string name="simple_no">No</string>
+    <string name="simple_ok">Ok</string>
     <string name="simple_edit_pt">Editar trabajo de registro PhoneTrack</string>
     <string name="simple_edit_cu">Editar trabajo de destino personalizado</string>
     <string name="simple_about">Acerca de</string>
@@ -36,6 +39,7 @@
     <string name="action_drawer_open">abrir menú lateral</string>
     <string name="action_drawer_close">cerrar menú lateral</string>
     <string name="menu_delete">Eliminar</string>
+    <string name="menu_save">Guardar</string>
     <string name="menu_select_session">Usar sesión PhoneTrack de Nextcloud</string>
     <string name="menu_from_url">Usar URL de registro PhoneTrack de Nextcloud</string>
     <string name="menu_share">Compartir</string>
@@ -55,6 +59,7 @@
     <string name="logjob_info_lastsync_error">Último error de sincronización en %s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Importar URL de registro de PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Cualquier URL de registro compatible introducida en la interfaz web de PhoneTrack</string>
+    <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
     <string name="is_running">procesando (%s pendiente, %s enviado)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Cuenta</string>

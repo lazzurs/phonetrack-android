@@ -27,6 +27,9 @@
     <string name="setting_post_summary">invece del metodo GET. I parametri GET saranno convertiti in POST.</string>
     <string name="action_search">Ricerca</string>
     <string name="simple_cancel">Annulla</string>
+    <string name="simple_yes">Sì</string>
+    <string name="simple_no">No</string>
+    <string name="simple_ok">Ok</string>
     <string name="simple_edit_pt">Modifica log job di PhoneTrack</string>
     <string name="simple_edit_cu">Modifica log job personalizzato</string>
     <string name="simple_about">Info su</string>
@@ -36,6 +39,7 @@
     <string name="action_drawer_open">apri menu laterale</string>
     <string name="action_drawer_close">chiudi menu laterale</string>
     <string name="menu_delete">Cancella</string>
+    <string name="menu_save">Salva</string>
     <string name="menu_select_session">Utilizzare la sessione PhoneTrack di Nextcloud</string>
     <string name="menu_from_url">Utilizzare l\'URL di registrazione Nextcloud PhoneTrack</string>
     <string name="menu_share">Condividi</string>
@@ -55,6 +59,7 @@
     <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione a %s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Importa l\'URL di registrazione di PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Qualsiasi URL di registrazione compatibile fornito nell\'interfaccia web PhoneTrack</string>
+    <string name="confirm_delete_logjob_dialog_title">Sei sicuro?</string>
     <string name="is_running">in esecuzione (%s in sospeso, %s inviato)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -108,12 +113,12 @@
     <string name="error_username_password_invalid">username o password sbagliati</string>
     <string name="error_invalid_pt_url">URL di registrazione PhoneTrack non valido</string>
     <string name="error_invalid_url">URL non valido</string>
-    <string name="error_invalid_token">Invalid token</string>
-    <string name="error_invalid_title">Invalid title</string>
-    <string name="error_invalid_devname">Invalid device name</string>
-    <string name="error_invalid_mintime">Invalid minimum time</string>
-    <string name="error_invalid_mindistance">Invalid minimum distance</string>
-    <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
+    <string name="error_invalid_token">Token non valido</string>
+    <string name="error_invalid_title">Titolo non valido</string>
+    <string name="error_invalid_devname">Nome dispositivo non valido</string>
+    <string name="error_invalid_mintime">Tempo minimo non valido</string>
+    <string name="error_invalid_mindistance">Distanza minima non valida</string>
+    <string name="error_invalid_minaccuracy">Accuratezza minima non valida</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

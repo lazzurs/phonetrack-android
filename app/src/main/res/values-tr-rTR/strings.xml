@@ -27,6 +27,9 @@
     <string name="setting_post_summary">instead of GET method. GET parameters will be converted to POST.</string>
     <string name="action_search">Search</string>
     <string name="simple_cancel">İptal</string>
+    <string name="simple_yes">Yes</string>
+    <string name="simple_no">No</string>
+    <string name="simple_ok">Tamam</string>
     <string name="simple_edit_pt">Edit PhoneTrack log job</string>
     <string name="simple_edit_cu">Edit custom log job</string>
     <string name="simple_about">About</string>
@@ -36,6 +39,7 @@
     <string name="action_drawer_open">open side menu</string>
     <string name="action_drawer_close">close side menu</string>
     <string name="menu_delete">Sil</string>
+    <string name="menu_save">Kaydet</string>
     <string name="menu_select_session">Use Nextcloud PhoneTrack session</string>
     <string name="menu_from_url">Use Nextcloud PhoneTrack logging URL</string>
     <string name="menu_share">Share</string>
@@ -55,6 +59,7 @@
     <string name="logjob_info_lastsync_error">Last synchronization error at %s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Import PhoneTrack logging URL</string>
     <string name="dialog_msg_import_pt_url">Any compatible logging URL given in PhoneTrack web interface</string>
+    <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
     <string name="is_running">running (%s pending, %s sent)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -108,12 +113,12 @@
     <string name="error_username_password_invalid">wrong username or password</string>
     <string name="error_invalid_pt_url">Invalid PhoneTrack logging URL</string>
     <string name="error_invalid_url">Invalid URL</string>
-    <string name="error_invalid_token">Invalid token</string>
-    <string name="error_invalid_title">Invalid title</string>
-    <string name="error_invalid_devname">Invalid device name</string>
-    <string name="error_invalid_mintime">Invalid minimum time</string>
-    <string name="error_invalid_mindistance">Invalid minimum distance</string>
-    <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
+    <string name="error_invalid_token">Geçersiz jeton</string>
+    <string name="error_invalid_title">Geçersiz başlık</string>
+    <string name="error_invalid_devname">Geçersiz cihaz adı</string>
+    <string name="error_invalid_mintime">Geçersiz asgari süre</string>
+    <string name="error_invalid_mindistance">Geçersiz asgari mesafe</string>
+    <string name="error_invalid_minaccuracy">Geçersiz asgari doğruluk</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

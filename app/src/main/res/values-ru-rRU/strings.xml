@@ -27,6 +27,9 @@
     <string name="setting_post_summary">вместо метода GET. Параметры GET будут преобразованы в POST.</string>
     <string name="action_search">Поиск</string>
     <string name="simple_cancel">Отмена</string>
+    <string name="simple_yes">Yes</string>
+    <string name="simple_no">No</string>
+    <string name="simple_ok">Оk</string>
     <string name="simple_edit_pt">Edit PhoneTrack log job</string>
     <string name="simple_edit_cu">Edit custom log job</string>
     <string name="simple_about">О программе</string>
@@ -36,6 +39,7 @@
     <string name="action_drawer_open">open side menu</string>
     <string name="action_drawer_close">close side menu</string>
     <string name="menu_delete">Удалить</string>
+    <string name="menu_save">Сохранить</string>
     <string name="menu_select_session">Использовать сессию Nextcloud PhoneTrack</string>
     <string name="menu_from_url">Использовать URL журнала Nextcloud PhoneTrack</string>
     <string name="menu_share">Share</string>
@@ -55,6 +59,7 @@
     <string name="logjob_info_lastsync_error">Last synchronization error at %s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Import PhoneTrack logging URL</string>
     <string name="dialog_msg_import_pt_url">Any compatible logging URL given in PhoneTrack web interface</string>
+    <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
     <string name="is_running">выполнение (ожидает %s, отправлено %s)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>

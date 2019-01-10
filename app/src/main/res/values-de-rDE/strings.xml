@@ -27,6 +27,9 @@
     <string name="setting_post_summary">anstelle der GET-Methode. GET-Parameter werden in POST umgewandelt.</string>
     <string name="action_search">Suchen</string>
     <string name="simple_cancel">Abbrechen</string>
+    <string name="simple_yes">Ja</string>
+    <string name="simple_no">Nein</string>
+    <string name="simple_ok">Ok</string>
     <string name="simple_edit_pt">PhoneTrack Protokollierungsaufträge bearbeiten</string>
     <string name="simple_edit_cu">Benutzerdefinierten Protokollierungsauftrag bearbeiten</string>
     <string name="simple_about">Über</string>
@@ -36,6 +39,7 @@
     <string name="action_drawer_open">Seitenmenü öffnen</string>
     <string name="action_drawer_close">Seitenmenü schließen</string>
     <string name="menu_delete">Löschen</string>
+    <string name="menu_save">Speichern</string>
     <string name="menu_select_session">Nextcloud PhoneTrack-Sitzung verwenden</string>
     <string name="menu_from_url">Nextcloud PhoneTrack-Protokollierungsadresse verwenden</string>
     <string name="menu_share">Teilen</string>
@@ -55,6 +59,7 @@
     <string name="logjob_info_lastsync_error">Letzter Synchronisierungsfehler bei: %s\n\n%s</string>
     <string name="dialog_title_import_pt_url">PhoneTrack-Protokollierungs-URL importieren</string>
     <string name="dialog_msg_import_pt_url">Jede kompatible Protokollierungs-URL, die in der PhoneTrack-Webschnittstelle angegeben ist</string>
+    <string name="confirm_delete_logjob_dialog_title">Sind Sie sicher?</string>
     <string name="is_running">wird ausgeführt (%s ausstehend, %s gesendet)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
