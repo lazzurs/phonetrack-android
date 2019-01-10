@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 0.0.6 – 2019-01-10
+### Added
+- add logjob option to keep gps on between fixes
+[#8](https://gitlab.com/eneiluj/phonetrack-android/issues/8) @roydenyates
+
+### Changed
+- change behaviour of logjob edit : back=cancel, menuSaveIcon=save
+[#6](https://gitlab.com/eneiluj/phonetrack-android/issues/6) @Tobiasff3200
+
+### Fixed
+- no more double sync on startup
+[#5](https://gitlab.com/eneiluj/phonetrack-android/issues/5) @Valdnet
+
 ## 0.0.5 – 2019-01-09
 ### Added
 - compatibility with API>=16
