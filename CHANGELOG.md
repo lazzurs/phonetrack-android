@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - change behaviour of logjob edit : back=cancel, menuSaveIcon=save
 [#6](https://gitlab.com/eneiluj/phonetrack-android/issues/6) @Tobiasff3200
+- show session selection dialog when creating phonetrack logjob
+[#8](https://gitlab.com/eneiluj/phonetrack-android/issues/8) @roydenyates
 
 ### Fixed
 - no more double sync on startup
