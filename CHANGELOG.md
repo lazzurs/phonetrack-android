@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## 0.0.6 – 2019-01-10
+## 0.0.6 – 2019-01-11
 ### Added
 - add logjob option to keep gps on between fixes
 [#8](https://gitlab.com/eneiluj/phonetrack-android/issues/8) @roydenyates
@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#6](https://gitlab.com/eneiluj/phonetrack-android/issues/6) @Tobiasff3200
 - show session selection dialog when creating phonetrack logjob
 [#8](https://gitlab.com/eneiluj/phonetrack-android/issues/8) @roydenyates
+- removed splashscreen
 
 ### Fixed
 - no more double sync on startup
