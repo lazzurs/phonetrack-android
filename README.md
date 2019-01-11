@@ -13,6 +13,13 @@ What's different from other logging apps ?
 
 PhoneTrack Android app can manage multiple configurations (called log jobs)
 and log locations at different frequencies to different destinations at the same time.
+This means you can simultaneously have :
+
+* a low frequency log job which logs one point per hour (for example) to keep track of where you go
+* a high frequency log job which logs one point every five seconds (for example) to record a hike and potentially share it for others to be able to see your position in real time
+* a medium frequency log job which logs one point every five minutes (for example) to share with your friends to help them finding you if you got separated during a city walk
+
+Log jobs are independent and can be individually activated.
 
 It can log to [PhoneTrack Nextcloud app](https://gitlab.com/eneiluj/phonetrack-oc) with a `PhoneTrack log job`
 or to any server which can receive HTTP GET or POST requests with a `custom log job`.
@@ -58,6 +65,7 @@ Then open/import the project in Android studio and build it.
 
 
 ## :link: Requirements
+* Android >= 4.1
 * [Nextcloud](https://nextcloud.com/) instance running
 * [Nextcloud PhoneTrack](https://gitlab.com/eneiluj/phonetrack-oc) app enabled
 
