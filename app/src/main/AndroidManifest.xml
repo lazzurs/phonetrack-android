@@ -75,7 +75,7 @@
             android:label="@string/simple_edit_pt"
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
-            android:launchMode="singleTask">
+            android:launchMode="standard">
             <!-- this is to receive share action from other apps -->
             <intent-filter android:label="@string/action_create_share">
                 <action android:name="android.intent.action.SEND" />
@@ -89,7 +89,7 @@
             android:label="@string/simple_edit_cu"
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
-            android:launchMode="singleTask">
+            android:launchMode="standard">
             <!-- this is to receive share action from other apps -->
             <intent-filter android:label="@string/action_create_custom_share">
                 <action android:name="android.intent.action.SEND" />
