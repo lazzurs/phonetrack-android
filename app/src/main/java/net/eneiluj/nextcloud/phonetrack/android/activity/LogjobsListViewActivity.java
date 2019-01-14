@@ -94,6 +94,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private final static int show_single_logjob_cmd = 1;
     private final static int server_settings = 2;
     private final static int about = 3;
+    private final static int map = 4;
 
 
     @BindView(R.id.logjobsListActivityActionBar)
@@ -454,11 +455,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     private void setupNavigationMenu() {
         //final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
+        final NavigationAdapter.NavigationItem itemMap = new NavigationAdapter.NavigationItem("map", getString(R.string.action_map), null, R.drawable.ic_settings_grey600_24dp);
         final NavigationAdapter.NavigationItem itemSettings = new NavigationAdapter.NavigationItem("settings", getString(R.string.action_settings), null, R.drawable.ic_settings_grey600_24dp);
         final NavigationAdapter.NavigationItem itemAbout = new NavigationAdapter.NavigationItem("about", getString(R.string.simple_about), null, R.drawable.ic_info_outline_grey600_24dp);
 
         ArrayList<NavigationAdapter.NavigationItem> itemsMenu = new ArrayList<>();
-        //itemsMenu.add(itemTrashbin);
+        itemsMenu.add(itemMap);
         itemsMenu.add(itemSettings);
         itemsMenu.add(itemAbout);
 
@@ -468,15 +470,15 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 if (item == itemSettings) {
                     Intent settingsIntent = new Intent(getApplicationContext(), PreferencesActivity.class);
                     startActivityForResult(settingsIntent, server_settings);
-                } else if (item == itemAbout) {
+                }
+                else if (item == itemAbout) {
                     Intent aboutIntent = new Intent(getApplicationContext(), AboutActivity.class);
                     startActivityForResult(aboutIntent, about);
                 }
-                /*else if (item == itemTrashbin) {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url + "index.php/apps/files/?dir=/&view=trashbin")));
-                }*/
+                else if (item == itemMap) {
+                    Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                    startActivityForResult(mapIntent, map);
+                }
             }
 
             @Override
