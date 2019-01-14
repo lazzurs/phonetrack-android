@@ -300,7 +300,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         // manage session list DIALOG
         selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.Theme_AppCompat_DayNight_Dialog));
-        selectBuilder.setTitle("Choose a session");
+        selectBuilder.setTitle(getString(R.string.edit_logjob_choose_session_dialog_title));
 
         if (sessionNameList.size() > 0) {
             CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);

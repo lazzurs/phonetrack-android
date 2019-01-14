@@ -1,7 +1,9 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,6 +16,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -24,6 +27,8 @@ import android.widget.ImageView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
+import net.eneiluj.nextcloud.phonetrack.model.DBSession;
+import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 
@@ -51,6 +56,8 @@ public class MapActivity extends Activity {
 
     private static final String TAG = MapActivity.class.getSimpleName();
 
+    public static final String PARAM_SESSIONID = "net.eneiluj.nextcloud.phonetrack.mapSessionId";
+
     private MyLocationNewOverlay mLocationOverlay;
     private CompassOverlay mCompassOverlay;
     private RotationGestureOverlay mRotationGestureOverlay;
@@ -63,10 +70,11 @@ public class MapActivity extends Activity {
     private Map<String, DBLocation> locations;
     private Map<String, Marker> markers;
 
+    private DBSession session;
+    private PhoneTrackSQLiteOpenHelper db;
+
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //handle permissions first, before map is created. not depicted here
 
         //load/initialize the osmdroid configuration, this can be done
         this.ctx = getApplicationContext();
@@ -76,6 +84,13 @@ public class MapActivity extends Activity {
         //if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
         //see also StorageUtils
         //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
+        ActivityCompat.requestPermissions(MapActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PackageManager.PERMISSION_GRANTED);
+
+        db = PhoneTrackSQLiteOpenHelper.getInstance(ctx);
+
+        long sid = getIntent().getLongExtra(PARAM_SESSIONID, 0);
+        session = db.getSession(sid);
+        Log.i(TAG, "CREATE map : session : "+session);
 
         //inflate and create the map
         setContentView(R.layout.activity_map);
@@ -172,6 +187,7 @@ public class MapActivity extends Activity {
     }
 
     public void onResume(){
+        Log.i(TAG, "[onResume begin]");
         super.onResume();
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
@@ -189,10 +205,11 @@ public class MapActivity extends Activity {
         }
 
         startRefresh();
-
+        Log.i(TAG, "[onResume end]");
     }
 
     public void onPause(){
+        Log.i(TAG, "[onPause begin]");
         super.onPause();
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
@@ -201,7 +218,7 @@ public class MapActivity extends Activity {
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
 
         stopRefresh();
-        Log.i(TAG, "[onPause]");
+        Log.i(TAG, "[onPause end]");
     }
 
     public BitmapDrawable writeOnDrawable(int drawableId, String text, int markerColorId, int textColorId){
@@ -235,26 +252,30 @@ public class MapActivity extends Activity {
     }
 
     private Timer timer;
-    private TimerTask timerTask = new TimerTask() {
-
-        @Override
-        public void run() {
-            // launch task of server sync with callback
-            Log.i(TAG, "[Task run]");
-        }
-    };
+    private TimerTask timerTask;
 
     public void startRefresh() {
         if(timer != null) {
             return;
         }
+        timerTask = new TimerTask() {
+
+            @Override
+            public void run() {
+                // launch task of server sync with callback
+                Log.i(TAG, "[Task run]");
+            }
+        };
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 10000);
     }
 
     public void stopRefresh() {
-        timer.cancel();
-        timer = null;
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+            timerTask = null;
+        }
     }
 
     private IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {

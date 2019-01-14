@@ -54,6 +54,7 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.Item;
 import net.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
@@ -476,8 +477,49 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     startActivityForResult(aboutIntent, about);
                 }
                 else if (item == itemMap) {
-                    Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
-                    startActivityForResult(mapIntent, map);
+                    List<DBSession> sessions = db.getSessions();
+                    List<String> sessionNameList = new ArrayList<>();
+                    final List<Long> sessionIdList = new ArrayList<>();
+                    for (DBSession session : sessions) {
+                        sessionNameList.add(session.getName());
+                        sessionIdList.add(session.getId());
+                    }
+                    // manage session list DIALOG
+                    AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(listView.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
+                    selectBuilder.setTitle(getString(R.string.map_choose_session_dialog_title));
+
+                    if (sessionNameList.size() > 0) {
+                        CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
+                        selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                long sid = sessionIdList.get(which);
+                                Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                                mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
+                                startActivityForResult(mapIntent, map);
+                                dialog.dismiss();
+                            }
+                        });
+
+                        // add OK and Cancel buttons
+                        selectBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // user clicked OK
+                                System.out.println("CHECKED OK :" + which);
+                            }
+                        });
+                        selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
+
+                        // create the alert dialog
+                        AlertDialog selectDialog = selectBuilder.create();
+                        System.out.println("BOOOOOOOOOOOOM");
+                        selectDialog.show();
+                    }
+                    else {
+                        showToast(getString(R.string.map_choose_session_dialog_impossible), Toast.LENGTH_LONG);
+                    }
                 }
             }
 

@@ -64,6 +64,10 @@
     <string name="dialog_title_import_pt_url">Import PhoneTrack logging URL</string>
     <string name="dialog_msg_import_pt_url">Any compatible logging URL given in PhoneTrack web interface</string>
     <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
+    <string name="edit_logjob_choose_session_dialog_title">Choose a session</string>
+    <string name="map_choose_session_dialog_title">Choose a session to display on the map</string>
+    <string name="map_choose_session_dialog_impossible">Impossible to display a session on the map</string>
+
 
     <string name="is_running">running (%s pending, %s sent)</string>
 
