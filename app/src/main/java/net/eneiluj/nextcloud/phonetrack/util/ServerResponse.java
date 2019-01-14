@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
-import net.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
 /**
@@ -30,7 +30,7 @@ public class ServerResponse {
             super(response);
         }
 
-        public CloudSession getSession(PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
+        public DBSession getSession(PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
             return getSessionFromJSON(new JSONArray(getContent()), dbHelper);
         }
     }
@@ -40,16 +40,16 @@ public class ServerResponse {
             super(response);
         }
 
-        public List<CloudSession> getSessions(PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
-            List<CloudSession> sessionsList = new ArrayList<>();
+        public List<DBSession> getSessions(PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
+            List<DBSession> sessionsList = new ArrayList<>();
             //JSONObject topObj = new JSONObject(getTitle());
             JSONArray sessions = new JSONArray(getContent());
             for (int i = 0; i < sessions.length(); i++) {
                 JSONArray json = sessions.getJSONArray(i);
                 // if session is not shared
-                if (json.length() > 4) {
-                    sessionsList.add(getSessionFromJSON(json, dbHelper));
-                }
+                //if (json.length() > 4) {
+                sessionsList.add(getSessionFromJSON(json, dbHelper));
+                //}
             }
             return sessionsList;
         }
@@ -96,17 +96,21 @@ public class ServerResponse {
         return null;
     }
 
-    protected CloudSession getSessionFromJSON(JSONArray json, PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
+    protected DBSession getSessionFromJSON(JSONArray json, PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
         String name = "";
         String token = "";
+        String publicToken = "";
+        boolean isFromShare = false;
         if (json.length() > 1) {
             name = json.getString(0);
             token = json.getString(1);
+            publicToken = json.getString(2);
+            isFromShare = (json.length() <= 5);
         }
 
         Context appContext = dbHelper.getContext().getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
         String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
-        return new CloudSession(name, token, url);
+        return new DBSession(0, name, token, url, publicToken, isFromShare);
     }
 }

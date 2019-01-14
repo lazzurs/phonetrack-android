@@ -23,6 +23,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
+import net.eneiluj.nextcloud.phonetrack.util.ICallback;
+import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -36,6 +39,10 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay.backgroundColor;
 
@@ -52,6 +59,9 @@ public class MapActivity extends Activity {
 
     private ImageButton btCenterMap;
     private ImageButton btFollowMe;
+
+    private Map<String, DBLocation> locations;
+    private Map<String, Marker> markers;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +88,8 @@ public class MapActivity extends Activity {
 
 
         this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
-        this.mLocationOverlay.enableMyLocation();
-        this.mLocationOverlay.enableFollowLocation();
+        //this.mLocationOverlay.enableMyLocation();
+        //this.mLocationOverlay.enableFollowLocation();
         this.mLocationOverlay.setEnableAutoStop(true);
         map.getOverlays().add(this.mLocationOverlay);
 
@@ -171,8 +181,14 @@ public class MapActivity extends Activity {
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
 
         this.mLocationOverlay.enableMyLocation();
-        this.mLocationOverlay.enableFollowLocation();
+        //this.mLocationOverlay.enableFollowLocation();
+        Location currentLocation = mLocationOverlay.getLastFix();
+        if (currentLocation != null) {
+            GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+            map.getController().animateTo(myPosition);
+        }
 
+        startRefresh();
 
     }
 
@@ -183,6 +199,9 @@ public class MapActivity extends Activity {
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
+
+        stopRefresh();
+        Log.i(TAG, "[onPause]");
     }
 
     public BitmapDrawable writeOnDrawable(int drawableId, String text, int markerColorId, int textColorId){
@@ -214,4 +233,42 @@ public class MapActivity extends Activity {
 
         return new BitmapDrawable(ctx.getResources(), bm);
     }
+
+    private Timer timer;
+    private TimerTask timerTask = new TimerTask() {
+
+        @Override
+        public void run() {
+            // launch task of server sync with callback
+            Log.i(TAG, "[Task run]");
+        }
+    };
+
+    public void startRefresh() {
+        if(timer != null) {
+            return;
+        }
+        timer = new Timer();
+        timer.scheduleAtFixedRate(timerTask, 0, 10000);
+    }
+
+    public void stopRefresh() {
+        timer.cancel();
+        timer = null;
+    }
+
+    private IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
+        @Override
+        public void onFinish() {
+
+        }
+
+        @Override
+        public void onFinish(Map<String, DBLocation> locations, String message) {
+        }
+
+        @Override
+        public void onScheduled() {
+        }
+    };
 }

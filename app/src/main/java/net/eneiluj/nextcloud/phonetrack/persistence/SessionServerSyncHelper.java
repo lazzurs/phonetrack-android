@@ -34,7 +34,7 @@ import at.bitfire.cert4android.CustomCertManager;
 import at.bitfire.cert4android.CustomCertService;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
-import net.eneiluj.nextcloud.phonetrack.model.CloudSession;
+import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
@@ -312,10 +312,10 @@ public class SessionServerSyncHelper {
             try {
                 Map<String, Long> locIdMap = dbHelper.getTokenMap();
                 ServerResponse.SessionsResponse response = client.getSessions(customCertManager, lastModified, lastETag);
-                List<CloudSession> remoteSessions = response.getSessions(dbHelper);
+                List<DBSession> remoteSessions = response.getSessions(dbHelper);
                 Set<String> remoteTokens = new HashSet<>();
                 // pull remote changes: update or create each remote logjob
-                for (CloudSession remoteSession : remoteSessions) {
+                for (DBSession remoteSession : remoteSessions) {
                     Log.v(getClass().getSimpleName(), "   Process Remote Session: " + remoteSession);
                     remoteTokens.add(remoteSession.getToken());
                     if (locIdMap.containsKey(remoteSession.getToken())) {

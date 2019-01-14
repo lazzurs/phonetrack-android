@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.media.DeniedByServerException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
@@ -17,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.eneiluj.nextcloud.phonetrack.model.CloudSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -32,12 +32,14 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 9;
+    private static final int database_version = 10;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
     private static final String key_id = "ID";
     private static final String key_token = "TOKEN";
+    private static final String key_publicToken = "PUBLICTOKEN";
+    private static final String key_isFromShare = "ISFROMSHARE";
     private static final String key_nextURL = "NEXTURL";
     private static final String key_name = "NAME";
 
@@ -69,7 +71,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_satellites = "SATELLITES";
     private static final String key_battery = "BATTERY";
 
-    private static final String[] columnsSessions = {key_id, key_token, key_name, key_nextURL};
+    private static final String[] columnsSessions = {
+            key_id, key_token, key_name, key_nextURL,
+            key_publicToken, key_isFromShare
+    };
     private static final String[] columnsLogjobs = {
             key_id, key_title, key_url, key_token, key_deviceName,
             key_minTime, key_minDistance, key_minAccuracy,
@@ -124,6 +129,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 key_name + " TEXT, " +
                 key_nextURL + " TEXT, " +
+                key_publicToken + " TEXT, " +
+                key_isFromShare + " INTEGER DEFAULT 0, " +
                 key_token + " TEXT)");
 
     }
@@ -168,6 +175,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 9) {
             db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_keepGpsOn + " INTEGER DEFAULT 0");
+        }
+        if (oldVersion < 10) {
+            db.execSQL("ALTER TABLE " + table_sessions + " ADD COLUMN " + key_publicToken + " TEXT DEFAULT NULL");
+            db.execSQL("ALTER TABLE " + table_sessions + " ADD COLUMN " + key_isFromShare + " INTEGER DEFAULT 0");
         }
     }
 
@@ -242,18 +253,16 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return context;
     }
 
-    /**
-     * Creates a new session in the Database and adds a Synchronization Flag.
-     *
-     */
-    @SuppressWarnings("UnusedReturnValue")
-    public long addSessionAndSync(String name, String token, String nextURL) {
-        CloudSession session = new CloudSession(name, token, nextURL);
-        return addSessionAndSync(session);
-    }
 
-    public long addSessionAndSync(CloudSession session) {
-        DBSession dbs = new DBSession(0, session.getName(), session.getToken(), session.getNextURL());
+    public long addSessionAndSync(DBSession session) {
+        DBSession dbs = new DBSession(
+                0,
+                session.getName(),
+                session.getToken(),
+                session.getNextURL(),
+                session.getPublicToken(),
+                session.isFromShare()
+        );
         long id = addSession(dbs);
         notifySessionsChanged();
         //getPhonetrackServerSyncHelper().scheduleSync(true);
@@ -297,12 +306,14 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return db.insert(table_logjobs, null, values);
     }
 
-    long addSession(CloudSession session) {
+    long addSession(DBSession session) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_name, session.getName());
         values.put(key_token, session.getToken());
         values.put(key_nextURL, session.getNextURL());
+        values.put(key_publicToken, session.getPublicToken());
+        values.put(key_isFromShare, session.isFromShare() ? "1" : "0");
         return db.insert(table_sessions, null, values);
     }
 
@@ -407,7 +418,14 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     private DBSession getSessionFromCursor(@NonNull Cursor cursor) {
-        return new DBSession(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+        return new DBSession(
+                cursor.getLong(0),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getInt(5) == 1
+        );
     }
 
     public void debugPrintFullDB() {
@@ -446,6 +464,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     @WorkerThread
     public List<DBSession> getSessions() {
         return getSessionsCustom("", new String[]{}, default_order);
+    }
+
+    @NonNull
+    @WorkerThread
+    public List<DBSession> getSessionsNotShared() {
+        return getSessionsCustom(key_isFromShare + " = 0", new String[]{}, default_order);
     }
 
     @NonNull
@@ -566,13 +590,15 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param remoteSession                session from the server.
      * @return The number of the Rows affected.
      */
-    int updateSession(long id, @NonNull CloudSession remoteSession) {
+    int updateSession(long id, @NonNull DBSession remoteSession) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(key_name, remoteSession.getName());
         values.put(key_token, remoteSession.getToken());
         values.put(key_nextURL, remoteSession.getNextURL());
+        values.put(key_publicToken, remoteSession.getPublicToken());
+        values.put(key_isFromShare, remoteSession.isFromShare() ? "1" : "0");
         String whereClause;
         String[] whereArgs;
 

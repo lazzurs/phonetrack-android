@@ -115,7 +115,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (db.getSessions().size() == 0) {
+        if (db.getSessionsNotShared().size() == 0) {
             MenuItem itemSelectSession = menu.findItem(R.id.menu_selectSession);
             itemSelectSession.setVisible(false);
         }
@@ -290,7 +290,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         editDevicename.setSummary(logjob.getDeviceName());
 
         // manage session list
-        sessionList = db.getSessions();
+        sessionList = db.getSessionsNotShared();
         sessionNameList = new ArrayList<>();
         sessionIdList = new ArrayList<>();
         for (DBSession session : sessionList) {
