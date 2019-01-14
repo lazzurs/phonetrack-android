@@ -34,9 +34,11 @@ import at.bitfire.cert4android.CustomCertManager;
 import at.bitfire.cert4android.CustomCertService;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
+import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
+import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil.LoginStatus;
 import net.eneiluj.nextcloud.phonetrack.util.ServerResponse;
@@ -494,6 +496,88 @@ public class SessionServerSyncHelper {
                 }
             }
             callback.onFinish(publicUrl, errorString);
+        }
+    }
+
+    public boolean getSessionLastPositions(DBSession session, IGetLastPosCallback callback) {
+        if (isSyncPossible()) {
+            GetSessionlastPositionsTask getSessionlastPositionsTask = new GetSessionlastPositionsTask(session, callback);
+            getSessionlastPositionsTask.execute();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * task to ask server to create public share with name restriction on device
+     * or just get the share token if it already exists
+     *
+     */
+    private class GetSessionlastPositionsTask extends AsyncTask<Void, Void, LoginStatus> {
+        private PhoneTrackClient client;
+        private DBSession session;
+        private IGetLastPosCallback callback;
+        private List<Throwable> exceptions = new ArrayList<>();
+        private Map<String, DBLocation> locations;
+
+        public GetSessionlastPositionsTask(DBSession session, IGetLastPosCallback callback) {
+            this.session = session;
+            this.callback = callback;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected LoginStatus doInBackground(Void... voids) {
+            client = createPhoneTrackClient();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+            if (LoggerService.DEBUG) { Log.i(getClass().getSimpleName(), "STARTING share device"); }
+            LoginStatus status = LoginStatus.OK;
+            locations = null;
+            try {
+                ServerResponse.GetSessionLastPositionsResponse response = client.getSessionLastPositions(customCertManager, session);
+                locations = response.getPositions(session);
+                if (LoggerService.DEBUG) {
+                    Log.i(getClass().getSimpleName(), "HERE ARE THE positions BIIIITCH "+locations.keySet().size());
+                }
+
+            } catch (IOException e) {
+                if (LoggerService.DEBUG) {
+                    Log.e(getClass().getSimpleName(), "Exception", e);
+                }
+                exceptions.add(e);
+                status = LoginStatus.CONNECTION_FAILED;
+            } catch (JSONException e) {
+                if (LoggerService.DEBUG) {
+                    Log.e(getClass().getSimpleName(), "Exception", e);
+                }
+                exceptions.add(e);
+                status = LoginStatus.JSON_FAILED;
+            }
+            if (LoggerService.DEBUG) {
+                Log.i(getClass().getSimpleName(), "FINISHED share device");
+            }
+            return status;
+        }
+
+        @Override
+        protected void onPostExecute(LoginStatus status) {
+            super.onPostExecute(status);
+            String errorString = "";
+            if (status != LoginStatus.OK) {
+                errorString = appContext.getString(
+                        R.string.error_sync,
+                        appContext.getString(status.str)
+                );
+                errorString += "\n\n";
+                for (Throwable e : exceptions) {
+                    errorString += e.getClass().getName() + ": " + e.getMessage();
+                }
+            }
+            callback.onFinish(locations, errorString);
         }
     }
 }

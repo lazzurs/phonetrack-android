@@ -66,7 +66,7 @@ import static android.location.LocationProvider.TEMPORARILY_UNAVAILABLE;
 
 public class LoggerService extends Service {
 
-    public static float battery = -1.0f;
+    public static double battery = -1.0;
 
     private static final String TAG = LoggerService.class.getSimpleName();
     public static final String BROADCAST_LOCATION_STARTED = "net.eneiluj.nextcloud.phonetrack.broadcast.location_started";
@@ -571,22 +571,22 @@ public class LoggerService extends Service {
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             if(level == -1 || scale == -1) {
-                battery = 0.0f;
+                battery = 0.0;
             }
-            battery = ((float)level / (float)scale) * 100.0f;
+            battery = ((double)level / (double)scale) * 100.0;
             if (LoggerService.DEBUG) { Log.d(TAG, "[BATT changed " + battery + "]"); }
         }
     };
 
-    private float getBatteryLevelOnce() {
+    private double getBatteryLevelOnce() {
         Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
         if(level == -1 || scale == -1) {
-            return 0.0f;
+            return 0.0;
         }
 
-        return ((float)level / (float)scale) * 100.0f;
+        return ((double)level / (double)scale) * 100.0;
     }
 
     /**

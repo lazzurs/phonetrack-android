@@ -9,18 +9,18 @@ public class DBLocation {
 
     private long id;
     private long logjobId;
-    private float lat;
-    private float lon;
-    private int timestamp;
-    private float bearing;
-    private float altitude;
-    private float speed;
-    private float accuracy;
-    private int satellites;
-    private float battery;
+    private double lat;
+    private double lon;
+    private long timestamp;
+    private double bearing;
+    private double altitude;
+    private double speed;
+    private double accuracy;
+    private double satellites;
+    private double battery;
 
-    public DBLocation(long id, long logjobId, float lat, float lon, int timestamp, float bearing,
-                      float altitude, float speed, float accuracy, int satellites, float battery) {
+    public DBLocation(long id, long logjobId, double lat, double lon, long timestamp, double bearing,
+                      double altitude, double speed, double accuracy, long satellites, double battery) {
         this.id = id;
         this.logjobId = logjobId;
         this.lat = lat;
@@ -32,6 +32,10 @@ public class DBLocation {
         this.accuracy = accuracy;
         this.satellites = satellites;
         this.battery = battery;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public void setId(long id) {
@@ -46,80 +50,76 @@ public class DBLocation {
         this.logjobId = logjobId;
     }
 
-    public float getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public void setLat(float lat) {
+    public void setLat(double lat) {
         this.lat = lat;
     }
 
-    public float getLon() {
+    public double getLon() {
         return lon;
     }
 
-    public void setLon(float lon) {
+    public void setLon(double lon) {
         this.lon = lon;
     }
 
-    public int getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
-    public float getBearing() {
+    public double getBearing() {
         return bearing;
     }
 
-    public void setBearing(float bearing) {
+    public void setBearing(double bearing) {
         this.bearing = bearing;
     }
 
-    public float getAltitude() {
+    public double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(float altitude) {
+    public void setAltitude(double altitude) {
         this.altitude = altitude;
     }
 
-    public float getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(float speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
     }
 
-    public float getAccuracy() {
+    public double getAccuracy() {
         return accuracy;
     }
 
-    public void setAccuracy(float accuracy) {
+    public void setAccuracy(double accuracy) {
         this.accuracy = accuracy;
     }
 
-    public int getSatellites() {
+    public double getSatellites() {
         return satellites;
     }
 
-    public void setSatellites(int satellites) {
+    public void setSatellites(double satellites) {
         this.satellites = satellites;
     }
 
-    public float getBattery() {
+    public double getBattery() {
         return battery;
     }
 
-    public void setBattery(float battery) {
+    public void setBattery(double battery) {
         this.battery = battery;
-    }
-
-    public long getId() {
-        return id;
     }
 
     @Override

@@ -11,9 +11,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
+import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
@@ -65,6 +69,16 @@ public class ServerResponse {
         }
     }
 
+    public static class GetSessionLastPositionsResponse extends ServerResponse {
+        public GetSessionLastPositionsResponse(PhoneTrackClient.ResponseData response) {
+            super(response);
+        }
+
+        public Map<String, DBLocation> getPositions(DBSession session) throws JSONException {
+            return getPositionsFromJSON(new JSONObject(getContent()), session);
+        }
+    }
+
     private final PhoneTrackClient.ResponseData response;
 
     public ServerResponse(PhoneTrackClient.ResponseData response) {
@@ -94,6 +108,33 @@ public class ServerResponse {
             }
         }
         return null;
+    }
+
+    protected Map<String, DBLocation> getPositionsFromJSON(JSONObject json, DBSession session) throws JSONException {
+        Map<String, DBLocation> locations = new HashMap<>();
+        if (json.has(session.getPublicToken())) {
+            JSONObject jsonLocs = json.getJSONObject(session.getPublicToken());
+            Iterator<String> keys = jsonLocs.keys();
+            while(keys.hasNext()) {
+                String devName = keys.next();
+                JSONObject oneLoc = jsonLocs.getJSONObject(devName);
+                locations.put(devName,
+                        new DBLocation(
+                                0, 0,
+                                oneLoc.getDouble("lat"),
+                                oneLoc.getDouble("lon"),
+                                oneLoc.getLong("timestamp"),
+                                oneLoc.getDouble("bearing"),
+                                oneLoc.getDouble("altitude"),
+                                oneLoc.getDouble("speed"),
+                                oneLoc.getDouble("accuracy"),
+                                oneLoc.getLong("satellites"),
+                                oneLoc.getDouble("batterylevel")
+                        )
+                );
+            }
+        }
+        return locations;
     }
 
     protected DBSession getSessionFromJSON(JSONArray json, PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {

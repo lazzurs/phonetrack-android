@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 
 import at.bitfire.cert4android.CustomCertManager;
 import net.eneiluj.nextcloud.phonetrack.BuildConfig;
+import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 
 @WorkerThread
 public class PhoneTrackClient {
@@ -65,12 +66,17 @@ public class PhoneTrackClient {
 
     public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
         String target = "api/getsessions";
-        return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_GET, null, lastETag));
+        return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_GET, null, lastETag, true));
     }
 
     public ServerResponse.ShareDeviceResponse shareDevice(CustomCertManager ccm, String token, String deviceName) throws JSONException, IOException {
         String target = "api/sharedevice/" + token + "/" + deviceName;
-        return new ServerResponse.ShareDeviceResponse(requestServer(ccm, target, METHOD_GET, null, null));
+        return new ServerResponse.ShareDeviceResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+    }
+
+    public ServerResponse.GetSessionLastPositionsResponse getSessionLastPositions(CustomCertManager ccm, DBSession session) throws JSONException, IOException {
+        String target = "api/getlastpositions/" + session.getPublicToken();
+        return new ServerResponse.GetSessionLastPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, false));
     }
 
     /**
@@ -83,16 +89,18 @@ public class PhoneTrackClient {
      * @throws MalformedURLException
      * @throws IOException
      */
-    private ResponseData requestServer(CustomCertManager ccm, String target, String method, JSONObject params, String lastETag)
+    private ResponseData requestServer(CustomCertManager ccm, String target, String method, JSONObject params, String lastETag, boolean needLogin)
             throws IOException {
         StringBuffer result = new StringBuffer();
         // setup connection
         String targetURL = url + "index.php/apps/phonetrack/" + target;
         HttpURLConnection con = SupportUtil.getHttpURLConnection(ccm, targetURL);
         con.setRequestMethod(method);
-        con.setRequestProperty(
-                "Authorization",
-                "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+        if (needLogin) {
+            con.setRequestProperty(
+                    "Authorization",
+                    "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+        }
         // https://github.com/square/retrofit/issues/805#issuecomment-93426183
         con.setRequestProperty( "Connection", "Close");
         con.setRequestProperty("User-Agent", "phonetrack-android/" + BuildConfig.VERSION_NAME);

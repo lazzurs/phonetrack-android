@@ -75,7 +75,7 @@ public class WebTrackService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[websync start]"); }
 
-        String logjobId = intent.getStringExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID);
+        long logjobId = intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0);
 
         if (pi != null) {
             // cancel pending alarm
@@ -94,19 +94,19 @@ public class WebTrackService extends IntentService {
     /**
      * Send all positions in database
      */
-    private void doSync(String ljIdToSync) {
+    private void doSync(long ljIdToSync) {
         boolean anyError = false;
 
         // get the logjobs
         List<DBLogjob> logjobs;
-        if (ljIdToSync == null) {
+        if (ljIdToSync == 0) {
             // iterate over positions in db
             logjobs = db.getLogjobs();
         }
         // if only one logjob is asked, just get this one
         else {
             logjobs = new ArrayList<>();
-            logjobs.add(db.getLogjob(Long.valueOf(ljIdToSync)));
+            logjobs.add(db.getLogjob(ljIdToSync));
         }
 
         if (logjobs.size() > 0) {

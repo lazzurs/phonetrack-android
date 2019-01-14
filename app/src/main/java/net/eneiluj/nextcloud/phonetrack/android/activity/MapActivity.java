@@ -264,6 +264,7 @@ public class MapActivity extends Activity {
             public void run() {
                 // launch task of server sync with callback
                 Log.i(TAG, "[Task run]");
+                db.getPhonetrackServerSyncHelper().getSessionLastPositions(session, syncCallBack);
             }
         };
         timer = new Timer();
@@ -280,16 +281,10 @@ public class MapActivity extends Activity {
 
     private IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
         @Override
-        public void onFinish() {
-
-        }
-
-        @Override
         public void onFinish(Map<String, DBLocation> locations, String message) {
-        }
-
-        @Override
-        public void onScheduled() {
+            for (String devName : locations.keySet()) {
+                Log.i(TAG, "Results : "+devName+" | "+locations.get(devName));
+            }
         }
     };
 }
