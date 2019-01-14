@@ -111,6 +111,6 @@ public class ServerResponse {
         Context appContext = dbHelper.getContext().getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
         String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
-        return new DBSession(0, name, token, url, publicToken, isFromShare);
+        return new DBSession(0, token, name, url, publicToken, isFromShare);
     }
 }
