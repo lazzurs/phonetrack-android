@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+- send multiple point in one request if more than 5 points
+
+### Fixed
+
 ## 0.0.6 – 2019-01-11
 ### Added
 - add logjob option to keep gps on between fixes
