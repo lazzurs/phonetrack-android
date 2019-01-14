@@ -51,8 +51,8 @@
     <string name="setting_min_time_long">Tempo minimo tra due punti registrati (secondi)</string>
     <string name="setting_min_accuracy">Precisione minima</string>
     <string name="setting_min_accuracy_long">Precisione minima per i punti registrati (metri)</string>
-    <string name="setting_keepgps_title">Keep GPS on between fixes</string>
-    <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
+    <string name="setting_keepgps_title">Tieni il GPS acceso tra le correzioni</string>
+    <string name="setting_keepgps_summary">Questo avrà posizioni più precise ma avrà più effetto sulla durata della batteria. Utilizzalo quando il tempo minimo è inferiore a 60 secondi.</string>
     <string name="logjob_info_dialog_title">Circa %s</string>
     <string name="logjob_info_nbsync">%d posizioni inviate</string>
     <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
