@@ -51,6 +51,7 @@ public class WebTrackHelper {
     public static final String PARAM_BATTERY = "bat";
     public static final String PARAM_SATELLITES = "sat";
     public static final String PARAM_USERAGENT = "useragent";
+    private static final String application_json = "application/json";
 
     private final String userAgent;
     private final Context context;
@@ -69,6 +70,102 @@ public class WebTrackHelper {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         userAgent = context.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME + "; " + System.getProperty("http.agent");
+    }
+
+    @SuppressWarnings("StringConcatenationInLoop")
+    private String postMultiple(URL url, JSONObject params) throws IOException {
+
+        if (LoggerService.DEBUG) { Log.d(TAG, "[postMultiple: " + url + " : " + params + "]"); }
+        String response;
+
+        HttpURLConnection connection = null;
+        InputStream in = null;
+        //OutputStream out = null;
+        try {
+            boolean redirect;
+            int redirectTries = 5;
+            do {
+                redirect = false;
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("User-Agent", userAgent);
+                connection.setInstanceFollowRedirects(false);
+                connection.setConnectTimeout(SOCKET_TIMEOUT);
+                connection.setReadTimeout(SOCKET_TIMEOUT);
+                connection.setUseCaches(true);
+
+                byte[] paramData = null;
+                if (params != null) {
+                    paramData = params.toString().getBytes();
+                    Log.d(getClass().getSimpleName(), "Params: " + params);
+                    connection.setFixedLengthStreamingMode(paramData.length);
+                    connection.setRequestProperty("Content-Type", application_json);
+                    connection.setDoOutput(true);
+                    OutputStream os = connection.getOutputStream();
+                    os.write(paramData);
+                    os.flush();
+                    os.close();
+                }
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_MOVED_PERM
+                        || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+                        || responseCode == HttpURLConnection.HTTP_SEE_OTHER
+                        || responseCode == 307) {
+                    URL base = connection.getURL();
+                    String location = connection.getHeaderField("Location");
+                    if (LoggerService.DEBUG) { Log.d(TAG, "[postMultiple redirect: " + location + "]"); }
+                    if (location == null || redirectTries == 0) {
+                        throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
+                    }
+                    redirect = true;
+                    redirectTries--;
+                    url = new URL(base, location);
+                    String h1 = base.getHost();
+                    String h2 = url.getHost();
+                    if (h1 != null && !h1.equalsIgnoreCase(h2)) {
+                        throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
+                    }
+                    try {
+                        //out.close();
+                        connection.getInputStream().close();
+                        connection.disconnect();
+                    } catch (final IOException e) {
+                        if (LoggerService.DEBUG) { Log.d(TAG, "[connection cleanup failed (ignored)]"); }
+                    }
+                }
+                else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    throw new IOException(context.getString(R.string.e_auth_failure, responseCode));
+                }
+                else if (responseCode != HttpURLConnection.HTTP_OK) {
+                    throw new IOException(context.getString(R.string.e_http_code, responseCode));
+                }
+            } while (redirect);
+
+            in = new BufferedInputStream(connection.getInputStream());
+
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String inputLine;
+            while ((inputLine = br.readLine()) != null) {
+                sb.append(inputLine);
+            }
+            response = sb.toString();
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            } catch (final IOException e) {
+                if (LoggerService.DEBUG) { Log.d(TAG, "[connection cleanup failed (ignored)]"); }
+            }
+        }
+        if (LoggerService.DEBUG) { Log.d(TAG, "[postMultiple response: " + response + "]"); }
+        return response;
     }
 
     /**
@@ -202,6 +299,27 @@ public class WebTrackHelper {
     }
 
     /**
+     * post multiple positions in one request, build the JSON parameters
+     * @param url
+     * @param params
+     * @throws IOException
+     */
+    public void postMultiplePositionsToPhoneTrack(URL url, JSONObject params) throws IOException {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[postMultiplePositionsToPhoneTrack]"); }
+        String response = postMultiple(url, params);
+        int done = 0;
+        try {
+            JSONObject json = new JSONObject(response);
+            done = json.getInt("done");
+        } catch (JSONException e) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[postMultiplePositionsToPhoneTrack json failed: " + e + "]"); }
+        }
+        if (done != 1) {
+            throw new IOException(context.getString(R.string.e_server_response));
+        }
+    }
+
+    /**
      * Upload position to server
      * @param params Map of parameters (position properties)
      * @throws IOException Connection error
@@ -284,6 +402,13 @@ public class WebTrackHelper {
         return new URL(
                 lj.getUrl().replaceAll("/+$", "") +
                         "/index.php/apps/phonetrack/logPost/" + lj.getToken() + "/" + lj.getDeviceName()
+        );
+    }
+
+    public URL getUrlMultipleFromPhoneTrackLogjob(DBLogjob lj) throws MalformedURLException {
+        return new URL(
+                lj.getUrl().replaceAll("/+$", "") +
+                        "/index.php/apps/phonetrack/logPostMultiple/" + lj.getToken() + "/" + lj.getDeviceName()
         );
     }
 }

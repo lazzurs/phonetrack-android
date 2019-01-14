@@ -27,6 +27,10 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.WebTrackHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static android.app.PendingIntent.FLAG_ONE_SHOT;
 
 /**
@@ -118,12 +122,30 @@ public class WebTrackService extends IntentService {
                 if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
                     URL url = web.getUrlFromPhoneTrackLogjob(logjob);
                     List<DBLocation> locations = db.getLocationOfLogjob(ljId);
-                    for (DBLocation loc : locations) {
-                        long locId = loc.getId();
-                        Map<String, String> params = dbLocationToMap(loc);
-                        web.postPositionToPhoneTrack(url, params);
-                        db.deleteLocation(locId);
-                        db.incNbSync(logjob);
+                    // send one by one
+                    if (locations.size() <= 5) {
+                        for (DBLocation loc : locations) {
+                            long locId = loc.getId();
+                            Map<String, String> params = dbLocationToMap(loc);
+                            web.postPositionToPhoneTrack(url, params);
+                            db.deleteLocation(locId);
+                            db.incNbSync(logjob);
+                            db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
+                            Intent intent = new Intent(BROADCAST_SYNC_DONE);
+                            intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                            sendBroadcast(intent);
+                        }
+                    }
+                    // send all in one request
+                    else {
+                        url = web.getUrlMultipleFromPhoneTrackLogjob(logjob);
+                        JSONObject params = dbLocationsToJSON(locations);
+                        web.postMultiplePositionsToPhoneTrack(url, params);
+                        for (DBLocation loc : locations) {
+                            long locId = loc.getId();
+                            db.deleteLocation(locId);
+                            db.incNbSync(logjob);
+                        }
                         db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
@@ -159,10 +181,10 @@ public class WebTrackService extends IntentService {
                 }
                 anyError = true;
                 handleError(e, ljId);
-            } /*catch (JSONException e2) {
+            } catch (JSONException e2) {
                 anyError = true;
                 handleError(e2, ljId);
-            }*/
+            }
         }
         // retry only if there was any error and tracking is on
         if (anyError && LoggerService.isRunning()) {
@@ -232,6 +254,32 @@ public class WebTrackService extends IntentService {
         params.put(WebTrackHelper.PARAM_BATTERY, String.valueOf(loc.getBattery()));
         params.put(WebTrackHelper.PARAM_USERAGENT, userAgent);
         return params;
+    }
+
+    private JSONObject dbLocationsToJSON(List<DBLocation> locations) throws JSONException {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[DBLOC to JSONObject]"); }
+
+        JSONObject result = new JSONObject();
+        JSONArray points = new JSONArray();
+
+        for (DBLocation loc : locations) {
+            JSONArray point = new JSONArray();
+            point.put(loc.getLat());
+            point.put(loc.getLon());
+            point.put(loc.getTimestamp());
+            point.put( (loc.getAltitude() != -1.0) ? loc.getAltitude() : "");
+            point.put( (loc.getAccuracy() != -1.0) ? loc.getAccuracy() : "");
+            point.put( String.valueOf(loc.getBattery()));
+            point.put( (loc.getSatellites() != -1) ? String.valueOf(loc.getSatellites()) : "");
+            point.put(userAgent);
+            point.put( (loc.getSpeed() != -1.0) ? String.valueOf(loc.getSpeed()) : "");
+            point.put( (loc.getBearing() != -1.0) ? String.valueOf(loc.getBearing()) : "");
+
+            points.put(point);
+        }
+
+        result.put("points", points);
+        return result;
     }
 
     /**
