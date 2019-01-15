@@ -40,6 +40,7 @@
     <string name="action_undo">Undo</string>
     <string name="action_drawer_open">open side menu</string>
     <string name="action_drawer_close">close side menu</string>
+    <string name="action_frequency">Set refresh frequency</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_save">Save</string>
     <string name="menu_select_session">Use Nextcloud PhoneTrack session</string>
@@ -67,6 +68,8 @@
     <string name="edit_logjob_choose_session_dialog_title">Choose a session</string>
     <string name="map_choose_session_dialog_title">Choose a session to display on the map</string>
     <string name="map_choose_session_dialog_impossible">Impossible to display a session on the map</string>
+    <string name="map_choose_frequency_dialog_title">Choose map refresh frequency (sec)</string>
+    <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
 
 
     <string name="is_running">running (%s pending, %s sent)</string>

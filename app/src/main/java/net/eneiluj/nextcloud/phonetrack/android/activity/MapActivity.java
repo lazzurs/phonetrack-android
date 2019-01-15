@@ -1,7 +1,12 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,18 +26,23 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
+import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 
@@ -100,14 +110,18 @@ public class MapActivity extends AppCompatActivity {
     RecyclerView listNavigationMenu;
 
     private ActionBarDrawerToggle drawerToggle;
+    private SharedPreferences prefs;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         setContentView(R.layout.drawer_layout_map);
         ButterKnife.bind(this);
         setupActionBar();
         drawerToggle.syncState();
+
 
         markers = new HashMap<>();
         autoZoom = true;
@@ -216,6 +230,7 @@ public class MapActivity extends AppCompatActivity {
                 else {
                     btZoomAuto.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
                     autoZoom = true;
+                    zoomOnAllMarkers();
                 }
             }
         });
@@ -272,7 +287,7 @@ public class MapActivity extends AppCompatActivity {
             map.getController().animateTo(myPosition);
         }
         */
-
+        setupNavigationMenu();
         startRefresh();
         Log.i(TAG, "[onResume end]");
     }
@@ -288,6 +303,81 @@ public class MapActivity extends AppCompatActivity {
 
         stopRefresh();
         Log.i(TAG, "[onPause end]");
+    }
+
+    private void setupNavigationMenu() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int freq = prefs.getInt("map_freq", 15);
+        //final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
+        final NavigationAdapter.NavigationItem itemFreq = new NavigationAdapter.NavigationItem("freq", getString(R.string.action_frequency), freq, android.R.drawable.ic_menu_mapmode);
+        //final NavigationAdapter.NavigationItem itemSettings = new NavigationAdapter.NavigationItem("settings", getString(R.string.action_settings), null, R.drawable.ic_settings_grey600_24dp);
+        //final NavigationAdapter.NavigationItem itemAbout = new NavigationAdapter.NavigationItem("about", getString(R.string.simple_about), null, R.drawable.ic_info_outline_grey600_24dp);
+
+        ArrayList<NavigationAdapter.NavigationItem> itemsMenu = new ArrayList<>();
+        itemsMenu.add(itemFreq);
+        //itemsMenu.add(itemSettings);
+        //itemsMenu.add(itemAbout);
+
+        NavigationAdapter adapterMenu = new NavigationAdapter(new NavigationAdapter.ClickListener() {
+            @Override
+            public void onItemClick(NavigationAdapter.NavigationItem item) {
+                /*if (item == itemSettings) {
+                    Intent settingsIntent = new Intent(getApplicationContext(), PreferencesActivity.class);
+                    startActivityForResult(settingsIntent, server_settings);
+                }
+                else if (item == itemAbout) {
+                    Intent aboutIntent = new Intent(getApplicationContext(), AboutActivity.class);
+                    startActivityForResult(aboutIntent, about);
+                }
+                else*/ if (item == itemFreq) {
+                    int currentFreq = prefs.getInt("map_freq", 15);
+
+                    final EditText fromUrlEdit = new EditText(map.getContext());
+                    fromUrlEdit.setText(String.valueOf(currentFreq));
+                    fromUrlEdit.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+                    AlertDialog.Builder fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
+                    fromUrlBuilder.setMessage(getString(R.string.map_choose_frequency_dialog_message));
+                    fromUrlBuilder.setTitle(getString(R.string.map_choose_frequency_dialog_title));
+
+                    fromUrlBuilder.setView(fromUrlEdit);
+
+                    fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            setFrequency(fromUrlEdit.getText().toString());
+                            Log.i(TAG, "[CHANGE FREQ] "+fromUrlEdit.getText().toString());
+                        }
+                    });
+
+                    fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // what ever you want to do with No option.
+                        }
+                    });
+
+                    // create the alert dialog
+                    Dialog fromUrlDialog = fromUrlBuilder.create();
+                    fromUrlDialog.show();
+                }
+            }
+
+            @Override
+            public void onIconClick(NavigationAdapter.NavigationItem item) {
+                onItemClick(item);
+            }
+        });
+
+        adapterMenu.setItems(itemsMenu);
+        listNavigationMenu.setAdapter(adapterMenu);
+    }
+
+    private void setFrequency(String f) {
+        int freq = Integer.valueOf(f);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putInt("map_freq", freq).apply();
+        stopRefresh();
+        startRefresh();
+        // to update freq displayed value
+        setupNavigationMenu();
     }
 
     private void zoomOnAllMarkers() {
@@ -388,8 +478,9 @@ public class MapActivity extends AppCompatActivity {
                 db.getPhonetrackServerSyncHelper().getSessionLastPositions(session, syncCallBack);
             }
         };
+        int currentFreq = prefs.getInt("map_freq", 15);
         timer = new Timer();
-        timer.scheduleAtFixedRate(timerTask, 0, 10000);
+        timer.scheduleAtFixedRate(timerTask, 0, currentFreq*1000);
     }
 
     public void stopRefresh() {
