@@ -35,6 +35,7 @@ import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
@@ -45,6 +46,9 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -66,8 +70,9 @@ public class MapActivity extends Activity {
 
     private ImageButton btCenterMap;
     private ImageButton btFollowMe;
+    private ImageButton btZoom;
 
-    private Map<String, DBLocation> locations;
+    //private Map<String, DBLocation> locations;
     private Map<String, Marker> markers;
 
     private DBSession session;
@@ -75,6 +80,8 @@ public class MapActivity extends Activity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        markers = new HashMap<>();
 
         //load/initialize the osmdroid configuration, this can be done
         this.ctx = getApplicationContext();
@@ -97,6 +104,7 @@ public class MapActivity extends Activity {
 
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setMaxZoomLevel(20.0);
 
         map.setMultiTouchControls(true);
 
@@ -140,20 +148,20 @@ public class MapActivity extends Activity {
             }
         });
 
-        btFollowMe = (ImageButton) findViewById(R.id.ic_zoom_all);
+        btZoom = (ImageButton) findViewById(R.id.ic_zoom_all);
         //btFollowMe.setColorFilter(Color.argb(255, 128, 128, 128));
 
-        btFollowMe.setOnClickListener(new View.OnClickListener() {
+        btZoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "btZoom clicked ");
-                //zoomOnAllMarkers();
+                zoomOnAllMarkers();
             }
         });
 
 
         IMapController mapController = map.getController();
-        mapController.setZoom(15.5);
+        mapController.setZoom(2.0);
         //Location startPoint = this.mLocationOverlay.get
         //System.out.println("STARTPOINT" + startPoint);
         //mapController.setCenter(new GeoPoint(startPoint.getLatitude(), startPoint.getLongitude()));
@@ -177,13 +185,14 @@ public class MapActivity extends Activity {
 
 
         //build a marker
-        Marker m = new Marker(map);
-        m.setTextLabelBackgroundColor(Color.GREEN);
+        /*Marker m = new Marker(map);
+        //m.setTextLabelBackgroundColor(Color.GREEN);
         BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, "A", R.color.bg_attention, android.R.color.black);
         m.setIcon(bmd);
         m.setTitle("hello world");
         m.setPosition(new GeoPoint(43.6617,3.8473));
         map.getOverlays().add(m);
+        */
     }
 
     public void onResume(){
@@ -197,7 +206,7 @@ public class MapActivity extends Activity {
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
 
         this.mLocationOverlay.enableMyLocation();
-        //this.mLocationOverlay.enableFollowLocation();
+        this.mLocationOverlay.enableFollowLocation();
         Location currentLocation = mLocationOverlay.getLastFix();
         if (currentLocation != null) {
             GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -219,6 +228,58 @@ public class MapActivity extends Activity {
 
         stopRefresh();
         Log.i(TAG, "[onPause end]");
+    }
+
+    private void zoomOnAllMarkers() {
+        if (markers.keySet().size() == 0) {
+            return;
+        }
+        boolean selectMode = false;
+        List<GeoPoint> points = new ArrayList<>();
+        for (String devName : markers.keySet()) {
+            Marker m = markers.get(devName);
+            if (m.isInfoWindowShown()) {
+                if (selectMode) {
+
+                } else {
+                    selectMode = true;
+                    points.clear();
+                }
+                points.add(new GeoPoint(m.getPosition().getLatitude(), m.getPosition().getLongitude()));
+            } else {
+                if (selectMode) {
+                } else {
+                    points.add(new GeoPoint(m.getPosition().getLatitude(), m.getPosition().getLongitude()));
+                }
+            }
+        }
+        if (points.size() == 1) {
+            map.getController().setCenter(
+                    new GeoPoint(points.get(0).getLatitude(), points.get(0).getLongitude())
+            );
+            map.getController().setZoom(18.0);
+        }
+        else {
+            BoundingBox bb = new BoundingBox(
+                    points.get(0).getLatitude(), points.get(0).getLongitude(),
+                    points.get(0).getLatitude(), points.get(0).getLongitude()
+            );
+            for (GeoPoint point : points) {
+                if (point.getLatitude() < bb.getLatSouth()) {
+                    bb.set(bb.getLatNorth(), bb.getLonEast(), point.getLatitude(), bb.getLonWest());
+                }
+                if (point.getLatitude() > bb.getLatNorth()) {
+                    bb.set(point.getLatitude(), bb.getLonEast(), bb.getLatSouth(), bb.getLonWest());
+                }
+                if (point.getLongitude() > bb.getLonEast()) {
+                    bb.set(bb.getLatNorth(), point.getLongitude(), bb.getLatSouth(), bb.getLonWest());
+                }
+                if (point.getLongitude() < bb.getLonWest()) {
+                    bb.set(bb.getLatNorth(), bb.getLonEast(), bb.getLatSouth(), point.getLongitude());
+                }
+            }
+            map.zoomToBoundingBox(bb, true, 40);
+        }
     }
 
     public BitmapDrawable writeOnDrawable(int drawableId, String text, int markerColorId, int textColorId){
@@ -284,6 +345,24 @@ public class MapActivity extends Activity {
         public void onFinish(Map<String, DBLocation> locations, String message) {
             for (String devName : locations.keySet()) {
                 Log.i(TAG, "Results : "+devName+" | "+locations.get(devName));
+                DBLocation loc = locations.get(devName);
+                if (markers.containsKey(devName)) {
+
+                }
+                else {
+                    Marker m = new Marker(map);
+                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), R.color.bg_attention, android.R.color.black);
+                    m.setIcon(bmd);
+                    m.setTitle(devName);
+                    //m.setPosition(new GeoPoint(43.6617,3.8473));
+                    map.getOverlays().add(m);
+                    markers.put(devName, m);
+                }
+                markers.get(devName).setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
+            }
+            // TODO
+            if (true) {
+                zoomOnAllMarkers();
             }
         }
     };
