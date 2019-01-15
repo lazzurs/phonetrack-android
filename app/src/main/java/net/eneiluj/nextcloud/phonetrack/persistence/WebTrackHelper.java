@@ -28,6 +28,9 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
+import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
+
+import at.bitfire.cert4android.CustomCertManager;
 
 /**
  * Web server communication
@@ -60,13 +63,16 @@ public class WebTrackHelper {
     // Socket timeout in milliseconds
     static final int SOCKET_TIMEOUT = 30 * 1000;
 
+    private CustomCertManager certManager;
+
 
     /**
      * Constructor
      * @param ctx Context
      */
-    public WebTrackHelper(Context ctx) {
+    public WebTrackHelper(Context ctx, CustomCertManager certManager) {
         context = ctx;
+        this.certManager = certManager;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         userAgent = context.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME + "; " + System.getProperty("http.agent");
@@ -86,7 +92,8 @@ public class WebTrackHelper {
             int redirectTries = 5;
             do {
                 redirect = false;
-                connection = (HttpURLConnection) url.openConnection();
+                //connection = (HttpURLConnection) url.openConnection();
+                connection = SupportUtil.getHttpURLConnection(certManager, url.toString());
                 connection.setDoOutput(true);
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("User-Agent", userAgent);
@@ -200,7 +207,8 @@ public class WebTrackHelper {
             int redirectTries = 5;
             do {
                 redirect = false;
-                connection = (HttpURLConnection) url.openConnection();
+                //connection = (HttpURLConnection) url.openConnection();
+                connection = SupportUtil.getHttpURLConnection(certManager, url.toString());
                 connection.setDoOutput(true);
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -339,7 +347,8 @@ public class WebTrackHelper {
         URL url = new URL(urlWithValues);
         // TODO do the GET request
         StringBuilder result = new StringBuilder();
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        //HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = SupportUtil.getHttpURLConnection(certManager, url.toString());
         conn.setInstanceFollowRedirects(false);
         conn.setConnectTimeout(SOCKET_TIMEOUT);
         conn.setReadTimeout(SOCKET_TIMEOUT);

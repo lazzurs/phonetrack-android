@@ -31,6 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import at.bitfire.cert4android.CustomCertManager;
+
 import static android.app.PendingIntent.FLAG_ONE_SHOT;
 
 /**
@@ -63,8 +65,9 @@ public class WebTrackService extends IntentService {
 
         userAgent = this.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME;
 
-        web = new WebTrackHelper(this);
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
+        CustomCertManager certManager = db.getPhonetrackServerSyncHelper().getCustomCertManager();
+        web = new WebTrackHelper(this, certManager);
     }
 
     /**
