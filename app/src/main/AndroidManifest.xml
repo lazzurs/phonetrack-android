@@ -102,6 +102,7 @@
         <activity
             android:name="net.eneiluj.nextcloud.phonetrack.android.activity.MapActivity"
             android:label="@string/simple_map"
+            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity" />
 
         <service

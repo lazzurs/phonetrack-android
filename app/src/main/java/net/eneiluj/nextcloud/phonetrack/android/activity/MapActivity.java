@@ -1,7 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -14,13 +13,22 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
@@ -48,7 +56,10 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MapActivity extends Activity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class MapActivity extends AppCompatActivity {
     MapView map = null;
 
     private static final String TAG = MapActivity.class.getSimpleName();
@@ -74,8 +85,29 @@ public class MapActivity extends Activity {
 
     private boolean autoZoom;
 
+    @BindView(R.id.mapActivityActionBar)
+    Toolbar toolbar;
+    @BindView(R.id.drawerLayoutMap)
+    DrawerLayout drawerLayoutMap;
+    @BindView(R.id.account)
+    TextView account;
+    @BindView(R.id.relativelayoutMap)
+    RelativeLayout relativeLayoutMap;
+
+    @BindView(R.id.navigationList)
+    RecyclerView listNavigationCategories;
+    @BindView(R.id.navigationMenu)
+    RecyclerView listNavigationMenu;
+
+    private ActionBarDrawerToggle drawerToggle;
+
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.drawer_layout_map);
+        ButterKnife.bind(this);
+        setupActionBar();
+        drawerToggle.syncState();
 
         markers = new HashMap<>();
         autoZoom = true;
@@ -97,7 +129,7 @@ public class MapActivity extends Activity {
         Log.i(TAG, "CREATE map : session : "+session);
 
         //inflate and create the map
-        setContentView(R.layout.activity_map);
+        //setContentView(R.layout.activity_map);
 
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
@@ -191,19 +223,6 @@ public class MapActivity extends Activity {
 
         IMapController mapController = map.getController();
         mapController.setZoom(2.0);
-        //Location startPoint = this.mLocationOverlay.get
-        //System.out.println("STARTPOINT" + startPoint);
-        //mapController.setCenter(new GeoPoint(startPoint.getLatitude(), startPoint.getLongitude()));
-
-        /*mRotationGestureOverlay = new RotationGestureOverlay(map);
-        mRotationGestureOverlay.setEnabled(true);
-        map.getOverlays().add(this.mRotationGestureOverlay);
-        */
-
-        /*this.mCompassOverlay = new CompassOverlay(ctx, map);
-        this.mCompassOverlay.enableCompass();
-        map.getOverlays().add(this.mCompassOverlay);
-        */
 
         final DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
         mScaleBarOverlay = new ScaleBarOverlay(map);
@@ -212,16 +231,27 @@ public class MapActivity extends Activity {
         mScaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);
         map.getOverlays().add(this.mScaleBarOverlay);
 
+    }
 
-        //build a marker
-        /*Marker m = new Marker(map);
-        //m.setTextLabelBackgroundColor(Color.GREEN);
-        BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, "A", R.color.bg_attention, android.R.color.black);
-        m.setIcon(bmd);
-        m.setTitle("hello world");
-        m.setPosition(new GeoPoint(43.6617,3.8473));
-        map.getOverlays().add(m);
-        */
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.syncState();
+    }
+
+    private void setupActionBar() {
+        Log.i(TAG, "[setupactionbar]");
+        setSupportActionBar(toolbar);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayoutMap, toolbar, R.string.action_drawer_open, R.string.action_drawer_close);
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayoutMap.addDrawerListener(drawerToggle);
+        setTitle("Map");
     }
 
     public void onResume(){

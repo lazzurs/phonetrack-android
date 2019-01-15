@@ -1,62 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <org.osmdroid.views.MapView android:id="@+id/map"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/mapActivityActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="4dp" />
+
+    <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/relativelayoutMap"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        tools:ignore="MergeRootFrame">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ic_center_map"
-        android:src="@android:drawable/ic_menu_mylocation"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:background="#00ffffff"
-        android:contentDescription="aaa"
-        android:cropToPadding="true" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ic_center_map"
+            android:src="@android:drawable/ic_menu_mylocation"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#00ffffff"
+            android:contentDescription="aaa"
+            android:cropToPadding="true" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ic_follow_me"
-        android:src="@android:drawable/ic_menu_directions"
-        android:background="#00ffffff"
-        android:contentDescription="bbb"
-        android:cropToPadding="true"
-        android:layout_below="@+id/ic_center_map"
-        android:layout_alignLeft="@+id/ic_center_map"
-        android:layout_alignStart="@+id/ic_center_map"
-        android:layout_marginTop="10dp" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ic_follow_me"
+            android:src="@android:drawable/ic_menu_directions"
+            android:background="#00ffffff"
+            android:contentDescription="bbb"
+            android:cropToPadding="true"
+            android:layout_below="@+id/ic_center_map"
+            android:layout_alignLeft="@+id/ic_center_map"
+            android:layout_alignStart="@+id/ic_center_map"
+            android:layout_marginTop="10dp" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ic_zoom_all"
-        android:src="@android:drawable/ic_menu_search"
-        android:background="#00ffffff"
-        android:contentDescription="bbb"
-        android:cropToPadding="true"
-        android:layout_below="@+id/ic_follow_me"
-        android:layout_alignLeft="@+id/ic_center_map"
-        android:layout_alignStart="@+id/ic_follow_me"
-        android:layout_marginTop="10dp" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ic_zoom_all"
+            android:src="@android:drawable/ic_menu_search"
+            android:background="#00ffffff"
+            android:contentDescription="bbb"
+            android:cropToPadding="true"
+            android:layout_below="@+id/ic_follow_me"
+            android:layout_alignLeft="@+id/ic_center_map"
+            android:layout_alignStart="@+id/ic_follow_me"
+            android:layout_marginTop="10dp" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ic_zoom_auto"
-        android:src="@android:drawable/ic_menu_zoom"
-        android:background="#00ffffff"
-        android:contentDescription="bbb"
-        android:cropToPadding="true"
-        android:layout_below="@+id/ic_zoom_all"
-        android:layout_alignLeft="@+id/ic_center_map"
-        android:layout_alignStart="@+id/ic_zoom_all"
-        android:layout_marginTop="10dp" />
-</RelativeLayout>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ic_zoom_auto"
+            android:src="@android:drawable/ic_menu_zoom"
+            android:background="#00ffffff"
+            android:contentDescription="bbb"
+            android:cropToPadding="true"
+            android:layout_below="@+id/ic_zoom_all"
+            android:layout_alignLeft="@+id/ic_center_map"
+            android:layout_alignStart="@+id/ic_zoom_all"
+            android:layout_marginTop="10dp" />
+    </RelativeLayout>
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
+
