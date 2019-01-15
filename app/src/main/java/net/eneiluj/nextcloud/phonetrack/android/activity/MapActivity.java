@@ -7,14 +7,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,13 +21,11 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
-import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 
 import org.osmdroid.api.IMapController;
@@ -41,7 +37,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
-import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -52,8 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay.backgroundColor;
 
 public class MapActivity extends Activity {
     MapView map = null;
@@ -68,9 +61,10 @@ public class MapActivity extends Activity {
     private ScaleBarOverlay mScaleBarOverlay;
     private Context ctx;
 
-    private ImageButton btCenterMap;
+    private ImageButton btDisplayMyLoc;
     private ImageButton btFollowMe;
     private ImageButton btZoom;
+    private ImageButton btZoomAuto;
 
     //private Map<String, DBLocation> locations;
     private Map<String, Marker> markers;
@@ -78,10 +72,13 @@ public class MapActivity extends Activity {
     private DBSession session;
     private PhoneTrackSQLiteOpenHelper db;
 
+    private boolean autoZoom;
+
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         markers = new HashMap<>();
+        autoZoom = true;
 
         //load/initialize the osmdroid configuration, this can be done
         this.ctx = getApplicationContext();
@@ -111,27 +108,28 @@ public class MapActivity extends Activity {
 
 
         this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
-        //this.mLocationOverlay.enableMyLocation();
+        this.mLocationOverlay.enableMyLocation();
         //this.mLocationOverlay.enableFollowLocation();
         this.mLocationOverlay.setEnableAutoStop(true);
         map.getOverlays().add(this.mLocationOverlay);
 
-        btCenterMap = (ImageButton) findViewById(R.id.ic_center_map);
+        btDisplayMyLoc = (ImageButton) findViewById(R.id.ic_center_map);
+        btDisplayMyLoc.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
 
-        btCenterMap.setOnClickListener(new View.OnClickListener() {
+
+        btDisplayMyLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "centerMap clicked ");
                 if (mLocationOverlay.isMyLocationEnabled()) {
                     mLocationOverlay.disableMyLocation();
+                    mLocationOverlay.disableFollowLocation();
+                    btDisplayMyLoc.setBackgroundResource(0);
+                    btFollowMe.setBackgroundResource(0);
                 }
                 else {
                     mLocationOverlay.enableMyLocation();
-                    Location currentLocation = mLocationOverlay.getLastFix();
-                    if (currentLocation != null) {
-                        GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-                        map.getController().animateTo(myPosition);
-                    }
+                    btDisplayMyLoc.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
                 }
             }
         });
@@ -143,8 +141,16 @@ public class MapActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "btFollowMe clicked ");
-                mLocationOverlay.enableMyLocation();
-                mLocationOverlay.enableFollowLocation();
+                if (mLocationOverlay.isFollowLocationEnabled()) {
+                    mLocationOverlay.disableFollowLocation();
+                    btFollowMe.setBackgroundResource(0);
+                }
+                else {
+                    mLocationOverlay.enableMyLocation();
+                    mLocationOverlay.enableFollowLocation();
+                    btFollowMe.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
+                    btDisplayMyLoc.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
+                }
             }
         });
 
@@ -156,6 +162,29 @@ public class MapActivity extends Activity {
             public void onClick(View v) {
                 Log.i(TAG, "btZoom clicked ");
                 zoomOnAllMarkers();
+            }
+        });
+
+        btZoomAuto = (ImageButton) findViewById(R.id.ic_zoom_auto);
+        if (!autoZoom) {
+            btZoomAuto.setBackgroundResource(0);
+        }
+        else {
+            btZoomAuto.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
+        }
+
+        btZoomAuto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "btZoom clicked ");
+                if (autoZoom) {
+                    btZoomAuto.setBackgroundResource(0);
+                    autoZoom = false;
+                }
+                else {
+                    btZoomAuto.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
+                    autoZoom = true;
+                }
             }
         });
 
@@ -205,13 +234,14 @@ public class MapActivity extends Activity {
 
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
 
-        this.mLocationOverlay.enableMyLocation();
-        this.mLocationOverlay.enableFollowLocation();
-        Location currentLocation = mLocationOverlay.getLastFix();
+        //this.mLocationOverlay.enableMyLocation();
+        //this.mLocationOverlay.enableFollowLocation();
+        /*Location currentLocation = mLocationOverlay.getLastFix();
         if (currentLocation != null) {
             GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
             map.getController().animateTo(myPosition);
         }
+        */
 
         startRefresh();
         Log.i(TAG, "[onResume end]");
@@ -360,8 +390,7 @@ public class MapActivity extends Activity {
                 }
                 markers.get(devName).setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
             }
-            // TODO
-            if (true) {
+            if (autoZoom) {
                 zoomOnAllMarkers();
             }
         }

@@ -46,4 +46,17 @@
         android:layout_alignLeft="@+id/ic_center_map"
         android:layout_alignStart="@+id/ic_follow_me"
         android:layout_marginTop="10dp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ic_zoom_auto"
+        android:src="@android:drawable/ic_menu_zoom"
+        android:background="#00ffffff"
+        android:contentDescription="bbb"
+        android:cropToPadding="true"
+        android:layout_below="@+id/ic_zoom_all"
+        android:layout_alignLeft="@+id/ic_center_map"
+        android:layout_alignStart="@+id/ic_zoom_all"
+        android:layout_marginTop="10dp" />
 </RelativeLayout>
