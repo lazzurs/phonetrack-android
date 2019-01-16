@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -22,7 +21,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
@@ -37,7 +35,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
@@ -75,6 +72,7 @@ public class MapActivity extends AppCompatActivity {
     private static final String TAG = MapActivity.class.getSimpleName();
 
     public static final String PARAM_SESSIONID = "net.eneiluj.nextcloud.phonetrack.mapSessionId";
+    public static final String ID_ITEM_ALL_DEVICES = "net.eneiluj.nextcloud.phonetrack.id_item_all_devices";
 
     private MyLocationNewOverlay mLocationOverlay;
     private CompassOverlay mCompassOverlay;
@@ -94,6 +92,7 @@ public class MapActivity extends AppCompatActivity {
     private PhoneTrackSQLiteOpenHelper db;
 
     private boolean autoZoom;
+    private String selectedDeviceItemId;
 
     @BindView(R.id.mapActivityActionBar)
     Toolbar toolbar;
@@ -105,9 +104,11 @@ public class MapActivity extends AppCompatActivity {
     RelativeLayout relativeLayoutMap;
 
     @BindView(R.id.navigationList)
-    RecyclerView listNavigationCategories;
+    RecyclerView listNavigationDevices;
     @BindView(R.id.navigationMenu)
     RecyclerView listNavigationMenu;
+
+    private NavigationAdapter adapterDevices;
 
     private ActionBarDrawerToggle drawerToggle;
     private SharedPreferences prefs;
@@ -125,6 +126,7 @@ public class MapActivity extends AppCompatActivity {
 
         markers = new HashMap<>();
         autoZoom = true;
+        selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
 
         //load/initialize the osmdroid configuration, this can be done
         this.ctx = getApplicationContext();
@@ -305,11 +307,58 @@ public class MapActivity extends AppCompatActivity {
         Log.i(TAG, "[onPause end]");
     }
 
+    private void setupNavigationDeviceList() {
+        ArrayList<NavigationAdapter.NavigationItem> itemsNavigationDevice = new ArrayList<>();
+
+        NavigationAdapter.NavigationItem itemAll = new NavigationAdapter.NavigationItem(ID_ITEM_ALL_DEVICES, getString(R.string.item_all_devices_label), null, R.drawable.ic_allgrey_24dp);
+        itemsNavigationDevice.add(itemAll);
+        for (String devName : markers.keySet()) {
+            NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, devName, null, R.drawable.ic_phone_android_grey_24dp);
+            itemsNavigationDevice.add(item);
+        }
+
+        adapterDevices = new NavigationAdapter(new NavigationAdapter.ClickListener() {
+            @Override
+            public void onItemClick(NavigationAdapter.NavigationItem item) {
+                selectItem(item, true);
+            }
+
+            private void selectItem(NavigationAdapter.NavigationItem item, boolean closeNavigation) {
+                adapterDevices.setSelectedItem(item.id);
+                Log.i(TAG, "[select item] "+item.id);
+                selectedDeviceItemId = item.id;
+
+                // update views
+                if (closeNavigation) {
+                    drawerLayoutMap.closeDrawers();
+                }
+                if (autoZoom) {
+                    zoomOnAllMarkers();
+                }
+            }
+
+            @Override
+            public void onIconClick(NavigationAdapter.NavigationItem item) {
+                onItemClick(item);
+            }
+        });
+
+        adapterDevices.setItems(itemsNavigationDevice);
+        if (markers.containsKey(selectedDeviceItemId)) {
+            adapterDevices.setSelectedItem(selectedDeviceItemId);
+        }
+        else {
+            adapterDevices.setSelectedItem(ID_ITEM_ALL_DEVICES);
+            selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
+        }
+        listNavigationDevices.setAdapter(adapterDevices);
+    }
+
     private void setupNavigationMenu() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int freq = prefs.getInt("map_freq", 15);
         //final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
-        final NavigationAdapter.NavigationItem itemFreq = new NavigationAdapter.NavigationItem("freq", getString(R.string.action_frequency), freq, android.R.drawable.ic_menu_mapmode);
+        final NavigationAdapter.NavigationItem itemFreq = new NavigationAdapter.NavigationItem("freq", getString(R.string.action_frequency), freq, R.drawable.ic_timer_grey_24dp);
         //final NavigationAdapter.NavigationItem itemSettings = new NavigationAdapter.NavigationItem("settings", getString(R.string.action_settings), null, R.drawable.ic_settings_grey600_24dp);
         //final NavigationAdapter.NavigationItem itemAbout = new NavigationAdapter.NavigationItem("about", getString(R.string.simple_about), null, R.drawable.ic_info_outline_grey600_24dp);
 
@@ -388,26 +437,31 @@ public class MapActivity extends AppCompatActivity {
         List<GeoPoint> points = new ArrayList<>();
         for (String devName : markers.keySet()) {
             Marker m = markers.get(devName);
-            if (m.isInfoWindowShown()) {
+            if (devName.equals(selectedDeviceItemId)) {
                 if (selectMode) {
 
-                } else {
+                }
+                else {
                     selectMode = true;
                     points.clear();
                 }
+                // anyway we want this point
                 points.add(new GeoPoint(m.getPosition().getLatitude(), m.getPosition().getLongitude()));
-            } else {
+            }
+            else {
                 if (selectMode) {
-                } else {
+                }
+                else {
                     points.add(new GeoPoint(m.getPosition().getLatitude(), m.getPosition().getLongitude()));
                 }
             }
         }
         if (points.size() == 1) {
-            map.getController().setCenter(
-                    new GeoPoint(points.get(0).getLatitude(), points.get(0).getLongitude())
-            );
+            GeoPoint p = new GeoPoint(points.get(0).getLatitude(), points.get(0).getLongitude());
+            //map.getController().setCenter(p);
+            map.getController().animateTo(p);
             map.getController().setZoom(18.0);
+            Log.i(TAG, "[set center] "+p);
         }
         else {
             BoundingBox bb = new BoundingBox(
@@ -511,6 +565,8 @@ public class MapActivity extends AppCompatActivity {
                 }
                 markers.get(devName).setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
             }
+
+            setupNavigationDeviceList();
             if (autoZoom) {
                 zoomOnAllMarkers();
             }

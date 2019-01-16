@@ -70,6 +70,8 @@
     <string name="map_choose_session_dialog_impossible">Impossible to display a session on the map</string>
     <string name="map_choose_frequency_dialog_title">Choose map refresh frequency (sec)</string>
     <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
+    <string name="item_all_devices_label">All device</string>
+
 
 
     <string name="is_running">running (%s pending, %s sent)</string>
