@@ -626,8 +626,9 @@ public class MapActivity extends AppCompatActivity {
                     //m.setPosition(new GeoPoint(43.6617,3.8473));
                     map.getOverlays().add(m);
                     markers.put(devName, m);
-                    locations.put(devName, loc);
                 }
+                // always update location data
+                locations.put(devName, loc);
                 Marker m = markers.get(devName);
                 String text = devName;
                 text += "\n"+sdfComplete.format(new Date(loc.getTimestamp()*1000));
@@ -648,6 +649,9 @@ public class MapActivity extends AppCompatActivity {
                 }
                 if (loc.getSatellites() != null) {
                     text += "\n"+getString(R.string.popup_satellites)+" : "+loc.getSatellites();
+                }
+                if (loc.getUserAgent() != null) {
+                    text += "\n"+getString(R.string.popup_user_agent)+" : "+loc.getUserAgent();
                 }
                 m.setTitle(text);
                 m.setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
