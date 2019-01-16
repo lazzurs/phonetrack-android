@@ -648,12 +648,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_time, loc.getTime() / 1000);
         values.put(key_lat, loc.getLatitude());
         values.put(key_lon, loc.getLongitude());
-        values.put(key_bearing, loc.hasBearing() ? loc.getBearing() : -1.0);
-        values.put(key_altitude, loc.hasAltitude() ? loc.getAltitude() : -1.0);
-        values.put(key_speed, loc.hasSpeed() ? loc.getSpeed() : -1.0);
-        values.put(key_accuracy, loc.hasAccuracy() ? loc.getAccuracy() : -1.0);
+        values.put(key_bearing, loc.hasBearing() ? loc.getBearing() : null);
+        values.put(key_altitude, loc.hasAltitude() ? loc.getAltitude() : null);
+        values.put(key_speed, loc.hasSpeed() ? loc.getSpeed() : null);
+        values.put(key_accuracy, loc.hasAccuracy() ? loc.getAccuracy() : null);
         values.put(key_battery, battery);
-        int sat = -1;
+        Integer sat = null;
         //if (LoggerService.DEBUG) { Log.d(TAG, "[PROVIDER "+loc.getProvider()+"]"); }
         if(loc.getProvider().equals("gps") && loc.getExtras() != null) {
             sat = loc.getExtras().getInt("satellites", -1);
@@ -728,18 +728,20 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     private DBLocation getLocationFromCursor(@NonNull Cursor cursor) {
+
+        Log.v(getClass().getSimpleName(), "altitude from db : "+cursor.isNull(6));
         return new DBLocation(
                 cursor.getLong(0),
                 cursor.getLong(1),
                 cursor.getDouble(2),
                 cursor.getDouble(3),
                 cursor.getLong(4),
-                cursor.getDouble(5),
-                cursor.getDouble(6),
-                cursor.getDouble(7),
-                cursor.getDouble(8),
-                cursor.getLong(9),
-                cursor.getDouble(10)
+                cursor.isNull(5) ? null : cursor.getDouble(5),
+                cursor.isNull(6) ? null : cursor.getDouble(6),
+                cursor.isNull(7) ? null : cursor.getDouble(7),
+                cursor.isNull(8) ? null : cursor.getDouble(8),
+                cursor.isNull(9) ? null : cursor.getLong(9),
+                cursor.isNull(10) ? null : cursor.getDouble(10)
         );
     }
 

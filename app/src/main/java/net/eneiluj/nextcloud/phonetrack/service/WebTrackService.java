@@ -249,11 +249,11 @@ public class WebTrackService extends IntentService {
         params.put(WebTrackHelper.PARAM_TIME, String.valueOf(loc.getTimestamp()));
         params.put(WebTrackHelper.PARAM_LAT, String.valueOf(loc.getLat()));
         params.put(WebTrackHelper.PARAM_LON, String.valueOf(loc.getLon()));
-        params.put(WebTrackHelper.PARAM_ALT, (loc.getAltitude() != -1.0) ? String.valueOf(loc.getAltitude()) : "");
-        params.put(WebTrackHelper.PARAM_ACCURACY, (loc.getAccuracy() != -1.0) ? String.valueOf(loc.getAccuracy()): "");
-        params.put(WebTrackHelper.PARAM_SPEED, (loc.getSpeed() != -1.0) ? String.valueOf(loc.getSpeed()) : "");
-        params.put(WebTrackHelper.PARAM_BEARING, (loc.getBearing() != -1.0) ? String.valueOf(loc.getBearing()) : "");
-        params.put(WebTrackHelper.PARAM_SATELLITES, (loc.getSatellites() != -1) ? String.valueOf(loc.getSatellites()) : "");
+        params.put(WebTrackHelper.PARAM_ALT, (loc.getAltitude() != null) ? String.valueOf(loc.getAltitude()) : "");
+        params.put(WebTrackHelper.PARAM_ACCURACY, (loc.getAccuracy() != null) ? String.valueOf(loc.getAccuracy()): "");
+        params.put(WebTrackHelper.PARAM_SPEED, (loc.getSpeed() != null) ? String.valueOf(loc.getSpeed()) : "");
+        params.put(WebTrackHelper.PARAM_BEARING, (loc.getBearing() != null) ? String.valueOf(loc.getBearing()) : "");
+        params.put(WebTrackHelper.PARAM_SATELLITES, (loc.getSatellites() != null) ? String.valueOf(loc.getSatellites()) : "");
         params.put(WebTrackHelper.PARAM_BATTERY, String.valueOf(loc.getBattery()));
         params.put(WebTrackHelper.PARAM_USERAGENT, userAgent);
         return params;
