@@ -16,10 +16,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -519,10 +516,12 @@ public class MapActivity extends AppCompatActivity {
         }
         if (points.size() == 1) {
             GeoPoint p = new GeoPoint(points.get(0).getLatitude(), points.get(0).getLongitude());
-            //map.getController().setCenter(p);
-            map.getController().animateTo(p, 18.0, (long) 1000);
             //map.getController().setZoom(18.0);
-            Log.i(TAG, "[set center] "+p);
+            //map.getController().setCenter(p);
+            //map.invalidate();
+            map.getController().animateTo(p, 18.0, (long) 1000);
+
+            Log.i(TAG, "[set center] "+p+" map center "+map.getMapCenter());
         }
         else {
             BoundingBox bb = new BoundingBox(
@@ -543,8 +542,12 @@ public class MapActivity extends AppCompatActivity {
                     bb.set(bb.getLatNorth(), bb.getLonEast(), bb.getLatSouth(), point.getLongitude());
                 }
             }
+            //map.postInvalidate();
             map.zoomToBoundingBox(bb, true, 40);
-            Log.i(TAG, "[zoomToBounds] "+bb+" "+mLocationOverlay.isFollowLocationEnabled());
+            //map.getController().setCenter(new GeoPoint(bb.getCenterLatitude(), bb.getCenterLongitude()));
+            //map.postInvalidate();
+            Log.i(TAG, "[zoomToBounds] "+bb+" map center "+map.getMapCenter());
+
         }
     }
 
@@ -647,6 +650,7 @@ public class MapActivity extends AppCompatActivity {
                 locations.remove(devToDel);
             }
 
+            map.invalidate();
             // update device list
             setupNavigationDeviceList();
             if (prefs.getBoolean("map_autozoom", true)) {
