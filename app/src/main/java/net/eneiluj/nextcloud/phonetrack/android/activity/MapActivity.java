@@ -16,6 +16,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -93,7 +97,6 @@ public class MapActivity extends AppCompatActivity {
     private DBSession session;
     private PhoneTrackSQLiteOpenHelper db;
 
-    private boolean autoZoom;
     private String selectedDeviceItemId;
 
     @BindView(R.id.mapActivityActionBar)
@@ -117,11 +120,22 @@ public class MapActivity extends AppCompatActivity {
 
     private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd\nHH:mm:ss z");
     private final SimpleDateFormat sdfHour = new SimpleDateFormat("HH:mm:ss");
+    private Drawable toggleCircle;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ctx = getApplicationContext();
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        toggleCircle = ContextCompat.getDrawable(ctx, R.drawable.ic_plain_circle_grey_24dp)
+                .getConstantState().newDrawable();
+        toggleCircle.setColorFilter(
+                new PorterDuffColorFilter(
+                        ContextCompat.getColor(ctx, R.color.primary),
+                        PorterDuff.Mode.SRC_IN
+                )
+        );
 
         setContentView(R.layout.drawer_layout_map);
         ButterKnife.bind(this);
@@ -131,11 +145,10 @@ public class MapActivity extends AppCompatActivity {
 
         markers = new HashMap<>();
         locations = new HashMap<>();
-        autoZoom = true;
         selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
 
         //load/initialize the osmdroid configuration, this can be done
-        this.ctx = getApplicationContext();
+
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         //setting this before the layout is inflated is a good idea
         //it 'should' ensure that the map has a writable location for the map cache, even without permissions
@@ -150,7 +163,7 @@ public class MapActivity extends AppCompatActivity {
         session = db.getSession(sid);
         Log.i(TAG, "CREATE map : session : "+session);
 
-        //inflate and create the map
+        //inflate and create the map (already done upper ;-) )
         //setContentView(R.layout.activity_map);
 
         map = (MapView) findViewById(R.id.map);
@@ -159,17 +172,24 @@ public class MapActivity extends AppCompatActivity {
 
         map.setMultiTouchControls(true);
 
-
-
         this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
-        this.mLocationOverlay.enableMyLocation();
         //this.mLocationOverlay.enableFollowLocation();
-        this.mLocationOverlay.setEnableAutoStop(true);
+        //this.mLocationOverlay.setEnableAutoStop(true);
         map.getOverlays().add(this.mLocationOverlay);
 
         btDisplayMyLoc = (ImageButton) findViewById(R.id.ic_center_map);
-        btDisplayMyLoc.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
+        btFollowMe = (ImageButton) findViewById(R.id.ic_follow_me);
+        btZoom = (ImageButton) findViewById(R.id.ic_zoom_all);
+        btZoomAuto = (ImageButton) findViewById(R.id.ic_zoom_auto);
 
+        if (prefs.getBoolean("map_myposition", true)) {
+            btDisplayMyLoc.setBackground(toggleCircle);
+            mLocationOverlay.enableMyLocation();
+        }
+        else {
+            mLocationOverlay.disableMyLocation();
+            prefs.edit().putBoolean("map_followme", false).apply();
+        }
 
         btDisplayMyLoc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,16 +200,30 @@ public class MapActivity extends AppCompatActivity {
                     mLocationOverlay.disableFollowLocation();
                     btDisplayMyLoc.setBackgroundResource(0);
                     btFollowMe.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_myposition", false).apply();
+                    prefs.edit().putBoolean("map_followme", false).apply();
                 }
                 else {
                     mLocationOverlay.enableMyLocation();
-                    btDisplayMyLoc.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
+                    btDisplayMyLoc.setBackground(toggleCircle);
+                    prefs.edit().putBoolean("map_myposition", true).apply();
                 }
             }
         });
 
-        btFollowMe = (ImageButton) findViewById(R.id.ic_follow_me);
-        //btFollowMe.setColorFilter(Color.argb(255, 128, 128, 128));
+        if (prefs.getBoolean("map_followme", false)) {
+            // disable auto zoom (which shouldn't be enabled but who knows these days)
+            btZoomAuto.setBackgroundResource(0);
+            prefs.edit().putBoolean("map_autozoom", false).apply();
+            // enable follow me
+            mLocationOverlay.enableMyLocation();
+            mLocationOverlay.enableFollowLocation();
+            btFollowMe.setBackground(toggleCircle);
+            btDisplayMyLoc.setBackground(toggleCircle);
+        }
+        else {
+            mLocationOverlay.disableFollowLocation();
+        }
 
         btFollowMe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,18 +232,24 @@ public class MapActivity extends AppCompatActivity {
                 if (mLocationOverlay.isFollowLocationEnabled()) {
                     mLocationOverlay.disableFollowLocation();
                     btFollowMe.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_followme", false).apply();
                 }
                 else {
+                    // disable autozoom
+                    btZoomAuto.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_autozoom", false).apply();
+                    // enable follow me
                     mLocationOverlay.enableMyLocation();
                     mLocationOverlay.enableFollowLocation();
-                    btFollowMe.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
-                    btDisplayMyLoc.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
+                    btFollowMe.setBackground(toggleCircle);
+                    btDisplayMyLoc.setBackground(toggleCircle);
+                    prefs.edit().putBoolean("map_myposition", true).apply();
+                    prefs.edit().putBoolean("map_followme", true).apply();
                 }
             }
         });
 
-        btZoom = (ImageButton) findViewById(R.id.ic_zoom_all);
-        //btFollowMe.setColorFilter(Color.argb(255, 128, 128, 128));
+
 
         btZoom.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,26 +259,31 @@ public class MapActivity extends AppCompatActivity {
             }
         });
 
-        btZoomAuto = (ImageButton) findViewById(R.id.ic_zoom_auto);
-        if (!autoZoom) {
-            btZoomAuto.setBackgroundResource(0);
-        }
-        else {
-            btZoomAuto.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
+        if (prefs.getBoolean("map_autozoom", true)) {
+            btZoomAuto.setBackground(toggleCircle);
+            // disable follow me
+            mLocationOverlay.disableFollowLocation();
+            btFollowMe.setBackgroundResource(0);
+            prefs.edit().putBoolean("map_followme", false).apply();
         }
 
         btZoomAuto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "btZoom clicked ");
-                if (autoZoom) {
-                    btZoomAuto.setBackgroundResource(0);
-                    autoZoom = false;
+                Log.i(TAG, "btAUTOZoom clicked ");
+                if (!prefs.getBoolean("map_autozoom", true)) {
+                    // disable follow me
+                    mLocationOverlay.disableFollowLocation();
+                    btFollowMe.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_followme", false).apply();
+                    // enable auto zoom
+                    btZoomAuto.setBackground(toggleCircle);
+                    prefs.edit().putBoolean("map_autozoom", true).apply();
+                    zoomOnAllMarkers();
                 }
                 else {
-                    btZoomAuto.setBackgroundResource(R.drawable.ic_plain_circle_grey_24dp);
-                    autoZoom = true;
-                    zoomOnAllMarkers();
+                    btZoomAuto.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_autozoom", false).apply();
                 }
             }
         });
@@ -287,6 +332,13 @@ public class MapActivity extends AppCompatActivity {
 
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
 
+        // i don't know why but map.onResume() always enables myLocation...
+        if (prefs.getBoolean("map_myposition", true)) {
+            mLocationOverlay.enableMyLocation();
+        }
+        else {
+            mLocationOverlay.disableMyLocation();
+        }
         //this.mLocationOverlay.enableMyLocation();
         //this.mLocationOverlay.enableFollowLocation();
         /*Location currentLocation = mLocationOverlay.getLastFix();
@@ -492,6 +544,7 @@ public class MapActivity extends AppCompatActivity {
                 }
             }
             map.zoomToBoundingBox(bb, true, 40);
+            Log.i(TAG, "[zoomToBounds] "+bb+" "+mLocationOverlay.isFollowLocationEnabled());
         }
     }
 
@@ -596,7 +649,7 @@ public class MapActivity extends AppCompatActivity {
 
             // update device list
             setupNavigationDeviceList();
-            if (autoZoom) {
+            if (prefs.getBoolean("map_autozoom", true)) {
                 zoomOnAllMarkers();
             }
         }
