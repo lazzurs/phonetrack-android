@@ -332,7 +332,7 @@ public class WebTrackHelper {
      * @param params Map of parameters (position properties)
      * @throws IOException Connection error
      */
-    public void sendGETPosition(String urlStr, Map<String, String> params) throws IOException {
+    public void sendGETPositionToCustom(String urlStr, Map<String, String> params) throws IOException {
         String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
                 .replace("%LON", params.get(PARAM_LON))
                 .replace("%TIMESTAMP", params.get(PARAM_TIME))
@@ -349,6 +349,7 @@ public class WebTrackHelper {
         StringBuilder result = new StringBuilder();
         //HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         HttpURLConnection conn = SupportUtil.getHttpURLConnection(certManager, url.toString());
+        if (LoggerService.DEBUG) { Log.d(TAG, "[getWithParams: " + url+"]"); }
         conn.setInstanceFollowRedirects(false);
         conn.setConnectTimeout(SOCKET_TIMEOUT);
         conn.setReadTimeout(SOCKET_TIMEOUT);
@@ -362,7 +363,7 @@ public class WebTrackHelper {
         if (LoggerService.DEBUG) { Log.d(TAG, "[GET request response: " + result + "]"); }
     }
 
-    public void sendPOSTPosition(String urlStr, Map<String, String> params) throws IOException {
+    public void sendPOSTPositionToCustom(String urlStr, Map<String, String> params) throws IOException {
         if (LoggerService.DEBUG) { Log.d(TAG, "[SENDPOS  "+params+"]"); }
         String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
                 .replace("%LON", params.get(PARAM_LON))

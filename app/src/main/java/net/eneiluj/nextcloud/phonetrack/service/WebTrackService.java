@@ -163,10 +163,10 @@ public class WebTrackService extends IntentService {
                         long locId = loc.getId();
                         Map<String, String> params = dbLocationToMap(loc);
                         if (logjob.getPost()) {
-                            web.sendPOSTPosition(destUrl, params);
+                            web.sendPOSTPositionToCustom(destUrl, params);
                         }
                         else {
-                            web.sendGETPosition(destUrl, params);
+                            web.sendGETPositionToCustom(destUrl, params);
                         }
 
                         db.deleteLocation(locId);
@@ -270,13 +270,13 @@ public class WebTrackService extends IntentService {
             point.put(loc.getLat());
             point.put(loc.getLon());
             point.put(loc.getTimestamp());
-            point.put( (loc.getAltitude() != -1.0) ? loc.getAltitude() : "");
-            point.put( (loc.getAccuracy() != -1.0) ? loc.getAccuracy() : "");
-            point.put( String.valueOf(loc.getBattery()));
-            point.put( (loc.getSatellites() != -1) ? String.valueOf(loc.getSatellites()) : "");
+            point.put(loc.getAltitude());
+            point.put(loc.getAccuracy());
+            point.put(loc.getBattery());
+            point.put(loc.getSatellites());
             point.put(userAgent);
-            point.put( (loc.getSpeed() != -1.0) ? String.valueOf(loc.getSpeed()) : "");
-            point.put( (loc.getBearing() != -1.0) ? String.valueOf(loc.getBearing()) : "");
+            point.put(loc.getSpeed());
+            point.put(loc.getBearing());
 
             points.put(point);
         }
