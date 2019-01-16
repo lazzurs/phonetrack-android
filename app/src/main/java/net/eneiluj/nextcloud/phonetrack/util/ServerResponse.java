@@ -124,12 +124,12 @@ public class ServerResponse {
                                 oneLoc.getDouble("lat"),
                                 oneLoc.getDouble("lon"),
                                 oneLoc.getLong("timestamp"),
-                                oneLoc.getDouble("bearing"),
-                                oneLoc.getDouble("altitude"),
-                                oneLoc.getDouble("speed"),
-                                oneLoc.getDouble("accuracy"),
-                                oneLoc.getLong("satellites"),
-                                oneLoc.getDouble("batterylevel")
+                                oneLoc.isNull("bearing") ? null : oneLoc.getDouble("bearing"),
+                                oneLoc.isNull("altitude") ? null : oneLoc.getDouble("altitude"),
+                                oneLoc.isNull("speed") ? null : oneLoc.getDouble("speed"),
+                                oneLoc.isNull("accuracy") ? null : oneLoc.getDouble("accuracy"),
+                                oneLoc.isNull("satellites") ? null : oneLoc.getLong("satellites"),
+                                oneLoc.isNull("batterylevel") ? null : oneLoc.getDouble("batterylevel")
                         )
                 );
             }

@@ -1,5 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.model;
 
+import android.support.annotation.Nullable;
+
 /**
  * DBLocation represents a location from the local SQLite database with all attributes.
  * key_id, key_logjobid, key_lat, key_lon, 4 key_time, 5 key_bearing,
@@ -12,15 +14,16 @@ public class DBLocation {
     private double lat;
     private double lon;
     private long timestamp;
-    private double bearing;
-    private double altitude;
-    private double speed;
-    private double accuracy;
-    private double satellites;
-    private double battery;
+    private Double bearing;
+    private Double altitude;
+    private Double speed;
+    private Double accuracy;
+    private Long satellites;
+    private Double battery;
 
-    public DBLocation(long id, long logjobId, double lat, double lon, long timestamp, double bearing,
-                      double altitude, double speed, double accuracy, long satellites, double battery) {
+    public DBLocation(long id, long logjobId, double lat, double lon, long timestamp,
+                      @Nullable Double bearing, @Nullable Double altitude, @Nullable Double speed,
+                      @Nullable Double accuracy, @Nullable Long satellites, @Nullable Double battery) {
         this.id = id;
         this.logjobId = logjobId;
         this.lat = lat;
@@ -74,51 +77,51 @@ public class DBLocation {
         this.timestamp = timestamp;
     }
 
-    public double getBearing() {
+    public Double getBearing() {
         return bearing;
     }
 
-    public void setBearing(double bearing) {
+    public void setBearing(Double bearing) {
         this.bearing = bearing;
     }
 
-    public double getAltitude() {
+    public Double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(double altitude) {
+    public void setAltitude(Double altitude) {
         this.altitude = altitude;
     }
 
-    public double getSpeed() {
+    public Double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(double speed) {
+    public void setSpeed(Double speed) {
         this.speed = speed;
     }
 
-    public double getAccuracy() {
+    public Double getAccuracy() {
         return accuracy;
     }
 
-    public void setAccuracy(double accuracy) {
+    public void setAccuracy(Double accuracy) {
         this.accuracy = accuracy;
     }
 
-    public double getSatellites() {
+    public Long getSatellites() {
         return satellites;
     }
 
-    public void setSatellites(double satellites) {
+    public void setSatellites(Long satellites) {
         this.satellites = satellites;
     }
 
-    public double getBattery() {
+    public Double getBattery() {
         return battery;
     }
 
-    public void setBattery(double battery) {
+    public void setBattery(Double battery) {
         this.battery = battery;
     }
 

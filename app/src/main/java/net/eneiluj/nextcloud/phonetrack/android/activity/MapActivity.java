@@ -630,10 +630,25 @@ public class MapActivity extends AppCompatActivity {
                 }
                 Marker m = markers.get(devName);
                 String text = devName;
-                if (loc.getBattery() > 0.0) {
+                text += "\n"+sdfComplete.format(new Date(loc.getTimestamp()*1000));
+                if (loc.getBattery() != null) {
                     text += "\n"+getString(R.string.popup_battery)+" : "+loc.getBattery();
                 }
-                text += "\n"+sdfComplete.format(new Date(loc.getTimestamp()*1000));
+                if (loc.getAccuracy() != null) {
+                    text += "\n"+getString(R.string.popup_accuracy)+" : "+loc.getAccuracy();
+                }
+                if (loc.getAltitude() != null) {
+                    text += "\n"+getString(R.string.popup_altitude)+" : "+loc.getAltitude();
+                }
+                if (loc.getSpeed() != null) {
+                    text += "\n"+getString(R.string.popup_speed)+" : "+loc.getSpeed();
+                }
+                if (loc.getBearing() != null) {
+                    text += "\n"+getString(R.string.popup_bearing)+" : "+loc.getBearing();
+                }
+                if (loc.getSatellites() != null) {
+                    text += "\n"+getString(R.string.popup_satellites)+" : "+loc.getSatellites();
+                }
                 m.setTitle(text);
                 m.setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
             }

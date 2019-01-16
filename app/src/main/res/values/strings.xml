@@ -72,6 +72,11 @@
     <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
     <string name="item_all_devices_label">All devices</string>
     <string name="popup_battery">Battery level</string>
+    <string name="popup_altitude">Altitude</string>
+    <string name="popup_accuracy">Accuracy</string>
+    <string name="popup_satellites">Satellites</string>
+    <string name="popup_bearing">Bearing</string>
+    <string name="popup_speed">Speed</string>
 
 
 
