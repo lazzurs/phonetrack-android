@@ -332,9 +332,10 @@ public class MapActivity extends AppCompatActivity {
                 if (closeNavigation) {
                     drawerLayoutMap.closeDrawers();
                 }
-                if (autoZoom) {
-                    zoomOnAllMarkers();
-                }
+
+                // zoom anyway, whatever the autozoom value is
+                zoomOnAllMarkers();
+
             }
 
             @Override
