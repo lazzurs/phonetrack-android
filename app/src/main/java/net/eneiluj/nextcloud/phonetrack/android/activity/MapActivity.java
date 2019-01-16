@@ -557,14 +557,19 @@ public class MapActivity extends AppCompatActivity {
                 }
                 else {
                     Marker m = new Marker(map);
-                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), R.color.bg_attention, android.R.color.black);
+                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), R.color.primary, android.R.color.black);
                     m.setIcon(bmd);
-                    m.setTitle(devName);
                     //m.setPosition(new GeoPoint(43.6617,3.8473));
                     map.getOverlays().add(m);
                     markers.put(devName, m);
                 }
-                markers.get(devName).setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
+                Marker m = markers.get(devName);
+                String text = devName;
+                if (loc.getBattery() > 0.0) {
+                    text += "\n"+getString(R.string.popup_battery)+" : "+loc.getBattery();
+                }
+                m.setTitle(text);
+                m.setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
             }
             // delete removed
             List<String> devsToDel = new ArrayList<>();
