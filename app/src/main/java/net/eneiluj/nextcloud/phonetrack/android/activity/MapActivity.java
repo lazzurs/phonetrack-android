@@ -565,7 +565,19 @@ public class MapActivity extends AppCompatActivity {
                 }
                 markers.get(devName).setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
             }
+            // delete removed
+            List<String> devsToDel = new ArrayList<>();
+            for (String markerDevName : markers.keySet()) {
+                if (!locations.containsKey(markerDevName)) {
+                    devsToDel.add(markerDevName);
+                }
+            }
+            for (String devToDel : devsToDel) {
+                map.getOverlays().remove(markers.get(devToDel));
+                markers.remove(devToDel);
+            }
 
+            // update device list
             setupNavigationDeviceList();
             if (autoZoom) {
                 zoomOnAllMarkers();
