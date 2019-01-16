@@ -460,8 +460,8 @@ public class MapActivity extends AppCompatActivity {
         if (points.size() == 1) {
             GeoPoint p = new GeoPoint(points.get(0).getLatitude(), points.get(0).getLongitude());
             //map.getController().setCenter(p);
-            map.getController().animateTo(p);
-            map.getController().setZoom(18.0);
+            map.getController().animateTo(p, 18.0, (long) 1000);
+            //map.getController().setZoom(18.0);
             Log.i(TAG, "[set center] "+p);
         }
         else {
