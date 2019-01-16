@@ -10,6 +10,7 @@ import android.media.DeniedByServerException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -18,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.eneiluj.nextcloud.phonetrack.BuildConfig;
+import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -32,7 +35,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 10;
+    private static final int database_version = 11;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -70,6 +73,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_accuracy = "ACCURACY";
     private static final String key_satellites = "SATELLITES";
     private static final String key_battery = "BATTERY";
+    private static final String key_userAgent = "USERAGENT";
 
     private static final String[] columnsSessions = {
             key_id, key_token, key_name, key_nextURL,
@@ -84,7 +88,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String[] columnsLocations = {
             key_id, key_logjobid, key_lat, key_lon, key_time,
             key_bearing, key_altitude, key_speed, key_accuracy,
-            key_satellites, key_battery};
+            key_satellites, key_battery, key_userAgent};
 
     private static final String default_order = key_id + " DESC";
 
@@ -93,9 +97,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private SessionServerSyncHelper serverSyncHelper;
     private Context context;
 
+    private String userAgent;
+
     private PhoneTrackSQLiteOpenHelper(Context context) {
         super(context, database_name, null, database_version);
         this.context = context.getApplicationContext();
+        userAgent = context.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME;
         serverSyncHelper = SessionServerSyncHelper.getInstance(this);
         //recreateDatabase(getWritableDatabase());
     }
@@ -168,6 +175,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_speed + " FLOAT, " +
                 key_accuracy + " FLOAT, " +
                 key_satellites + " INTEGER, " +
+                key_userAgent + " TEXT, " +
                 key_battery + " FLOAT)");
     }
 
@@ -179,6 +187,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         if (oldVersion < 10) {
             db.execSQL("ALTER TABLE " + table_sessions + " ADD COLUMN " + key_publicToken + " TEXT DEFAULT NULL");
             db.execSQL("ALTER TABLE " + table_sessions + " ADD COLUMN " + key_isFromShare + " INTEGER DEFAULT 0");
+        }
+        if (oldVersion < 11) {
+            db.execSQL("ALTER TABLE " + table_locations + " ADD COLUMN " + key_userAgent + " TEXT DEFAULT NULL");
         }
     }
 
@@ -659,6 +670,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             sat = loc.getExtras().getInt("satellites", -1);
         }
         values.put(key_satellites, sat);
+        values.put(key_userAgent, userAgent);
 
         db.insert(table_locations, null, values);
 
@@ -680,6 +692,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_accuracy, dbLoc.getAccuracy());
         values.put(key_battery, dbLoc.getBattery());
         values.put(key_satellites, dbLoc.getSatellites());
+        values.put(key_userAgent, dbLoc.getUserAgent());
 
         db.insert(table_locations, null, values);
     }
@@ -741,7 +754,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 cursor.isNull(7) ? null : cursor.getDouble(7),
                 cursor.isNull(8) ? null : cursor.getDouble(8),
                 cursor.isNull(9) ? null : cursor.getLong(9),
-                cursor.isNull(10) ? null : cursor.getDouble(10)
+                cursor.isNull(10) ? null : cursor.getDouble(10),
+                cursor.isNull(11) ? null : cursor.getString(11)
         );
     }
 

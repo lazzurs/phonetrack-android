@@ -50,7 +50,6 @@ public class WebTrackService extends IntentService {
     private PhoneTrackSQLiteOpenHelper db;
     private WebTrackHelper web;
     private static PendingIntent pi = null;
-    private static String userAgent;
 
     final private static int FIVE_MINUTES = 1000 * 60 * 5;
 
@@ -62,8 +61,6 @@ public class WebTrackService extends IntentService {
     public void onCreate() {
         super.onCreate();
         if (LoggerService.DEBUG) { Log.d(TAG, "[websync create]"); }
-
-        userAgent = this.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME;
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
         CustomCertManager certManager = db.getPhonetrackServerSyncHelper().getCustomCertManager();
@@ -255,7 +252,7 @@ public class WebTrackService extends IntentService {
         params.put(WebTrackHelper.PARAM_BEARING, (loc.getBearing() != null) ? String.valueOf(loc.getBearing()) : "");
         params.put(WebTrackHelper.PARAM_SATELLITES, (loc.getSatellites() != null) ? String.valueOf(loc.getSatellites()) : "");
         params.put(WebTrackHelper.PARAM_BATTERY, String.valueOf(loc.getBattery()));
-        params.put(WebTrackHelper.PARAM_USERAGENT, userAgent);
+        params.put(WebTrackHelper.PARAM_USERAGENT, (loc.getUserAgent() != null) ? loc.getUserAgent() : "");
         return params;
     }
 
@@ -274,7 +271,7 @@ public class WebTrackService extends IntentService {
             point.put(loc.getAccuracy());
             point.put(loc.getBattery());
             point.put(loc.getSatellites());
-            point.put(userAgent);
+            point.put(loc.getUserAgent());
             point.put(loc.getSpeed());
             point.put(loc.getBearing());
 

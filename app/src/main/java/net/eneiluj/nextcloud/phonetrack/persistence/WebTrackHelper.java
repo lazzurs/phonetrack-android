@@ -56,7 +56,7 @@ public class WebTrackHelper {
     public static final String PARAM_USERAGENT = "useragent";
     private static final String application_json = "application/json";
 
-    private final String userAgent;
+    private final String webUserAgent;
     private final Context context;
 
     private static boolean tlsSocketInitialized = false;
@@ -75,7 +75,7 @@ public class WebTrackHelper {
         this.certManager = certManager;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        userAgent = context.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME + "; " + System.getProperty("http.agent");
+        webUserAgent = context.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME + "; " + System.getProperty("http.agent");
     }
 
     @SuppressWarnings("StringConcatenationInLoop")
@@ -96,7 +96,7 @@ public class WebTrackHelper {
                 connection = SupportUtil.getHttpURLConnection(certManager, url.toString());
                 connection.setDoOutput(true);
                 connection.setRequestMethod("POST");
-                connection.setRequestProperty("User-Agent", userAgent);
+                connection.setRequestProperty("User-Agent", webUserAgent);
                 connection.setInstanceFollowRedirects(false);
                 connection.setConnectTimeout(SOCKET_TIMEOUT);
                 connection.setReadTimeout(SOCKET_TIMEOUT);
@@ -213,7 +213,7 @@ public class WebTrackHelper {
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestProperty("Content-Length", Integer.toString(data.length));
-                connection.setRequestProperty("User-Agent", userAgent);
+                connection.setRequestProperty("User-Agent", webUserAgent);
                 connection.setInstanceFollowRedirects(false);
                 connection.setConnectTimeout(SOCKET_TIMEOUT);
                 connection.setReadTimeout(SOCKET_TIMEOUT);

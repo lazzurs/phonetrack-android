@@ -20,10 +20,12 @@ public class DBLocation {
     private Double accuracy;
     private Long satellites;
     private Double battery;
+    private String userAgent;
 
     public DBLocation(long id, long logjobId, double lat, double lon, long timestamp,
                       @Nullable Double bearing, @Nullable Double altitude, @Nullable Double speed,
-                      @Nullable Double accuracy, @Nullable Long satellites, @Nullable Double battery) {
+                      @Nullable Double accuracy, @Nullable Long satellites, @Nullable Double battery,
+                      @Nullable String userAgent) {
         this.id = id;
         this.logjobId = logjobId;
         this.lat = lat;
@@ -35,6 +37,7 @@ public class DBLocation {
         this.accuracy = accuracy;
         this.satellites = satellites;
         this.battery = battery;
+        this.userAgent = userAgent;
     }
 
     public long getId() {
@@ -43,6 +46,14 @@ public class DBLocation {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     public long getLogjobId() {

@@ -129,7 +129,8 @@ public class ServerResponse {
                                 oneLoc.isNull("speed") ? null : oneLoc.getDouble("speed"),
                                 oneLoc.isNull("accuracy") ? null : oneLoc.getDouble("accuracy"),
                                 oneLoc.isNull("satellites") ? null : oneLoc.getLong("satellites"),
-                                oneLoc.isNull("batterylevel") ? null : oneLoc.getDouble("batterylevel")
+                                oneLoc.isNull("batterylevel") ? null : oneLoc.getDouble("batterylevel"),
+                                oneLoc.isNull("useragent") ? null : oneLoc.getString("useragent")
                         )
                 );
             }
