@@ -56,7 +56,9 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +87,7 @@ public class MapActivity extends AppCompatActivity {
     private ImageButton btZoom;
     private ImageButton btZoomAuto;
 
-    //private Map<String, DBLocation> locations;
+    private Map<String, DBLocation> locations;
     private Map<String, Marker> markers;
 
     private DBSession session;
@@ -113,6 +115,9 @@ public class MapActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private SharedPreferences prefs;
 
+    private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd\nHH:mm:ss z");
+    private final SimpleDateFormat sdfHour = new SimpleDateFormat("HH:mm:ss");
+
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -125,6 +130,7 @@ public class MapActivity extends AppCompatActivity {
 
 
         markers = new HashMap<>();
+        locations = new HashMap<>();
         autoZoom = true;
         selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
 
@@ -313,7 +319,9 @@ public class MapActivity extends AppCompatActivity {
         NavigationAdapter.NavigationItem itemAll = new NavigationAdapter.NavigationItem(ID_ITEM_ALL_DEVICES, getString(R.string.item_all_devices_label), null, R.drawable.ic_allgrey_24dp);
         itemsNavigationDevice.add(itemAll);
         for (String devName : markers.keySet()) {
-            NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, devName, null, R.drawable.ic_phone_android_grey_24dp);
+            String label = devName;
+            label += " ("+sdfHour.format(locations.get(devName).getTimestamp()*1000) + ")";
+            NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, null, R.drawable.ic_phone_android_grey_24dp);
             itemsNavigationDevice.add(item);
         }
 
@@ -548,10 +556,10 @@ public class MapActivity extends AppCompatActivity {
 
     private IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
         @Override
-        public void onFinish(Map<String, DBLocation> locations, String message) {
-            for (String devName : locations.keySet()) {
-                Log.i(TAG, "Results : "+devName+" | "+locations.get(devName));
-                DBLocation loc = locations.get(devName);
+        public void onFinish(Map<String, DBLocation> newLocations, String message) {
+            for (String devName : newLocations.keySet()) {
+                Log.i(TAG, "Results : "+devName+" | "+newLocations.get(devName));
+                DBLocation loc = newLocations.get(devName);
                 if (markers.containsKey(devName)) {
 
                 }
@@ -562,25 +570,28 @@ public class MapActivity extends AppCompatActivity {
                     //m.setPosition(new GeoPoint(43.6617,3.8473));
                     map.getOverlays().add(m);
                     markers.put(devName, m);
+                    locations.put(devName, loc);
                 }
                 Marker m = markers.get(devName);
                 String text = devName;
                 if (loc.getBattery() > 0.0) {
                     text += "\n"+getString(R.string.popup_battery)+" : "+loc.getBattery();
                 }
+                text += "\n"+sdfComplete.format(new Date(loc.getTimestamp()*1000));
                 m.setTitle(text);
                 m.setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
             }
             // delete removed
             List<String> devsToDel = new ArrayList<>();
             for (String markerDevName : markers.keySet()) {
-                if (!locations.containsKey(markerDevName)) {
+                if (!newLocations.containsKey(markerDevName)) {
                     devsToDel.add(markerDevName);
                 }
             }
             for (String devToDel : devsToDel) {
                 map.getOverlays().remove(markers.get(devToDel));
                 markers.remove(devToDel);
+                locations.remove(devToDel);
             }
 
             // update device list
