@@ -12,6 +12,7 @@
     <string name="action_create_share">Importar URL de registro PhTrk</string>
     <string name="action_create_custom_share">Importar URL de registro personalizada</string>
     <string name="action_settings">Configuración</string>
+    <string name="action_map">Map</string>
     <string name="setting_title">Título</string>
     <string name="setting_title_long">Nombre del trabajo de registro</string>
     <string name="mandatory">(obligatorio)</string>
@@ -27,17 +28,19 @@
     <string name="setting_post_summary">alternativa al método GET. Los parámetros GET se convertirán a POST.</string>
     <string name="action_search">Buscar</string>
     <string name="simple_cancel">Cancelar</string>
-    <string name="simple_yes">Yes</string>
+    <string name="simple_yes">Sí</string>
     <string name="simple_no">No</string>
     <string name="simple_ok">Ok</string>
     <string name="simple_edit_pt">Editar trabajo de registro PhoneTrack</string>
     <string name="simple_edit_cu">Editar trabajo de destino personalizado</string>
     <string name="simple_about">Acerca de</string>
+    <string name="simple_map">Map</string>
     <string name="action_logjob_deleted">Trabajo de registro borrado</string>
     <string name="action_logjob_restored">Trabajo de registro restaurado</string>
     <string name="action_undo">Deshacer</string>
     <string name="action_drawer_open">abrir menú lateral</string>
     <string name="action_drawer_close">cerrar menú lateral</string>
+    <string name="action_frequency">Set refresh frequency</string>
     <string name="menu_delete">Eliminar</string>
     <string name="menu_save">Guardar</string>
     <string name="menu_select_session">Usar sesión PhoneTrack de Nextcloud</string>
@@ -51,8 +54,8 @@
     <string name="setting_min_time_long">Tiempo mínimo entre dos puntos registrados (segundos)</string>
     <string name="setting_min_accuracy">Precisión mínima</string>
     <string name="setting_min_accuracy_long">Precisión mínima para puntos registrados (metros)</string>
-    <string name="setting_keepgps_title">Keep GPS on between fixes</string>
-    <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
+    <string name="setting_keepgps_title">Mantener el GPS encendido entre localizaciones</string>
+    <string name="setting_keepgps_summary">Esto conseguirá posiciones más precisas pero tendrá mayor impacto en la duración de la batería. Utilizar cuando el tiempo mínimo sea menor de 60 segundos.</string>
     <string name="logjob_info_dialog_title">Acerca de %s</string>
     <string name="logjob_info_nbsync">%d posiciones enviadas</string>
     <string name="logjob_info_nbnotsync">%d posiciones pendientes</string>
@@ -61,7 +64,20 @@
     <string name="logjob_info_lastsync_error">Último error de sincronización en %s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Importar URL de registro de PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Cualquier URL de registro compatible introducida en la interfaz web de PhoneTrack</string>
-    <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
+    <string name="confirm_delete_logjob_dialog_title">¿Está seguro?</string>
+    <string name="edit_logjob_choose_session_dialog_title">Choose a session</string>
+    <string name="map_choose_session_dialog_title">Choose a session to display on the map</string>
+    <string name="map_choose_session_dialog_impossible">Impossible to display a session on the map</string>
+    <string name="map_choose_frequency_dialog_title">Choose map refresh frequency (sec)</string>
+    <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
+    <string name="item_all_devices_label">All devices</string>
+    <string name="popup_battery">Battery level</string>
+    <string name="popup_altitude">Altura</string>
+    <string name="popup_accuracy">Accuracy</string>
+    <string name="popup_satellites">Satélites</string>
+    <string name="popup_bearing">Rumbo</string>
+    <string name="popup_speed">Velocidad</string>
+    <string name="popup_user_agent">User-agent</string>
     <string name="is_running">procesando (%s pendiente, %s enviado)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Cuenta</string>
@@ -115,12 +131,12 @@
     <string name="error_username_password_invalid">nombre de usuario o contraseña incorrectos</string>
     <string name="error_invalid_pt_url">URL de registro PhoneTrack no válida</string>
     <string name="error_invalid_url">URL no válida</string>
-    <string name="error_invalid_token">Invalid token</string>
-    <string name="error_invalid_title">Invalid title</string>
-    <string name="error_invalid_devname">Invalid device name</string>
-    <string name="error_invalid_mintime">Invalid minimum time</string>
-    <string name="error_invalid_mindistance">Invalid minimum distance</string>
-    <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
+    <string name="error_invalid_token">Petición no válida</string>
+    <string name="error_invalid_title">Título incorrecto</string>
+    <string name="error_invalid_devname">Nombre de dispositivo no válido</string>
+    <string name="error_invalid_mintime">Tiempo mínimo no válido</string>
+    <string name="error_invalid_mindistance">Distancia mínima no válida</string>
+    <string name="error_invalid_minaccuracy">Precisión mínima no válida</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

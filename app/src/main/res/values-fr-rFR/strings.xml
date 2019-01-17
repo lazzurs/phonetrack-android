@@ -12,6 +12,7 @@
     <string name="action_create_share">Importer URL PT</string>
     <string name="action_create_custom_share">Importer URL personnalisée</string>
     <string name="action_settings">Paramètres</string>
+    <string name="action_map">Carte</string>
     <string name="setting_title">Titre</string>
     <string name="setting_title_long">Titre du log job</string>
     <string name="mandatory">(obligatoire)</string>
@@ -33,11 +34,13 @@
     <string name="simple_edit_pt">Éditer un log job PhoneTrack</string>
     <string name="simple_edit_cu">Éditer un log job personnalisé</string>
     <string name="simple_about">À propos</string>
+    <string name="simple_map">Carte</string>
     <string name="action_logjob_deleted">Log job supprimé</string>
     <string name="action_logjob_restored">Log job restauré</string>
     <string name="action_undo">Annuler</string>
     <string name="action_drawer_open">ouvrir le menu latéral</string>
     <string name="action_drawer_close">fermer le menu latéral</string>
+    <string name="action_frequency">Changer la fréquence de rafraichissement</string>
     <string name="menu_delete">Supprimer</string>
     <string name="menu_save">Enregistrer</string>
     <string name="menu_select_session">Utiliser une session PhoneTrack Nextcloud</string>
@@ -62,6 +65,19 @@
     <string name="dialog_title_import_pt_url">Importer une URL de logging de PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">N\'importe quelle URL de logging fournie dans l\'interface web de PhoneTrack</string>
     <string name="confirm_delete_logjob_dialog_title">Êtes-vous sûr(e) ?</string>
+    <string name="edit_logjob_choose_session_dialog_title">Choisissez une session</string>
+    <string name="map_choose_session_dialog_title">Choisissez une session à afficher sur la carte</string>
+    <string name="map_choose_session_dialog_impossible">Impossible d\'afficher une session sur la carte</string>
+    <string name="map_choose_frequency_dialog_title">Choisissez la fréquence de rafraichissement de la carte (sec)</string>
+    <string name="map_choose_frequency_dialog_message">Combien de secondes entre les rafraichissements ?</string>
+    <string name="item_all_devices_label">Tous les appareils</string>
+    <string name="popup_battery">Niveau de batterie</string>
+    <string name="popup_altitude">Altitude</string>
+    <string name="popup_accuracy">Précision</string>
+    <string name="popup_satellites">Satellites</string>
+    <string name="popup_bearing">Azimut</string>
+    <string name="popup_speed">Vitesse</string>
+    <string name="popup_user_agent">User-agent</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>

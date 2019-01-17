@@ -12,6 +12,7 @@
     <string name="action_create_share">PhTrk-Protokollierungs-URL importieren</string>
     <string name="action_create_custom_share">Benutzerdefinierte Protokollierungs-URL importieren</string>
     <string name="action_settings">Einstellungen</string>
+    <string name="action_map">Map</string>
     <string name="setting_title">Titel</string>
     <string name="setting_title_long">Titel des Protokollierungsauftrags</string>
     <string name="mandatory">(obligatorisch)</string>
@@ -33,11 +34,13 @@
     <string name="simple_edit_pt">PhoneTrack Protokollierungsaufträge bearbeiten</string>
     <string name="simple_edit_cu">Benutzerdefinierten Protokollierungsauftrag bearbeiten</string>
     <string name="simple_about">Über</string>
+    <string name="simple_map">Map</string>
     <string name="action_logjob_deleted">Protokollierungsauftrag gesöscht</string>
     <string name="action_logjob_restored">Protokollierungsauftrag wiederhergestellt</string>
     <string name="action_undo">Widerrufen</string>
     <string name="action_drawer_open">Seitenmenü öffnen</string>
     <string name="action_drawer_close">Seitenmenü schließen</string>
+    <string name="action_frequency">Set refresh frequency</string>
     <string name="menu_delete">Löschen</string>
     <string name="menu_save">Speichern</string>
     <string name="menu_select_session">Nextcloud PhoneTrack-Sitzung verwenden</string>
@@ -62,6 +65,19 @@
     <string name="dialog_title_import_pt_url">PhoneTrack-Protokollierungs-URL importieren</string>
     <string name="dialog_msg_import_pt_url">Jede kompatible Protokollierungs-URL, die in der PhoneTrack-Webschnittstelle angegeben ist</string>
     <string name="confirm_delete_logjob_dialog_title">Sind Sie sicher?</string>
+    <string name="edit_logjob_choose_session_dialog_title">Choose a session</string>
+    <string name="map_choose_session_dialog_title">Choose a session to display on the map</string>
+    <string name="map_choose_session_dialog_impossible">Impossible to display a session on the map</string>
+    <string name="map_choose_frequency_dialog_title">Choose map refresh frequency (sec)</string>
+    <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
+    <string name="item_all_devices_label">All devices</string>
+    <string name="popup_battery">Battery level</string>
+    <string name="popup_altitude">Höhe über NN</string>
+    <string name="popup_accuracy">Accuracy</string>
+    <string name="popup_satellites">Satelliten</string>
+    <string name="popup_bearing">Peilung</string>
+    <string name="popup_speed">Geschwindigkeit</string>
+    <string name="popup_user_agent">User-Agent</string>
     <string name="is_running">wird ausgeführt (%s ausstehend, %s gesendet)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
