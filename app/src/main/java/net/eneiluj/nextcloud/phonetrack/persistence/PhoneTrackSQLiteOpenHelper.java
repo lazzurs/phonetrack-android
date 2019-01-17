@@ -455,14 +455,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @NonNull
     @WorkerThread
-    public Map<String, Long> getTokenMap() {
-        Map<String, Long> result = new HashMap<>();
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(table_sessions, new String[]{key_token, key_id}, "", new String[]{}, null, null, null);
-        while (cursor.moveToNext()) {
-            result.put(cursor.getString(0), cursor.getLong(1));
+    public Map<String, DBSession> getTokenMap() {
+        Map<String, DBSession> result = new HashMap<>();
+        for (DBSession s : getSessions()) {
+            result.put(s.getToken(), s);
         }
-        cursor.close();
         return result;
     }
 

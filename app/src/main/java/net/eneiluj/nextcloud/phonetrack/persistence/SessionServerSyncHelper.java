@@ -312,28 +312,42 @@ public class SessionServerSyncHelper {
             long lastModified = preferences.getLong(SettingsActivity.SETTINGS_KEY_LAST_MODIFIED, 0);
             LoginStatus status;
             try {
-                Map<String, Long> locIdMap = dbHelper.getTokenMap();
+                Map<String, DBSession> localTokenToSession = dbHelper.getTokenMap();
                 ServerResponse.SessionsResponse response = client.getSessions(customCertManager, lastModified, lastETag);
                 List<DBSession> remoteSessions = response.getSessions(dbHelper);
                 Set<String> remoteTokens = new HashSet<>();
                 // pull remote changes: update or create each remote logjob
                 for (DBSession remoteSession : remoteSessions) {
-                    Log.v(getClass().getSimpleName(), "   Process Remote Session: " + remoteSession);
+                    //Log.v(getClass().getSimpleName(), "   Process Remote Session: " + remoteSession);
                     remoteTokens.add(remoteSession.getToken());
-                    if (locIdMap.containsKey(remoteSession.getToken())) {
-                        Log.v(getClass().getSimpleName(), "   ... found -> Update");
-                        dbHelper.updateSession(locIdMap.get(remoteSession.getToken()), remoteSession);
+                    if (localTokenToSession.containsKey(remoteSession.getToken())) {
+
+                        DBSession localSession = localTokenToSession.get(remoteSession.getToken());
+                        // TODO
+                        if (!localSession.getName().equals(remoteSession.getName())
+                                || !localSession.getNextURL().equals(remoteSession.getNextURL())
+                                || !localSession.getToken().equals(remoteSession.getToken())
+                                || !localSession.getPublicToken().equals(remoteSession.getPublicToken())
+                                || localSession.isFromShare() != remoteSession.isFromShare()
+                        ) {
+                            Log.v(getClass().getSimpleName(), "session "+localSession.getName()+" found locally -> needs update");
+                            dbHelper.updateSession(localSession.getId(), remoteSession);
+                        }
+                        else {
+                            Log.v(getClass().getSimpleName(), "session "+localSession.getName()+" found locally -> does not need update");
+                        }
                     } else {
-                        Log.v(getClass().getSimpleName(), "   ... create");
+                        Log.v(getClass().getSimpleName(), "create session");
                         dbHelper.addSession(remoteSession);
                     }
                 }
-                Log.d(getClass().getSimpleName(), "   Remove remotely deleted Sessions");
+                Log.d(getClass().getSimpleName(), "Remove remotely deleted Sessions");
                 // remove remotely deleted sessions
-                for (Map.Entry<String, Long> locEntry : locIdMap.entrySet()) {
-                    if (!remoteTokens.contains(locEntry.getKey())) {
-                        Log.v(getClass().getSimpleName(), "   ... remove " + locEntry.getValue());
-                        dbHelper.deleteSession(locEntry.getValue());
+                for (String localToken : localTokenToSession.keySet()) {
+                    if (!remoteTokens.contains(localToken)) {
+                        DBSession s = localTokenToSession.get(localToken);
+                        Log.v(getClass().getSimpleName(), "   ... remove " + s.getName());
+                        dbHelper.deleteSession(s.getId());
                     }
                 }
                 status = LoginStatus.OK;
