@@ -573,7 +573,8 @@ public class LoggerService extends Service {
             if(level == -1 || scale == -1) {
                 battery = 0.0;
             }
-            battery = ((double)level / (double)scale) * 100.0;
+            double batLevel = ((double)level / (double)scale) * 100.0;
+            battery = Math.round(batLevel * 100.0) / 100.0;
             if (LoggerService.DEBUG) { Log.d(TAG, "[BATT changed " + battery + "]"); }
         }
     };
@@ -586,7 +587,9 @@ public class LoggerService extends Service {
             return 0.0;
         }
 
-        return ((double)level / (double)scale) * 100.0;
+        double batLevel = ((double)level / (double)scale) * 100.0;
+        batLevel = Math.round(batLevel * 100.0) / 100.0;
+        return batLevel;
     }
 
     /**
