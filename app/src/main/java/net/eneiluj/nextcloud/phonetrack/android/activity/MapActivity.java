@@ -521,7 +521,12 @@ public class MapActivity extends AppCompatActivity {
             //map.getController().setZoom(18.0);
             //map.getController().setCenter(p);
             //map.invalidate();
-            map.getController().animateTo(p, 18.0, (long) 1000);
+            if (map.getZoomLevelDouble() > 17.0) {
+                map.getController().animateTo(p);
+            }
+            else {
+                map.getController().animateTo(p, 17.0, (long) 1000);
+            }
 
             Log.i(TAG, "[set center] "+p+" map center "+map.getMapCenter());
         }
