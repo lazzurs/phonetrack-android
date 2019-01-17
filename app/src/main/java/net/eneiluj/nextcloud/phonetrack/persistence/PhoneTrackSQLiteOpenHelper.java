@@ -668,6 +668,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         //if (LoggerService.DEBUG) { Log.d(TAG, "[PROVIDER "+loc.getProvider()+"]"); }
         if(loc.getProvider().equals("gps") && loc.getExtras() != null) {
             sat = loc.getExtras().getInt("satellites", -1);
+            if (sat == -1) {
+                sat = null;
+            }
         }
         values.put(key_satellites, sat);
         values.put(key_userAgent, userAgent);
