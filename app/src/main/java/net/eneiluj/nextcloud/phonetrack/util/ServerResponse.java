@@ -142,17 +142,19 @@ public class ServerResponse {
         String name = "";
         String token = "";
         String publicToken = "";
+        boolean isPublic = true;
         boolean isFromShare = false;
         if (json.length() > 1) {
             name = json.getString(0);
             token = json.getString(1);
             publicToken = json.getString(2);
-            isFromShare = (json.length() <= 5);
+            isPublic = (json.getInt(4) != 0);
+            isFromShare = (json.length() <= 6);
         }
 
         Context appContext = dbHelper.getContext().getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
         String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
-        return new DBSession(0, token, name, url, publicToken, isFromShare);
+        return new DBSession(0, token, name, url, publicToken, isFromShare, isPublic);
     }
 }

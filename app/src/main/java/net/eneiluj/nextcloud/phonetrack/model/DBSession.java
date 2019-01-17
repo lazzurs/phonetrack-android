@@ -11,14 +11,25 @@ public class DBSession {
     private String nextURL;
     private String publicToken;
     private boolean isFromShare;
+    private boolean isPublic;
 
-    public DBSession(long id, String token, String name, String nextURL, String publicToken, boolean isFromShare) {
+    public DBSession(long id, String token, String name, String nextURL, String publicToken,
+                     boolean isFromShare, boolean isPublic) {
         this.id = id;
         this.token = token;
         this.name = name;
         this.nextURL = nextURL;
         this.publicToken = publicToken;
         this.isFromShare = isFromShare;
+        this.isPublic = isPublic;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public boolean isFromShare() {

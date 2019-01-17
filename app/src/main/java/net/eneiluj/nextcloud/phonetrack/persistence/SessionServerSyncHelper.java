@@ -329,6 +329,7 @@ public class SessionServerSyncHelper {
                                 || !localSession.getToken().equals(remoteSession.getToken())
                                 || !localSession.getPublicToken().equals(remoteSession.getPublicToken())
                                 || localSession.isFromShare() != remoteSession.isFromShare()
+                                || localSession.isPublic() != remoteSession.isPublic()
                         ) {
                             Log.v(getClass().getSimpleName(), "session "+localSession.getName()+" found locally -> needs update");
                             dbHelper.updateSession(localSession.getId(), remoteSession);

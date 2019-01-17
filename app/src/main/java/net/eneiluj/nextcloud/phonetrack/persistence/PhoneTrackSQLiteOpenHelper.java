@@ -35,7 +35,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 11;
+    private static final int database_version = 12;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -43,6 +43,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_token = "TOKEN";
     private static final String key_publicToken = "PUBLICTOKEN";
     private static final String key_isFromShare = "ISFROMSHARE";
+    private static final String key_isPublic = "ISPUBLIC";
     private static final String key_nextURL = "NEXTURL";
     private static final String key_name = "NAME";
 
@@ -77,7 +78,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String[] columnsSessions = {
             key_id, key_token, key_name, key_nextURL,
-            key_publicToken, key_isFromShare
+            key_publicToken, key_isFromShare, key_isPublic
     };
     private static final String[] columnsLogjobs = {
             key_id, key_title, key_url, key_token, key_deviceName,
@@ -138,6 +139,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_nextURL + " TEXT, " +
                 key_publicToken + " TEXT, " +
                 key_isFromShare + " INTEGER DEFAULT 0, " +
+                key_isPublic + " INTEGER DEFAULT 1, " +
                 key_token + " TEXT)");
 
     }
@@ -190,6 +192,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         }
         if (oldVersion < 11) {
             db.execSQL("ALTER TABLE " + table_locations + " ADD COLUMN " + key_userAgent + " TEXT DEFAULT NULL");
+        }
+        if (oldVersion < 12) {
+            db.execSQL("ALTER TABLE " + table_sessions + " ADD COLUMN " + key_isPublic + " INTEGER DEFAULT 1");
         }
     }
 
@@ -272,7 +277,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 session.getToken(),
                 session.getNextURL(),
                 session.getPublicToken(),
-                session.isFromShare()
+                session.isFromShare(),
+                session.isPublic()
         );
         long id = addSession(dbs);
         notifySessionsChanged();
@@ -325,6 +331,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_nextURL, session.getNextURL());
         values.put(key_publicToken, session.getPublicToken());
         values.put(key_isFromShare, session.isFromShare() ? "1" : "0");
+        values.put(key_isPublic, session.isPublic() ? "1" : "0");
         return db.insert(table_sessions, null, values);
     }
 
@@ -435,7 +442,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 cursor.getString(2),
                 cursor.getString(3),
                 cursor.getString(4),
-                cursor.getInt(5) == 1
+                cursor.getInt(5) == 1,
+                cursor.getInt(6) == 1
         );
     }
 
@@ -478,6 +486,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     @WorkerThread
     public List<DBSession> getSessionsNotShared() {
         return getSessionsCustom(key_isFromShare + " = 0", new String[]{}, default_order);
+    }
+
+    @NonNull
+    @WorkerThread
+    public List<DBSession> getSessionsPublic() {
+        return getSessionsCustom(key_isPublic + " = 1", new String[]{}, default_order);
     }
 
     @NonNull
@@ -607,6 +621,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_nextURL, remoteSession.getNextURL());
         values.put(key_publicToken, remoteSession.getPublicToken());
         values.put(key_isFromShare, remoteSession.isFromShare() ? "1" : "0");
+        values.put(key_isPublic, remoteSession.isPublic() ? "1" : "0");
         String whereClause;
         String[] whereArgs;
 

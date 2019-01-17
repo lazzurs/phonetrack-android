@@ -477,7 +477,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     startActivityForResult(aboutIntent, about);
                 }
                 else if (item == itemMap) {
-                    List<DBSession> sessions = db.getSessions();
+                    List<DBSession> sessions = db.getSessionsPublic();
                     List<String> sessionNameList = new ArrayList<>();
                     final List<Long> sessionIdList = new ArrayList<>();
                     for (DBSession session : sessions) {
