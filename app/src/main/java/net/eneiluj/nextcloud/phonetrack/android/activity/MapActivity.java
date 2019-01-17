@@ -367,7 +367,7 @@ public class MapActivity extends AppCompatActivity {
     private void setupNavigationDeviceList() {
         ArrayList<NavigationAdapter.NavigationItem> itemsNavigationDevice = new ArrayList<>();
 
-        NavigationAdapter.NavigationItem itemAll = new NavigationAdapter.NavigationItem(ID_ITEM_ALL_DEVICES, getString(R.string.item_all_devices_label), null, R.drawable.ic_allgrey_24dp);
+        NavigationAdapter.NavigationItem itemAll = new NavigationAdapter.NavigationItem(ID_ITEM_ALL_DEVICES, getString(R.string.item_all_devices_label), markers.keySet().size(), R.drawable.ic_allgrey_24dp);
         itemsNavigationDevice.add(itemAll);
         for (String devName : markers.keySet()) {
             String label = devName;
