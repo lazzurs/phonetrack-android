@@ -7,11 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
+- new map feature : watch a session's devices on a map (works with public sessions only)
+- lots of translations (thank you guys)
 
 ### Changed
 - send multiple point in one request if more than 5 points
+- get rid of useless class CloudSession
+- less margins in drawer menus
+- DBLocation now includes User-agent
 
 ### Fixed
+- logjob edition session selection : only show my sessions (not the shared ones)
+- get rid of float, now using double
+- use cert4android in webTrackService
+[#11](https://gitlab.com/eneiluj/phonetrack-android/issues/11) @temrix
 
 ## 0.0.6 – 2019-01-11
 ### Added
