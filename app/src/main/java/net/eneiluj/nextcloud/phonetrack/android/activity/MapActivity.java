@@ -328,7 +328,6 @@ public class MapActivity extends AppCompatActivity {
             mapsForgeTileProvider = new MapsForgeTileProvider(
                     new SimpleRegisterReceiver(map.getContext()),
                     fromFiles, null);
-
         }
         return mapsForgeTileProvider;
     }
