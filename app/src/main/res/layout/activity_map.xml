@@ -34,13 +34,26 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/ic_center_map"
-            android:src="@android:drawable/ic_menu_mylocation"
+            android:id="@+id/ic_map_layers"
+            android:src="@android:drawable/ic_menu_mapmode"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
+            android:background="#00ffffff"
+            android:contentDescription="aaa"
+            android:cropToPadding="true" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ic_center_map"
+            android:src="@android:drawable/ic_menu_mylocation"
+            android:layout_below="@+id/ic_map_layers"
+            android:layout_alignLeft="@+id/ic_map_layers"
+            android:layout_alignStart="@+id/ic_map_layers"
+            android:layout_marginTop="10dp"
             android:background="#00ffffff"
             android:contentDescription="aaa"
             android:cropToPadding="true" />

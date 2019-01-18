@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -46,6 +47,7 @@ import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
@@ -84,6 +86,7 @@ public class MapActivity extends AppCompatActivity {
     private ScaleBarOverlay mScaleBarOverlay;
     private Context ctx;
 
+    private ImageButton btLayers;
     private ImageButton btDisplayMyLoc;
     private ImageButton btFollowMe;
     private ImageButton btZoom;
@@ -119,6 +122,9 @@ public class MapActivity extends AppCompatActivity {
     private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd\nHH:mm:ss z");
     private final SimpleDateFormat sdfHour = new SimpleDateFormat("HH:mm:ss");
     private Drawable toggleCircle;
+
+    private Map<String, OnlineTileSourceBase> layersMap;
+    private String selectedLayer;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,8 +171,18 @@ public class MapActivity extends AppCompatActivity {
         //setContentView(R.layout.activity_map);
 
         map = (MapView) findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.MAPNIK);
         map.setMaxZoomLevel(20.0);
+        layersMap = new HashMap<>();
+        layersMap.put("Mapnik", TileSourceFactory.MAPNIK);
+        layersMap.put("Hike bike map", TileSourceFactory.HIKEBIKEMAP);
+        layersMap.put("OpenTopoMap", TileSourceFactory.OpenTopo);
+        selectedLayer = prefs.getString("map_selected_layer", "Mapnik");
+        if (!layersMap.containsKey(selectedLayer)) {
+            // selected layer was removed
+            selectedLayer = "Mapnik";
+            prefs.edit().putString("map_selected_layer", "Mapnik").apply();
+        }
+        map.setTileSource(layersMap.get(selectedLayer));
 
         map.setMultiTouchControls(true);
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
@@ -180,6 +196,7 @@ public class MapActivity extends AppCompatActivity {
         btFollowMe = (ImageButton) findViewById(R.id.ic_follow_me);
         btZoom = (ImageButton) findViewById(R.id.ic_zoom_all);
         btZoomAuto = (ImageButton) findViewById(R.id.ic_zoom_auto);
+        btLayers = (ImageButton) findViewById(R.id.ic_map_layers);
 
         if (prefs.getBoolean("map_myposition", true)) {
             btDisplayMyLoc.setBackground(toggleCircle);
@@ -284,6 +301,41 @@ public class MapActivity extends AppCompatActivity {
                     btZoomAuto.setBackgroundResource(0);
                     prefs.edit().putBoolean("map_autozoom", false).apply();
                 }
+            }
+        });
+
+        btLayers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
+                selectBuilder.setTitle(getString(R.string.map_choose_layer));
+
+                final CharSequence[] layers = layersMap.keySet().toArray(new CharSequence[layersMap.keySet().size()]);
+                List<String> layerNamesList = new ArrayList<>();
+                for (int i=0; i<layers.length; i++) {
+                    layerNamesList.add(layers[i].toString());
+                }
+                int checked = layerNamesList.indexOf(selectedLayer);
+                selectBuilder.setSingleChoiceItems(layers, checked, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectedLayer = layers[which].toString();
+                        map.setTileSource(layersMap.get(selectedLayer));
+                        prefs.edit().putString("map_selected_layer", selectedLayer).apply();
+                        dialog.dismiss();
+                    }
+                });
+
+                selectBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
+
+                // create the alert dialog
+                AlertDialog selectDialog = selectBuilder.create();
+                selectDialog.show();
             }
         });
 
@@ -628,7 +680,7 @@ public class MapActivity extends AppCompatActivity {
                 }
                 else {
                     Marker m = new Marker(map);
-                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), R.color.primary, android.R.color.black);
+                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), R.color.primary, android.R.color.white);
                     m.setIcon(bmd);
                     //m.setPosition(new GeoPoint(43.6617,3.8473));
                     map.getOverlays().add(m);

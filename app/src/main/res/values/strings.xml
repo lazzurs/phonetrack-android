@@ -78,6 +78,7 @@
     <string name="popup_bearing">Bearing</string>
     <string name="popup_speed">Speed</string>
     <string name="popup_user_agent">User-agent</string>
+    <string name="map_choose_layer">Choose a map tile provider</string>
 
 
 
