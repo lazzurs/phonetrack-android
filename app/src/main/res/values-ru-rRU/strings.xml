@@ -5,7 +5,7 @@
     <string name="swipe_left">Переключить</string>
     <string name="label_all_logjobs">Все задания журнала</string>
     <string name="label_enabled">Включено</string>
-    <string name="label_phonetrack_lj">Задания журналов PhoneTracK</string>
+    <string name="label_phonetrack_lj">Задания журналов PhoneTrack</string>
     <string name="label_custom_lj">Задания журнала пользователя</string>
     <string name="label_custom">Пользователя</string>
     <string name="action_create">Новое задание журнала</string>
@@ -31,7 +31,7 @@
     <string name="simple_yes">Да</string>
     <string name="simple_no">Нет</string>
     <string name="simple_ok">Оk</string>
-    <string name="simple_edit_pt">Редактировать задание журнала PhoneTracK</string>
+    <string name="simple_edit_pt">Редактировать задание журнала PhoneTrack</string>
     <string name="simple_edit_cu">Редактировать задание журнала пользователя</string>
     <string name="simple_about">О программе</string>
     <string name="simple_map">Карта</string>
@@ -78,6 +78,7 @@
     <string name="popup_bearing">Азимут</string>
     <string name="popup_speed">Скорость</string>
     <string name="popup_user_agent">Агент пользователя</string>
+    <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="is_running">выполнение (ожидает %s, отправлено %s)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Учетная запись</string>

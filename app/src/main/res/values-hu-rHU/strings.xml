@@ -78,6 +78,7 @@
     <string name="popup_bearing">Bearing</string>
     <string name="popup_speed">Speed</string>
     <string name="popup_user_agent">Felhasználói azonosító</string>
+    <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="is_running">futás (%s függőben,%s elküldve)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>

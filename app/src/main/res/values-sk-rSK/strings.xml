@@ -78,6 +78,7 @@
     <string name="popup_bearing">Smer</string>
     <string name="popup_speed">Rýchlosť</string>
     <string name="popup_user_agent">Používateľský agent</string>
+    <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="is_running">running (%s pending, %s sent)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>

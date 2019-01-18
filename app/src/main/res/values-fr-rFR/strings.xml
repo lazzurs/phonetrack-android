@@ -78,6 +78,7 @@
     <string name="popup_bearing">Azimut</string>
     <string name="popup_speed">Vitesse</string>
     <string name="popup_user_agent">User-agent</string>
+    <string name="map_choose_layer">Choisissez un fournisseur de tuiles</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>

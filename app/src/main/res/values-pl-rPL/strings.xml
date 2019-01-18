@@ -78,6 +78,7 @@
     <string name="popup_bearing">Kierunek</string>
     <string name="popup_speed">Prędkość</string>
     <string name="popup_user_agent">Aplikacja</string>
+    <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="is_running">uruchomionych (%s oczekujących, %s wysłanych)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>

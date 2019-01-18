@@ -78,6 +78,7 @@
     <string name="popup_bearing">Rumbo</string>
     <string name="popup_speed">Velocidad</string>
     <string name="popup_user_agent">User-agent</string>
+    <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="is_running">procesando (%s pendiente, %s enviado)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Cuenta</string>

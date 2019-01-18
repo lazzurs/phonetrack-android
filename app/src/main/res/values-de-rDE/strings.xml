@@ -78,6 +78,7 @@
     <string name="popup_bearing">Peilung</string>
     <string name="popup_speed">Geschwindigkeit</string>
     <string name="popup_user_agent">User-Agent</string>
+    <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="is_running">wird ausgeführt (%s ausstehend, %s gesendet)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
