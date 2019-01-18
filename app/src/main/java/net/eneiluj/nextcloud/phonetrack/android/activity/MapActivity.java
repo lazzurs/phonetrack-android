@@ -49,8 +49,10 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
@@ -163,8 +165,8 @@ public class MapActivity extends AppCompatActivity {
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(ctx);
 
-        long sid = getIntent().getLongExtra(PARAM_SESSIONID, 0);
-        session = db.getSession(sid);
+        long sessionid = getIntent().getLongExtra(PARAM_SESSIONID, 0);
+        session = db.getSession(sessionid);
         Log.i(TAG, "CREATE map : session : "+session);
 
         //inflate and create the map (already done upper ;-) )
@@ -172,10 +174,9 @@ public class MapActivity extends AppCompatActivity {
 
         map = (MapView) findViewById(R.id.map);
         map.setMaxZoomLevel(20.0);
-        layersMap = new HashMap<>();
-        layersMap.put("Mapnik", TileSourceFactory.MAPNIK);
-        layersMap.put("Hike bike map", TileSourceFactory.HIKEBIKEMAP);
-        layersMap.put("OpenTopoMap", TileSourceFactory.OpenTopo);
+
+        setupMapTileProviders();
+
         selectedLayer = prefs.getString("map_selected_layer", "Mapnik");
         if (!layersMap.containsKey(selectedLayer)) {
             // selected layer was removed
@@ -183,6 +184,8 @@ public class MapActivity extends AppCompatActivity {
             prefs.edit().putString("map_selected_layer", "Mapnik").apply();
         }
         map.setTileSource(layersMap.get(selectedLayer));
+        IMapController mapController = map.getController();
+        mapController.setZoom(2.0);
 
         map.setMultiTouchControls(true);
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
@@ -192,156 +195,7 @@ public class MapActivity extends AppCompatActivity {
         //this.mLocationOverlay.setEnableAutoStop(true);
         map.getOverlays().add(this.mLocationOverlay);
 
-        btDisplayMyLoc = (ImageButton) findViewById(R.id.ic_center_map);
-        btFollowMe = (ImageButton) findViewById(R.id.ic_follow_me);
-        btZoom = (ImageButton) findViewById(R.id.ic_zoom_all);
-        btZoomAuto = (ImageButton) findViewById(R.id.ic_zoom_auto);
-        btLayers = (ImageButton) findViewById(R.id.ic_map_layers);
-
-        if (prefs.getBoolean("map_myposition", true)) {
-            btDisplayMyLoc.setBackground(toggleCircle);
-            mLocationOverlay.enableMyLocation();
-        }
-        else {
-            mLocationOverlay.disableMyLocation();
-            prefs.edit().putBoolean("map_followme", false).apply();
-        }
-
-        btDisplayMyLoc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "centerMap clicked ");
-                if (mLocationOverlay.isMyLocationEnabled()) {
-                    mLocationOverlay.disableMyLocation();
-                    mLocationOverlay.disableFollowLocation();
-                    btDisplayMyLoc.setBackgroundResource(0);
-                    btFollowMe.setBackgroundResource(0);
-                    prefs.edit().putBoolean("map_myposition", false).apply();
-                    prefs.edit().putBoolean("map_followme", false).apply();
-                }
-                else {
-                    mLocationOverlay.enableMyLocation();
-                    btDisplayMyLoc.setBackground(toggleCircle);
-                    prefs.edit().putBoolean("map_myposition", true).apply();
-                }
-            }
-        });
-
-        if (prefs.getBoolean("map_followme", false)) {
-            // disable auto zoom (which shouldn't be enabled but who knows these days)
-            btZoomAuto.setBackgroundResource(0);
-            prefs.edit().putBoolean("map_autozoom", false).apply();
-            // enable follow me
-            mLocationOverlay.enableMyLocation();
-            mLocationOverlay.enableFollowLocation();
-            btFollowMe.setBackground(toggleCircle);
-            btDisplayMyLoc.setBackground(toggleCircle);
-        }
-        else {
-            mLocationOverlay.disableFollowLocation();
-        }
-
-        btFollowMe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "btFollowMe clicked ");
-                if (mLocationOverlay.isFollowLocationEnabled()) {
-                    mLocationOverlay.disableFollowLocation();
-                    btFollowMe.setBackgroundResource(0);
-                    prefs.edit().putBoolean("map_followme", false).apply();
-                }
-                else {
-                    // disable autozoom
-                    btZoomAuto.setBackgroundResource(0);
-                    prefs.edit().putBoolean("map_autozoom", false).apply();
-                    // enable follow me
-                    mLocationOverlay.enableMyLocation();
-                    mLocationOverlay.enableFollowLocation();
-                    btFollowMe.setBackground(toggleCircle);
-                    btDisplayMyLoc.setBackground(toggleCircle);
-                    prefs.edit().putBoolean("map_myposition", true).apply();
-                    prefs.edit().putBoolean("map_followme", true).apply();
-                }
-            }
-        });
-
-
-
-        btZoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "btZoom clicked ");
-                zoomOnAllMarkers();
-            }
-        });
-
-        if (prefs.getBoolean("map_autozoom", true)) {
-            btZoomAuto.setBackground(toggleCircle);
-            // disable follow me
-            mLocationOverlay.disableFollowLocation();
-            btFollowMe.setBackgroundResource(0);
-            prefs.edit().putBoolean("map_followme", false).apply();
-        }
-
-        btZoomAuto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "btAUTOZoom clicked ");
-                if (!prefs.getBoolean("map_autozoom", true)) {
-                    // disable follow me
-                    mLocationOverlay.disableFollowLocation();
-                    btFollowMe.setBackgroundResource(0);
-                    prefs.edit().putBoolean("map_followme", false).apply();
-                    // enable auto zoom
-                    btZoomAuto.setBackground(toggleCircle);
-                    prefs.edit().putBoolean("map_autozoom", true).apply();
-                    zoomOnAllMarkers();
-                }
-                else {
-                    btZoomAuto.setBackgroundResource(0);
-                    prefs.edit().putBoolean("map_autozoom", false).apply();
-                }
-            }
-        });
-
-        btLayers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
-                selectBuilder.setTitle(getString(R.string.map_choose_layer));
-
-                final CharSequence[] layers = layersMap.keySet().toArray(new CharSequence[layersMap.keySet().size()]);
-                List<String> layerNamesList = new ArrayList<>();
-                for (int i=0; i<layers.length; i++) {
-                    layerNamesList.add(layers[i].toString());
-                }
-                int checked = layerNamesList.indexOf(selectedLayer);
-                selectBuilder.setSingleChoiceItems(layers, checked, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedLayer = layers[which].toString();
-                        map.setTileSource(layersMap.get(selectedLayer));
-                        prefs.edit().putString("map_selected_layer", selectedLayer).apply();
-                        dialog.dismiss();
-                    }
-                });
-
-                selectBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
-
-                // create the alert dialog
-                AlertDialog selectDialog = selectBuilder.create();
-                selectDialog.show();
-            }
-        });
-
-
-        IMapController mapController = map.getController();
-        mapController.setZoom(2.0);
+        setupMapButtons();
 
         final DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
         mScaleBarOverlay = new ScaleBarOverlay(map);
@@ -362,6 +216,52 @@ public class MapActivity extends AppCompatActivity {
     public void onConfigurationChanged(android.content.res.Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.syncState();
+    }
+
+    private void setupMapTileProviders() {
+        layersMap = new HashMap<>();
+        layersMap.put("Mapnik", TileSourceFactory.MAPNIK);
+        layersMap.put("Hike bike map", TileSourceFactory.HIKEBIKEMAP);
+        layersMap.put("OpenTopoMap", TileSourceFactory.OpenTopo);
+        layersMap.put(
+                "OpenCycleMap",
+                new XYTileSource(
+                        "OpenCycleMap", 1, 22, 256,
+                        ".png",
+                        new String[]{
+                                "https://a.tile.thunderforest.com/cycle/",
+                                "https://b.tile.thunderforest.com/cycle/",
+                                "https://c.tile.thunderforest.com/cycle/"
+                        },
+                        "&copy; <a href=\"https://www.opencyclemap.org\">OpenCycleMap</a>"
+                )
+        );
+        layersMap.put(
+                "ESRI Aerial",
+                new OnlineTileSourceBase("ARCGisOnline", 1, 19, 256, "", new String[]{"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"}) {
+                    @Override
+                    public String getTileURLString(long tileIndex) {
+                        String mImageFilenameEnding = "";
+
+                        return getBaseUrl() + MapTileIndex.getZoom(tileIndex) + "/"
+                                + MapTileIndex.getY(tileIndex) + "/" + MapTileIndex.getX(tileIndex)
+                                + mImageFilenameEnding;
+                    }
+                }
+        );
+        layersMap.put(
+                "ESRI Topo with relief",
+                new OnlineTileSourceBase("ARCGisOnlineTopo", 1, 19, 256, "", new String[]{"https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/"}) {
+                    @Override
+                    public String getTileURLString(long tileIndex) {
+                        String mImageFilenameEnding = "";
+
+                        return getBaseUrl() + MapTileIndex.getZoom(tileIndex) + "/"
+                                + MapTileIndex.getY(tileIndex) + "/" + MapTileIndex.getX(tileIndex)
+                                + mImageFilenameEnding;
+                    }
+                }
+        );
     }
 
     private void setupActionBar() {
@@ -736,4 +636,153 @@ public class MapActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void setupMapButtons() {
+        btDisplayMyLoc = (ImageButton) findViewById(R.id.ic_center_map);
+        btFollowMe = (ImageButton) findViewById(R.id.ic_follow_me);
+        btZoom = (ImageButton) findViewById(R.id.ic_zoom_all);
+        btZoomAuto = (ImageButton) findViewById(R.id.ic_zoom_auto);
+        btLayers = (ImageButton) findViewById(R.id.ic_map_layers);
+
+        if (prefs.getBoolean("map_myposition", true)) {
+            btDisplayMyLoc.setBackground(toggleCircle);
+            mLocationOverlay.enableMyLocation();
+        }
+        else {
+            mLocationOverlay.disableMyLocation();
+            prefs.edit().putBoolean("map_followme", false).apply();
+        }
+
+        btDisplayMyLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "centerMap clicked ");
+                if (mLocationOverlay.isMyLocationEnabled()) {
+                    mLocationOverlay.disableMyLocation();
+                    mLocationOverlay.disableFollowLocation();
+                    btDisplayMyLoc.setBackgroundResource(0);
+                    btFollowMe.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_myposition", false).apply();
+                    prefs.edit().putBoolean("map_followme", false).apply();
+                }
+                else {
+                    mLocationOverlay.enableMyLocation();
+                    btDisplayMyLoc.setBackground(toggleCircle);
+                    prefs.edit().putBoolean("map_myposition", true).apply();
+                }
+            }
+        });
+
+        if (prefs.getBoolean("map_followme", false)) {
+            // disable auto zoom (which shouldn't be enabled but who knows these days)
+            btZoomAuto.setBackgroundResource(0);
+            prefs.edit().putBoolean("map_autozoom", false).apply();
+            // enable follow me
+            mLocationOverlay.enableMyLocation();
+            mLocationOverlay.enableFollowLocation();
+            btFollowMe.setBackground(toggleCircle);
+            btDisplayMyLoc.setBackground(toggleCircle);
+        }
+        else {
+            mLocationOverlay.disableFollowLocation();
+        }
+
+        btFollowMe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "btFollowMe clicked ");
+                if (mLocationOverlay.isFollowLocationEnabled()) {
+                    mLocationOverlay.disableFollowLocation();
+                    btFollowMe.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_followme", false).apply();
+                }
+                else {
+                    // disable autozoom
+                    btZoomAuto.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_autozoom", false).apply();
+                    // enable follow me
+                    mLocationOverlay.enableMyLocation();
+                    mLocationOverlay.enableFollowLocation();
+                    btFollowMe.setBackground(toggleCircle);
+                    btDisplayMyLoc.setBackground(toggleCircle);
+                    prefs.edit().putBoolean("map_myposition", true).apply();
+                    prefs.edit().putBoolean("map_followme", true).apply();
+                }
+            }
+        });
+
+
+
+        btZoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "btZoom clicked ");
+                zoomOnAllMarkers();
+            }
+        });
+
+        if (prefs.getBoolean("map_autozoom", true)) {
+            btZoomAuto.setBackground(toggleCircle);
+            // disable follow me
+            mLocationOverlay.disableFollowLocation();
+            btFollowMe.setBackgroundResource(0);
+            prefs.edit().putBoolean("map_followme", false).apply();
+        }
+
+        btZoomAuto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "btAUTOZoom clicked ");
+                if (!prefs.getBoolean("map_autozoom", true)) {
+                    // disable follow me
+                    mLocationOverlay.disableFollowLocation();
+                    btFollowMe.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_followme", false).apply();
+                    // enable auto zoom
+                    btZoomAuto.setBackground(toggleCircle);
+                    prefs.edit().putBoolean("map_autozoom", true).apply();
+                    zoomOnAllMarkers();
+                }
+                else {
+                    btZoomAuto.setBackgroundResource(0);
+                    prefs.edit().putBoolean("map_autozoom", false).apply();
+                }
+            }
+        });
+
+        btLayers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
+                selectBuilder.setTitle(getString(R.string.map_choose_layer));
+
+                final CharSequence[] layers = layersMap.keySet().toArray(new CharSequence[layersMap.keySet().size()]);
+                List<String> layerNamesList = new ArrayList<>();
+                for (int i=0; i<layers.length; i++) {
+                    layerNamesList.add(layers[i].toString());
+                }
+                int checked = layerNamesList.indexOf(selectedLayer);
+                selectBuilder.setSingleChoiceItems(layers, checked, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectedLayer = layers[which].toString();
+                        map.setTileSource(layersMap.get(selectedLayer));
+                        prefs.edit().putString("map_selected_layer", selectedLayer).apply();
+                        dialog.dismiss();
+                    }
+                });
+
+                selectBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
+
+                // create the alert dialog
+                AlertDialog selectDialog = selectBuilder.create();
+                selectDialog.show();
+            }
+        });
+    }
 }
