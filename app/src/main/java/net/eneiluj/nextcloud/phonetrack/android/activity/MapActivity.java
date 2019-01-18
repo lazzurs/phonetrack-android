@@ -46,11 +46,18 @@ import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 
+import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
+import org.mapsforge.map.rendertheme.XmlRenderTheme;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.mapsforge.MapsForgeTileProvider;
+import org.osmdroid.mapsforge.MapsForgeTileSource;
+import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.tileprovider.util.StorageUtils;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
@@ -64,12 +71,18 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -129,6 +142,7 @@ public class MapActivity extends AppCompatActivity {
 
     private Map<String, OnlineTileSourceBase> layersMap;
     private String selectedLayer;
+    private MapTileProviderBasic defaultTileProvider;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,7 +199,8 @@ public class MapActivity extends AppCompatActivity {
             selectedLayer = "OpenStreetMap Mapnik";
             prefs.edit().putString("map_selected_layer", "OpenStreetMap Mapnik").apply();
         }
-        map.setTileSource(layersMap.get(selectedLayer));
+        setTileSource(selectedLayer);
+
         IMapController mapController = map.getController();
         mapController.setZoom(2.0);
 
@@ -276,6 +291,46 @@ public class MapActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        // MAPSFORGE
+        MapsForgeTileSource.createInstance(this.getApplication());
+        Set<File> mapfiles = findMapFiles();
+        //do a simple scan of local storage for .map files.
+        File[] maps = new File[mapfiles.size()];
+        maps = mapfiles.toArray(maps);
+        if (maps == null || maps.length == 0) {
+        }
+        else {
+            layersMap.put("MapsForge", null);
+        }
+    }
+
+    private MapsForgeTileProvider getMapsForgeTileProvider() {
+        MapsForgeTileProvider mapsForgeTileProvider;
+        Set<File> mapfiles = findMapFiles();
+        //do a simple scan of local storage for .map files.
+        File[] maps = new File[mapfiles.size()];
+        maps = mapfiles.toArray(maps);
+        if (maps == null || maps.length == 0) {
+            mapsForgeTileProvider = null;
+        }
+        else {
+            XmlRenderTheme theme = null;
+            try {
+                theme = new AssetsRenderTheme(map.getContext().getApplicationContext(), "renderthemes/", "rendertheme-v4.xml");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            MapsForgeTileSource fromFiles = null;
+
+            fromFiles = MapsForgeTileSource.createFromFiles(maps, theme, "rendertheme-v4");
+            mapsForgeTileProvider = new MapsForgeTileProvider(
+                    new SimpleRegisterReceiver(map.getContext()),
+                    fromFiles, null);
+
+        }
+        return mapsForgeTileProvider;
     }
 
     private void setupActionBar() {
@@ -780,7 +835,7 @@ public class MapActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         selectedLayer = layers[which].toString();
-                        map.setTileSource(layersMap.get(selectedLayer));
+                        setTileSource(selectedLayer);
                         prefs.edit().putString("map_selected_layer", selectedLayer).apply();
                         dialog.dismiss();
                     }
@@ -798,5 +853,47 @@ public class MapActivity extends AppCompatActivity {
                 selectDialog.show();
             }
         });
+    }
+
+    private void setTileSource(String layerKey) {
+        // unfortunately i didn't find a way to keep existing tile providers
+        // it seems they are destoryed/detached when an other one is selected
+        // so here, we create a new one each time
+        if (layerKey.equals("MapsForge")) {
+            map.setTileProvider(getMapsForgeTileProvider());
+        }
+        else {
+            defaultTileProvider = new MapTileProviderBasic(getApplicationContext());
+            defaultTileProvider.setTileSource(layersMap.get(layerKey));
+            map.setTileProvider(defaultTileProvider);
+        }
+    }
+
+    protected static Set<File> findMapFiles() {
+        Set<File> maps = new HashSet<>();
+        List<StorageUtils.StorageInfo> storageList = StorageUtils.getStorageList();
+        for (int i = 0; i < storageList.size(); i++) {
+            File f = new File(storageList.get(i).path + File.separator + "osmdroid" + File.separator);
+            if (f.exists()) {
+                maps.addAll(scan(f));
+            }
+        }
+        return maps;
+    }
+
+    static private Collection<? extends File> scan(File f) {
+        List<File> ret = new ArrayList<>();
+        File[] files = f.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.getName().toLowerCase().endsWith(".map"))
+                    return true;
+                return false;
+            }
+        });
+        if (files != null) {
+            Collections.addAll(ret, files);
+        }
+        return ret;
     }
 }

@@ -46,4 +46,5 @@ dependencies {
     androidTestImplementation 'junit:junit:4.12'
 
     implementation 'org.osmdroid:osmdroid-android:6.0.3'
+    implementation "org.osmdroid:osmdroid-mapsforge:6.0.3"
 }
