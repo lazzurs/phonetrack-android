@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -55,6 +56,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
@@ -177,11 +179,11 @@ public class MapActivity extends AppCompatActivity {
 
         setupMapTileProviders();
 
-        selectedLayer = prefs.getString("map_selected_layer", "Mapnik");
+        selectedLayer = prefs.getString("map_selected_layer", "OpenStreetMap Mapnik");
         if (!layersMap.containsKey(selectedLayer)) {
             // selected layer was removed
-            selectedLayer = "Mapnik";
-            prefs.edit().putString("map_selected_layer", "Mapnik").apply();
+            selectedLayer = "OpenStreetMap Mapnik";
+            prefs.edit().putString("map_selected_layer", "OpenStreetMap Mapnik").apply();
         }
         map.setTileSource(layersMap.get(selectedLayer));
         IMapController mapController = map.getController();
@@ -194,6 +196,10 @@ public class MapActivity extends AppCompatActivity {
         //this.mLocationOverlay.enableFollowLocation();
         //this.mLocationOverlay.setEnableAutoStop(true);
         map.getOverlays().add(this.mLocationOverlay);
+
+        CopyrightOverlay copyrightOverlay = new CopyrightOverlay(map.getContext());
+        copyrightOverlay.setTextColor(Color.BLACK);
+        map.getOverlays().add(copyrightOverlay);
 
         setupMapButtons();
 
@@ -220,7 +226,7 @@ public class MapActivity extends AppCompatActivity {
 
     private void setupMapTileProviders() {
         layersMap = new HashMap<>();
-        layersMap.put("Mapnik", TileSourceFactory.MAPNIK);
+        layersMap.put("OpenStreetMap Mapnik", TileSourceFactory.MAPNIK);
         layersMap.put("Hike bike map", TileSourceFactory.HIKEBIKEMAP);
         layersMap.put("OpenTopoMap", TileSourceFactory.OpenTopo);
         layersMap.put(
@@ -233,12 +239,16 @@ public class MapActivity extends AppCompatActivity {
                                 "https://b.tile.thunderforest.com/cycle/",
                                 "https://c.tile.thunderforest.com/cycle/"
                         },
-                        "&copy; <a href=\"https://www.opencyclemap.org\">OpenCycleMap</a>"
+                        "OpenCycleMap (https://www.opencyclemap.org)"
                 )
         );
         layersMap.put(
                 "ESRI Aerial",
-                new OnlineTileSourceBase("ARCGisOnline", 1, 19, 256, "", new String[]{"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"}) {
+                new OnlineTileSourceBase(
+                        "ARCGisOnline", 1, 19, 256,
+                        "",
+                        new String[]{"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"},
+                        "Esri ArcgisOnline") {
                     @Override
                     public String getTileURLString(long tileIndex) {
                         String mImageFilenameEnding = "";
@@ -251,7 +261,11 @@ public class MapActivity extends AppCompatActivity {
         );
         layersMap.put(
                 "ESRI Topo with relief",
-                new OnlineTileSourceBase("ARCGisOnlineTopo", 1, 19, 256, "", new String[]{"https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/"}) {
+                new OnlineTileSourceBase(
+                        "ARCGisOnlineTopo", 1, 19, 256,
+                        "",
+                        new String[]{"https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/"},
+                        "Esri ArcgisOnline") {
                     @Override
                     public String getTileURLString(long tileIndex) {
                         String mImageFilenameEnding = "";
