@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - new map feature : watch a session's devices on a map (works with public sessions only)
+- map features : show my position, follow me, autozoom, zoom on markers, change tile provider
+- able to load tiles from local mapsforge v4 files in /osmdroid/\*.map
 - lots of translations (thank you guys)
 
 ### Changed
@@ -15,12 +17,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - get rid of useless class CloudSession
 - less margins in drawer menus
 - DBLocation now includes User-agent
+- replace URL by link or address in strings
 
 ### Fixed
 - logjob edition session selection : only show my sessions (not the shared ones)
 - get rid of float, now using double
 - use cert4android in webTrackService
 [#11](https://gitlab.com/eneiluj/phonetrack-android/issues/11) @temrix
+- don't update sessions if not necessary when syncing
+- fix some icon's color for old android versions
+- fix permission requests
+- fix Android 6.0 problem with theme changing
+[#5](https://gitlab.com/eneiluj/phonetrack-android/issues/5) @Valdnet
+- fix info dialog which was not using an up-to-date logjob
+[#13](https://gitlab.com/eneiluj/phonetrack-android/issues/13) @Valdnet
 
 ## 0.0.6 – 2019-01-11
 ### Added
