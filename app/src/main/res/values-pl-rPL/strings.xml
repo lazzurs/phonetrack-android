@@ -20,10 +20,10 @@
     <string name="setting_devicename_long">Nazwa urządzenia lub token rezerwacji</string>
     <string name="setting_token">Token sesji</string>
     <string name="setting_token_long">Token identyfikacji sesji</string>
-    <string name="setting_lj_url">Adres URL Nextcloud</string>
-    <string name="setting_lj_url_long">Adres URL Nextcloud docelowej instancji PhoneTrack obsługujący sesję</string>
-    <string name="setting_url">Docelowy adres URL</string>
-    <string name="setting_url_long">Docelowy adres URL, o który należy poprosić przy wymianie wartości</string>
+    <string name="setting_lj_url">Nextcloud address</string>
+    <string name="setting_lj_url_long">Nextcloud address of target PhoneTrack instance hosting the session</string>
+    <string name="setting_url">Target address</string>
+    <string name="setting_url_long">Target address to be requested with value replacement</string>
     <string name="setting_post_title">Użyj metody POST</string>
     <string name="setting_post_summary">zamiast metody GET. Parametry GET zostaną przekonwertowane na POST.</string>
     <string name="action_search">Szukaj</string>
@@ -43,8 +43,8 @@
     <string name="action_frequency">Ustaw częstotliwość odświeżania</string>
     <string name="menu_delete">Usuń</string>
     <string name="menu_save">Zapisz</string>
-    <string name="menu_select_session">Użyj sesji Nextcloud PhoneTrack</string>
-    <string name="menu_from_url">Użyj adresu URL rejestrowania NextCloud PhoneTrack</string>
+    <string name="menu_select_session">Use PhoneTrack session</string>
+    <string name="menu_from_url">Use PhoneTrack logging link</string>
     <string name="menu_share">Udostępnij</string>
     <string name="fab_create_phonetrack">Nowe zadanie dziennika PhoneTrack</string>
     <string name="fab_create_custom">Nowe niestandardowe zadanie dziennika</string>
@@ -60,10 +60,10 @@
     <string name="logjob_info_nbsync">%d wysłane lokalizacje</string>
     <string name="logjob_info_nbnotsync">%d lokalizacje oczekujące</string>
     <string name="logjob_info_lastloc">Ostatnia lokalizacja nabyta w %s</string>
-    <string name="logjob_info_lastsync">Ostatnia pomyślna synchronizacja w %s</string>
+    <string name="logjob_info_lastsync">Last successful sync at %s</string>
     <string name="logjob_info_lastsync_error">Ostatni błąd synchronizacji na %s\n\n%s</string>
-    <string name="dialog_title_import_pt_url">Importuj adres URL rejestrowania PhoneTrack</string>
-    <string name="dialog_msg_import_pt_url">Dowolny zgodny adres URL logowania podany w interfejsie internetowym PhoneTrack</string>
+    <string name="dialog_title_import_pt_url">Import PhoneTrack logging link</string>
+    <string name="dialog_msg_import_pt_url">Any compatible logging link given in PhoneTrack web interface</string>
     <string name="confirm_delete_logjob_dialog_title">Czy jesteś pewny?</string>
     <string name="edit_logjob_choose_session_dialog_title">Wybierz sesję</string>
     <string name="map_choose_session_dialog_title">Wybierz sesję do wyświetlenia na mapie</string>
@@ -78,7 +78,7 @@
     <string name="popup_bearing">Kierunek</string>
     <string name="popup_speed">Prędkość</string>
     <string name="popup_user_agent">Aplikacja</string>
-    <string name="map_choose_layer">Choose a map tile provider</string>
+    <string name="map_choose_layer">Wybierz dostawcę kafelka mapy</string>
     <string name="is_running">uruchomionych (%s oczekujących, %s wysłanych)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
@@ -113,7 +113,7 @@
     <string name="pref_shownbsynced_summary">zsynchronizowany = wysłany na serwer</string>
     <string name="share_dev_title">Udostępnij publiczny adres URL PhoneTrack</string>
     <string name="menu_share_dev_title">Udostępnij publiczny adres URL PhoneTrack</string>
-    <string name="error_share_dev_same_url">Adres URL Nextcloud musi być taki sam, jak w ustawieniach konta, aby można go było udostępniać</string>
+    <string name="error_share_dev_same_url">Nextcloud address must be the same as in Account settings to be able to share</string>
     <string name="error_share_dev_configured">Ustawienia konta muszą zostać skonfigurowane</string>
     <string name="error_share_dev_network">Nie udało się udostępnić urządzenia\nSieć jest niedostępna</string>
     <string name="error_share_dev_helper">Błąd podczas udostępniania urządzenia : %s</string>
@@ -130,8 +130,8 @@
     <string name="error_no_network">brak połączenia z siecią</string>
     <string name="error_server">błąd serwera</string>
     <string name="error_username_password_invalid">błędna nazwa użytkownika lub hasło</string>
-    <string name="error_invalid_pt_url">Nieprawidłowy adres URL logowania do PhoneTrack</string>
-    <string name="error_invalid_url">Nieprawidłowy adres URL</string>
+    <string name="error_invalid_pt_url">Invalid PhoneTrack logging link</string>
+    <string name="error_invalid_url">Invalid link</string>
     <string name="error_invalid_token">Nieprawidłowy token</string>
     <string name="error_invalid_title">Nieprawidłowy tytuł</string>
     <string name="error_invalid_devname">Nieprawidłowa nazwa urządzenia</string>
