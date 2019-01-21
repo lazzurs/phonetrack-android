@@ -865,8 +865,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     @Override
     public void onLogjobInfoButtonClick(int position, View view) {
-        DBLogjob logjob = (DBLogjob) adapter.getItem(position);
-        if (logjob != null) {
+        DBLogjob logjobItem = (DBLogjob) adapter.getItem(position);
+        if (logjobItem != null) {
+            DBLogjob logjob = db.getLogjob(logjobItem.getId());
             long ljId = logjob.getId();
             PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
             long tsLastLoc = db.getLastLocTimestamp(ljId);
