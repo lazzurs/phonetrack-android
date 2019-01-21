@@ -92,6 +92,7 @@ import butterknife.ButterKnife;
 public class MapActivity extends AppCompatActivity {
     MapView map = null;
 
+    private final static int PERMISSION_WRITE = 3;
     private static final String TAG = MapActivity.class.getSimpleName();
 
     public static final String PARAM_SESSIONID = "net.eneiluj.nextcloud.phonetrack.mapSessionId";
@@ -177,8 +178,15 @@ public class MapActivity extends AppCompatActivity {
         //if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
         //see also StorageUtils
         //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
-        ActivityCompat.requestPermissions(MapActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PackageManager.PERMISSION_GRANTED);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(
+                    MapActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_WRITE
+            );
+        }
         db = PhoneTrackSQLiteOpenHelper.getInstance(ctx);
 
         long sessionid = getIntent().getLongExtra(PARAM_SESSIONID, 0);

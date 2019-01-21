@@ -78,7 +78,7 @@
     <string name="popup_bearing">Richting</string>
     <string name="popup_speed">Snelheid</string>
     <string name="popup_user_agent">User-agent</string>
-    <string name="map_choose_layer">Choose a map tile provider</string>
+    <string name="map_choose_layer">Kies een kaart tegel provider</string>
     <string name="is_running">draaiend (%s in behandeling, %s verzonden)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>

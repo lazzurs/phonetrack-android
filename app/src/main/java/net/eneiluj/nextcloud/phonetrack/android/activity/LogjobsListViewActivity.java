@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 //import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -70,6 +72,7 @@ import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
     private final static int PERMISSION_LOCATION = 1;
+    private final static int PERMISSION_FOREGROUND = 2;
 
     private final static int PERMISSION_FOREGROUND_SERVICE = 1;
 
@@ -173,13 +176,28 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[request 2 permissions]"); }
-            ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (LoggerService.DEBUG) { Log.d(TAG, "[request location permission]"); }
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_LOCATION
+            );
         }
-        else {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[request 1 permission]"); }
-            ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (LoggerService.DEBUG) { Log.d(TAG, "[request foreground permission]"); }
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.FOREGROUND_SERVICE},
+                        PERMISSION_FOREGROUND
+                );
+            }
         }
 
         Map<String, Integer> enabled = db.getEnabledCount();
@@ -210,6 +228,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         registerBroadcastReceiver();
         // TODO update number of late positions
         //updateStatuses();
+        if (LoggerService.DEBUG) { Log.d(TAG, "[onResume END]"); }
     }
 
     /**
@@ -220,6 +239,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         if (LoggerService.DEBUG) { Log.d(TAG, "[onPause]"); }
         unregisterReceiver(mBroadcastReceiver);
         super.onPause();
+        if (LoggerService.DEBUG) { Log.d(TAG, "[onPause END]"); }
     }
 
 
