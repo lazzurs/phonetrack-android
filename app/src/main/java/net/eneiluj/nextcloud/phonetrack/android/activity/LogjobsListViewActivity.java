@@ -216,18 +216,17 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     @Override
     protected void onResume() {
         if (LoggerService.DEBUG) { Log.d(TAG, "[onResume]"); }
+        super.onResume();
         // refresh and sync every time the activity gets visible
         refreshLists();
         swipeRefreshLayout.setRefreshing(false);
-        db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
+        //db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
             synchronize();
         }
-        super.onResume();
 
         registerBroadcastReceiver();
-        // TODO update number of late positions
-        //updateStatuses();
+
         if (LoggerService.DEBUG) { Log.d(TAG, "[onResume END]"); }
     }
 
@@ -237,8 +236,17 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     @Override
     protected void onPause() {
         if (LoggerService.DEBUG) { Log.d(TAG, "[onPause]"); }
-        unregisterReceiver(mBroadcastReceiver);
         super.onPause();
+
+        try {
+            unregisterReceiver(mBroadcastReceiver);
+        }
+        // i don't understand why this is happening on 6.0 only
+        // onPause is called twice when trying to launch preferences activity
+        // anyway this solves it, at least the app does not crash anymore
+        catch (RuntimeException e) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "RECEIVER PROBLEM, let's ignore it..."); }
+        }
         if (LoggerService.DEBUG) { Log.d(TAG, "[onPause END]"); }
     }
 
@@ -952,7 +960,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     private void synchronize() {
         if (LoggerService.DEBUG) { Log.d(TAG, "[call synchronize()]"); }
-        //swipeRefreshLayout.setRefreshing(true);
         db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         db.getPhonetrackServerSyncHelper().scheduleSync(false);
     }
