@@ -4,31 +4,15 @@
 
 If you find a bug, feel free to [open an issue](https://gitlab.com/eneiluj/phonetrack-android/issues). But please provide these information in the comment:
 
-**Android version:** e. g. 6.0.1 Marshmallow
-
-**Device**: e. g. Motorola Moto G 2015
-
-**System language**: English (US), German, ...
-
-**App version:** e. g. v0.0.1
-
-**App source:** self-built, project wiki, F-droid ?
-
-**Steps to reproduce:**
-  1. open the app
-  2. click on a log job
-  3. use the top left back-arrow
-  4. ...
-
 ### Copy & Paste
-    **Android version:** e. g. 6.0.1 Marshmallow
-    
-    **Device**: e. g. Motorola Moto G 2015
-    
+    **Android version:** e. g. 7.1.2 Nougat
+
+    **Device**: e. g. LG G4
+
     **System language**: English (US), German, ...
-    
-    **App version:** e. g. v0.0.1
-    
+
+    **App version:** e. g. v0.0.6
+
     **App source:** self-built, project wiki, F-droid ?
 
     **Steps to reproduce:**
