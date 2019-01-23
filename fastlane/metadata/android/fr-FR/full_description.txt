@@ -9,10 +9,11 @@ quel serveur personnalisé (requêtes HTTP GET ou POST).
 - Loguer vers plusieurs destinations avec plusieurs configurations (fréquence, distance min, précision min)
 - Loguer vers l'appli PhoneTrack Nextcloud (log job PhoneTrack)
 - Loguer vers n'importe quel serveur capable de recevoir des requêtes HTTP GET ou POST (log job personnalisé)
-- Démarrer au lancement du système
 - Stocker les positions quand le réseau est inaccessible
+- Démarrer au lancement du système
+- Afficher les appareils d'une session PhoneTrack Nextcloud sur une carte
 - Thème sombre
-- Interface utilisateur multilingue (traduit sur [https://crowdin.com/project/phonetrack Crowdin])
+- Interface utilisateur multilingue (traduit sur https://crowdin.com/project/phonetrack )
 
 # Prérequis
 

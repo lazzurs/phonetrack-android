@@ -30,7 +30,7 @@ or to any server which can receive HTTP GET or POST requests with a `custom log 
 
 ## Install
 
-* APK Direct download : [releases in project wiki](https://gitlab.com/eneiluj/phonetrack-android/wikis/home#releases)
+* APK Direct download : [builds in Gitlab CI artifacts](https://gitlab.com/eneiluj/phonetrack-android/pipelines)
 * [![PhoneTrack App on fdroid.org](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/57bb389a0c40f5cb81dc1ae21a314adb/fd.png)](https://f-droid.org/packages/net.eneiluj.nextcloud.phonetrack/)
 
 ## Build
@@ -60,7 +60,8 @@ Then open/import the project in Android studio and build it.
 * Send locations to custom server with GET or POST requests
 * Store positions when network is not available
 * Launch on system startup
-* Theming
+* Display devices of a Nextcloud PhoneTrack session on a map
+* Dark theme
 * Translated in many languages on [Crowdin](https://crowdin.com/project/phonetrack)
 
 
