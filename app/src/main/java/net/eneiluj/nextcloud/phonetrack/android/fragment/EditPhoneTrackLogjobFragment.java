@@ -308,24 +308,11 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // user checked an item
-                    System.out.println("CHECKED :" + which);
                     setFieldsFromSession(sessionList.get(which));
-                    //saveLogjob(null);
                     dialog.dismiss();
                 }
             });
-
-            // add OK and Cancel buttons
-            selectBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // user clicked OK
-                    System.out.println("CHECKED OK :" + which);
-                }
-            });
             selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
-
-            // create the alert dialog
             selectDialog = selectBuilder.create();
         }
 
@@ -340,17 +327,13 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString());
-                //saveLogjob(null);
             }
         });
-
         fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // what ever you want to do with No option.
             }
         });
-
-        // create the alert dialog
         fromUrlDialog = fromUrlBuilder.create();
 
         // show select session dialog if there are sessions

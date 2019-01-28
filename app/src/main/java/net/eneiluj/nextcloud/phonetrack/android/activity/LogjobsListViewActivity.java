@@ -529,20 +529,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                 dialog.dismiss();
                             }
                         });
-
-                        // add OK and Cancel buttons
-                        selectBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // user clicked OK
-                                System.out.println("CHECKED OK :" + which);
-                            }
-                        });
                         selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
-
-                        // create the alert dialog
                         AlertDialog selectDialog = selectBuilder.create();
-                        System.out.println("BOOOOOOOOOOOOM");
                         selectDialog.show();
                     }
                     else {
@@ -923,10 +911,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
 
             AlertDialog.Builder builder;
-            //builder = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_Material_Dialog_Alert);
             builder = new AlertDialog.Builder(new ContextThemeWrapper(view.getContext(), R.style.AppThemeDialog));
             builder.setTitle(view.getContext().getString(R.string.logjob_info_dialog_title, logjob.getTitle()))
-                    //.setMessage(infoText)
                     .setView(iView)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {

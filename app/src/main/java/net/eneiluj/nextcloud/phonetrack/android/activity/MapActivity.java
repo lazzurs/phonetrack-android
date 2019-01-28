@@ -848,15 +848,7 @@ public class MapActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-
-                selectBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
                 selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
-
-                // create the alert dialog
                 AlertDialog selectDialog = selectBuilder.create();
                 selectDialog.show();
             }
