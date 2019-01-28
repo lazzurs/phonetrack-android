@@ -6,7 +6,7 @@ An android app to log locations to [PhoneTrack Nextcloud app](https://gitlab.com
 This is still a beta version.
 
 This app is originally a fork of [Nextcloud Notes for Android](https://github.com/stefan-niedermann/nextcloud-notes).
-It is also largely insired by [µLogger for Android](https://github.com/bfabiszewski/ulogger-android).
+It is also largely insired by [µLogger for Android](https://github.com/bfabiszewski/ulogger-android) for the logging service part.
 Many thanks to their developers :heart: !
 
 What's different from other logging apps ?
@@ -21,8 +21,29 @@ This means you can simultaneously have :
 
 Log jobs are independent and can be individually activated.
 
-It can log to [PhoneTrack Nextcloud app](https://gitlab.com/eneiluj/phonetrack-oc) with a `PhoneTrack log job`
+PhoneTrack-Android can log to [PhoneTrack Nextcloud app](https://gitlab.com/eneiluj/phonetrack-oc) with a `PhoneTrack log job`
 or to any server which can receive HTTP GET or POST requests with a `custom log job`.
+
+This app is pretty simple so it has a low inpact on battery life. There has been a few comparisons with other loggers in [#8](https://gitlab.com/eneiluj/phonetrack-android/issues/8#note_130524605) and in [#175 of Nextcloud PhoneTrack](https://gitlab.com/eneiluj/phonetrack-oc/issues/175#note_130338568).
+
+## Features
+* Create multiple log jobs to run in the background to log positions to different places
+* Send locations to PhoneTrack Nextcloud app
+* Send locations to custom server with GET or POST requests
+* Store positions when network is not available
+* Launch on system startup
+* Display devices of a Nextcloud PhoneTrack session on a map
+* Dark theme
+* Translated in many languages on [Crowdin](https://crowdin.com/project/phonetrack)
+
+
+## :link: Requirements
+* Android >= 4.1
+
+If you want to log to Nextcloud PhoneTrack :
+
+* [Nextcloud](https://nextcloud.com/) instance running
+* [Nextcloud PhoneTrack](https://gitlab.com/eneiluj/phonetrack-oc) app enabled
 
 ## User documentation
 
@@ -53,22 +74,12 @@ Then open/import the project in Android studio and build it.
 
 ## :eyes: Screenshots
 
-
-## Features
-* Create multiple log jobs to run in the background to log positions to different places
-* Send locations to PhoneTrack Nextcloud app
-* Send locations to custom server with GET or POST requests
-* Store positions when network is not available
-* Launch on system startup
-* Display devices of a Nextcloud PhoneTrack session on a map
-* Dark theme
-* Translated in many languages on [Crowdin](https://crowdin.com/project/phonetrack)
-
-
-## :link: Requirements
-* Android >= 4.1
-* [Nextcloud](https://nextcloud.com/) instance running
-* [Nextcloud PhoneTrack](https://gitlab.com/eneiluj/phonetrack-oc) app enabled
+![1](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/b29ea339fbb3a1dede386847e710fb49/1.png)
+![2](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/c21cf9f1c58bd2341073b9a910d0d5ae/2.png)
+![3](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/bfbbe80b0dd35303f81154a727b732d3/3.png)
+![4](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/cd1110b94bcd634fbbb314a590a7e3e9/4.png)
+![5](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/82ab4bba86fab9f3e09ace3875ed2e67/5.png)
+![6](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/2cea3c089c828540629246dc6f394ad5/6.png)
 
 ## :notebook: License
 This project is licensed under the [GNU GENERAL PUBLIC LICENSE](/LICENSE).

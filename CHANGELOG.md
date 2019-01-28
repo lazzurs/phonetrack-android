@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - less margins in drawer menus
 - DBLocation now includes User-agent
 - replace URL by link or address in strings
+- unified theme accross the app parts
 
 ### Fixed
 - logjob edition session selection : only show my sessions (not the shared ones)
@@ -31,6 +32,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#5](https://gitlab.com/eneiluj/phonetrack-android/issues/5) @Valdnet
 - fix info dialog which was not using an up-to-date logjob
 [#13](https://gitlab.com/eneiluj/phonetrack-android/issues/13) @Valdnet
+- wait 5 seconds when connectivity is back before launching syncService
+- remove useless ok button for list select dialog
+- map setFrequency field forced to number
 
 ## 0.0.6 – 2019-01-11
 ### Added
