@@ -546,17 +546,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
 
                         AlertDialog selectDialog = selectBuilder.create();
-                        selectDialog.setOnShowListener(
-                                new DialogInterface.OnShowListener() {
-                                    @Override
-                                    public void onShow(DialogInterface dialog) {
-                                        int primColor = ThemeUtils.primaryColor(listView.getContext());
-                                        ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE)
-                                                .setTextColor(primColor);
-                                    }
-                                }
-                        );
-
                         selectDialog.show();
                     }
                     else {

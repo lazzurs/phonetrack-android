@@ -2,16 +2,20 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
+import android.view.Window;
 import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public abstract class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
 
@@ -31,6 +35,16 @@ public abstract class EditLogjobActivity extends AppCompatActivity implements Ed
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            int color = ThemeUtils.primaryColor(this);
+            actionBar.setBackgroundDrawable(new ColorDrawable(color));
+        }
+
+        Window window = getWindow();
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int colorDark = ThemeUtils.primaryDarkColor(this);
+                window.setStatusBarColor(colorDark);
+            }
         }
     }
 

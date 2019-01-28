@@ -18,7 +18,9 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -34,6 +36,7 @@ import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -45,6 +48,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
 import org.mapsforge.map.rendertheme.XmlRenderTheme;
@@ -155,7 +159,7 @@ public class MapActivity extends AppCompatActivity {
                 .getConstantState().newDrawable();
         toggleCircle.setColorFilter(
                 new PorterDuffColorFilter(
-                        ContextCompat.getColor(ctx, R.color.primary),
+                        ThemeUtils.primaryColor(ctx),
                         PorterDuff.Mode.SRC_IN
                 )
         );
@@ -347,6 +351,19 @@ public class MapActivity extends AppCompatActivity {
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayoutMap.addDrawerListener(drawerToggle);
         setTitle("Map");
+
+        if (toolbar != null) {
+            int color = ThemeUtils.primaryColor(this);
+            toolbar.setBackgroundColor(color);
+        }
+
+        Window window = getWindow();
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int colorDark = ThemeUtils.primaryDarkColor(this);
+                window.setStatusBarColor(colorDark);
+            }
+        }
     }
 
     public void onResume(){
@@ -587,7 +604,7 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    public BitmapDrawable writeOnDrawable(int drawableId, String text, int markerColorId, int textColorId){
+    public BitmapDrawable writeOnDrawable(int drawableId, String text, int markerColor, int textColorId){
 
         Bitmap bm = BitmapFactory.decodeResource(ctx.getResources(), drawableId).copy(Bitmap.Config.ARGB_8888, true);
         bm = Bitmap.createScaledBitmap(bm, 70, 70, true);
@@ -596,7 +613,7 @@ public class MapActivity extends AppCompatActivity {
         Paint paintCol = new Paint();
 
         ColorFilter filter = new PorterDuffColorFilter(
-                ContextCompat.getColor(this, markerColorId),
+                markerColor,
                 PorterDuff.Mode.SRC_IN
         );
         paintCol.setColorFilter(filter);
@@ -657,7 +674,8 @@ public class MapActivity extends AppCompatActivity {
                 }
                 else {
                     Marker m = new Marker(map);
-                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), R.color.primary, android.R.color.white);
+                    int color = ThemeUtils.primaryColor(ctx);
+                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), color, android.R.color.white);
                     m.setIcon(bmd);
                     //m.setPosition(new GeoPoint(43.6617,3.8473));
                     map.getOverlays().add(m);

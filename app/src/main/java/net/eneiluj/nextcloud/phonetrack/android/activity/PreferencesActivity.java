@@ -1,10 +1,15 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
 
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 /**
  * Allows to change application settings.
@@ -18,5 +23,23 @@ public class PreferencesActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new PreferencesFragment())
                 .commit();
+        setupActionBar();
+    }
+
+    private void setupActionBar() {
+        ActionBar actionBar = getDelegate().getSupportActionBar();
+
+        if (actionBar != null) {
+            int color = ThemeUtils.primaryColor(this);
+            actionBar.setBackgroundDrawable(new ColorDrawable(color));
+        }
+
+        Window window = getWindow();
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int colorDark = ThemeUtils.primaryDarkColor(this);
+                window.setStatusBarColor(colorDark);
+            }
+        }
     }
 }

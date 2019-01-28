@@ -43,6 +43,7 @@
 
     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
         android:defaultValue="@color/primary"
+        android:icon="@drawable/ic_palette_grey_24dp"
         android:key="@string/pref_key_color"
         android:summary="An example of using a different picker"
         android:title="Custom picker sample"
