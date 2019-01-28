@@ -280,6 +280,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.action_drawer_open, R.string.action_drawer_close);
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.addDrawerListener(drawerToggle);
+        drawerLayout.findViewById(R.id.drawer_top_layout).setBackgroundColor(ThemeUtils.primaryColor(this));
 
         toolbar.setBackgroundColor(ThemeUtils.primaryColor(this));
 

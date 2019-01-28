@@ -351,6 +351,7 @@ public class MapActivity extends AppCompatActivity {
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayoutMap.addDrawerListener(drawerToggle);
         setTitle("Map");
+        drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackgroundColor(ThemeUtils.primaryColor(this));
 
         if (toolbar != null) {
             int color = ThemeUtils.primaryColor(this);

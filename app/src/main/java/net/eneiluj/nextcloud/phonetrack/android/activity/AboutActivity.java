@@ -1,12 +1,16 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -14,6 +18,7 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.about.AboutFragmentContributingTab;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.about.AboutFragmentCreditsTab;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.about.AboutFragmentLicenseTab;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -30,6 +35,25 @@ public class AboutActivity extends AppCompatActivity {
 
         mViewPager.setAdapter(new TabsPagerAdapter(getSupportFragmentManager()));
         mTabLayout.setupWithViewPager(mViewPager);
+
+        setupActionBar();
+    }
+
+    private void setupActionBar() {
+        ActionBar actionBar = getDelegate().getSupportActionBar();
+
+        if (actionBar != null) {
+            int color = ThemeUtils.primaryColor(this);
+            actionBar.setBackgroundDrawable(new ColorDrawable(color));
+        }
+
+        Window window = getWindow();
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int colorDark = ThemeUtils.primaryDarkColor(this);
+                window.setStatusBarColor(colorDark);
+            }
+        }
     }
 
     private class TabsPagerAdapter extends FragmentPagerAdapter {
