@@ -18,6 +18,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.ViewHolder> {
 
@@ -103,7 +104,13 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
             //view.setBackgroundColor(isSelected ? view.getResources().getColor(R.color.bg_highlighted) : Color.TRANSPARENT);
             view.setBackgroundColor(isSelected ? ContextCompat.getColor(view.getContext(), R.color.bg_highlighted) : Color.TRANSPARENT);
             //int textColor = view.getResources().getColor(isSelected ? R.color.primary_dark : R.color.fg_default);
-            int textColor = ContextCompat.getColor(view.getContext(), isSelected ? R.color.primary : R.color.fg_default);
+            int textColor;
+            if (isSelected) {
+                textColor = ThemeUtils.primaryColor(view.getContext());
+            }
+            else{
+                textColor = ContextCompat.getColor(view.getContext(), R.color.fg_default);
+            }
 
             name.setTextColor(textColor);
             count.setTextColor(textColor);
