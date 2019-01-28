@@ -47,6 +47,7 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
@@ -763,6 +764,15 @@ public class LoggerService extends Service {
         @Override
         public void onAvailable(Network network) {
             if (DEBUG) { Log.d(TAG, "Network is available again : launch sync from loggerservice"); }
+            try {
+                // just to be sure the connection is effective
+                // sometimes i experienced problems when connecting to slow wifi networks
+                // i think internet access was not yet established when syncService was launched
+                TimeUnit.SECONDS.sleep(5);
+            }
+            catch (InterruptedException e) {
+
+            }
             startService(syncIntent);
         }
     }
