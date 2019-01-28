@@ -2,10 +2,13 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 //import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +18,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,6 +32,7 @@ import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil.LoginStatus;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 /**
  * Allows to set Settings like URL, Username and Password for Server-Synchronization
@@ -74,6 +79,20 @@ public class SettingsActivity extends AppCompatActivity {
             first_run = true;
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            }
+        }
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            int color = ThemeUtils.primaryColor(this);
+            actionBar.setBackgroundDrawable(new ColorDrawable(color));
+        }
+
+        Window window = getWindow();
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int colorDark = ThemeUtils.primaryDarkColor(this);
+                window.setStatusBarColor(colorDark);
             }
         }
 

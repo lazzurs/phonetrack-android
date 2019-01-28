@@ -339,6 +339,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 fabMenu.close(false);
             }
         });
+        fabMenu.setMenuButtonColorNormal(ThemeUtils.primaryColor(this));
+        fabMenu.setMenuButtonColorPressed(ThemeUtils.primaryColor(this));
+        fabCreateCustom.setColorNormal(ThemeUtils.primaryColor(this));
+        fabCreateCustom.setColorPressed(ThemeUtils.primaryColor(this));
+        fabCreatePhoneTrack.setColorNormal(ThemeUtils.primaryColor(this));
+        fabCreatePhoneTrack.setColorPressed(ThemeUtils.primaryColor(this));
     }
 
     private void setupNavigationList(final String selectedItem) {
