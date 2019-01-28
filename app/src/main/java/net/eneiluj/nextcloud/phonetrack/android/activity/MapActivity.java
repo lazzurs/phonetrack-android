@@ -472,7 +472,7 @@ public class MapActivity extends AppCompatActivity {
                     final EditText fromUrlEdit = new EditText(map.getContext());
                     fromUrlEdit.setText(String.valueOf(currentFreq));
                     fromUrlEdit.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-                    AlertDialog.Builder fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
+                    AlertDialog.Builder fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.AppThemeDialog));
                     fromUrlBuilder.setMessage(getString(R.string.map_choose_frequency_dialog_message));
                     fromUrlBuilder.setTitle(getString(R.string.map_choose_frequency_dialog_title));
 
@@ -829,7 +829,7 @@ public class MapActivity extends AppCompatActivity {
         btLayers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
+                AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.AppThemeDialog));
                 selectBuilder.setTitle(getString(R.string.map_choose_layer));
 
                 final CharSequence[] layers = layersMap.keySet().toArray(new CharSequence[layersMap.keySet().size()]);

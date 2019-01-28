@@ -513,7 +513,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         sessionIdList.add(session.getId());
                     }
                     // manage session list DIALOG
-                    AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(listView.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
+                    AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(listView.getContext(), R.style.AppThemeDialog));
                     selectBuilder.setTitle(getString(R.string.map_choose_session_dialog_title));
 
                     if (sessionNameList.size() > 0) {
@@ -924,7 +924,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
             AlertDialog.Builder builder;
             //builder = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_Material_Dialog_Alert);
-            builder = new AlertDialog.Builder(new ContextThemeWrapper(view.getContext(), R.style.Theme_AppCompat_DayNight_Dialog));
+            builder = new AlertDialog.Builder(new ContextThemeWrapper(view.getContext(), R.style.AppThemeDialog));
             builder.setTitle(view.getContext().getString(R.string.logjob_info_dialog_title, logjob.getTitle()))
                     //.setMessage(infoText)
                     .setView(iView)
@@ -933,7 +933,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
                         }
                     })
-                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setIcon(R.drawable.ic_info_outline_grey600_24dp)
                     .show();
         }
     }

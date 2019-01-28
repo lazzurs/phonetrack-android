@@ -250,7 +250,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             }
         };
         //confirmDeleteAlertBuilder = new AlertDialog.Builder(getActivity());
-        confirmDeleteAlertBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.Theme_AppCompat_DayNight_Dialog));
+        confirmDeleteAlertBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.AppThemeDialog));
         confirmDeleteAlertBuilder.setMessage(getString(R.string.confirm_delete_logjob_dialog_title))
                 .setPositiveButton(getString(R.string.simple_yes), deleteDialogClickListener)
                 .setNegativeButton(getString(R.string.simple_no), deleteDialogClickListener);

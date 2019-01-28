@@ -299,7 +299,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         }
 
         // manage session list DIALOG
-        selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.Theme_AppCompat_DayNight_Dialog));
+        selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.AppThemeDialog));
         selectBuilder.setTitle(getString(R.string.edit_logjob_choose_session_dialog_title));
 
         if (sessionNameList.size() > 0) {
@@ -331,7 +331,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         // manage from URL DIALOG
         fromUrlEdit = new EditText(getContext());
-        fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.Theme_AppCompat_DayNight_Dialog));
+        fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.AppThemeDialog));
         fromUrlBuilder.setMessage(getString(R.string.dialog_msg_import_pt_url));
         fromUrlBuilder.setTitle(getString(R.string.dialog_title_import_pt_url));
 
