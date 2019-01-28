@@ -39,6 +39,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -352,6 +353,8 @@ public class MapActivity extends AppCompatActivity {
         drawerLayoutMap.addDrawerListener(drawerToggle);
         setTitle("Map");
         drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackgroundColor(ThemeUtils.primaryColor(this));
+        ImageView logoView = drawerLayoutMap.findViewById(R.id.drawer_logo_map);
+        logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
 
         if (toolbar != null) {
             int color = ThemeUtils.primaryColor(this);

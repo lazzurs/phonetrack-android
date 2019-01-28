@@ -18,6 +18,15 @@ public class ThemeUtils {
         return color;
     }
 
+    public static int primaryColorTransparent(Context context) {
+        int color = PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(
+                        context.getString(R.string.pref_key_color),
+                        ContextCompat.getColor(context, R.color.primary)
+                );
+        return manipulateColor(color, 1, 150);
+    }
+
     public static int primaryDarkColor(Context context) {
         int color = PreferenceManager.getDefaultSharedPreferences(context)
                 .getInt(context.getString(
@@ -28,11 +37,14 @@ public class ThemeUtils {
     }
 
     public static int manipulateColor(int color, float factor) {
-        int a = Color.alpha(color);
+        return manipulateColor(color, factor, Color.alpha(color));
+    }
+
+    public static int manipulateColor(int color, float factor, int alpha) {
         int r = Math.round(Color.red(color) * factor);
         int g = Math.round(Color.green(color) * factor);
         int b = Math.round(Color.blue(color) * factor);
-        return Color.argb(a,
+        return Color.argb(alpha,
                 Math.min(r,255),
                 Math.min(g,255),
                 Math.min(b,255));
