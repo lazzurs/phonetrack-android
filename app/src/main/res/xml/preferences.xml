@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
         android:icon="@drawable/ic_account_circle_grey_24dp"
@@ -39,6 +40,14 @@
         android:key="@string/pref_key_theme"
         android:summary="%s"
         android:title="@string/settings_theme_title" />
+
+    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+        android:defaultValue="@color/primary"
+        android:key="@string/pref_key_color"
+        android:summary="An example of using a different picker"
+        android:title="Custom picker sample"
+        app:colorShape="circle"
+        app:showDialog="false" />
 
     <PreferenceScreen
         android:key="@string/pref_key_certs"

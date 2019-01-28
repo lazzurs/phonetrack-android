@@ -203,6 +203,7 @@
     <string name="pref_key_trust_system_certs" translatable="false">trustSystemCerts</string>
     <string name="pref_key_reset_trust" translatable="false">resetTrust</string>
     <string name="pref_key_theme" translatable="false">darkTheme</string>
+    <string name="pref_key_color" translatable="false">appColor</string>
     <string name="pref_key_autostart" translatable="false">autostart</string>
     <string name="pref_key_shownbsynced" translatable="false">shownbsynced</string>
     <string name="pref_value_theme_light">Light</string>

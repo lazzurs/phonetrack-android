@@ -12,6 +12,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,6 +71,7 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
@@ -276,6 +280,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.action_drawer_open, R.string.action_drawer_close);
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.addDrawerListener(drawerToggle);
+
+        toolbar.setBackgroundColor(ThemeUtils.primaryColor(this));
+
+        Window window = getWindow();
+        if (window != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int color = ThemeUtils.primaryDarkColor(this);
+                window.setStatusBarColor(color);
+            }
+        }
     }
 
     private void setupLogjobsList() {
@@ -530,7 +544,19 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                             }
                         });
                         selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
+
                         AlertDialog selectDialog = selectBuilder.create();
+                        selectDialog.setOnShowListener(
+                                new DialogInterface.OnShowListener() {
+                                    @Override
+                                    public void onShow(DialogInterface dialog) {
+                                        int primColor = ThemeUtils.primaryColor(listView.getContext());
+                                        ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE)
+                                                .setTextColor(primColor);
+                                    }
+                                }
+                        );
+
                         selectDialog.show();
                     }
                     else {

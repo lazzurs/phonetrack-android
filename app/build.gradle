@@ -45,6 +45,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestImplementation 'junit:junit:4.12'
 
-    implementation 'org.osmdroid:osmdroid-android:6.0.3'
+    implementation "org.osmdroid:osmdroid-android:6.0.3"
     implementation "org.osmdroid:osmdroid-mapsforge:6.0.3"
+
+    implementation 'com.github.kizitonwose.colorpreference:support:1.0.6'
+    implementation 'com.larswerkman:lobsterpicker:1.0.1'
 }

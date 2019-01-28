@@ -530,7 +530,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
 
     @NonNull
-    @WorkerThread
+    //@WorkerThread
     public Map<String, Integer> getEnabledCount() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(
