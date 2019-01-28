@@ -469,19 +469,20 @@ public class MapActivity extends AppCompatActivity {
                 else*/ if (item == itemFreq) {
                     int currentFreq = prefs.getInt("map_freq", 15);
 
-                    final EditText fromUrlEdit = new EditText(map.getContext());
-                    fromUrlEdit.setText(String.valueOf(currentFreq));
-                    fromUrlEdit.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+                    final EditText frequencyEdit = new EditText(map.getContext());
+                    frequencyEdit.setText(String.valueOf(currentFreq));
+                    frequencyEdit.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+                    frequencyEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
                     AlertDialog.Builder fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.AppThemeDialog));
                     fromUrlBuilder.setMessage(getString(R.string.map_choose_frequency_dialog_message));
                     fromUrlBuilder.setTitle(getString(R.string.map_choose_frequency_dialog_title));
 
-                    fromUrlBuilder.setView(fromUrlEdit);
+                    fromUrlBuilder.setView(frequencyEdit);
 
                     fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            setFrequency(fromUrlEdit.getText().toString());
-                            Log.i(TAG, "[CHANGE FREQ] "+fromUrlEdit.getText().toString());
+                            setFrequency(frequencyEdit.getText().toString());
+                            Log.i(TAG, "[CHANGE FREQ] "+frequencyEdit.getText().toString());
                         }
                     });
 
