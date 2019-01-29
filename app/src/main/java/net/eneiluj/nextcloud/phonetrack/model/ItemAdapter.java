@@ -2,6 +2,8 @@ package net.eneiluj.nextcloud.phonetrack.model;
 
 import android.content.SharedPreferences;
 //import android.preference.PreferenceManager;
+import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +28,7 @@ import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
@@ -128,10 +131,26 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
             nvHolder.logjobEnabled.setChecked(logjob.isEnabled());
+            if (nvHolder.logjobEnabled.isChecked()) {
+                nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ThemeUtils.primaryDarkColor(db.getContext()), PorterDuff.Mode.SRC_IN);
+                nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ThemeUtils.primaryColor(db.getContext()), PorterDuff.Mode.MULTIPLY);
+            }
+            else {
+                nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
+                nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_high), PorterDuff.Mode.MULTIPLY);
+            }
             nvHolder.logjobEnabled.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     logjobClickListener.onLogjobEnabledClick(holder.getAdapterPosition(), view);
+                    if (nvHolder.logjobEnabled.isChecked()) {
+                        nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ThemeUtils.primaryDarkColor(db.getContext()), PorterDuff.Mode.SRC_IN);
+                        nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ThemeUtils.primaryColor(db.getContext()), PorterDuff.Mode.MULTIPLY);
+                    }
+                    else {
+                        nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
+                        nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_high), PorterDuff.Mode.MULTIPLY);
+                    }
                 }
             });
 
