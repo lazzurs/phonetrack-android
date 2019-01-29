@@ -20,8 +20,8 @@
     <string name="setting_devicename_long">Имя устройства или маркер резервирования</string>
     <string name="setting_token">Маркер сессии</string>
     <string name="setting_token_long">Идентификационный маркер сессии</string>
-    <string name="setting_lj_url">Nextcloud address</string>
-    <string name="setting_lj_url_long">Nextcloud address of target PhoneTrack instance hosting the session</string>
+    <string name="setting_lj_url">Адрес сервера Nextcloud</string>
+    <string name="setting_lj_url_long">URL-адрес сессии PhoneTrack на сервере NextCloud</string>
     <string name="setting_url">Target address</string>
     <string name="setting_url_long">Target address to be requested with value replacement</string>
     <string name="setting_post_title">Использовать метод POST</string>
@@ -60,7 +60,7 @@
     <string name="logjob_info_nbsync">%d положений передано</string>
     <string name="logjob_info_nbnotsync">%d положений ожидает</string>
     <string name="logjob_info_lastloc">Последнее местоположение получено в %s</string>
-    <string name="logjob_info_lastsync">Last successful sync at %s</string>
+    <string name="logjob_info_lastsync">Последняя успешная синхронизация в %s</string>
     <string name="logjob_info_lastsync_error">Последняя ошибка синхронизации в %s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Import PhoneTrack logging link</string>
     <string name="dialog_msg_import_pt_url">Any compatible logging link given in PhoneTrack web interface</string>
@@ -143,10 +143,10 @@
     <!-- About -->
     <string name="about_version_title">Версия</string>
     <string name="about_version">You are currently using &lt;strong&gt;%1$s&lt;/strong&gt;</string>
-    <string name="about_maintainer_title">Maintainer</string>
+    <string name="about_maintainer_title">Разработчик</string>
     <string name="about_developers_title">Разработчики</string>
     <string name="about_translators_title">Переводчики</string>
-    <string name="about_translators_crowdin">PhoneTrack community on &lt;a href=\"%1$s\"&gt;Crowdin&lt;/a&gt;</string>
+    <string name="about_translators_crowdin">Сообщество PhoneTrack: &lt;a href=\"%1$s\"&gt;Crowdin&lt;/a&gt;</string>
     <string name="about_testers_title">Тестировщики</string>
     <string name="about_source_title">Исходный код</string>
     <string name="about_source">Этот проект размещается на Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>

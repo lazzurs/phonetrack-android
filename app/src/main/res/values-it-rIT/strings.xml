@@ -20,10 +20,10 @@
     <string name="setting_devicename_long">Nome del dispositivo o token di prenotazione</string>
     <string name="setting_token">Token di sessione</string>
     <string name="setting_token_long">Token di identificazione di sessione</string>
-    <string name="setting_lj_url">Nextcloud address</string>
-    <string name="setting_lj_url_long">Nextcloud address of target PhoneTrack instance hosting the session</string>
-    <string name="setting_url">Target address</string>
-    <string name="setting_url_long">Target address to be requested with value replacement</string>
+    <string name="setting_lj_url">Indirizzo Nextcloud</string>
+    <string name="setting_lj_url_long">URL Nextcloud dell\'istanza PhoneTrack che ospita la sessione</string>
+    <string name="setting_url">Indirizzo del destinatario</string>
+    <string name="setting_url_long">URL di destinazione da richiedere con sostituzione del valore</string>
     <string name="setting_post_title">Usa il metodo Post</string>
     <string name="setting_post_summary">invece del metodo GET. I parametri GET saranno convertiti in POST.</string>
     <string name="action_search">Ricerca</string>
@@ -43,8 +43,8 @@
     <string name="action_frequency">Imposta frequenza di aggiornamento</string>
     <string name="menu_delete">Cancella</string>
     <string name="menu_save">Salva</string>
-    <string name="menu_select_session">Use PhoneTrack session</string>
-    <string name="menu_from_url">Use PhoneTrack logging link</string>
+    <string name="menu_select_session">Utilizzare la sessione di PhoneTrack</string>
+    <string name="menu_from_url">Utilizzare link di registrazione PhoneTrack</string>
     <string name="menu_share">Condividi</string>
     <string name="fab_create_phonetrack">Nuovo log job di PhoneTrack</string>
     <string name="fab_create_custom">Nuovo log job personalizzato</string>
@@ -60,10 +60,10 @@
     <string name="logjob_info_nbsync">%d posizioni inviate</string>
     <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
     <string name="logjob_info_lastloc">Ultima posizione acquisita a %s</string>
-    <string name="logjob_info_lastsync">Last successful sync at %s</string>
+    <string name="logjob_info_lastsync">Ultima sincronizzazione riuscita il %s</string>
     <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione a %s\n\n%s</string>
-    <string name="dialog_title_import_pt_url">Import PhoneTrack logging link</string>
-    <string name="dialog_msg_import_pt_url">Any compatible logging link given in PhoneTrack web interface</string>
+    <string name="dialog_title_import_pt_url">Importa l\'URL di registrazione di PhoneTrack</string>
+    <string name="dialog_msg_import_pt_url">Qualsiasi URL di registrazione compatibile fornito nell\'interfaccia web PhoneTrack</string>
     <string name="confirm_delete_logjob_dialog_title">Sei sicuro?</string>
     <string name="edit_logjob_choose_session_dialog_title">Scegli una sessione</string>
     <string name="map_choose_session_dialog_title">Scegli una sessione da visualizzare sulla mappa</string>
@@ -113,7 +113,7 @@
     <string name="pref_shownbsynced_summary">sincronizzato = inviato al server</string>
     <string name="share_dev_title">Condividi URL PhoneTrack pubblico</string>
     <string name="menu_share_dev_title">Condividi URL PhoneTrack pubblico</string>
-    <string name="error_share_dev_same_url">Nextcloud address must be the same as in Account settings to be able to share</string>
+    <string name="error_share_dev_same_url">L\'URL di Nextcloud deve essere lo stesso delle impostazioni dell\'account per poterlo condividere</string>
     <string name="error_share_dev_configured">Le impostazioni dell\'account devono essere configurate</string>
     <string name="error_share_dev_network">Impossibile condividere il dispositivo \n Rete non disponibile</string>
     <string name="error_share_dev_helper">Errore durante la condivisione del dispositivo: %s</string>
@@ -130,8 +130,8 @@
     <string name="error_no_network">nessuna connessione di rete</string>
     <string name="error_server">errore del server</string>
     <string name="error_username_password_invalid">username o password sbagliati</string>
-    <string name="error_invalid_pt_url">Invalid PhoneTrack logging link</string>
-    <string name="error_invalid_url">Invalid link</string>
+    <string name="error_invalid_pt_url">URL di registrazione PhoneTrack non valido</string>
+    <string name="error_invalid_url">Link non valido</string>
     <string name="error_invalid_token">Token non valido</string>
     <string name="error_invalid_title">Titolo non valido</string>
     <string name="error_invalid_devname">Nome dispositivo non valido</string>

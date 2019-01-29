@@ -7,7 +7,7 @@
     <string name="label_enabled">Enabled</string>
     <string name="label_phonetrack_lj">PhoneTrack logboek taken</string>
     <string name="label_custom_lj">Aangepaste logboek taken</string>
-    <string name="label_custom">Aangepaste</string>
+    <string name="label_custom">Custom</string>
     <string name="action_create">Nieuwe logboek taak</string>
     <string name="action_create_share">PhTrk URL voor logboekregistratie importeren</string>
     <string name="action_create_custom_share">Importeren van URL voor aangepaste logboekregistratie</string>
@@ -20,10 +20,10 @@
     <string name="setting_devicename_long">Apparaatnaam of reservering token</string>
     <string name="setting_token">Sessie token</string>
     <string name="setting_token_long">Sessie identificatiebewijs</string>
-    <string name="setting_lj_url">Nextcloud address</string>
-    <string name="setting_lj_url_long">Nextcloud address of target PhoneTrack instance hosting the session</string>
-    <string name="setting_url">Target address</string>
-    <string name="setting_url_long">Target address to be requested with value replacement</string>
+    <string name="setting_lj_url">Nextcloud adres</string>
+    <string name="setting_lj_url_long">Nextcloud adres van PhoneTrack doelinstantie die de sessie host</string>
+    <string name="setting_url">Doeladres</string>
+    <string name="setting_url_long">Aan te vragen doeladres met vervanging van de waarde</string>
     <string name="setting_post_title">Gebruik POST methode</string>
     <string name="setting_post_summary">in plaats van GET-methode. GET parameters worden geconverteerd naar POST.</string>
     <string name="action_search">Zoeken</string>
@@ -43,8 +43,8 @@
     <string name="action_frequency">Vernieuwingsfrequentie instellen</string>
     <string name="menu_delete">Verwijder</string>
     <string name="menu_save">Opslaan</string>
-    <string name="menu_select_session">Use PhoneTrack session</string>
-    <string name="menu_from_url">Use PhoneTrack logging link</string>
+    <string name="menu_select_session">Gebruik PhoneTrack sessie</string>
+    <string name="menu_from_url">Gebruik PhoneTrack logging link</string>
     <string name="menu_share">Delen</string>
     <string name="fab_create_phonetrack">Nieuwe PhoneTrack logboek taak</string>
     <string name="fab_create_custom">Nieuwe aangepaste logboek taak</string>
@@ -60,10 +60,10 @@
     <string name="logjob_info_nbsync">%d posities verzonden</string>
     <string name="logjob_info_nbnotsync">%d uitstaande posities</string>
     <string name="logjob_info_lastloc">Laatste locatie verworven op %s</string>
-    <string name="logjob_info_lastsync">Last successful sync at %s</string>
+    <string name="logjob_info_lastsync">Laatste succesvolle synchronisatie op %s</string>
     <string name="logjob_info_lastsync_error">Laatste synchronisatiefout op %s\n\n%s</string>
-    <string name="dialog_title_import_pt_url">Import PhoneTrack logging link</string>
-    <string name="dialog_msg_import_pt_url">Any compatible logging link given in PhoneTrack web interface</string>
+    <string name="dialog_title_import_pt_url">Importeer een PhoneTrack logging link</string>
+    <string name="dialog_msg_import_pt_url">Elke compatibele logging link die in de PhoneTrack-webinterface wordt gegeven</string>
     <string name="confirm_delete_logjob_dialog_title">Weet je het zeker?</string>
     <string name="edit_logjob_choose_session_dialog_title">Kies een sessie</string>
     <string name="map_choose_session_dialog_title">Kies een sessie om weer te geven op de kaart</string>
@@ -113,7 +113,7 @@
     <string name="pref_shownbsynced_summary">gesynchroniseerd = naar de server verzonden</string>
     <string name="share_dev_title">Deel publieke PhoneTrack URL</string>
     <string name="menu_share_dev_title">Deel publieke PhoneTrack URL</string>
-    <string name="error_share_dev_same_url">Nextcloud address must be the same as in Account settings to be able to share</string>
+    <string name="error_share_dev_same_url">Nextcloud adres moet hetzelfde zijn als in account instellingen om het delen mogelijk te maken</string>
     <string name="error_share_dev_configured">Account instellingen moeten geconfigureerd zijn</string>
     <string name="error_share_dev_network">Delen apparaat mislukt\nNetwerk niet beschikbaar</string>
     <string name="error_share_dev_helper">Fout bij delen van apparaat : %s</string>
@@ -130,8 +130,8 @@
     <string name="error_no_network">geen netwerkverbinding</string>
     <string name="error_server">serverfout</string>
     <string name="error_username_password_invalid">verkeerde gebruikersnaam of wachtwoord</string>
-    <string name="error_invalid_pt_url">Invalid PhoneTrack logging link</string>
-    <string name="error_invalid_url">Invalid link</string>
+    <string name="error_invalid_pt_url">Ongeldige PhoneTrack logging link</string>
+    <string name="error_invalid_url">Ongeldige link</string>
     <string name="error_invalid_token">Ongeldig token</string>
     <string name="error_invalid_title">Ongeldige titel</string>
     <string name="error_invalid_devname">Ongeldige apparaatnaam</string>
