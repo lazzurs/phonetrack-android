@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -245,7 +246,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.syncIcon)
         ImageView syncIcon;
         @BindView(R.id.logjobEnabled)
-        Switch logjobEnabled;
+        SwitchCompat logjobEnabled;
         @BindView(R.id.nbNotSync)
         TextView nbNotSync;
         @BindView(R.id.nbSync)
