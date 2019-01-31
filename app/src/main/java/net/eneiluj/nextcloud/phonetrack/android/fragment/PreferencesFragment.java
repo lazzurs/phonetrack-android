@@ -153,14 +153,14 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
 
         new AlertDialog.Builder(getActivity())
                 .setView(colorView)
-                .setTitle("Choose Color")
-                .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.settings_colorpicker_title))
+                .setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         ((ColorPreferenceCompat) preference).setValue(lobsterPicker.getColor());
                     }
                 })
-                .setNegativeButton("CLOSE", null)
+                .setNegativeButton(getString(R.string.simple_cancel), null)
                 .show();
     }
 }

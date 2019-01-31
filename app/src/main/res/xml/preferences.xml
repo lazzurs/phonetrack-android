@@ -45,8 +45,8 @@
         android:defaultValue="@color/primary"
         android:icon="@drawable/ic_palette_grey_24dp"
         android:key="@string/pref_key_color"
-        android:summary="An example of using a different picker"
-        android:title="Custom picker sample"
+        android:summary="@string/settings_color_summary"
+        android:title="@string/settings_color_title"
         app:colorShape="circle"
         app:showDialog="false" />
 
