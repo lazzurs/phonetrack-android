@@ -15,7 +15,7 @@
     <string name="action_map">Karte</string>
     <string name="setting_title">Titel</string>
     <string name="setting_title_long">Titel des Protokollierungsauftrags</string>
-    <string name="mandatory">(obligatorisch)</string>
+    <string name="mandatory">(Pflichtfeld)</string>
     <string name="setting_devicename">Gerätename</string>
     <string name="setting_devicename_long">Gerätename oder Reservierungstoken</string>
     <string name="setting_token">Sitzungstoken</string>
