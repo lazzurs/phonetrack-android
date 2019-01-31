@@ -183,6 +183,8 @@ public class LoggerService extends Service {
             }
         }
         else {
+            final Notification notification = showNotification(NOTIFICATION_ID);
+            startForeground(NOTIFICATION_ID, notification);
             if (DEBUG) { Log.d(TAG, "[onCreate : stop because no loc upd]"); }
             stopSelf();
         }
