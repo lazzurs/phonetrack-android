@@ -328,6 +328,7 @@ public class SessionServerSyncHelper {
                         if (!localSession.getName().equals(remoteSession.getName())
                                 || !localSession.getNextURL().equals(remoteSession.getNextURL())
                                 || !localSession.getToken().equals(remoteSession.getToken())
+                                || localSession.getPublicToken() == null
                                 || !localSession.getPublicToken().equals(remoteSession.getPublicToken())
                                 || localSession.isFromShare() != remoteSession.isFromShare()
                                 || localSession.isPublic() != remoteSession.isPublic()
