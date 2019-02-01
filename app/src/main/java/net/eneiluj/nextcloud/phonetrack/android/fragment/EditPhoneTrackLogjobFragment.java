@@ -350,8 +350,8 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     }
 
     private void setFieldsFromSession(DBSession s) {
-        editTitle.setText("Log to "+s.getName());
-        editTitle.setSummary("Log to "+s.getName());
+        editTitle.setText(getString(R.string.logjob_title_log_to, s.getName()));
+        editTitle.setSummary(getString(R.string.logjob_title_log_to, s.getName()));
         editURL.setText(s.getNextURL());
         editURL.setSummary(s.getNextURL());
         editToken.setText(s.getToken());

@@ -9,6 +9,7 @@ import android.os.Bundle;
 //import android.preference.Preference;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 //import android.preference.PreferenceFragment;
 import android.support.v7.preference.PreferenceFragmentCompat;
@@ -35,10 +36,15 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PreferencesFragment extends PreferenceFragmentCompat implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback{
 
     public final static String UPDATED_PROVIDERS = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS";
     public final static String UPDATED_PROVIDERS_VALUE = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
+
+    private List<String> providersList;
 
     @Override
     public Fragment getCallbackFragment() {
@@ -110,6 +116,14 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             }
         });
 
+        ListPreference providersListPref = (ListPreference) providersPref;
+        providersList = new ArrayList<>();
+        providersList.add(getString(R.string.providers_gps));
+        providersList.add(getString(R.string.providers_network));
+        providersList.add(getString(R.string.providers_gps_network));
+        CharSequence[] providerEntries = providersList.toArray(new CharSequence[providersList.size()]);
+        providersListPref.setEntries(providerEntries);
+
         String providersValue = sp.getString(getString(R.string.pref_key_providers), "1");
 
         setProvidersSummary(providersPref, providersValue);
@@ -132,9 +146,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     }
 
     private void setProvidersSummary(Preference providersPref, String value) {
-        String[] names = getResources().getStringArray(R.array.providersEntries);
         int intVal = Integer.valueOf(value);
-        providersPref.setSummary(names[intVal-1]);
+        providersPref.setSummary(providersList.get(intVal-1));
     }
 
     private void showColorDialog(final Preference preference) {

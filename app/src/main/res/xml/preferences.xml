@@ -16,7 +16,6 @@
         android:key="@string/pref_key_providers"
         android:summary=""
         android:title="@string/settings_providers_title"
-        android:entries="@array/providersEntries"
         android:entryValues="@array/providersValues"
         android:defaultValue="@string/pref_value_providers" />
 

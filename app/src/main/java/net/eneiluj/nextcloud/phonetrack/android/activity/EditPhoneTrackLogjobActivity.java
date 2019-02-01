@@ -39,8 +39,8 @@ public class EditPhoneTrackLogjobActivity extends EditLogjobActivity {
         Intent intent = getIntent();
 
         DBLogjob newLogjob = new DBLogjob(
-                0, "",  "https://yournextcloud.org", "supersessiontoken",
-                "mydevname", 60, 5, 50,
+                0, "",  getString(R.string.default_nextcloud_url), getString(R.string.default_session_token),
+                getString(R.string.default_device_name), 60, 5, 50,
                 false,false,false, 0
         );
 
