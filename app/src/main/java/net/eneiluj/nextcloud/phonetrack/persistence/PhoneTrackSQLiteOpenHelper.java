@@ -92,6 +92,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             key_satellites, key_battery, key_userAgent};
 
     private static final String default_order = key_id + " DESC";
+    private static final String default_order_sessions = key_id + " ASC";
 
     private static PhoneTrackSQLiteOpenHelper instance;
 
@@ -479,19 +480,19 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     @NonNull
     @WorkerThread
     public List<DBSession> getSessions() {
-        return getSessionsCustom("", new String[]{}, default_order);
+        return getSessionsCustom("", new String[]{}, default_order_sessions);
     }
 
     @NonNull
     @WorkerThread
     public List<DBSession> getSessionsNotShared() {
-        return getSessionsCustom(key_isFromShare + " = 0", new String[]{}, default_order);
+        return getSessionsCustom(key_isFromShare + " = 0", new String[]{}, default_order_sessions);
     }
 
     @NonNull
     @WorkerThread
     public List<DBSession> getSessionsPublic() {
-        return getSessionsCustom(key_isPublic + " = 1", new String[]{}, default_order);
+        return getSessionsCustom(key_isPublic + " = 1", new String[]{}, default_order_sessions);
     }
 
     @NonNull
