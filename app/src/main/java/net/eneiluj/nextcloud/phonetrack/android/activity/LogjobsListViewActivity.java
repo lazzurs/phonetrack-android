@@ -801,7 +801,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
                 this.updateUsernameInDrawer();
                 adapter.removeAll();
-                synchronize();
+                //synchronize();
             } else {
                 if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
