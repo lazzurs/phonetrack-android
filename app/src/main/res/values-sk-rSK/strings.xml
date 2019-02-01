@@ -12,7 +12,6 @@
     <string name="action_create_share">Import PhTrk logging URL</string>
     <string name="action_create_custom_share">Import custom logging URL</string>
     <string name="action_settings">Settings</string>
-    <string name="action_map">Map</string>
     <string name="setting_title">Title</string>
     <string name="setting_title_long">Log job title</string>
     <string name="mandatory">(mandatory)</string>
@@ -56,6 +55,10 @@
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters)</string>
     <string name="setting_keepgps_title">Keep GPS on between fixes</string>
     <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
+    <string name="logjob_title_log_to">Log to %s</string>
+    <string name="default_nextcloud_url">https://yournextcloud.org</string>
+    <string name="default_device_name">myDeviceName</string>
+    <string name="default_session_token">supertoken</string>
     <string name="logjob_info_dialog_title">About %s</string>
     <string name="logjob_info_nbsync">%d locations sent</string>
     <string name="logjob_info_nbnotsync">%d locations pending</string>
@@ -71,14 +74,15 @@
     <string name="map_choose_frequency_dialog_title">Choose map refresh frequency (sec)</string>
     <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
     <string name="item_all_devices_label">All devices</string>
-    <string name="popup_battery">Battery level</string>
-    <string name="popup_altitude">Nadmorská výška</string>
-    <string name="popup_accuracy">Accuracy</string>
+    <string name="popup_battery_value">Battery level : %.2f%%</string>
+    <string name="popup_altitude_value">Altitude : %.2fm</string>
+    <string name="popup_accuracy_value">Accuracy : %.2fm</string>
     <string name="popup_satellites">Satelity</string>
-    <string name="popup_bearing">Smer</string>
-    <string name="popup_speed">Rýchlosť</string>
+    <string name="popup_bearing_value">Bearing : %.2f°</string>
+    <string name="popup_speed_value">Speed : %.2fkm/h</string>
     <string name="popup_user_agent">Používateľský agent</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
+    <string name="drawer_connect_hint">Tap here to connect</string>
     <string name="is_running">running (%s pending, %s sent)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -91,6 +95,9 @@
     <string name="settings_submitting">Connecting &#8230;</string>
     <string name="settings_theme_title">Téma</string>
     <string name="settings_providers_title">Location providers</string>
+    <string name="providers_gps">GPS</string>
+    <string name="providers_network">Network</string>
+    <string name="providers_gps_network">Network and GPS</string>
     <string name="settings_color_title">App main color</string>
     <string name="settings_color_summary">Color for action bars, map buttons etc...</string>
     <string name="settings_colorpicker_title">Choose color</string>

@@ -12,7 +12,6 @@
     <string name="action_create_share">Importer URL PT</string>
     <string name="action_create_custom_share">Importer URL personnalisée</string>
     <string name="action_settings">Paramètres</string>
-    <string name="action_map">Carte</string>
     <string name="setting_title">Titre</string>
     <string name="setting_title_long">Titre du log job</string>
     <string name="mandatory">(obligatoire)</string>
@@ -56,6 +55,10 @@
     <string name="setting_min_accuracy_long">Précision minimum pour les points logués (mètres)</string>
     <string name="setting_keepgps_title">Garder le GPS allumé entre les localisations</string>
     <string name="setting_keepgps_summary">Cela va améliorer la précision des positions mais va consommer plus de batterie. À utiliser quand le temps minimum est en dessous de 60 secondes.</string>
+    <string name="logjob_title_log_to">Loguer dans %s</string>
+    <string name="default_nextcloud_url">https://votre-nextcloud.org</string>
+    <string name="default_device_name">monAppareil</string>
+    <string name="default_session_token">supertoken</string>
     <string name="logjob_info_dialog_title">À propos de %s</string>
     <string name="logjob_info_nbsync">%d positions envoyées</string>
     <string name="logjob_info_nbnotsync">%d positions en attente</string>
@@ -71,14 +74,15 @@
     <string name="map_choose_frequency_dialog_title">Choisissez la fréquence de rafraichissement de la carte (sec)</string>
     <string name="map_choose_frequency_dialog_message">Combien de secondes entre les rafraichissements ?</string>
     <string name="item_all_devices_label">Tous les appareils</string>
-    <string name="popup_battery">Niveau de batterie</string>
-    <string name="popup_altitude">Altitude</string>
-    <string name="popup_accuracy">Précision</string>
+    <string name="popup_battery_value">Batterie : %.2f%%</string>
+    <string name="popup_altitude_value">Altitude : %.2fm</string>
+    <string name="popup_accuracy_value">Précision : %.2fm</string>
     <string name="popup_satellites">Satellites</string>
-    <string name="popup_bearing">Azimut</string>
-    <string name="popup_speed">Vitesse</string>
+    <string name="popup_bearing_value">Azimut : %.2f°</string>
+    <string name="popup_speed_value">Vitesse : %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="map_choose_layer">Choisissez un fournisseur de tuiles</string>
+    <string name="drawer_connect_hint">Appuyez ici pour vous connecter</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>
@@ -91,6 +95,9 @@
     <string name="settings_submitting">Connexion en cours &#8230;</string>
     <string name="settings_theme_title">Thème</string>
     <string name="settings_providers_title">Fournisseurs de localisation</string>
+    <string name="providers_gps">GPS</string>
+    <string name="providers_network">Réseau</string>
+    <string name="providers_gps_network">Réseau et GPS</string>
     <string name="settings_color_title">Couleur principale de l\'appli</string>
     <string name="settings_color_summary">Couleur pour les barres d\'action, les boutons de la carte etc...</string>
     <string name="settings_colorpicker_title">Choisissez une couleur</string>

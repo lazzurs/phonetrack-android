@@ -12,7 +12,6 @@
     <string name="action_create_share">Импорт URL журнала PhTrk</string>
     <string name="action_create_custom_share">Импорт URL журнала пользователя</string>
     <string name="action_settings">Настройки</string>
-    <string name="action_map">Карта</string>
     <string name="setting_title">Название</string>
     <string name="setting_title_long">Название задания журнала</string>
     <string name="mandatory">(обязательное)</string>
@@ -56,6 +55,10 @@
     <string name="setting_min_accuracy_long">Минимальная точность для сохранённых точкек (метров)</string>
     <string name="setting_keepgps_title">Сохранять GPS до фиксации</string>
     <string name="setting_keepgps_summary">Это позволит получить более точную позицию, но сократит время жизни батареи. Используйте когда минимальное время меньше 60 секунд.</string>
+    <string name="logjob_title_log_to">Log to %s</string>
+    <string name="default_nextcloud_url">https://yournextcloud.org</string>
+    <string name="default_device_name">myDeviceName</string>
+    <string name="default_session_token">supertoken</string>
     <string name="logjob_info_dialog_title">О %s</string>
     <string name="logjob_info_nbsync">%d положений передано</string>
     <string name="logjob_info_nbnotsync">%d положений ожидает</string>
@@ -71,14 +74,15 @@
     <string name="map_choose_frequency_dialog_title">Выбрать частоту обновления карты (сек)</string>
     <string name="map_choose_frequency_dialog_message">Сколько секунд между двумя обновлениями карты?</string>
     <string name="item_all_devices_label">Все устройства</string>
-    <string name="popup_battery">Уровень заряда</string>
-    <string name="popup_altitude">Высота</string>
-    <string name="popup_accuracy">Точность</string>
+    <string name="popup_battery_value">Battery level : %.2f%%</string>
+    <string name="popup_altitude_value">Altitude : %.2fm</string>
+    <string name="popup_accuracy_value">Accuracy : %.2fm</string>
     <string name="popup_satellites">Спутники</string>
-    <string name="popup_bearing">Азимут</string>
-    <string name="popup_speed">Скорость</string>
+    <string name="popup_bearing_value">Bearing : %.2f°</string>
+    <string name="popup_speed_value">Speed : %.2fkm/h</string>
     <string name="popup_user_agent">Агент пользователя</string>
     <string name="map_choose_layer">Выберите провайдера тайловых карт</string>
+    <string name="drawer_connect_hint">Tap here to connect</string>
     <string name="is_running">выполнение (ожидает %s, отправлено %s)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Учетная запись</string>
@@ -91,9 +95,12 @@
     <string name="settings_submitting">Подключение &#8230;</string>
     <string name="settings_theme_title">Тема</string>
     <string name="settings_providers_title">Поставщик местоположения</string>
+    <string name="providers_gps">GPS</string>
+    <string name="providers_network">Network</string>
+    <string name="providers_gps_network">Network and GPS</string>
     <string name="settings_color_title">App main color</string>
-    <string name="settings_color_summary">Color for action bars, map buttons etc...</string>
-    <string name="settings_colorpicker_title">Choose color</string>
+    <string name="settings_color_summary">Цвет панели управления, кнопок на карте, и тд...</string>
+    <string name="settings_colorpicker_title">Выберите цвет</string>
     <string name="settings_cert_category">Управление сертификатами</string>
     <string name="settings_cert_trust_system">Доверенная система сертификатов</string>
     <string name="settings_cert_trust_system_on">Доверять системным и добавленным пользователем сертификатам (рекомендовано)</string>
