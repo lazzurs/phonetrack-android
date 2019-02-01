@@ -1105,7 +1105,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     }
                     break;
                 case WebTrackService.BROADCAST_SYNC_STARTED:
-                    swipeRefreshLayout.setRefreshing(true);
+                    //swipeRefreshLayout.setRefreshing(true);
                     break;
                 // when sync is finished (fail or success)
                 case WebTrackService.BROADCAST_SYNC_DONE:
