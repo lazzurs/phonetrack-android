@@ -690,23 +690,23 @@ public class MapActivity extends AppCompatActivity {
                 Marker m = markers.get(devName);
                 String text = devName;
                 text += "\n"+sdfComplete.format(new Date(loc.getTimestamp()*1000));
-                if (loc.getBattery() != null) {
-                    text += "\n"+getString(R.string.popup_battery)+" : "+loc.getBattery();
+                if (loc.getAltitude() != null) {
+                    text += "\n"+getString(R.string.popup_altitude_value, loc.getAltitude());
                 }
                 if (loc.getAccuracy() != null) {
-                    text += "\n"+getString(R.string.popup_accuracy)+" : "+loc.getAccuracy();
-                }
-                if (loc.getAltitude() != null) {
-                    text += "\n"+getString(R.string.popup_altitude)+" : "+loc.getAltitude();
+                    text += "\n"+getString(R.string.popup_accuracy_value, loc.getAccuracy());
                 }
                 if (loc.getSpeed() != null) {
-                    text += "\n"+getString(R.string.popup_speed)+" : "+loc.getSpeed();
+                    text += "\n"+getString(R.string.popup_speed_value, loc.getSpeed());
                 }
                 if (loc.getBearing() != null) {
-                    text += "\n"+getString(R.string.popup_bearing)+" : "+loc.getBearing();
+                    text += "\n"+getString(R.string.popup_bearing_value, loc.getBearing());
                 }
                 if (loc.getSatellites() != null) {
                     text += "\n"+getString(R.string.popup_satellites)+" : "+loc.getSatellites();
+                }
+                if (loc.getBattery() != null) {
+                    text += "\n"+getString(R.string.popup_battery_value, loc.getBattery());
                 }
                 if (loc.getUserAgent() != null) {
                     text += "\n"+getString(R.string.popup_user_agent)+" : "+loc.getUserAgent();

@@ -74,12 +74,12 @@
     <string name="map_choose_frequency_dialog_title">Choose map refresh frequency (sec)</string>
     <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
     <string name="item_all_devices_label">All devices</string>
-    <string name="popup_battery">Battery level</string>
-    <string name="popup_altitude">Altitude</string>
-    <string name="popup_accuracy">Accuracy</string>
+    <string name="popup_battery_value">Battery level : %.2f%%</string>
+    <string name="popup_altitude_value">Altitude : %.2fm</string>
+    <string name="popup_accuracy_value">Accuracy : %.2fm</string>
     <string name="popup_satellites">Satellites</string>
-    <string name="popup_bearing">Bearing</string>
-    <string name="popup_speed">Speed</string>
+    <string name="popup_bearing_value">Bearing : %.2f°</string>
+    <string name="popup_speed_value">Speed : %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
