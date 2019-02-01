@@ -62,9 +62,9 @@
     <string name="logjob_info_dialog_title">O %s</string>
     <string name="logjob_info_nbsync">%d wysłane lokalizacje</string>
     <string name="logjob_info_nbnotsync">%d lokalizacje oczekujące</string>
-    <string name="logjob_info_lastloc">Ostatnia lokalizacja nabyta w %s</string>
-    <string name="logjob_info_lastsync">Ostatnia pomyślna synchronizacja w %s</string>
-    <string name="logjob_info_lastsync_error">Ostatni błąd synchronizacji w %s\n\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired at\n%s</string>
+    <string name="logjob_info_lastsync">Last successful sync at\n%s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error at\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Zaimportuj link do logowania PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Dowolny zgodny link do logowania podany w interfejsie internetowym PhoneTrack</string>
     <string name="confirm_delete_logjob_dialog_title">Czy jesteś pewny?</string>

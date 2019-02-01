@@ -62,9 +62,9 @@
     <string name="logjob_info_dialog_title">О %s</string>
     <string name="logjob_info_nbsync">%d положений передано</string>
     <string name="logjob_info_nbnotsync">%d положений ожидает</string>
-    <string name="logjob_info_lastloc">Последнее местоположение получено в %s</string>
-    <string name="logjob_info_lastsync">Последняя успешная синхронизация в %s</string>
-    <string name="logjob_info_lastsync_error">Последняя ошибка синхронизации в %s\n\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired at\n%s</string>
+    <string name="logjob_info_lastsync">Last successful sync at\n%s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error at\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Import PhoneTrack logging link</string>
     <string name="dialog_msg_import_pt_url">Любой совместимый URL журнала в веб-интерфейсе PhoneTrack</string>
     <string name="confirm_delete_logjob_dialog_title">Вы уверены?</string>

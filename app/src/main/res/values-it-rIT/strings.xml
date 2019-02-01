@@ -62,9 +62,9 @@
     <string name="logjob_info_dialog_title">Circa %s</string>
     <string name="logjob_info_nbsync">%d posizioni inviate</string>
     <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
-    <string name="logjob_info_lastloc">Ultima posizione acquisita a %s</string>
-    <string name="logjob_info_lastsync">Ultima sincronizzazione riuscita il %s</string>
-    <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione a %s\n\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired at\n%s</string>
+    <string name="logjob_info_lastsync">Last successful sync at\n%s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error at\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Importa l\'URL di registrazione di PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Qualsiasi URL di registrazione compatibile fornito nell\'interfaccia web PhoneTrack</string>
     <string name="confirm_delete_logjob_dialog_title">Sei sicuro?</string>
