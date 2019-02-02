@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 0.0.8 – 2019-02-02
+### Added
+- option to choose app primary color
+
+### Fixed
+- crash when getting new sessions while having ones from <=0.0.6
+- crash when stopping logginService without calling startForegroundService on Android>=8
+- make all UI strings translatable
+[#23](https://gitlab.com/eneiluj/phonetrack-android/issues/23) @Valdnet
+- avoid loading animation when synced automatically launched
+[#31](https://gitlab.com/eneiluj/phonetrack-android/issues/31) @Valdnet
+- put units in map popups
+[#32](https://gitlab.com/eneiluj/phonetrack-android/issues/32) @Valdnet
+- avoid double session sync when getting back from settings
+[#28](https://gitlab.com/eneiluj/phonetrack-android/issues/28) @Valdnet
+- change session order in UI
+[#24](https://gitlab.com/eneiluj/phonetrack-android/issues/24) @Valdnet
+
+## 0.0.7 – 2019-01-28
 ### Added
 - new map feature : watch a session's devices on a map (works with public sessions only)
 - map features : show my position, follow me, autozoom, zoom on markers, change tile provider
