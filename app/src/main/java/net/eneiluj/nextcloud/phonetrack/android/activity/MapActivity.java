@@ -351,7 +351,7 @@ public class MapActivity extends AppCompatActivity {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayoutMap, toolbar, R.string.action_drawer_open, R.string.action_drawer_close);
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayoutMap.addDrawerListener(drawerToggle);
-        setTitle("Map");
+        setTitle(getString(R.string.simple_map));
         drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackgroundColor(ThemeUtils.primaryColor(this));
         ImageView logoView = drawerLayoutMap.findViewById(R.id.drawer_logo_map);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
