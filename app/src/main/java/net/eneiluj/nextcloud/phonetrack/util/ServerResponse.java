@@ -112,8 +112,8 @@ public class ServerResponse {
 
     protected Map<String, DBLocation> getPositionsFromJSON(JSONObject json, DBSession session) throws JSONException {
         Map<String, DBLocation> locations = new HashMap<>();
-        if (json.has(session.getPublicToken())) {
-            JSONObject jsonLocs = json.getJSONObject(session.getPublicToken());
+        if (json.has(session.getToken())) {
+            JSONObject jsonLocs = json.getJSONObject(session.getToken());
             Iterator<String> keys = jsonLocs.keys();
             while(keys.hasNext()) {
                 String devName = keys.next();

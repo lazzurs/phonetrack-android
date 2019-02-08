@@ -75,8 +75,8 @@ public class PhoneTrackClient {
     }
 
     public ServerResponse.GetSessionLastPositionsResponse getSessionLastPositions(CustomCertManager ccm, DBSession session) throws JSONException, IOException {
-        String target = "api/getlastpositions/" + session.getPublicToken();
-        return new ServerResponse.GetSessionLastPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, false));
+        String target = "api/getuserlastpositions/" + session.getToken();
+        return new ServerResponse.GetSessionLastPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
     }
 
     /**
