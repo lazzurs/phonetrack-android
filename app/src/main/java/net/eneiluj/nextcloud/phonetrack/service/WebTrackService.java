@@ -136,15 +136,38 @@ public class WebTrackService extends IntentService {
                             sendBroadcast(intent);
                         }
                     }
-                    // send all in one request
+                    // send multiple locations per request
                     else {
                         url = web.getUrlMultipleFromPhoneTrackLogjob(logjob);
-                        JSONObject params = dbLocationsToJSON(locations);
-                        web.postMultiplePositionsToPhoneTrack(url, params);
+                        List<DBLocation> tmpLocs = new ArrayList<>();
+                        int n = 0;
                         for (DBLocation loc : locations) {
-                            long locId = loc.getId();
-                            db.deleteLocation(locId);
-                            db.incNbSync(logjob);
+                            tmpLocs.add(loc);
+                            n++;
+                            if (n%200 == 0) {
+                                JSONObject params = dbLocationsToJSON(tmpLocs);
+                                web.postMultiplePositionsToPhoneTrack(url, params);
+                                for (DBLocation locToDel : tmpLocs) {
+                                    long locId = locToDel.getId();
+                                    db.deleteLocation(locId);
+                                    db.incNbSync(logjob);
+                                }
+                                tmpLocs = new ArrayList<>();
+                                // update nbsync in logjob list
+                                Intent intent = new Intent(BROADCAST_SYNC_DONE);
+                                intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                                sendBroadcast(intent);
+                            }
+                        }
+                        // last bunch
+                        if (tmpLocs.size() > 0) {
+                            JSONObject params = dbLocationsToJSON(tmpLocs);
+                            web.postMultiplePositionsToPhoneTrack(url, params);
+                            for (DBLocation locToDel : tmpLocs) {
+                                long locId = locToDel.getId();
+                                db.deleteLocation(locId);
+                                db.incNbSync(logjob);
+                            }
                         }
                         db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
