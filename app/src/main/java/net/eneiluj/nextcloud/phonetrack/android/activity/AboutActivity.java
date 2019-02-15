@@ -3,17 +3,21 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.tabs.TabLayout;
+//import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
+//import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.FragmentManager;
+//import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentPagerAdapter;
+//import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Window;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+//import butterknife.BindView;
+//import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.about.AboutFragmentContributingTab;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.about.AboutFragmentCreditsTab;
@@ -22,16 +26,18 @@ import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public class AboutActivity extends AppCompatActivity {
 
-    @BindView(R.id.pager)
+    //@BindView(R.id.pager)
     ViewPager mViewPager;
-    @BindView(R.id.tabs)
+    //@BindView(R.id.tabs)
     TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        ButterKnife.bind(this);
+        mViewPager = findViewById(R.id.pager);
+        mTabLayout = findViewById(R.id.tabs);
+        //ButterKnife.bind(this);
 
         mViewPager.setAdapter(new TabsPagerAdapter(getSupportFragmentManager()));
         mTabLayout.setupWithViewPager(mViewPager);

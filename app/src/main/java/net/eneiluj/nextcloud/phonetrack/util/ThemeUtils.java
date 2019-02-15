@@ -2,8 +2,8 @@ package net.eneiluj.nextcloud.phonetrack.util;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.preference.PreferenceManager;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 

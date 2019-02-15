@@ -12,31 +12,31 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 //import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
-import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.support.v7.widget.helper.ItemTouchHelper.SimpleCallback;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+//import android.support.v4.widget.DrawerLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
+//import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,8 +55,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+//import butterknife.BindView;
+//import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
@@ -107,25 +107,25 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private final static int map = 4;
 
 
-    @BindView(R.id.logjobsListActivityActionBar)
+    //@BindView(R.id.logjobsListActivityActionBar)
     Toolbar toolbar;
-    @BindView(R.id.drawerLayout)
+    //@BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
-    @BindView(R.id.account)
+    //@BindView(R.id.account)
     TextView account;
-    @BindView(R.id.swiperefreshlayout)
+    //@BindView(R.id.swiperefreshlayout)
     SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.fab_create_phonetrack)
+    //@BindView(R.id.fab_create_phonetrack)
     com.github.clans.fab.FloatingActionButton fabCreatePhoneTrack;
-    @BindView(R.id.fab_create_custom)
+    //@BindView(R.id.fab_create_custom)
     com.github.clans.fab.FloatingActionButton fabCreateCustom;
-    @BindView(R.id.floatingMenu)
+    //@BindView(R.id.floatingMenu)
     com.github.clans.fab.FloatingActionMenu fabMenu;
-    @BindView(R.id.navigationList)
+    //@BindView(R.id.navigationList)
     RecyclerView listNavigationCategories;
-    @BindView(R.id.navigationMenu)
+    //@BindView(R.id.navigationMenu)
     RecyclerView listNavigationMenu;
-    @BindView(R.id.recycler_view)
+    //@BindView(R.id.recycler_view)
     RecyclerView listView;
 
     private ActionBarDrawerToggle drawerToggle;
@@ -165,6 +165,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, server_settings);
         }*/
+
         String categoryAdapterSelectedItem = ADAPTER_KEY_ALL;
         if (savedInstanceState != null) {
             navigationSelection = (Category) savedInstanceState.getSerializable(SAVED_STATE_NAVIGATION_SELECTION);
@@ -173,7 +174,18 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
 
         setContentView(R.layout.drawer_layout);
-        ButterKnife.bind(this);
+        toolbar = findViewById(R.id.logjobsListActivityActionBar);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        account = findViewById(R.id.account);
+        swipeRefreshLayout = findViewById(R.id.swiperefreshlayout);
+        fabCreatePhoneTrack = findViewById(R.id.fab_create_phonetrack);
+        fabCreateCustom = findViewById(R.id.fab_create_custom);
+        fabMenu = findViewById(R.id.floatingMenu);
+        listNavigationCategories = findViewById(R.id.navigationList);
+        listNavigationMenu = findViewById(R.id.navigationMenu);
+        listView = findViewById(R.id.recycler_view);
+
+        //ButterKnife.bind(this);
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
@@ -726,7 +738,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         final MenuItem item = menu.findItem(R.id.search);
         searchView = (SearchView) item.getActionView();
 
-        final LinearLayout searchEditFrame = searchView.findViewById(android.support.v7.appcompat.R.id
+        final LinearLayout searchEditFrame = searchView.findViewById(androidx.appcompat.R.id
                 .search_edit_frame);
 
         searchEditFrame.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

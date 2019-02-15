@@ -3,34 +3,32 @@ package net.eneiluj.nextcloud.phonetrack.model;
 import android.content.SharedPreferences;
 //import android.preference.PreferenceManager;
 import android.graphics.PorterDuff;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SwitchCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Space;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+//import butterknife.BindView;
+//import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
+import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 
 public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -252,27 +250,27 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public class LogjobViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
-        @BindView(R.id.logjobSwipeable)
+        //@BindView(R.id.logjobSwipeable)
         public View logjobSwipeable;
         View logjobSwipeFrame;
         TextView logjobTextToggleLeft;
         ImageView logjobDeleteRight;
         TextView logjobTitle;
-        @BindView(R.id.logjobExcerpt)
+        //@BindView(R.id.logjobExcerpt)
         TextView logjobSubtitle;
-        @BindView(R.id.nosyncIcon)
+        //@BindView(R.id.nosyncIcon)
         ImageView nosyncIcon;
-        @BindView(R.id.syncIcon)
+        //@BindView(R.id.syncIcon)
         ImageView syncIcon;
-        @BindView(R.id.logjobEnabled)
+        //@BindView(R.id.logjobEnabled)
         SwitchCompat logjobEnabled;
-        @BindView(R.id.nbNotSync)
+        //@BindView(R.id.nbNotSync)
         TextView nbNotSync;
-        @BindView(R.id.nbSync)
+        //@BindView(R.id.nbSync)
         TextView nbSync;
-        @BindView(R.id.syncSpacer)
+        //@BindView(R.id.syncSpacer)
         Space syncSpacer;
-        @BindView(R.id.infoButton)
+        //@BindView(R.id.infoButton)
         ImageButton infoButton;
 
         private LogjobViewHolder(View v) {
@@ -315,12 +313,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public static class SectionViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.sectionTitle)
+        //@BindView(R.id.sectionTitle)
         TextView sectionTitle;
 
         private SectionViewHolder(View view) {
             super(view);
-            ButterKnife.bind(this, view);
+            //ButterKnife.bind(this, view);
         }
     }
 }

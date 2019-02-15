@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/logjobsListActivityActionBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -18,7 +18,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:elevation="4dp" />
 
-        <android.support.v4.widget.SwipeRefreshLayout xmlns:tools="http://schemas.android.com/tools"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/swiperefreshlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -26,14 +26,14 @@
             tools:context="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             tools:ignore="MergeRootFrame">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/bg_highlighted"
                 android:scrollbars="vertical" />
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
@@ -79,4 +79,4 @@
             fab:fab_label="@string/fab_create_custom"/>
 
     </com.github.clans.fab.FloatingActionMenu>
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

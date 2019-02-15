@@ -1,6 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.util;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 import android.util.Base64;
 import android.util.Log;
 

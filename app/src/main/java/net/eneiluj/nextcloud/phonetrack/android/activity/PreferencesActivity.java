@@ -3,9 +3,9 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Window;
 
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;

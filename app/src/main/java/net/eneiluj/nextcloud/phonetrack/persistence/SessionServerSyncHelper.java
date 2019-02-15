@@ -1,11 +1,9 @@
 package net.eneiluj.nextcloud.phonetrack.persistence;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -17,9 +15,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 //import android.preference.PreferenceManager;
-import android.support.v7.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONException;
 

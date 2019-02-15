@@ -1,6 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * DBLocation represents a location from the local SQLite database with all attributes.

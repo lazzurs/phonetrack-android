@@ -37,11 +37,11 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 //import android.preference.PreferenceManager;
-import android.support.v7.preference.PreferenceManager;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+import androidx.preference.PreferenceManager;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 import android.util.Log;
 
 import java.util.HashMap;

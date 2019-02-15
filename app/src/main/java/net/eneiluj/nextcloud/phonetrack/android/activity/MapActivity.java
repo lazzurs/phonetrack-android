@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,20 +17,20 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+//import android.support.v4.widget.DrawerLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -91,8 +90,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+//import butterknife.BindView;
+//import butterknife.ButterKnife;
 
 public class MapActivity extends AppCompatActivity {
     MapView map = null;
@@ -123,18 +122,18 @@ public class MapActivity extends AppCompatActivity {
 
     private String selectedDeviceItemId;
 
-    @BindView(R.id.mapActivityActionBar)
+    //@BindView(R.id.mapActivityActionBar)
     Toolbar toolbar;
-    @BindView(R.id.drawerLayoutMap)
+    //@BindView(R.id.drawerLayoutMap)
     DrawerLayout drawerLayoutMap;
-    @BindView(R.id.account)
+    //@BindView(R.id.account)
     TextView account;
-    @BindView(R.id.relativelayoutMap)
+    //@BindView(R.id.relativelayoutMap)
     RelativeLayout relativeLayoutMap;
 
-    @BindView(R.id.navigationList)
+    //@BindView(R.id.navigationList)
     RecyclerView listNavigationDevices;
-    @BindView(R.id.navigationMenu)
+    //@BindView(R.id.navigationMenu)
     RecyclerView listNavigationMenu;
 
     private NavigationAdapter adapterDevices;
@@ -166,7 +165,15 @@ public class MapActivity extends AppCompatActivity {
         );
 
         setContentView(R.layout.drawer_layout_map);
-        ButterKnife.bind(this);
+
+        toolbar = findViewById(R.id.mapActivityActionBar);
+        drawerLayoutMap = findViewById(R.id.drawerLayoutMap);
+        account = findViewById(R.id.account);
+        relativeLayoutMap = findViewById(R.id.relativelayoutMap);
+        listNavigationDevices = findViewById(R.id.navigationList);
+        listNavigationMenu = findViewById(R.id.navigationMenu);
+
+        //ButterKnife.bind(this);
         setupActionBar();
         drawerToggle.syncState();
 

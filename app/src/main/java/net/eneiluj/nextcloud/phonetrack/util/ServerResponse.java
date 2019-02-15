@@ -3,7 +3,7 @@ package net.eneiluj.nextcloud.phonetrack.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 //import android.preference.PreferenceManager;
-import android.support.v7.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;

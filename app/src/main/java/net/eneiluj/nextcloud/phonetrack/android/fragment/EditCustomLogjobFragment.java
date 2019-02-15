@@ -2,12 +2,12 @@ package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.os.Bundle;
 //import android.preference.EditTextPreference;
-import android.support.v7.preference.CheckBoxPreference;
+import androidx.preference.CheckBoxPreference;
 //import android.preference.ListPreference;
 //import android.preference.Preference;
-import android.support.v7.preference.Preference;
+import androidx.preference.Preference;
 //import android.preference.PreferenceFragment;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;

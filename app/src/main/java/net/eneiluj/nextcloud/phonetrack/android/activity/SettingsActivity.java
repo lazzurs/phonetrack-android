@@ -8,11 +8,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 //import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.preference.PreferenceManager;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
+import androidx.preference.PreferenceManager;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,8 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import at.bitfire.cert4android.CustomCertManager;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+//import butterknife.BindView;
+//import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
@@ -50,17 +50,17 @@ public class SettingsActivity extends AppCompatActivity {
 
     private SharedPreferences preferences = null;
 
-    @BindView(R.id.settings_url)
+    //@BindView(R.id.settings_url)
     EditText field_url;
-    @BindView(R.id.settings_username)
+    //@BindView(R.id.settings_username)
     EditText field_username;
-    @BindView(R.id.settings_password)
+    //@BindView(R.id.settings_password)
     EditText field_password;
-    @BindView(R.id.settings_password_wrapper)
+    //@BindView(R.id.settings_password_wrapper)
     TextInputLayout password_wrapper;
-    @BindView(R.id.settings_submit)
+    //@BindView(R.id.settings_submit)
     Button btn_submit;
-    @BindView(R.id.settings_url_warn_http)
+    //@BindView(R.id.settings_url_warn_http)
     View urlWarnHttp;
     private String old_password = "";
 
@@ -70,7 +70,15 @@ public class SettingsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        ButterKnife.bind(this);
+
+        field_url = findViewById(R.id.settings_url);
+        field_username = findViewById(R.id.settings_username);
+        field_password = findViewById(R.id.settings_password);
+        password_wrapper = findViewById(R.id.settings_password_wrapper);
+        btn_submit = findViewById(R.id.settings_submit);
+        urlWarnHttp = findViewById(R.id.settings_url_warn_http);
+
+        //ButterKnife.bind(this);
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
