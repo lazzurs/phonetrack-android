@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 0.0.9 – 2019-03-01
+### Added
+- translations for fastlane descriptions
+
+### Changed
+- use another api entry to get map positions, now uses login creds, now shows all sessions
+[#38](https://gitlab.com/eneiluj/phonetrack-android/issues/38) @olivier.revelin
+- send multiple positions by bunch of 200
+[#43](https://gitlab.com/eneiluj/phonetrack-android/issues/43) @florom
+- get rid of butterknife
+- bump to androidx
+- update cert4android
+- CI : keep debug apk only
+
+### Fixed
+
 ## 0.0.8 – 2019-02-02
 ### Added
 - option to choose app primary color

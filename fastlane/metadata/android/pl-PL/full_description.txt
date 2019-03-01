@@ -1,0 +1,27 @@
+PhoneTrack to aplikacja do ciągłego rejestrowania współrzędnych lokalizacji.
+Aplikacja działa w tle. Punkty są zapisywane na wybranej częstotliwości i przesyłane na serwer w czasie rzeczywistym. Rejestrator działa z aplikacją [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud] lub dowolnym niestandardowym serwerem (żądania HTTP GET lub POST).
+
+# Funkcje
+
+- Rejestruje wiele miejsc docelowych z wieloma ustawieniami (częstotliwość, odległość min, dokładność min)
+- Rejestruje z aplikacji PhoneTrack Nextcloud (zadanie rejestratora PhoneTrack)
+- Rejestruje do dowolnego serwera, który może odbierać żądania HTTP GET lub POST (niestandardowe zadanie rejestratora)
+- Przechowuje pozycje, gdy sieć nie jest dostępna
+- Uruchamia się przy starcie systemu
+- Wyświetla urządzenia sesji PhoneTrack Nextcloud na mapie
+- Ciemny motyw
+- Wielojęzyczny interfejs użytkownika (przetłumaczony na https://crowdin.com/project/phonetrack)
+
+# Wymagania
+
+Jeśli chcesz się zalogować do aplikacji Nextcloud PhoneTrack:
+
+- Uruchom instancje Nextcloud
+- Włącz aplikację PhoneTrack Nextcloud
+
+Przeciwnie, brak wymagań! (Z wyjątkiem Androida> = 4.1)
+
+# Alternatywy
+
+Jeśli nie masz tej aplikacji i szukasz alternatyw:
+Zapoznaj się z metodami rejestrowania/aplikacjami w witrynie PhoneTrack wiki: https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods.

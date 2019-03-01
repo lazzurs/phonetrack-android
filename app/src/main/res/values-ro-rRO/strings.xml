@@ -23,7 +23,7 @@
     <string name="setting_lj_url_long">Nextcloud address of target PhoneTrack instance hosting the session</string>
     <string name="setting_url">Target address</string>
     <string name="setting_url_long">Target address to be requested with value replacement</string>
-    <string name="setting_post_title">Use POST method</string>
+    <string name="setting_post_title">Utilizați metoda POST</string>
     <string name="setting_post_summary">instead of GET method. GET parameters will be converted to POST.</string>
     <string name="action_search">Search</string>
     <string name="simple_cancel">Anulează</string>

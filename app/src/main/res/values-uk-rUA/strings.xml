@@ -136,10 +136,10 @@
     <string name="error_sync">Session retrieval failed: %1$s</string>
     <string name="error_invalid_login">Invalid login: %1$s</string>
     <string name="error_json">is the PhoneTrack app activated on the server?</string>
-    <string name="error_io">server connection is broken</string>
-    <string name="error_no_network">no network connection</string>
-    <string name="error_server">server error</string>
-    <string name="error_username_password_invalid">wrong username or password</string>
+    <string name="error_io">з\'єднання з сервером розірвано</string>
+    <string name="error_no_network">немає з\'єднання з мережою</string>
+    <string name="error_server">помилка сервера</string>
+    <string name="error_username_password_invalid">неправильне ім\'я користувача або пароль</string>
     <string name="error_invalid_pt_url">Invalid PhoneTrack logging link</string>
     <string name="error_invalid_url">Invalid link</string>
     <string name="error_invalid_token">Invalid token</string>
@@ -151,12 +151,12 @@
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->
-    <string name="about_version_title">Version</string>
-    <string name="about_version">You are currently using &lt;strong&gt;%1$s&lt;/strong&gt;</string>
-    <string name="about_maintainer_title">Maintainer</string>
-    <string name="about_developers_title">Developers</string>
-    <string name="about_translators_title">Translators</string>
-    <string name="about_translators_crowdin">PhoneTrack community on &lt;a href=\"%1$s\"&gt;Crowdin&lt;/a&gt;</string>
+    <string name="about_version_title">Версія</string>
+    <string name="about_version">Наразі ви використовуєте &lt;strong&gt;%1$s&lt;/strong&gt;</string>
+    <string name="about_maintainer_title">Розробник</string>
+    <string name="about_developers_title">Розробники</string>
+    <string name="about_translators_title">Перекладачі</string>
+    <string name="about_translators_crowdin">Спільнота PhoneTrack: &lt;a href=\"%1$s\"&gt;Crowdin&lt;/a&gt;</string>
     <string name="about_testers_title">Тестувальники</string>
     <string name="about_source_title">Сирцевий код</string>
     <string name="about_source">Розміщення цього проекту на Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>

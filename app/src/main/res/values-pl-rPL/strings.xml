@@ -74,7 +74,7 @@
     <string name="map_choose_frequency_dialog_title">Wybierz częstotliwość odświeżania mapy (s)</string>
     <string name="map_choose_frequency_dialog_message">Ile sekund między odświeżeniem mapy?</string>
     <string name="item_all_devices_label">Wszystkie urządzenia</string>
-    <string name="popup_battery_value">Poziom Baterii : %.2f%%</string>
+    <string name="popup_battery_value">Poziom baterii : %.2f%%</string>
     <string name="popup_altitude_value">Wysokość n.p.m. : %.2fm</string>
     <string name="popup_accuracy_value">Dokładność : %.2fm</string>
     <string name="popup_satellites">Satelity</string>
@@ -168,7 +168,7 @@
     <string name="about_app_license">Ta aplikacja jest na licencji GNU GENERAL PUBLIC LICENSE v3 +.</string>
     <string name="about_app_license_button">Pokaż licencję</string>
     <string name="about_icons_disclaimer_title">Ikony</string>
-    <string name="about_icons_disclaimer">&lt;p&gt;Oryginalne ikony wykonane przez %1$s&lt;/p&gt;&lt;p&gt;Wszystkie dodatkowe ikony używane przez tę aplikację są &lt;a href=\"https://materialdesignicons.com/\"&gt;Material Design Icons&lt;/a&gt; wykonane przez Google Inc. i licencjonowane na podstawie licencji Apache 2.0.&lt;/p&gt;</string>
+    <string name="about_icons_disclaimer">&lt;p&gt;Oryginalna ikona wykonana przez %1$s&lt;/p&gt;&lt;p&gt;Wszystkie dodatkowe ikony używane przez tę aplikację są &lt;a href=\"https://materialdesignicons.com/\"&gt;Material Design Icons&lt;/a&gt; wykonane przez Google Inc. i licencjonowane na podstawie licencji Apache 2.0.&lt;/p&gt;</string>
     <string name="about_credits_tab_title">Autorzy</string>
     <string name="about_contribution_tab_title">Wkład</string>
     <string name="about_license_tab_title">Licencja</string>

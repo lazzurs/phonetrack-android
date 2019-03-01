@@ -1,0 +1,1 @@
+Log posities naar Nextcloud PhoneTrack app of een aangepaste server
