@@ -326,13 +326,13 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                 else if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
                     showToast(getString(R.string.error_invalid_url), Toast.LENGTH_LONG);
                 }
-                else if (getMindistance() == 0) {
+                else if (getMindistance() < 0) {
                     showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
                 }
-                else if (getMintime() == 0) {
+                else if (getMintime() < 1) {
                     showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
                 }
-                else if (getMinaccuracy() == 0) {
+                else if (getMinaccuracy() < 1) {
                     showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
                 }
                 else {
@@ -424,19 +424,19 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     }
     protected int getMintime() {
         if (editMintime.getText() == null || editMintime.getText().equals("")) {
-            return 0;
+            return -1;
         }
         return Integer.valueOf(editMintime.getText());
     }
     protected int getMindistance() {
         if (editMindistance.getText() == null || editMindistance.getText().equals("")) {
-            return 0;
+            return -1;
         }
         return Integer.valueOf(editMindistance.getText());
     }
     protected int getMinaccuracy() {
         if (editMinaccuracy.getText() == null || editMinaccuracy.getText().equals("")) {
-            return 0;
+            return -1;
         }
         return Integer.valueOf(editMinaccuracy.getText());
     }

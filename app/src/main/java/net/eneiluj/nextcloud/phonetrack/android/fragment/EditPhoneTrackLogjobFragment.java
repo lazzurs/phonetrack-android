@@ -226,13 +226,13 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 else if (getDevicename() == null || getDevicename().equals("")) {
                     showToast(getString(R.string.error_invalid_devname), Toast.LENGTH_LONG);
                 }
-                else if (getMindistance() == 0) {
+                else if (getMindistance() < 0) {
                     showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
                 }
-                else if (getMintime() == 0) {
+                else if (getMintime() < 1) {
                     showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
                 }
-                else if (getMinaccuracy() == 0) {
+                else if (getMinaccuracy() < 1) {
                     showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
                 }
                 else {
