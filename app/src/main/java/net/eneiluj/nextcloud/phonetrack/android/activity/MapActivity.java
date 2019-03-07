@@ -704,7 +704,7 @@ public class MapActivity extends AppCompatActivity {
                     text += "\n"+getString(R.string.popup_accuracy_value, loc.getAccuracy());
                 }
                 if (loc.getSpeed() != null) {
-                    text += "\n"+getString(R.string.popup_speed_value, loc.getSpeed());
+                    text += "\n"+getString(R.string.popup_speed_value, loc.getSpeed()*3.6);
                 }
                 if (loc.getBearing() != null) {
                     text += "\n"+getString(R.string.popup_bearing_value, loc.getBearing());
