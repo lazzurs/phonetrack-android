@@ -21,6 +21,16 @@ android {
         disable 'MissingTranslation'
         abortOnError false
     }
+    productFlavors {
+        normal {
+            resValue "string", "app_name", "PhoneTrack"
+        }
+        dev {
+            applicationId 'net.eneiluj.nextcloud.phonetrack.dev'
+            resValue "string", "app_name", "PhoneTrack Dev"
+        }
+    }
+    flavorDimensions "default"
 }
 
 dependencies {
