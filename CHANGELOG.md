@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 0.0.10 – 2019-03-11
+### Changed
+- allow min distance == 0
+[#48](https://gitlab.com/eneiluj/phonetrack-android/issues/48) @makuser
+- add two flavors, normal and dev, just changes the app icon and ID to install both side by side
+
+### Fixed
+- fix speed display in map, convert m/s to km/h
+[#49](https://gitlab.com/eneiluj/phonetrack-android/issues/49) @Valdnet
+
 ## 0.0.9 – 2019-03-01
 ### Added
 - translations for fastlane descriptions
