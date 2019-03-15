@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -72,6 +73,7 @@ import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
+import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
@@ -351,11 +353,23 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 fabMenu.close(false);
             }
         });
-        fabMenu.setMenuButtonColorNormal(ThemeUtils.primaryColor(this));
+
+        boolean darkTheme = PhoneTrack.getAppTheme(this);
+        // if dark theme and main color is black, make fab button lighter/gray
+        if (darkTheme && ThemeUtils.primaryColor(this) == Color.BLACK) {
+            fabMenu.setMenuButtonColorNormal(Color.DKGRAY);
+            fabCreateCustom.setColorNormal(Color.DKGRAY);
+            fabCreatePhoneTrack.setColorNormal(Color.DKGRAY);
+        }
+        else {
+            fabMenu.setMenuButtonColorNormal(ThemeUtils.primaryColor(this));
+            fabCreateCustom.setColorNormal(ThemeUtils.primaryColor(this));
+            fabCreatePhoneTrack.setColorNormal(ThemeUtils.primaryColor(this));
+        }
         fabMenu.setMenuButtonColorPressed(ThemeUtils.primaryColor(this));
-        fabCreateCustom.setColorNormal(ThemeUtils.primaryColor(this));
+
         fabCreateCustom.setColorPressed(ThemeUtils.primaryColor(this));
-        fabCreatePhoneTrack.setColorNormal(ThemeUtils.primaryColor(this));
+
         fabCreatePhoneTrack.setColorPressed(ThemeUtils.primaryColor(this));
     }
 

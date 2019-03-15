@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,17 +109,16 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
             //view.setBackgroundColor(isSelected ? view.getResources().getColor(R.color.bg_highlighted) : Color.TRANSPARENT);
             view.setBackgroundColor(isSelected ? ContextCompat.getColor(view.getContext(), R.color.bg_highlighted) : Color.TRANSPARENT);
             //int textColor = view.getResources().getColor(isSelected ? R.color.primary_dark : R.color.fg_default);
-            int textColor;
-            if (isSelected) {
-                textColor = ThemeUtils.primaryColor(view.getContext());
-            }
-            else{
-                textColor = ContextCompat.getColor(view.getContext(), R.color.fg_default);
-            }
+            int textColor = ContextCompat.getColor(view.getContext(), R.color.fg_default);
 
             name.setTextColor(textColor);
             count.setTextColor(textColor);
             icon.setColorFilter(isSelected ? textColor : 0);
+
+            if (isSelected) {
+                name.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
+                count.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
+            }
         }
     }
 
