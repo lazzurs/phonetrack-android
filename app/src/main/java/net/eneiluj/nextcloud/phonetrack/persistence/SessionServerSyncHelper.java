@@ -16,6 +16,8 @@ import android.os.Build;
 import android.os.IBinder;
 //import android.preference.PreferenceManager;
 import androidx.preference.PreferenceManager;
+
+import android.os.RemoteException;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -30,6 +32,9 @@ import java.util.Set;
 
 import at.bitfire.cert4android.CustomCertManager;
 import at.bitfire.cert4android.CustomCertService;
+import at.bitfire.cert4android.ICustomCertService;
+import at.bitfire.cert4android.IOnCertificateDecision;
+
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
@@ -73,6 +78,7 @@ public class SessionServerSyncHelper {
     private final Context appContext;
 
     private CustomCertManager customCertManager;
+    private ICustomCertService iCustomCertService;
 
     // Track network connection changes using a BroadcastReceiver
     private boolean networkConnected = false;
@@ -81,6 +87,7 @@ public class SessionServerSyncHelper {
     private final ServiceConnection certService = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            iCustomCertService = ICustomCertService.Stub.asInterface(iBinder);
             cert4androidReady = true;
             /*if (isSyncPossible()) {
                 scheduleSync(false);
@@ -90,6 +97,7 @@ public class SessionServerSyncHelper {
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             cert4androidReady = false;
+            iCustomCertService = null;
         }
     };
 
@@ -184,6 +192,10 @@ public class SessionServerSyncHelper {
 
     public CustomCertManager getCustomCertManager() {
         return customCertManager;
+    }
+
+    public void checkCertificate(byte[] cert, IOnCertificateDecision callback) throws RemoteException {
+        iCustomCertService.checkTrusted(cert, true, false, callback);
     }
 
     /**

@@ -220,6 +220,8 @@
     <string name="pref_value_theme_dark">Dark</string>
     <string name="pref_key_providers" translatable="false">locationProviders</string>
     <string name="pref_value_providers" translatable="false">1</string>
+    <string name="fallback_weblogin_text">Revert to old login method</string>
+    <string name="fallback_weblogin_back">Back</string>
 
     <!-- Plurals -->
     <plurals name="ab_selected">

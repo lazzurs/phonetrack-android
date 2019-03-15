@@ -21,6 +21,10 @@ android {
         disable 'MissingTranslation'
         abortOnError false
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     productFlavors {
         normal {
             resValue "string", "app_name", "PhoneTrack"
