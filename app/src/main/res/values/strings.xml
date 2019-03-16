@@ -222,6 +222,7 @@
     <string name="pref_value_providers" translatable="false">1</string>
     <string name="fallback_weblogin_text">Revert to old login method</string>
     <string name="fallback_weblogin_back">Back</string>
+    <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
 
     <!-- Plurals -->
     <plurals name="ab_selected">

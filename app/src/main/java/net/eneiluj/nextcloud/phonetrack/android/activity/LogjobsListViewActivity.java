@@ -838,8 +838,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     private void updateUsernameInDrawer() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
-        String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS).replace("https://", "").replace("http://", "");
+        String username;
+        String url;
+        if (preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
+            username = preferences.getString(SettingsActivity.SETTINGS_SSO_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
+            url = preferences.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS).replace("https://", "").replace("http://", "");
+        }
+        else{
+            username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
+            url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS).replace("https://", "").replace("http://", "");
+        }
         if(!SettingsActivity.DEFAULT_SETTINGS.equals(username) && !SettingsActivity.DEFAULT_SETTINGS.equals(url)) {
             this.account.setText(username + "@" + url.substring(0, url.length() - 1));
         }

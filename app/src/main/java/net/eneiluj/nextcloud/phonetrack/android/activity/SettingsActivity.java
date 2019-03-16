@@ -9,12 +9,13 @@ import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-//import android.preference.PreferenceManager;
 import androidx.appcompat.app.ActionBar;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,14 +33,14 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import at.bitfire.cert4android.CustomCertManager;
 import at.bitfire.cert4android.IOnCertificateDecision;
-//import butterknife.BindView;
-//import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.android.fragment.LoginDialogFragment;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
@@ -62,6 +63,9 @@ import java.util.Map;
  */
 public class SettingsActivity extends AppCompatActivity {
 
+    public static final String SETTINGS_USE_SSO = "settingsUseSSO";
+    public static final String SETTINGS_SSO_URL = "settingsSSOUrl";
+    public static final String SETTINGS_SSO_USERNAME = "settingsSSOUsername";
     public static final String SETTINGS_URL = "settingsUrl";
     public static final String SETTINGS_USERNAME = "settingsUsername";
     public static final String SETTINGS_PASSWORD = "settingsPassword";
@@ -76,7 +80,9 @@ public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences preferences = null;
 
     //@BindView(R.id.settings_url)
+    Switch use_sso_switch;
     EditText field_url;
+    TextInputLayout url_wrapper;
     TextInputLayout username_wrapper;
     //@BindView(R.id.settings_username)
     EditText field_username;
@@ -95,12 +101,16 @@ public class SettingsActivity extends AppCompatActivity {
     private boolean first_run = false;
     private boolean useWebLogin = true;
 
+    private LoginDialogFragment loginDialogFragment;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        use_sso_switch = findViewById(R.id.use_sso_switch);
         field_url = findViewById(R.id.settings_url);
+        url_wrapper = findViewById(R.id.settings_url_wrapper);
         username_wrapper = findViewById(R.id.settings_username_wrapper);
         field_username = findViewById(R.id.settings_username);
         field_password = findViewById(R.id.settings_password);
@@ -137,6 +147,11 @@ public class SettingsActivity extends AppCompatActivity {
         setupListener();
 
         // Load current Preferences
+        use_sso_switch.setChecked(preferences.getBoolean(SETTINGS_USE_SSO, false));
+        if (use_sso_switch.isChecked()) {
+            url_wrapper.setVisibility(View.INVISIBLE);
+            btn_submit.setVisibility(View.INVISIBLE);
+        }
         field_url.setText(preferences.getString(SETTINGS_URL, DEFAULT_SETTINGS));
         field_username.setText(preferences.getString(SETTINGS_USERNAME, DEFAULT_SETTINGS));
         old_password = preferences.getString(SETTINGS_PASSWORD, DEFAULT_SETTINGS);
@@ -160,6 +175,30 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void setupListener() {
+
+        use_sso_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean isChecked = use_sso_switch.isChecked();
+
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean(SETTINGS_USE_SSO, isChecked);
+                editor.apply();
+
+                if (isChecked) {
+                    loginDialogFragment = new LoginDialogFragment();
+                    loginDialogFragment.show(SettingsActivity.this.getSupportFragmentManager(), "NoticeDialogFragment");
+
+                    url_wrapper.setVisibility(View.INVISIBLE);
+                    btn_submit.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    url_wrapper.setVisibility(View.VISIBLE);
+                    btn_submit.setVisibility(View.VISIBLE);
+                }
+            }
+
+        });
 
         field_url.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -496,10 +535,8 @@ public class SettingsActivity extends AppCompatActivity {
                 Drawable actionDoneDark = ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_check_grey600_24dp);
                 actionDoneDark.setBounds(0, 0, actionDoneDark.getIntrinsicWidth(), actionDoneDark.getIntrinsicHeight());
                 field_url.setCompoundDrawables(null, null, actionDoneDark, null);
-                Log.e("PhoneTrack", "YYYYYYYYYYYYYYYYYYYYYYY");
             } else {
                 field_url.setCompoundDrawables(null, null, null, null);
-                Log.e("PhoneTrack", "NNNNNNNNNNNNNNNNNNNN");
             }
             handleSubmitButtonEnabled();
         }
@@ -572,5 +609,32 @@ public class SettingsActivity extends AppCompatActivity {
         String serverAddress;
         String username;
         String password;
+    }
+
+    public void onAccountChoose(SingleSignOnAccount account) {
+        getSupportFragmentManager().beginTransaction().remove(loginDialogFragment).commit();
+        //Snackbar.make(, "Account URL: "+account.url, Snackbar.LENGTH_LONG).show();
+        Toast.makeText(
+                getApplicationContext(),
+                "Account URL: "+account.url,
+                Toast.LENGTH_LONG
+        ).show();
+
+        SingleAccountHelper.setCurrentAccount(this, account.name);
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SETTINGS_SSO_URL, account.url+"/");
+        editor.putString(SETTINGS_SSO_USERNAME, account.username);
+        //editor.putString(SETTINGS_PASSWORD, "");
+        editor.apply();
+
+        final Intent data = new Intent();
+        data.putExtra(LogjobsListViewActivity.CREDENTIALS_CHANGED, CREDENTIALS_CHANGED);
+        setResult(RESULT_OK, data);
+        finish();
+
+        //SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(context);
+        //NextcloudAPI nextcloudAPI = new NextcloudAPI(context, ssoAccount, new GsonBuilder().create(), callback);
+
     }
 }
