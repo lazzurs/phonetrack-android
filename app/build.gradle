@@ -27,11 +27,15 @@ android {
     }
     productFlavors {
         normal {
+            // yes this is repeated
+            applicationId "net.eneiluj.nextcloud.phonetrack"
             resValue "string", "app_name", "PhoneTrack"
+            resValue "string", "applicationId", applicationId
         }
         dev {
             applicationId 'net.eneiluj.nextcloud.phonetrack.dev'
             resValue "string", "app_name", "PhoneTrack Dev"
+            resValue "string", "applicationId", applicationId
         }
     }
     flavorDimensions "default"

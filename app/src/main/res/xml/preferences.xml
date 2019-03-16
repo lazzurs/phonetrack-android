@@ -8,7 +8,7 @@
         android:title="@string/settings_server_settings">
         <intent
             android:targetClass="net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity"
-            android:targetPackage="net.eneiluj.nextcloud.phonetrack" />
+            android:targetPackage="@string/applicationId" />
     </Preference>
 
     <ListPreference
