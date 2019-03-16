@@ -20,6 +20,13 @@ import androidx.preference.PreferenceManager;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.google.gson.GsonBuilder;
+import com.nextcloud.android.sso.api.NextcloudAPI;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -429,12 +436,44 @@ public class SessionServerSyncHelper {
         }
     }
 
+    private NextcloudAPI.ApiConnectedListener apiCallback = new NextcloudAPI.ApiConnectedListener() {
+        @Override
+        public void onConnected() {
+            // ignore this one..
+            Log.d(getClass().getSimpleName(), "API connected!!!!");
+        }
+
+        @Override
+        public void onError(Exception ex) {
+            // TODO handle error in your app
+        }
+    };
+
     private PhoneTrackClient createPhoneTrackClient() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
-        String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
-        String username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
-        String password = preferences.getString(SettingsActivity.SETTINGS_PASSWORD, SettingsActivity.DEFAULT_SETTINGS);
-        return new PhoneTrackClient(url, username, password);
+        String url = "";
+        String username = "";
+        String password = "";
+        boolean useSSO = preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
+        if (useSSO) {
+            try {
+                SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(appContext.getApplicationContext());
+                NextcloudAPI nextcloudAPI = new NextcloudAPI(appContext.getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
+                return new PhoneTrackClient(url, username, password, nextcloudAPI);
+            }
+            catch (NextcloudFilesAppAccountNotFoundException e) {
+                return null;
+            }
+            catch (NoCurrentAccountSelectedException e) {
+                return null;
+            }
+        }
+        else {
+            url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+            username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
+            password = preferences.getString(SettingsActivity.SETTINGS_PASSWORD, SettingsActivity.DEFAULT_SETTINGS);
+            return new PhoneTrackClient(url, username, password, null);
+        }
     }
 
     public boolean shareDevice(String token, String deviceName, ICallback callback) {

@@ -100,8 +100,8 @@ public class ServerResponse {
     protected String getPublicTokenFromJSON(JSONObject json) throws JSONException {
         int done = 0;
         String publictoken;
-        if (json.has("code") && json.has("sharetoken")) {
-            done = json.getInt("code");
+        if (json.has("done") && json.has("code") && json.has("sharetoken")) {
+            done = json.getInt("done");
             publictoken = json.getString("sharetoken");
             if (done == 1) {
                 return publictoken;

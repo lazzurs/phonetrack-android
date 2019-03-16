@@ -1,19 +1,27 @@
 package net.eneiluj.nextcloud.phonetrack.util;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+
+import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
+
+import com.nextcloud.android.sso.aidl.NextcloudRequest;
+import com.nextcloud.android.sso.api.NextcloudAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 
+import androidx.preference.PreferenceManager;
 import at.bitfire.cert4android.CustomCertManager;
 import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
@@ -57,28 +65,75 @@ public class PhoneTrackClient {
     private String url;
     private String username;
     private String password;
+    private NextcloudAPI nextcloudAPI;
 
-    public PhoneTrackClient(String url, String username, String password) {
+    public PhoneTrackClient(String url, String username, String password, @Nullable NextcloudAPI nextcloudAPI) {
         this.url = url;
         this.username = username;
         this.password = password;
+        this.nextcloudAPI = nextcloudAPI;
     }
 
     public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
         String target = "api/getsessions";
-        return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_GET, null, lastETag, true));
+        if (nextcloudAPI != null) {
+            Log.d(getClass().getSimpleName(), "using SSO to get sessions");
+            //return new ServerResponse.SessionsResponse(new ResponseData("[]", lastETag, lastModified));
+            return new ServerResponse.SessionsResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
+        }
+        else {
+            return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_GET, null, lastETag, true));
+        }
     }
 
     public ServerResponse.ShareDeviceResponse shareDevice(CustomCertManager ccm, String token, String deviceName) throws JSONException, IOException {
         String target = "api/sharedevice/" + token + "/" + deviceName;
-        return new ServerResponse.ShareDeviceResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+        if (nextcloudAPI != null) {
+            Log.d(getClass().getSimpleName(), "using SSO to get share device");
+            return new ServerResponse.ShareDeviceResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
+        }
+        else {
+            return new ServerResponse.ShareDeviceResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+        }
     }
 
     public ServerResponse.GetSessionLastPositionsResponse getSessionLastPositions(CustomCertManager ccm, DBSession session) throws JSONException, IOException {
         String target = "api/getuserlastpositions/" + session.getToken();
-        return new ServerResponse.GetSessionLastPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+        if (nextcloudAPI != null) {
+            Log.d(getClass().getSimpleName(), "using SSO to get session last positions");
+            return new ServerResponse.GetSessionLastPositionsResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
+        }
+        else {
+            return new ServerResponse.GetSessionLastPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+        }
     }
 
+    private ResponseData requestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, JSONObject params) {
+        StringBuffer result = new StringBuffer();
+
+        NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
+                .setMethod(method)
+                .setUrl("/index.php/apps/phonetrack/" + target)
+                .build();
+
+        try {
+            Log.d(getClass().getSimpleName(), "BEGGGGGGGGGGG ");
+            InputStream inputStream = nextcloudAPI.performNetworkRequest(nextcloudRequest);
+
+            BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            Log.d(getClass().getSimpleName(), "RESSSS " + result.toString());
+            inputStream.close();
+        } catch (Exception e) {
+            // TODO handle errors
+            Log.d(getClass().getSimpleName(), "SSO server request error "+e.toString());
+        }
+
+        return new ResponseData(result.toString(), "", 0);
+    }
     /**
      * Request-Method for POST, PUT with or without JSON-Object-Parameter
      *
