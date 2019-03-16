@@ -150,6 +150,7 @@ public class SettingsActivity extends AppCompatActivity {
         use_sso_switch.setChecked(preferences.getBoolean(SETTINGS_USE_SSO, false));
         if (use_sso_switch.isChecked()) {
             url_wrapper.setVisibility(View.INVISIBLE);
+            urlWarnHttp.setVisibility(View.GONE);
             btn_submit.setVisibility(View.INVISIBLE);
         }
         field_url.setText(preferences.getString(SETTINGS_URL, DEFAULT_SETTINGS));
@@ -189,6 +190,11 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 else {
                     url_wrapper.setVisibility(View.VISIBLE);
+                    //urlWarnHttp.setVisibility(View.VISIBLE);
+                    // stimulate url field to update http warning
+                    String url = field_url.getText().toString();
+                    field_url.setText("");
+                    field_url.setText(url);
                     btn_submit.setVisibility(View.VISIBLE);
                 }
             }
@@ -211,7 +217,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String url = PhoneTrackClientUtil.formatURL(field_url.getText().toString());
 
-                if (PhoneTrackClientUtil.isHttp(url)) {
+                if (PhoneTrackClientUtil.isHttp(url) && !preferences.getBoolean(SETTINGS_USE_SSO, false)) {
                     urlWarnHttp.setVisibility(View.VISIBLE);
                 } else {
                     urlWarnHttp.setVisibility(View.GONE);
@@ -616,6 +622,7 @@ public class SettingsActivity extends AppCompatActivity {
         ).show();
 
         url_wrapper.setVisibility(View.INVISIBLE);
+        urlWarnHttp.setVisibility(View.GONE);
         btn_submit.setVisibility(View.INVISIBLE);
 
         SingleAccountHelper.setCurrentAccount(this, account.name);
