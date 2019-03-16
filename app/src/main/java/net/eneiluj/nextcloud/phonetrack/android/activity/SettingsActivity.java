@@ -181,16 +181,11 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 boolean isChecked = use_sso_switch.isChecked();
 
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(SETTINGS_USE_SSO, isChecked);
-                editor.apply();
-
                 if (isChecked) {
                     loginDialogFragment = new LoginDialogFragment();
                     loginDialogFragment.show(SettingsActivity.this.getSupportFragmentManager(), "NoticeDialogFragment");
 
-                    url_wrapper.setVisibility(View.INVISIBLE);
-                    btn_submit.setVisibility(View.INVISIBLE);
+                    use_sso_switch.setChecked(false);
                 }
                 else {
                     url_wrapper.setVisibility(View.VISIBLE);
@@ -620,9 +615,13 @@ public class SettingsActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG
         ).show();
 
+        url_wrapper.setVisibility(View.INVISIBLE);
+        btn_submit.setVisibility(View.INVISIBLE);
+
         SingleAccountHelper.setCurrentAccount(this, account.name);
 
         SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(SETTINGS_USE_SSO, true);
         editor.putString(SETTINGS_SSO_URL, account.url+"/");
         editor.putString(SETTINGS_SSO_USERNAME, account.username);
         //editor.putString(SETTINGS_PASSWORD, "");
