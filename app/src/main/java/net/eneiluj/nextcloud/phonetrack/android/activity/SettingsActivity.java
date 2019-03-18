@@ -196,6 +196,11 @@ public class SettingsActivity extends AppCompatActivity {
                     field_url.setText("");
                     field_url.setText(url);
                     btn_submit.setVisibility(View.VISIBLE);
+
+                    // update preferences
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean(SETTINGS_USE_SSO, false);
+                    editor.apply();
                 }
             }
 
