@@ -117,6 +117,7 @@ public class MapActivity extends AppCompatActivity {
 
     private Map<String, DBLocation> locations;
     private Map<String, Marker> markers;
+    private Map<String, Integer> colors;
 
     private DBSession session;
     private PhoneTrackSQLiteOpenHelper db;
@@ -180,6 +181,7 @@ public class MapActivity extends AppCompatActivity {
 
 
         markers = new HashMap<>();
+        colors = new HashMap<>();
         locations = new HashMap<>();
         selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
 
@@ -681,16 +683,33 @@ public class MapActivity extends AppCompatActivity {
             for (String devName : newLocations.keySet()) {
                 Log.i(TAG, "Results : "+devName+" | "+newLocations.get(devName));
                 DBColoredLocation loc = newLocations.get(devName);
+                // marker already exists, check if color needs to be updated
                 if (markers.containsKey(devName)) {
-
+                    String colorStr = loc.getColor();
+                    if (colorStr != null) {
+                        int newColor = Color.parseColor(colorStr);
+                        Marker m = markers.get(devName);
+                        int currentColor = colors.get(devName);
+                        if (newColor != currentColor) {
+                            int textColor;
+                            if (ThemeUtils.isBrightColor(newColor)) {
+                                textColor = android.R.color.black;
+                            }
+                            else {
+                                textColor = android.R.color.white;
+                            }
+                            BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), newColor, textColor);
+                            m.setIcon(bmd);
+                        }
+                    }
                 }
+                // create the marker
                 else {
                     Marker m = new Marker(map);
                     int color;
                     String colorStr = loc.getColor();
                     if (colorStr != null) {
                         color = Color.parseColor(colorStr);
-                        Log.i(TAG, "Color: "+color);
                     }
                     else {
                         color = ThemeUtils.primaryColor(ctx);
@@ -704,9 +723,9 @@ public class MapActivity extends AppCompatActivity {
                     }
                     BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), color, textColor);
                     m.setIcon(bmd);
-                    //m.setPosition(new GeoPoint(43.6617,3.8473));
                     map.getOverlays().add(m);
                     markers.put(devName, m);
+                    colors.put(devName, color);
                 }
                 // always update location data
                 locations.put(devName, loc);
