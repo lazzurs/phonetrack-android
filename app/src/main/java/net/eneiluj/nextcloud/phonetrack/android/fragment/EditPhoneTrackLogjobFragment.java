@@ -336,7 +336,12 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         // show select session dialog if there are sessions
         if (sessionNameList.size() > 0 && logjob.getTitle().equals("")) {
-            selectDialog.show();
+            if (sessionNameList.size() == 1) {
+                setFieldsFromSession(sessionList.get(0));
+            }
+            else {
+                selectDialog.show();
+            }
         }
     }
 
