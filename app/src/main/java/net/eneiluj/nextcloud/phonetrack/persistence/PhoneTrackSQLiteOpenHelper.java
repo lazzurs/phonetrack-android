@@ -902,6 +902,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
     }
 
+    public void resetLastSyncError(long ljId) {
+        setLastSyncError(ljId, 0, "");
+    }
+
     public SyncError getLastSyncError(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(table_logjobs, new String[]{key_lastSyncErrorTimestamp, key_lastSyncErrorText}, key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null);

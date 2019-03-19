@@ -135,6 +135,9 @@ public class WebTrackService extends IntentService {
                             intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                             sendBroadcast(intent);
                         }
+                        if (locations.size() > 0) {
+                            db.resetLastSyncError(ljId);
+                        }
                     }
                     // send multiple locations per request
                     else {
@@ -170,6 +173,7 @@ public class WebTrackService extends IntentService {
                             }
                         }
                         db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
+                        db.resetLastSyncError(ljId);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                         sendBroadcast(intent);
@@ -195,6 +199,9 @@ public class WebTrackService extends IntentService {
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                         sendBroadcast(intent);
+                    }
+                    if (locations.size() > 0) {
+                        db.resetLastSyncError(ljId);
                     }
                 }
             } catch (IOException e) {
