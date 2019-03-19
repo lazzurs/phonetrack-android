@@ -43,6 +43,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.model.DBColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
@@ -676,17 +677,32 @@ public class MapActivity extends AppCompatActivity {
 
     private IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
         @Override
-        public void onFinish(Map<String, DBLocation> newLocations, String message) {
+        public void onFinish(Map<String, DBColoredLocation> newLocations, String message) {
             for (String devName : newLocations.keySet()) {
                 Log.i(TAG, "Results : "+devName+" | "+newLocations.get(devName));
-                DBLocation loc = newLocations.get(devName);
+                DBColoredLocation loc = newLocations.get(devName);
                 if (markers.containsKey(devName)) {
 
                 }
                 else {
                     Marker m = new Marker(map);
-                    int color = ThemeUtils.primaryColor(ctx);
-                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), color, android.R.color.white);
+                    int color;
+                    String colorStr = loc.getColor();
+                    if (colorStr != null) {
+                        color = Color.parseColor(colorStr);
+                        Log.i(TAG, "Color: "+color);
+                    }
+                    else {
+                        color = ThemeUtils.primaryColor(ctx);
+                    }
+                    int textColor;
+                    if (ThemeUtils.isBrightColor(color)) {
+                        textColor = android.R.color.black;
+                    }
+                    else {
+                        textColor = android.R.color.white;
+                    }
+                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), color, textColor);
                     m.setIcon(bmd);
                     //m.setPosition(new GeoPoint(43.6617,3.8473));
                     map.getOverlays().add(m);
