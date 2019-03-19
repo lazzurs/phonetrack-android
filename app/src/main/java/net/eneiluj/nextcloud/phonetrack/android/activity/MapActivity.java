@@ -91,6 +91,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.text.format.DateUtils.isToday;
+
 //import butterknife.BindView;
 //import butterknife.ButterKnife;
 
@@ -144,6 +146,7 @@ public class MapActivity extends AppCompatActivity {
     private SharedPreferences prefs;
 
     private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd\nHH:mm:ss z");
+    private final SimpleDateFormat sdfCompleteSimple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final SimpleDateFormat sdfHour = new SimpleDateFormat("HH:mm:ss");
     private Drawable toggleCircle;
 
@@ -430,7 +433,12 @@ public class MapActivity extends AppCompatActivity {
         itemsNavigationDevice.add(itemAll);
         for (String devName : markers.keySet()) {
             String label = devName;
-            label += " ("+sdfHour.format(locations.get(devName).getTimestamp()*1000) + ")";
+            if (isToday(locations.get(devName).getTimestamp()*1000)) {
+                label += " (" + sdfHour.format(locations.get(devName).getTimestamp() * 1000) + ")";
+            }
+            else {
+                label += "\n(" + sdfCompleteSimple.format(locations.get(devName).getTimestamp() * 1000) + ")";
+            }
             NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, null, R.drawable.ic_phone_android_grey_24dp);
             itemsNavigationDevice.add(item);
         }
