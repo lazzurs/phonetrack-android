@@ -177,6 +177,9 @@ href=\"https://materialdesignicons.com/\"&gt;Icone Material Design&lt;/a&gt; pro
     <!-- Key / Values for preferences -->
     <string name="pref_value_theme_light">Chiaro</string>
     <string name="pref_value_theme_dark">Scuro</string>
+    <string name="fallback_weblogin_text">Revert to old login method</string>
+    <string name="fallback_weblogin_back">Back</string>
+    <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d selezionato</item>

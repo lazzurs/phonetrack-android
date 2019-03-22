@@ -176,6 +176,9 @@
     <!-- Key / Values for preferences -->
     <string name="pref_value_theme_light">Hell</string>
     <string name="pref_value_theme_dark">Dunkel</string>
+    <string name="fallback_weblogin_text">Revert to old login method</string>
+    <string name="fallback_weblogin_back">Back</string>
+    <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d ausgewählt</item>
