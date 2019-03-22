@@ -82,6 +82,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -431,7 +432,15 @@ public class MapActivity extends AppCompatActivity {
 
         NavigationAdapter.NavigationItem itemAll = new NavigationAdapter.NavigationItem(ID_ITEM_ALL_DEVICES, getString(R.string.item_all_devices_label), markers.keySet().size(), R.drawable.ic_allgrey_24dp);
         itemsNavigationDevice.add(itemAll);
-        for (String devName : markers.keySet()) {
+        List<String> devNames = new ArrayList<>();
+        devNames.addAll(markers.keySet());
+        Collections.sort(devNames, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return s1.compareToIgnoreCase(s2);
+            }
+        });
+        for (String devName : devNames) {
             String label = devName;
             if (isToday(locations.get(devName).getTimestamp()*1000)) {
                 label += " (" + sdfHour.format(locations.get(devName).getTimestamp() * 1000) + ")";

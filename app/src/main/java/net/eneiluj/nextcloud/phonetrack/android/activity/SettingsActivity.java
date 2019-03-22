@@ -620,11 +620,6 @@ public class SettingsActivity extends AppCompatActivity {
     public void onAccountChoose(SingleSignOnAccount account) {
         getSupportFragmentManager().beginTransaction().remove(loginDialogFragment).commit();
         //Snackbar.make(, "Account URL: "+account.url, Snackbar.LENGTH_LONG).show();
-        Toast.makeText(
-                getApplicationContext(),
-                "Account URL: "+account.url,
-                Toast.LENGTH_LONG
-        ).show();
 
         url_wrapper.setVisibility(View.INVISIBLE);
         urlWarnHttp.setVisibility(View.GONE);
@@ -636,7 +631,6 @@ public class SettingsActivity extends AppCompatActivity {
         editor.putBoolean(SETTINGS_USE_SSO, true);
         editor.putString(SETTINGS_SSO_URL, account.url+"/");
         editor.putString(SETTINGS_SSO_USERNAME, account.username);
-        //editor.putString(SETTINGS_PASSWORD, "");
         editor.apply();
 
         final Intent data = new Intent();
