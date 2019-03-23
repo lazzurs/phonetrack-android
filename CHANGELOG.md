@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- web login
+- SSO login
+- get device colors from server in map view
+[#58](https://gitlab.com/eneiluj/phonetrack-android/issues/58) @markussvn
+
+### Changed
+- make dark theme really black
+[#53](https://gitlab.com/eneiluj/phonetrack-android/issues/53) @mapcar
+- show complete date if now today in map view
+[#57](https://gitlab.com/eneiluj/phonetrack-android/issues/57) @markussvn
+- use the only session for new PT log jobs if there is only one
+[#59](https://gitlab.com/eneiluj/phonetrack-android/issues/59) @markussvn
+- reset last sync error when sync succeeds
+[#62](https://gitlab.com/eneiluj/phonetrack-android/issues/62) @markussvn
+- sort device name in map sidebar
+[#57](https://gitlab.com/eneiluj/phonetrack-android/issues/57) @markussvn
+
+### Fixed
 
 ## 0.0.10 – 2019-03-11
 ### Changed
