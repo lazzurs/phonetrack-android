@@ -523,6 +523,9 @@ public class LoggerService extends Service {
                         //.setSmallIcon(R.drawable.ic_stat_notify_24dp)
                         //.setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name)));
         mNotificationBuilder = mBuilder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mBuilder.setChannelId(channelId);
+        }
 
         Intent resultIntent = new Intent(this, LogjobsListViewActivity.class);
 
