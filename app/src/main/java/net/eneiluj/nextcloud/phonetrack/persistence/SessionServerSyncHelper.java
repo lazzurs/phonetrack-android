@@ -527,11 +527,16 @@ public class SessionServerSyncHelper {
                 if (LoggerService.DEBUG) {
                     Log.i(getClass().getSimpleName(), "HERE IS THE TOKEN BIIIITCH "+sharetoken);
                 }
-                publicUrl = prefs.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
-                        .replaceAll("/+$", "")
-                        + "/index.php/apps/phonetrack/publicSessionWatch/" + sharetoken;
-
-
+                if (prefs.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
+                    publicUrl = prefs.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS)
+                            .replaceAll("/+$", "")
+                            + "/index.php/apps/phonetrack/publicSessionWatch/" + sharetoken;
+                }
+                else {
+                    publicUrl = prefs.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
+                            .replaceAll("/+$", "")
+                            + "/index.php/apps/phonetrack/publicSessionWatch/" + sharetoken;
+                }
             } catch (IOException e) {
                 if (LoggerService.DEBUG) {
                     Log.e(getClass().getSimpleName(), "Exception", e);

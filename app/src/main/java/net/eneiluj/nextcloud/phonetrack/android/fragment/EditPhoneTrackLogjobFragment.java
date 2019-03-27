@@ -253,8 +253,15 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 SessionServerSyncHelper syncHelper = db.getPhonetrackServerSyncHelper();
                 if (syncHelper.isConfigured(this.getActivity())) {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-                    String configUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
-                            .replaceAll("/+$", "");
+                    String configUrl;
+                    if (preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
+                        configUrl = preferences.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS)
+                                .replaceAll("/+$", "");
+                    }
+                    else {
+                        configUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
+                                .replaceAll("/+$", "");
+                    }
                     if (nextURL.equals(configUrl)) {
                         if (!syncHelper.shareDevice(token, devicename, shareCallBack)) {
                             showToast(getString(R.string.error_share_dev_network), Toast.LENGTH_LONG);
