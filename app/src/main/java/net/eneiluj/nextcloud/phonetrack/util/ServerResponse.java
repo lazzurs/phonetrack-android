@@ -156,7 +156,13 @@ public class ServerResponse {
 
         Context appContext = dbHelper.getContext().getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
-        String url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+        String url;
+        if (preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
+            url = preferences.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS);
+        }
+        else {
+            url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+        }
         return new DBSession(0, token, name, url, publicToken, isFromShare, isPublic);
     }
 }
