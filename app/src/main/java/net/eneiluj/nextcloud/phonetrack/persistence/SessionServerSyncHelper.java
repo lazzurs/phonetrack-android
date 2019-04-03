@@ -97,9 +97,9 @@ public class SessionServerSyncHelper {
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             iCustomCertService = ICustomCertService.Stub.asInterface(iBinder);
             cert4androidReady = true;
-            /*if (isSyncPossible()) {
+            if (isSyncPossible()) {
                 scheduleSync(false);
-            }*/
+            }
         }
 
         @Override
@@ -200,6 +200,7 @@ public class SessionServerSyncHelper {
      */
     public boolean isSyncPossible() {
         updateNetworkStatus();
+        //Log.d(TAG, networkConnected+ " " +isConfigured(appContext) +" "+ cert4androidReady);
         return networkConnected && isConfigured(appContext) && cert4androidReady;
     }
 
