@@ -33,6 +33,7 @@
     <string name="simple_edit_cu">Редактировать задание журнала пользователя</string>
     <string name="simple_about">О программе</string>
     <string name="simple_map">Карта</string>
+    <string name="action_session_created">Session created</string>
     <string name="action_logjob_deleted">Задание журнала удалено</string>
     <string name="action_logjob_restored">Задание журнала восстановлено</string>
     <string name="action_undo">Отмена</string>
@@ -44,6 +45,7 @@
     <string name="menu_select_session">Использовать сессию PhoneTrack</string>
     <string name="menu_from_url">Использовать ссылку для журнала PhoneTrack</string>
     <string name="menu_share">Поделиться</string>
+    <string name="fab_create_session">Create a session</string>
     <string name="fab_create_phonetrack">Новое задание журнала PhoneTrack</string>
     <string name="fab_create_custom">Новое задание журнала пользователя</string>
     <string name="setting_min_distance">Минимальная дистанция</string>
@@ -66,6 +68,8 @@
     <string name="logjob_info_lastsync_error">Ошибка при синхронизации в\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Импорт ссылки для журнала PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Любой совместимый URL журнала в веб-интерфейсе PhoneTrack</string>
+    <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
+    <string name="dialog_title_create_session">Создать сессию</string>
     <string name="confirm_delete_logjob_dialog_title">Вы уверены?</string>
     <string name="edit_logjob_choose_session_dialog_title">Выберите сессию</string>
     <string name="map_choose_session_dialog_title">Выберите сессию для отображения на карте</string>
@@ -126,6 +130,8 @@
     <string name="error_share_dev_configured">Необходимо настроить параметры учетной записи</string>
     <string name="error_share_dev_network">Не удалось поделиться устройством\nСеть недоступна</string>
     <string name="error_share_dev_helper">Ошибка совместного использования устройства : %s</string>
+    <string name="error_create_session_helper">Error when creating session : %s</string>
+    <string name="error_create_session_exists">The session already exists</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - безопасность подключения</string>
@@ -176,14 +182,14 @@
     <!-- Key / Values for preferences -->
     <string name="pref_value_theme_light">Светлая</string>
     <string name="pref_value_theme_dark">Темная</string>
-    <string name="fallback_weblogin_text">Revert to old login method</string>
-    <string name="fallback_weblogin_back">Back</string>
-    <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
+    <string name="fallback_weblogin_text">Вернуться к старому методу авторизации</string>
+    <string name="fallback_weblogin_back">Назад</string>
+    <string name="use_sso_toggle">Использовать учетную запись Nextcloud</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d выбрано</item>
-        <item quantity="few">%d selected</item>
-        <item quantity="many">%d selected</item>
-        <item quantity="other">%d selected</item>
+        <item quantity="few">%d выбрано</item>
+        <item quantity="many">%d выбрано</item>
+        <item quantity="other">%d выбрано</item>
     </plurals>
 </resources>

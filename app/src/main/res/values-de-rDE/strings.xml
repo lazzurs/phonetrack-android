@@ -33,6 +33,7 @@
     <string name="simple_edit_cu">Benutzerdefinierten Protokollierungsauftrag bearbeiten</string>
     <string name="simple_about">Über</string>
     <string name="simple_map">Karte</string>
+    <string name="action_session_created">Session created</string>
     <string name="action_logjob_deleted">Protokollierungsauftrag gelöscht</string>
     <string name="action_logjob_restored">Protokollierungsauftrag wiederhergestellt</string>
     <string name="action_undo">Widerrufen</string>
@@ -44,6 +45,7 @@
     <string name="menu_select_session">PhoneTrack-Sitzung verwenden</string>
     <string name="menu_from_url">PhoneTrack-Protokollierungs-Link verwenden</string>
     <string name="menu_share">Teilen</string>
+    <string name="fab_create_session">Create a session</string>
     <string name="fab_create_phonetrack">Neuer PhoneTrack-Protokollierungsauftrag</string>
     <string name="fab_create_custom">Neuer benutzerdefinierter Protokollierungsauftrag</string>
     <string name="setting_min_distance">Minimale Entfernung</string>
@@ -66,6 +68,8 @@
     <string name="logjob_info_lastsync_error">Letzter Synchronisierungsfehler bei:\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">PhoneTrack-Protokollierungs-Link importieren</string>
     <string name="dialog_msg_import_pt_url">Jeder kompatible Protokollierungs-Link, die in der PhoneTrack-Webschnittstelle angegeben ist</string>
+    <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
+    <string name="dialog_title_create_session">Sitzung anlegen</string>
     <string name="confirm_delete_logjob_dialog_title">Sind Sie sicher?</string>
     <string name="edit_logjob_choose_session_dialog_title">Sitzung wählen</string>
     <string name="map_choose_session_dialog_title">Wählen Sie eine Sitzung, die auf der Karte angezeigt werden soll</string>
@@ -126,6 +130,8 @@
     <string name="error_share_dev_configured">Die Kontoeinstellungen müssen konfiguriert werden</string>
     <string name="error_share_dev_network">Gerät konnte nicht freigegeben werden\nNetzwerk nicht verfügbar</string>
     <string name="error_share_dev_helper">Fehler bei der Freigabe des Geräts : %s</string>
+    <string name="error_create_session_helper">Error when creating session : %s</string>
+    <string name="error_create_session_exists">The session already exists</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Verbindungssicherheit</string>
@@ -176,9 +182,9 @@
     <!-- Key / Values for preferences -->
     <string name="pref_value_theme_light">Hell</string>
     <string name="pref_value_theme_dark">Dunkel</string>
-    <string name="fallback_weblogin_text">Revert to old login method</string>
-    <string name="fallback_weblogin_back">Back</string>
-    <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
+    <string name="fallback_weblogin_text">Zurück zur alte Anmeldemethode</string>
+    <string name="fallback_weblogin_back">Zurück</string>
+    <string name="use_sso_toggle">Konto aus der Nextcloud Files App verwenden</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d ausgewählt</item>
