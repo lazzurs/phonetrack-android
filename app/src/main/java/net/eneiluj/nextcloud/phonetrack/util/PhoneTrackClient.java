@@ -97,6 +97,17 @@ public class PhoneTrackClient {
         }
     }
 
+    public ServerResponse.CreateSessionResponse createSession(CustomCertManager ccm, String sessionName) throws JSONException, IOException {
+        String target = "api/createsession/" + sessionName;
+        if (nextcloudAPI != null) {
+            Log.d(getClass().getSimpleName(), "using SSO to create session");
+            return new ServerResponse.CreateSessionResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
+        }
+        else {
+            return new ServerResponse.CreateSessionResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+        }
+    }
+
     public ServerResponse.GetSessionLastPositionsResponse getSessionLastPositions(CustomCertManager ccm, DBSession session) throws JSONException, IOException {
         String target = "api/getuserlastpositions/" + session.getToken();
         if (nextcloudAPI != null) {

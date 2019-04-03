@@ -655,4 +655,85 @@ public class SessionServerSyncHelper {
             callback.onFinish(locations, errorString);
         }
     }
+
+    public boolean createSession(String sessionName, ICallback callback) {
+        if (isSyncPossible()) {
+            CreateSessionTask createSessionTask = new CreateSessionTask(sessionName, callback);
+            createSessionTask.execute();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * task to ask server to create a session
+     *
+     */
+    private class CreateSessionTask extends AsyncTask<Void, Void, LoginStatus> {
+        private PhoneTrackClient client;
+        private String sessionName;
+        private String sessionId = null;
+        private ICallback callback;
+        private List<Throwable> exceptions = new ArrayList<>();
+
+        public CreateSessionTask(String sessionName, ICallback callback) {
+            this.sessionName = sessionName;
+            this.callback = callback;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected LoginStatus doInBackground(Void... voids) {
+            client = createPhoneTrackClient();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+            if (LoggerService.DEBUG) { Log.i(getClass().getSimpleName(), "STARTING share device"); }
+            LoginStatus status = LoginStatus.OK;
+            try {
+                ServerResponse.CreateSessionResponse response = client.createSession(customCertManager, sessionName);
+                sessionId = response.getSessionId();
+                if (LoggerService.DEBUG) {
+                    Log.i(getClass().getSimpleName(), "HERE IS THE ID BIIIITCH "+sessionId);
+                }
+            } catch (IOException e) {
+                if (LoggerService.DEBUG) {
+                    Log.e(getClass().getSimpleName(), "Exception", e);
+                }
+                exceptions.add(e);
+                status = LoginStatus.CONNECTION_FAILED;
+            } catch (JSONException e) {
+                if (LoggerService.DEBUG) {
+                    Log.e(getClass().getSimpleName(), "Exception", e);
+                }
+                exceptions.add(e);
+                status = LoginStatus.JSON_FAILED;
+            } catch (Exception e) {
+                exceptions.add(new Exception(appContext.getString(R.string.error_create_session_exists)));
+            }
+            if (LoggerService.DEBUG) {
+                Log.i(getClass().getSimpleName(), "FINISHED create session task");
+            }
+            return status;
+        }
+
+        @Override
+        protected void onPostExecute(LoginStatus status) {
+            super.onPostExecute(status);
+            String errorString = "";
+            if (status != LoginStatus.OK) {
+                errorString = appContext.getString(
+                        R.string.error_sync,
+                        appContext.getString(status.str)
+                );
+                errorString += "\n\n";
+            }
+            for (Throwable e : exceptions) {
+                errorString += e.getClass().getName() + ": " + e.getMessage();
+            }
+            callback.onFinish(sessionId, errorString);
+        }
+    }
 }

@@ -18,7 +18,6 @@ import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBColoredLocation;
-import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
@@ -70,6 +69,16 @@ public class ServerResponse {
         }
     }
 
+    public static class CreateSessionResponse extends ServerResponse {
+        public CreateSessionResponse(PhoneTrackClient.ResponseData response) {
+            super(response);
+        }
+
+        public String getSessionId() throws JSONException, Exception {
+            return getSessionIdFromJSON(new JSONObject(getContent()));
+        }
+    }
+
     public static class GetSessionLastPositionsResponse extends ServerResponse {
         public GetSessionLastPositionsResponse(PhoneTrackClient.ResponseData response) {
             super(response);
@@ -106,6 +115,22 @@ public class ServerResponse {
             publictoken = json.getString("sharetoken");
             if (done == 1) {
                 return publictoken;
+            }
+        }
+        return null;
+    }
+
+    protected String getSessionIdFromJSON(JSONObject json) throws JSONException, Exception {
+        int done = 0;
+        String sessionId;
+        if (json.has("done") && json.has("token")) {
+            done = json.getInt("done");
+            sessionId = json.getString("token");
+            if (done == 1) {
+                return sessionId;
+            }
+            else if (done == 2) {
+                throw new Exception("Session already exists");
             }
         }
         return null;

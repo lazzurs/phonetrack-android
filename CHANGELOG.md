@@ -18,12 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#57](https://gitlab.com/eneiluj/phonetrack-android/issues/57) @markussvn
 - use the only session for new PT log jobs if there is only one
 [#59](https://gitlab.com/eneiluj/phonetrack-android/issues/59) @markussvn
+
+### Fixed
 - reset last sync error when sync succeeds
 [#62](https://gitlab.com/eneiluj/phonetrack-android/issues/62) @markussvn
 - sort device name in map sidebar
 [#57](https://gitlab.com/eneiluj/phonetrack-android/issues/57) @markussvn
-
-### Fixed
 
 ## 0.0.10 – 2019-03-11
 ### Changed

@@ -22,6 +22,8 @@ import android.os.Handler;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.Nullable;
+
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.ActivityCompat;
 //import android.support.v4.widget.DrawerLayout;
@@ -45,6 +47,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -109,25 +112,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private final static int map = 4;
 
 
-    //@BindView(R.id.logjobsListActivityActionBar)
     Toolbar toolbar;
-    //@BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
-    //@BindView(R.id.account)
     TextView account;
-    //@BindView(R.id.swiperefreshlayout)
     SwipeRefreshLayout swipeRefreshLayout;
-    //@BindView(R.id.fab_create_phonetrack)
     com.github.clans.fab.FloatingActionButton fabCreatePhoneTrack;
-    //@BindView(R.id.fab_create_custom)
     com.github.clans.fab.FloatingActionButton fabCreateCustom;
-    //@BindView(R.id.floatingMenu)
+    com.github.clans.fab.FloatingActionButton fabCreateSession;
     com.github.clans.fab.FloatingActionMenu fabMenu;
-    //@BindView(R.id.navigationList)
     RecyclerView listNavigationCategories;
-    //@BindView(R.id.navigationMenu)
     RecyclerView listNavigationMenu;
-    //@BindView(R.id.recycler_view)
     RecyclerView listView;
 
     private ActionBarDrawerToggle drawerToggle;
@@ -182,6 +176,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         swipeRefreshLayout = findViewById(R.id.swiperefreshlayout);
         fabCreatePhoneTrack = findViewById(R.id.fab_create_phonetrack);
         fabCreateCustom = findViewById(R.id.fab_create_custom);
+        fabCreateSession = findViewById(R.id.fab_create_session);
         fabMenu = findViewById(R.id.floatingMenu);
         listNavigationCategories = findViewById(R.id.navigationList);
         listNavigationMenu = findViewById(R.id.navigationMenu);
@@ -334,6 +329,57 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
+            }
+        });
+
+        fabMenu.setOnMenuToggleListener(new com.github.clans.fab.FloatingActionMenu.OnMenuToggleListener() {
+            @Override
+            public void onMenuToggle(boolean opened) {
+
+                int drawableId;
+                if (opened) {
+                    if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
+                        fabCreateSession.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        fabCreateSession.setVisibility(View.GONE);
+                    }
+                } else {
+
+                }
+
+            }
+        });
+
+        fabCreateSession.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                fabMenu.close(true);
+                EditText sessionNameEdit = new EditText(view.getContext());
+                AlertDialog.Builder sessionBuilder = new AlertDialog.Builder(new ContextThemeWrapper(view.getContext(), R.style.AppThemeDialog));
+                sessionBuilder.setMessage(getString(R.string.dialog_msg_create_session));
+                sessionBuilder.setTitle(getString(R.string.dialog_title_create_session));
+
+                sessionBuilder.setView(sessionNameEdit);
+
+                sessionBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String sessionName = sessionNameEdit.getText().toString();
+                        if (!sessionName.isEmpty()) {
+                            if (!db.getPhonetrackServerSyncHelper().createSession(sessionName, createSessionCallBack)) {
+                                showToast(getString(R.string.error_share_dev_network), Toast.LENGTH_LONG);
+                            }
+                        }
+                    }
+                });
+                sessionBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // what ever you want to do with No option.
+                    }
+                });
+                AlertDialog sessionDialog = sessionBuilder.create();
+                sessionDialog.show();
             }
         });
 
@@ -1183,11 +1229,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case LoggerService.BROADCAST_LOCATION_STARTED:
                     showToast(getString(R.string.tracking_started));
-                    //setLocLed(LED_YELLOW);
                     break;
                 case LoggerService.BROADCAST_LOCATION_STOPPED:
                     showToast(getString(R.string.tracking_stopped));
-                    //setLocLed(LED_RED);
                     break;
                 case LoggerService.BROADCAST_LOCATION_GPS_DISABLED:
                     showToast(getString(R.string.gps_disabled_warning), Toast.LENGTH_LONG);
@@ -1197,7 +1241,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case LoggerService.BROADCAST_LOCATION_DISABLED:
                     showToast(getString(R.string.location_disabled), Toast.LENGTH_LONG);
-                    //setLocLed(LED_RED);
                     break;
                 case LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED:
                     showToast(getString(R.string.using_network), Toast.LENGTH_LONG);
@@ -1207,10 +1250,29 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED:
                     showToast(getString(R.string.location_permission_denied), Toast.LENGTH_LONG);
-                    //setLocLed(LED_RED);
                     ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
                     break;
             }
+        }
+    };
+
+    private ICallback createSessionCallBack = new ICallback() {
+        @Override
+        public void onFinish() {
+        }
+
+        public void onFinish(String sessionId, String message) {
+            if (sessionId != null) {
+                Snackbar.make(swipeRefreshLayout, R.string.action_session_created, Snackbar.LENGTH_LONG).show();
+                synchronize();
+            }
+            else {
+                showToast(getString(R.string.error_create_session_helper, message), Toast.LENGTH_LONG);
+            }
+        }
+
+        @Override
+        public void onScheduled() {
         }
     };
 }
