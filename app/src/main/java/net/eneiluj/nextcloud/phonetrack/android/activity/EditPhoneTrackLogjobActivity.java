@@ -41,7 +41,8 @@ public class EditPhoneTrackLogjobActivity extends EditLogjobActivity {
 
         DBLogjob newLogjob = new DBLogjob(
                 0, "",  getString(R.string.default_nextcloud_url), getString(R.string.default_session_token),
-                getString(R.string.default_device_name), 60, 5, 50,
+                android.os.Build.MODEL.replaceAll(" ", "").replaceAll("/", ""),
+                60, 5, 50,
                 false,false,false, 0
         );
 
