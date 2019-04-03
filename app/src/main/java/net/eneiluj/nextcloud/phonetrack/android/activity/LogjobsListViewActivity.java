@@ -368,7 +368,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         String sessionName = sessionNameEdit.getText().toString();
                         if (!sessionName.isEmpty()) {
                             if (!db.getPhonetrackServerSyncHelper().createSession(sessionName, createSessionCallBack)) {
-                                showToast(getString(R.string.error_share_dev_network), Toast.LENGTH_LONG);
+                                showToast(getString(R.string.error_create_session_network), Toast.LENGTH_LONG);
                             }
                         }
                     }

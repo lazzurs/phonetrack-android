@@ -199,6 +199,7 @@ public class SessionServerSyncHelper {
      * @return true if sync is possible, otherwise false.
      */
     public boolean isSyncPossible() {
+        updateNetworkStatus();
         return networkConnected && isConfigured(appContext) && cert4androidReady;
     }
 
