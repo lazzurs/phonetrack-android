@@ -411,14 +411,14 @@ public class WebTrackHelper {
     public URL getUrlFromPhoneTrackLogjob(DBLogjob lj) throws MalformedURLException {
         return new URL(
                 lj.getUrl().replaceAll("/+$", "") +
-                        "/index.php/apps/phonetrack/logPost/" + lj.getToken() + "/" + lj.getDeviceName()
+                        "/index.php/apps/phonetrack/logPost/" + lj.getToken() + "/" + lj.getDeviceName().replaceAll("/", "-")
         );
     }
 
     public URL getUrlMultipleFromPhoneTrackLogjob(DBLogjob lj) throws MalformedURLException {
         return new URL(
                 lj.getUrl().replaceAll("/+$", "") +
-                        "/index.php/apps/phonetrack/logPostMultiple/" + lj.getToken() + "/" + lj.getDeviceName()
+                        "/index.php/apps/phonetrack/logPostMultiple/" + lj.getToken() + "/" + lj.getDeviceName().replaceAll("/", "-")
         );
     }
 }
