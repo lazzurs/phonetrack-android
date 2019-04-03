@@ -405,17 +405,19 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         if (darkTheme && ThemeUtils.primaryColor(this) == Color.BLACK) {
             fabMenu.setMenuButtonColorNormal(Color.DKGRAY);
             fabCreateCustom.setColorNormal(Color.DKGRAY);
+            fabCreateSession.setColorNormal(Color.DKGRAY);
             fabCreatePhoneTrack.setColorNormal(Color.DKGRAY);
         }
         else {
             fabMenu.setMenuButtonColorNormal(ThemeUtils.primaryColor(this));
-            fabCreateCustom.setColorNormal(ThemeUtils.primaryColor(this));
+                fabCreateCustom.setColorNormal(ThemeUtils.primaryColor(this));
+            fabCreateSession.setColorNormal(ThemeUtils.primaryColor(this));
             fabCreatePhoneTrack.setColorNormal(ThemeUtils.primaryColor(this));
         }
         fabMenu.setMenuButtonColorPressed(ThemeUtils.primaryColor(this));
 
         fabCreateCustom.setColorPressed(ThemeUtils.primaryColor(this));
-
+        fabCreateSession.setColorPressed(ThemeUtils.primaryColor(this));
         fabCreatePhoneTrack.setColorPressed(ThemeUtils.primaryColor(this));
     }
 
