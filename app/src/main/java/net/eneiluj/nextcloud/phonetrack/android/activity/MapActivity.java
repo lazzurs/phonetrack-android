@@ -462,6 +462,11 @@ public class MapActivity extends AppCompatActivity {
                 adapterDevices.setSelectedItem(item.id);
                 Log.i(TAG, "[select item] "+item.id);
                 selectedDeviceItemId = item.id;
+                if (!selectedDeviceItemId.equals(ID_ITEM_ALL_DEVICES)) {
+                    Marker m = markers.get(selectedDeviceItemId);
+                    map.getOverlays().remove(m);
+                    map.getOverlays().add(m);
+                }
 
                 // update views
                 if (closeNavigation) {
@@ -576,7 +581,6 @@ public class MapActivity extends AppCompatActivity {
             Marker m = markers.get(devName);
             if (devName.equals(selectedDeviceItemId)) {
                 if (selectMode) {
-
                 }
                 else {
                     selectMode = true;
