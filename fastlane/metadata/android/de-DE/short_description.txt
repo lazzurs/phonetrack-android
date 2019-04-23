@@ -1,1 +1,1 @@
-Positionen protokollieren zur Nextcloud PhoneTrack-App oder zu jedem benutzerdefinierten Server
+Positionen protokollieren zur Nextcloud PhoneTrack-App oder zu einem benutzerdefinierten Server
