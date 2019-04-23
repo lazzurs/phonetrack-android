@@ -616,22 +616,30 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     selectBuilder.setTitle(getString(R.string.map_choose_session_dialog_title));
 
                     if (sessionNameList.size() > 0) {
-                        CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
-                        selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        if (sessionNameList.size() == 1) {
+                            long sid = sessionIdList.get(0);
+                            Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                            mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
+                            startActivityForResult(mapIntent, map);
+                        }
+                        else {
+                            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
+                            selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                                long sid = sessionIdList.get(which);
-                                Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
-                                mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
-                                startActivityForResult(mapIntent, map);
-                                dialog.dismiss();
-                            }
-                        });
-                        selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
+                                    long sid = sessionIdList.get(which);
+                                    Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                                    mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
+                                    startActivityForResult(mapIntent, map);
+                                    dialog.dismiss();
+                                }
+                            });
+                            selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
 
-                        AlertDialog selectDialog = selectBuilder.create();
-                        selectDialog.show();
+                            AlertDialog selectDialog = selectBuilder.create();
+                            selectDialog.show();
+                        }
                     }
                     else {
                         showToast(getString(R.string.map_choose_session_dialog_impossible), Toast.LENGTH_LONG);
