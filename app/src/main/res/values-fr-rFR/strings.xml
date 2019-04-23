@@ -33,7 +33,7 @@
     <string name="simple_edit_cu">Éditer un log job personnalisé</string>
     <string name="simple_about">À propos</string>
     <string name="simple_map">Carte</string>
-    <string name="action_session_created">Session created</string>
+    <string name="action_session_created">Session créée</string>
     <string name="action_logjob_deleted">Log job supprimé</string>
     <string name="action_logjob_restored">Log job restauré</string>
     <string name="action_undo">Annuler</string>
@@ -45,7 +45,7 @@
     <string name="menu_select_session">Utiliser une session PhoneTrack</string>
     <string name="menu_from_url">Utiliser un lien de logging PhoneTrack</string>
     <string name="menu_share">Partager</string>
-    <string name="fab_create_session">Create a session</string>
+    <string name="fab_create_session">Créer une session</string>
     <string name="fab_create_phonetrack">Nouveau log job PhoneTrack</string>
     <string name="fab_create_custom">Nouveau log job personnalisé</string>
     <string name="setting_min_distance">Distance minimum</string>
@@ -68,7 +68,7 @@
     <string name="logjob_info_lastsync_error">Dernière erreur de synchronisation le\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Importer un lien de logging PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">N\'importe quelle lien de logging fourni dans l\'interface web de PhoneTrack</string>
-    <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
+    <string name="dialog_msg_create_session">Créer une session de logging dans l\'application Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Créer une session</string>
     <string name="confirm_delete_logjob_dialog_title">Êtes-vous sûr(e) ?</string>
     <string name="edit_logjob_choose_session_dialog_title">Choisissez une session</string>
@@ -129,9 +129,10 @@
     <string name="error_share_dev_same_url">L\'adresse du Nextcloud doit être identique à celle définie dans les paramètres du compte pour pouvoir créer le partage</string>
     <string name="error_share_dev_configured">Les paramètres du compte doivent être renseignés</string>
     <string name="error_share_dev_network">Impossible de partager l\'appareil\nRéseau indisponible</string>
+    <string name="error_create_session_network">Erreur de création de la session\nRéseau indisponible</string>
     <string name="error_share_dev_helper">Erreur du partage de l\'appareil : %s</string>
-    <string name="error_create_session_helper">Error when creating session : %s</string>
-    <string name="error_create_session_exists">The session already exists</string>
+    <string name="error_create_session_helper">Erreur lors de la création de la session: %s</string>
+    <string name="error_create_session_exists">La session existe déjà</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Sécurité de la connexion</string>

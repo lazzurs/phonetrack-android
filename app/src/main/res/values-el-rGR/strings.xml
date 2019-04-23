@@ -33,7 +33,7 @@
     <string name="simple_edit_cu">Επεξεργασία προσαρμοσμένης καταγραφής</string>
     <string name="simple_about">Σχετικά</string>
     <string name="simple_map">Χάρτης</string>
-    <string name="action_session_created">Session created</string>
+    <string name="action_session_created">Η συνεδρία δημιουργήθηκε</string>
     <string name="action_logjob_deleted">Η εργασία καταγραφής διαγράφηκε</string>
     <string name="action_logjob_restored">Η εργασία καταγραφής αποκαταστάθηκε</string>
     <string name="action_undo">Αναίρεση</string>
@@ -45,7 +45,7 @@
     <string name="menu_select_session">Χρήση συνεδρίας PhoneTrack</string>
     <string name="menu_from_url">Χρήση συνδέσμου καταγραφής PhoneTrack</string>
     <string name="menu_share">Κοινοποίηση</string>
-    <string name="fab_create_session">Create a session</string>
+    <string name="fab_create_session">Δημιουργία συνεδρίας</string>
     <string name="fab_create_phonetrack">Νέα εργασία καταγραφής PhoneTrack</string>
     <string name="fab_create_custom">Νέα προσαρμοσμένη εργασία καταγραφής</string>
     <string name="setting_min_distance">Ελάχιστη απόσταση</string>
@@ -68,7 +68,7 @@
     <string name="logjob_info_lastsync_error">Τελευταίο σφάλμα συγχρονισμού στις\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Εισαγωγή συνδέσμου καταγραφής PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Οποιοσδήποτε συμβατός σύνδεσμος καταγραφής δόθηκε στο γραφικό περιβάλλον του PhoneTrack</string>
-    <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
+    <string name="dialog_msg_create_session">Δημιουργία μιας συνεδρίας καταγραφής στην εφαρμογή Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Δημιουργία συνεδρίας</string>
     <string name="confirm_delete_logjob_dialog_title">Είσαι σίγουρος;</string>
     <string name="edit_logjob_choose_session_dialog_title">Επιλογή συνεδρίας</string>
@@ -129,9 +129,10 @@
     <string name="error_share_dev_same_url">Η διεύθυνση Nextcloud πρέπει να είναι η ίδια όπως στις ρυθμίσεις λογαριασμού για να μπορεί να κοινοποιηθεί</string>
     <string name="error_share_dev_configured">Οι ρυθμίσεις λογαριασμού πρέπει να ρυθμιστούν</string>
     <string name="error_share_dev_network">Αποτυχία κοινοποίησης συσκευής\nΔίκτυο μη διαθέσιμο</string>
+    <string name="error_create_session_network">Αποτυχία δημιουργίας συνεδρίας\nΔίκτυο μη διαθέσιμο</string>
     <string name="error_share_dev_helper">Σφάλμα κατά την κοινοποίηση της συσκευής : %s</string>
-    <string name="error_create_session_helper">Error when creating session : %s</string>
-    <string name="error_create_session_exists">The session already exists</string>
+    <string name="error_create_session_helper">Σφάλμα κατά τη δημιουργία συνεδρίας : %s</string>
+    <string name="error_create_session_exists">Η συνεδρία υπάρχει ήδη</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Ασφάλεια σύνδεσης</string>

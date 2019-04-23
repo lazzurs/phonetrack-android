@@ -129,6 +129,7 @@
     <string name="error_share_dev_same_url">Nextcloud adres moet hetzelfde zijn als in account instellingen om het delen mogelijk te maken</string>
     <string name="error_share_dev_configured">Account instellingen moeten geconfigureerd zijn</string>
     <string name="error_share_dev_network">Delen apparaat mislukt\nNetwerk niet beschikbaar</string>
+    <string name="error_create_session_network">Failed to create session\nNetwork unavailable</string>
     <string name="error_share_dev_helper">Fout bij delen van apparaat : %s</string>
     <string name="error_create_session_helper">Error when creating session : %s</string>
     <string name="error_create_session_exists">The session already exists</string>

@@ -33,7 +33,7 @@
     <string name="simple_edit_cu">Modifica log personalizzato</string>
     <string name="simple_about">Info su</string>
     <string name="simple_map">Mappa</string>
-    <string name="action_session_created">Session created</string>
+    <string name="action_session_created">Sessione creata</string>
     <string name="action_logjob_deleted">Log eliminato</string>
     <string name="action_logjob_restored">Log ripristinato</string>
     <string name="action_undo">Annulla</string>
@@ -45,7 +45,7 @@
     <string name="menu_select_session">Utilizzare la sessione di PhoneTrack</string>
     <string name="menu_from_url">Utilizzare link di registrazione PhoneTrack</string>
     <string name="menu_share">Condividi</string>
-    <string name="fab_create_session">Create a session</string>
+    <string name="fab_create_session">Crea una sessione</string>
     <string name="fab_create_phonetrack">Nuovo log di PhoneTrack</string>
     <string name="fab_create_custom">Nuovo log personalizzato</string>
     <string name="setting_min_distance">Distanza minima</string>
@@ -68,7 +68,7 @@
     <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione a\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Importa l\'URL di registrazione di PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Qualsiasi URL di registrazione compatibile fornito nell\'interfaccia web PhoneTrack</string>
-    <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
+    <string name="dialog_msg_create_session">Creare una sessione di log nella app PhoneTrack su Nextcloud</string>
     <string name="dialog_title_create_session">Creare la sessione</string>
     <string name="confirm_delete_logjob_dialog_title">Sei sicuro?</string>
     <string name="edit_logjob_choose_session_dialog_title">Seleziona una sessione</string>
@@ -129,9 +129,10 @@
     <string name="error_share_dev_same_url">L\'URL di Nextcloud deve essere lo stesso delle impostazioni dell\'account per poterlo condividere</string>
     <string name="error_share_dev_configured">Le impostazioni dell\'account devono essere configurate</string>
     <string name="error_share_dev_network">Impossibile condividere il dispositivo \n Rete non disponibile</string>
+    <string name="error_create_session_network">Impossibile creare la sessione\nRete non disponibile</string>
     <string name="error_share_dev_helper">Errore durante la condivisione del dispositivo: %s</string>
-    <string name="error_create_session_helper">Error when creating session : %s</string>
-    <string name="error_create_session_exists">The session already exists</string>
+    <string name="error_create_session_helper">Errore durante la creazione della sessione : %s</string>
+    <string name="error_create_session_exists">La sessione già esiste</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Sicurezza della connessione</string>

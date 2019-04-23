@@ -129,6 +129,7 @@
     <string name="error_share_dev_same_url">Nextcloud address must be the same as in Account settings to be able to share</string>
     <string name="error_share_dev_configured">A fiók beállításait konfigurálni kell</string>
     <string name="error_share_dev_network">Nem sikerült megosztani az eszközt \n hálózat nem érhető el</string>
+    <string name="error_create_session_network">Failed to create session\nNetwork unavailable</string>
     <string name="error_share_dev_helper">Hiba az eszköz megosztásakor: %s</string>
     <string name="error_create_session_helper">Error when creating session : %s</string>
     <string name="error_create_session_exists">The session already exists</string>
