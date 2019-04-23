@@ -71,6 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String SETTINGS_PASSWORD = "settingsPassword";
     public static final String SETTINGS_KEY_ETAG = "sessions_last_etag";
     public static final String SETTINGS_KEY_LAST_MODIFIED = "sessions_last_modified";
+    public static final String SETTINGS_LAST_SELECTED_SESSION_ID = "settingsLastSelectedSessionId";
     public static final String DEFAULT_SETTINGS = "";
     public static final int CREDENTIALS_CHANGED = 3;
 

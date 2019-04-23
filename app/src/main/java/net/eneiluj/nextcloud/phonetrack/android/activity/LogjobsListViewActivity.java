@@ -18,17 +18,14 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-//import android.preference.PreferenceManager;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.core.app.ActivityCompat;
-//import android.support.v4.widget.DrawerLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
-//import android.support.v4.widget.SwipeRefreshLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +47,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -624,7 +622,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         }
                         else {
                             CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
-                            selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            long lastSelectedSessionId = preferences.getLong(SettingsActivity.SETTINGS_LAST_SELECTED_SESSION_ID, -1);
+
+                            int selectedIndex = sessionIdList.indexOf(lastSelectedSessionId);
+                            selectBuilder.setSingleChoiceItems(entcs, selectedIndex, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
@@ -633,9 +635,26 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                     mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
                                     startActivityForResult(mapIntent, map);
                                     dialog.dismiss();
+
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.putLong(SettingsActivity.SETTINGS_LAST_SELECTED_SESSION_ID, sid);
+                                    editor.apply();
                                 }
                             });
                             selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
+                            selectBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ListView lw = ((AlertDialog)dialog).getListView();
+                                    int w = lw.getCheckedItemPosition();
+
+                                    long sid = sessionIdList.get(w);
+                                    Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                                    mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
+                                    startActivityForResult(mapIntent, map);
+                                    dialog.dismiss();
+                                }
+                            });
+
 
                             AlertDialog selectDialog = selectBuilder.create();
                             selectDialog.show();
