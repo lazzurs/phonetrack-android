@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - web login
-- SSO login
+- SSO login (only on Android 9, 8 and 4 for the moment)
 - get device colors from server in map view
 [#58](https://gitlab.com/eneiluj/phonetrack-android/issues/58) @markussvn
+- ability to create a remote session
 
 ### Changed
 - make dark theme really black
@@ -18,6 +19,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#57](https://gitlab.com/eneiluj/phonetrack-android/issues/57) @markussvn
 - use the only session for new PT log jobs if there is only one
 [#59](https://gitlab.com/eneiluj/phonetrack-android/issues/59) @markussvn
+- update gradle version
+- set notification channel
+- improved network check
+- sync sessions when cert4android gets ready even if it's redundant
+- use phone model name as default log job device name
+- avoid slashes in log URL, replaced by dash
+[#46](https://gitlab.com/eneiluj/phonetrack-android/issues/46) @syntron
+- bring marker to front when selected in side menu
+[#71](https://gitlab.com/eneiluj/phonetrack-android/issues/71) @markussvn
+- if there is only one session, use it for map view
+[#59](https://gitlab.com/eneiluj/phonetrack-android/issues/59) @markussvn
+[#73](https://gitlab.com/eneiluj/phonetrack-android/issues/73) @markussvn
+- when asking for map view, remember last selected session and preselect it
+[#59](https://gitlab.com/eneiluj/phonetrack-android/issues/59) @markussvn
+[#73](https://gitlab.com/eneiluj/phonetrack-android/issues/73) @markussvn
 
 ### Fixed
 - reset last sync error when sync succeeds
