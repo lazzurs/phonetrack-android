@@ -993,9 +993,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             DBLogjob logjob = db.getLogjob(logjobItem.getId());
             long ljId = logjob.getId();
             PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
+            long tsNow = new Date().getTime() / 1000;
             long tsLastLoc = db.getLastLocTimestamp(ljId);
+            long diffLastLoc = tsNow - tsLastLoc;
             long tsLastSync = db.getLastSyncTimestamp(ljId);
+            long diffLastSync = tsNow - tsLastSync;
             SyncError lastSyncErr = db.getLastSyncError(ljId);
+            long diffLastSyncErr = tsNow - lastSyncErr.getTimestamp();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
@@ -1067,7 +1071,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
             if (tsLastLoc != 0) {
                 Date d = new Date(tsLastLoc*1000);
-                lastLocText = view.getContext().getString(R.string.logjob_info_lastloc, sdf.format(d));
+                String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, view.getContext());
+                lastLocText = view.getContext().getString(R.string.logjob_info_lastloc, diffLastLocString, sdf.format(d));
 
                 TextView tv3 = iView.findViewById(R.id.infoLastLocText);
                 tv3.setText(lastLocText);
@@ -1077,7 +1082,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
             if (tsLastSync != 0) {
                 Date d = new Date(tsLastSync*1000);
-                lastSyncText = view.getContext().getString(R.string.logjob_info_lastsync, sdf.format(d));
+                String diffLastSyncString = SupportUtil.formatDuration(diffLastSync, view.getContext());
+                lastSyncText = view.getContext().getString(R.string.logjob_info_lastsync, diffLastSyncString, sdf.format(d));
 
                 TextView tv4 = iView.findViewById(R.id.infoLastSyncText);
                 tv4.setText(lastSyncText);
@@ -1088,7 +1094,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
             if (lastSyncErr.getTimestamp() != 0) {
                 Date d = new Date(lastSyncErr.getTimestamp()*1000);
-                lastSyncErrText = view.getContext().getString(R.string.logjob_info_lastsync_error, sdf.format(d), lastSyncErr.getMessage());
+                String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, view.getContext());
+                lastSyncErrText = view.getContext().getString(
+                        R.string.logjob_info_lastsync_error,
+                        diffLastLocString,
+                        sdf.format(d),
+                        lastSyncErr.getMessage());
 
                 TextView tv5 = iView.findViewById(R.id.infoLastSyncErrText);
                 tv5.setText(lastSyncErrText);
