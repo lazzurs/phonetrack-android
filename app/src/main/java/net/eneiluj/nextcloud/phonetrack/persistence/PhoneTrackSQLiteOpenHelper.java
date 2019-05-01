@@ -555,6 +555,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_enabled, logjob.isEnabled() ? "1" : "0");
+        // reset nbSync if logjob is enabled
+        if (logjob.isEnabled()) {
+            values.put(key_nbsync, 0);
+        }
         db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
         /*if (callback != null) {
             serverSyncHelper.addCallbackPush(callback);
