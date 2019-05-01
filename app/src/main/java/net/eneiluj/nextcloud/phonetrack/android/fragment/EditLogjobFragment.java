@@ -10,7 +10,8 @@ import android.os.Handler;
 import android.os.Looper;
 //import android.preference.EditTextPreference;
 import androidx.preference.CheckBoxPreference;
-import androidx.preference.EditTextPreference;
+//import androidx.preference.EditTextPreference;
+import com.takisoft.fix.support.v7.preference.EditTextPreference;
 //import android.preference.ListPreference;
 //import android.preference.Preference;
 import androidx.preference.Preference;
@@ -29,6 +30,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 //import butterknife.ButterKnife;
@@ -123,7 +126,21 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     }
 
     public void endOnCreate() {
+
+        Preference.OnPreferenceClickListener clickListener =  new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                EditText input = ((EditTextPreference) preference).getEditText();
+                input.setSelectAllOnFocus(true);
+                input.requestFocus();
+                input.setSelected(true);
+                // show keyboard
+                InputMethodManager inputMethodManager = (InputMethodManager) preference.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                return true;
+            }
+        };
         Preference titlePref = findPreference("title");
+        titlePref.setOnPreferenceClickListener(clickListener);
         titlePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
@@ -147,6 +164,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
         });
         Preference URLPref = findPreference("URL");
+        URLPref.setOnPreferenceClickListener(clickListener);
         URLPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
@@ -370,6 +388,8 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
     public void onCloseLogjob() {
         Log.d(getClass().getSimpleName(), "onCLOSE()");
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     /**

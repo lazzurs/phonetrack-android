@@ -1,6 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ import androidx.appcompat.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -66,7 +68,21 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         System.out.println("PHONEFRAG on create : "+logjob);
 
+        Preference.OnPreferenceClickListener clickListener =  new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                EditText input = ((com.takisoft.fix.support.v7.preference.EditTextPreference) preference).getEditText();
+                input.setSelectAllOnFocus(true);
+                input.requestFocus();
+                input.setSelected(true);
+                // show keyboard
+                InputMethodManager inputMethodManager = (InputMethodManager) preference.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                return true;
+            }
+        };
+
         Preference tokenPref = findPreference("token");
+        tokenPref.setOnPreferenceClickListener(clickListener);
         tokenPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
@@ -88,6 +104,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         });
         Preference devicenamePref = findPreference("devicename");
+        devicenamePref.setOnPreferenceClickListener(clickListener);
         devicenamePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
@@ -242,6 +259,11 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 return true;
             case R.id.menu_fromLogUrl:
                 fromUrlDialog.show();
+                fromUrlEdit.setSelectAllOnFocus(true);
+                fromUrlEdit.requestFocus();
+                // show keyboard
+                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 return true;
             case R.id.menu_selectSession:
                 selectDialog.show();
@@ -332,11 +354,16 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString());
+                // restore keyboard auto hide behaviour
+                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
         });
         fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                // what ever you want to do with No option.
+                // restore keyboard auto hide behaviour
+                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
         });
         fromUrlDialog = fromUrlBuilder.create();

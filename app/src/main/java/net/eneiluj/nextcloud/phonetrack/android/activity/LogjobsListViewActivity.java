@@ -44,6 +44,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -369,15 +370,25 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                 showToast(getString(R.string.error_create_session_network), Toast.LENGTH_LONG);
                             }
                         }
+                        // restore keyboard auto hide behaviour
+                        InputMethodManager inputMethodManager = (InputMethodManager) sessionNameEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
                 });
                 sessionBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        // what ever you want to do with No option.
+                        // restore keyboard auto hide behaviour
+                        InputMethodManager inputMethodManager = (InputMethodManager) sessionNameEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
                 });
                 AlertDialog sessionDialog = sessionBuilder.create();
                 sessionDialog.show();
+                sessionNameEdit.setSelectAllOnFocus(true);
+                sessionNameEdit.requestFocus();
+                // show keyboard
+                InputMethodManager inputMethodManager = (InputMethodManager) sessionNameEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
         });
 
