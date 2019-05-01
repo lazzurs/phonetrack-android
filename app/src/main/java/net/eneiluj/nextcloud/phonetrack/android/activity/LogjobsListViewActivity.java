@@ -1029,6 +1029,15 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             TextView tv2 = iView.findViewById(R.id.infoNbnotsyncText);
             tv2.setText(nbnotsyncText);
 
+            if (totDistance != 0.0) {
+                String totDistanceText = view.getContext().getString(R.string.logjob_info_distance, totDistance);
+
+                TextView tv3 = iView.findViewById(R.id.infoDistanceText);
+                tv3.setText(totDistanceText);
+            }
+            else {
+                iView.findViewById(R.id.infoDistanceLayout).setVisibility(View.GONE);
+            }
             if (tsLastLoc != 0) {
                 Date d = new Date(tsLastLoc*1000);
                 lastLocText = view.getContext().getString(R.string.logjob_info_lastloc, sdf.format(d));
