@@ -317,7 +317,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
                     }
                 }
-                if (db.getLocationCount() > 0) {
+                if (db.getLocationNotSyncedCount() > 0) {
                     Intent syncIntent = new Intent(LogjobsListViewActivity.this, WebTrackService.class);
                     startService(syncIntent);
                     showToast(getString(R.string.uploading_started));
@@ -720,7 +720,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     case ItemTouchHelper.LEFT: {
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
                         // get locations
-                        final List<DBLogjobLocation> locations = db.getLocationOfLogjob(dbLogjob.getId());
+                        final List<DBLogjobLocation> locations = db.getLocationsOfLogjob(dbLogjob.getId());
                         db.deleteLogjob(dbLogjob.getId());
                         adapter.remove(dbLogjob);
                         refreshLists();
@@ -1000,7 +1000,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             if (LoggerService.DEBUG) { Log.d(TAG, "[LAST " + tsLastLoc + " "+tsLastSync+ "]"); }
 
             String nbsyncText = view.getContext().getString(R.string.logjob_info_nbsync, logjob.getNbSync());
-            String nbnotsyncText = view.getContext().getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationCount(logjob.getId()));
+            String nbnotsyncText = view.getContext().getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationNotSyncedCount(logjob.getId()));
             String lastLocText = "";
             String lastSyncText = "";
             String lastSyncErrText = "";

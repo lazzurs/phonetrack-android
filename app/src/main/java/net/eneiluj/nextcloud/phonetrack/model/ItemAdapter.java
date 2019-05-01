@@ -159,7 +159,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
 
-            int nb = db.getLogjobLocationCount(logjob.getId());
+            int nb = db.getLogjobLocationNotSyncedCount(logjob.getId());
             String nbTxt = (nb == 0) ? "" : String.valueOf(nb);
             nvHolder.nbNotSync.setText(nbTxt);
             int visible = (nb == 0) ? View.INVISIBLE : View.VISIBLE;

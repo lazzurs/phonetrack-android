@@ -120,14 +120,14 @@ public class WebTrackService extends IntentService {
                 // PhoneTrack logjob
                 if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
                     URL url = web.getUrlFromPhoneTrackLogjob(logjob);
-                    List<DBLogjobLocation> locations = db.getLocationOfLogjob(ljId);
+                    List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
                     // send one by one
                     if (locations.size() <= 5) {
                         for (DBLogjobLocation loc : locations) {
                             long locId = loc.getId();
                             Map<String, String> params = dbLocationToMap(loc);
                             web.postPositionToPhoneTrack(url, params);
-                            db.deleteLocation(locId);
+                            db.setLocationSynced(locId);
                             db.incNbSync(logjob);
                             db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                             Intent intent = new Intent(BROADCAST_SYNC_DONE);
@@ -151,7 +151,7 @@ public class WebTrackService extends IntentService {
                                 web.postMultiplePositionsToPhoneTrack(url, params);
                                 for (DBLogjobLocation locToDel : tmpLocs) {
                                     long locId = locToDel.getId();
-                                    db.deleteLocation(locId);
+                                    db.setLocationSynced(locId);
                                     db.incNbSync(logjob);
                                 }
                                 tmpLocs = new ArrayList<>();
@@ -167,7 +167,7 @@ public class WebTrackService extends IntentService {
                             web.postMultiplePositionsToPhoneTrack(url, params);
                             for (DBLogjobLocation locToDel : tmpLocs) {
                                 long locId = locToDel.getId();
-                                db.deleteLocation(locId);
+                                db.setLocationSynced(locId);
                                 db.incNbSync(logjob);
                             }
                         }
@@ -181,7 +181,7 @@ public class WebTrackService extends IntentService {
                 // custom logjob
                 else {
                     String destUrl = logjob.getUrl();
-                    List<DBLogjobLocation> locations = db.getLocationOfLogjob(ljId);
+                    List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
                     for (DBLogjobLocation loc : locations) {
                         long locId = loc.getId();
                         Map<String, String> params = dbLocationToMap(loc);
@@ -192,7 +192,7 @@ public class WebTrackService extends IntentService {
                             web.sendGETPositionToCustom(destUrl, params);
                         }
 
-                        db.deleteLocation(locId);
+                        db.setLocationSynced(locId);
                         db.incNbSync(logjob);
                         db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);

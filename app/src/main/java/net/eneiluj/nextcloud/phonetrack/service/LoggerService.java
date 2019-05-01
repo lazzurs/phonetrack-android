@@ -122,7 +122,7 @@ public class LoggerService extends Service {
 
         syncIntent = new Intent(getApplicationContext(), WebTrackService.class);
         // start websync service if needed
-        if (db.getLocationCount() > 0) {
+        if (db.getLocationNotSyncedCount() > 0) {
             startService(syncIntent);
         }
 
@@ -512,7 +512,7 @@ public class LoggerService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(channelId);
         }
-        String nbLocations = String.valueOf(db.getLocationCount());
+        String nbLocations = String.valueOf(db.getLocationNotSyncedCount());
         String nbSent = String.valueOf(db.getNbTotalSync());
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this, channelId)
@@ -540,7 +540,7 @@ public class LoggerService extends Service {
     }
 
     private void updateNotificationContent() {
-        String nbLocations = String.valueOf(db.getLocationCount());
+        String nbLocations = String.valueOf(db.getLocationNotSyncedCount());
         String nbSent = String.valueOf(db.getNbTotalSync());
         mNotificationBuilder.setContentText(String.format(getString(R.string.is_running), nbLocations, nbSent));
         mNotificationManager.notify(this.NOTIFICATION_ID, mNotificationBuilder.build());

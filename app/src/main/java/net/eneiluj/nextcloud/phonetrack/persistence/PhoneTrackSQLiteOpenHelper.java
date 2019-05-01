@@ -569,10 +569,18 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             values.put(key_nbsync, 0);
         }
         db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
-        /*if (callback != null) {
-            serverSyncHelper.addCallbackPush(callback);
+
+        if (logjob.isEnabled()) {
+            // delete locations which are already synced
+            db.delete(table_locations,
+                    key_logjobid + " = ? AND " + key_synced + " = 1",
+                    new String[]{String.valueOf(logjob.getId())});
+
+            // set currentRun of locations
+            ContentValues locValues = new ContentValues();
+            values.put(key_currentRun, 0);
+            db.update(table_locations, locValues, key_logjobid + " = ?", new String[]{String.valueOf(logjob.getId())});
         }
-        serverSyncHelper.scheduleSync(true);*/
     }
 
     public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken,
@@ -724,8 +732,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_battery, dbLoc.getBattery());
         values.put(key_satellites, dbLoc.getSatellites());
         values.put(key_userAgent, dbLoc.getUserAgent());
-        values.put(key_synced, dbLoc.isSynced());
-        values.put(key_currentRun, dbLoc.isCurrentRun());
+        values.put(key_synced, dbLoc.isSynced() ? 1 : 0);
+        values.put(key_currentRun, dbLoc.isCurrentRun() ? 1 : 0);
 
         db.insert(table_locations, null, values);
     }
@@ -736,9 +744,36 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param ljId int - ID of the logjob
      * @return requested locations
      */
-    public List<DBLogjobLocation> getLocationOfLogjob(long ljId) {
-        List<DBLogjobLocation> locations = getLocationsCustom(key_logjobid + " = ?", new String[]{String.valueOf(ljId)}, key_time + " ASC");
+    public List<DBLogjobLocation> getLocationsOfLogjob(long ljId) {
+        List<DBLogjobLocation> locations = getLocationsCustom(
+                key_logjobid + " = ?",
+                new String[]{String.valueOf(ljId)},
+                key_time + " ASC"
+        );
         return locations;
+    }
+
+    public List<DBLogjobLocation> getLocationsToSyncOfLogjob(long ljId) {
+        List<DBLogjobLocation> locations = getLocationsCustom(
+                key_logjobid + " = ? AND " + key_synced + " = 0",
+                new String[]{String.valueOf(ljId)},
+                key_time + " ASC"
+        );
+        return locations;
+    }
+
+    public List<DBLogjobLocation> getCurrentRunLocationsOfLogjob(long ljId) {
+        List<DBLogjobLocation> locations = getLocationsCustom(
+                key_logjobid + " = ? AND " + key_currentRun + " = 1",
+                new String[]{String.valueOf(ljId)},
+                key_time + " ASC"
+        );
+        return locations;
+    }
+
+    public DBLogjobLocation getLocation(long id) {
+        List<DBLogjobLocation> locations = getLocationsCustom(key_id + " = ?", new String[]{String.valueOf(id)}, null);
+        return locations.isEmpty() ? null : locations.get(0);
     }
 
     /**
@@ -796,12 +831,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @NonNull
     @WorkerThread
-    public int getLogjobLocationCount(long ljId) {
+    public int getLogjobLocationNotSyncedCount(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(
                 table_locations,
                 new String[]{"COUNT(*)"},
-                key_logjobid +" = ?",
+                key_logjobid +" = ? AND " + key_synced + " = 0",
                 new String[]{String.valueOf(ljId)},
                 null,
                 null,
@@ -817,12 +852,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @NonNull
     @WorkerThread
-    public int getLocationCount() {
+    public int getLocationNotSyncedCount() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(
                 table_locations,
                 new String[]{"COUNT(*)"},
-                null,
+                key_synced + " = 0",
                 new String[]{},
                 null,
                 null,
@@ -834,6 +869,23 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return result;
+    }
+
+    /**
+     * location is now synced with success
+     * it can be deleted if it's not a location of the "current run"
+     * @param id
+     */
+    public void setLocationSynced(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(key_synced, 1);
+        db.update(table_locations, values, key_id + " = ?", new String[]{String.valueOf(id)});
+
+        DBLogjobLocation loc = this.getLocation(id);
+        if (!loc.isCurrentRun()) {
+            deleteLocation(id);
+        }
     }
 
     public void deleteLocation(long id) {
