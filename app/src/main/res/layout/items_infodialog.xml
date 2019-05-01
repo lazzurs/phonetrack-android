@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,6 +11,29 @@
     android:gravity="center_vertical"
     android:orientation="vertical"
     android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/infoNbPointsLayout"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/infoNbPointsIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_dots_grey_24dp" />
+
+        <TextView
+            android:id="@+id/infoNbPointsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="text1" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/infoDistanceLayout"
@@ -25,6 +51,29 @@
 
         <TextView
             android:id="@+id/infoDistanceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="text1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/infoDurationLayout"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/infoDurationIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_timer_grey_24dp" />
+
+        <TextView
+            android:id="@+id/infoDurationText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -150,3 +199,4 @@
     </LinearLayout>
 
 </LinearLayout>
+</ScrollView>

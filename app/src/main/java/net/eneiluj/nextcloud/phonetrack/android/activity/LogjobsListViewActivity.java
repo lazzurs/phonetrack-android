@@ -52,6 +52,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,6 +75,7 @@ import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
+import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
@@ -1001,13 +1003,15 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
             List<DBLogjobLocation> cRLocations = db.getCurrentRunLocationsOfLogjob(ljId);
             double totDistance = 0.0;
+            long duration = 0;
             if (cRLocations.size() > 1) {
+                // distance
                 DBLogjobLocation loc;
                 DBLogjobLocation prevLoc = cRLocations.get(0);
                 int i = 1;
                 while (i < cRLocations.size()) {
                     loc = cRLocations.get(i);
-                    totDistance += distance(
+                    totDistance += SupportUtil.distance(
                             prevLoc.getLat(), loc.getLat(),
                             prevLoc.getLon(), loc.getLon(),
                             prevLoc.getAltitude(), loc.getAltitude()
@@ -1015,6 +1019,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     prevLoc = loc;
                     i++;
                 }
+                // duration
+                long tFirst = cRLocations.get(0).getTimestamp();
+                long tLast = cRLocations.get(cRLocations.size()-1).getTimestamp();
+                duration = tLast - tFirst;
             }
 
             String nbsyncText = view.getContext().getString(R.string.logjob_info_nbsync, logjob.getNbSync());
@@ -1029,6 +1037,15 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             TextView tv2 = iView.findViewById(R.id.infoNbnotsyncText);
             tv2.setText(nbnotsyncText);
 
+            if (cRLocations.size() > 0) {
+                String nbPointsText = view.getContext().getString(R.string.logjob_info_nbpoints, cRLocations.size());
+
+                TextView tv3 = iView.findViewById(R.id.infoNbPointsText);
+                tv3.setText(nbPointsText);
+            }
+            else {
+                iView.findViewById(R.id.infoNbPointsLayout).setVisibility(View.GONE);
+            }
             if (totDistance != 0.0) {
                 String totDistanceText = view.getContext().getString(R.string.logjob_info_distance, totDistance);
 
@@ -1037,6 +1054,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
             else {
                 iView.findViewById(R.id.infoDistanceLayout).setVisibility(View.GONE);
+            }
+            if (duration != 0) {
+                String formattedDuration = SupportUtil.formatDuration(duration, view.getContext());
+                String durationText = view.getContext().getString(R.string.logjob_info_duration, formattedDuration);
+
+                TextView tv3 = iView.findViewById(R.id.infoDurationText);
+                tv3.setText(durationText);
+            }
+            else {
+                iView.findViewById(R.id.infoDurationLayout).setVisibility(View.GONE);
             }
             if (tsLastLoc != 0) {
                 Date d = new Date(tsLastLoc*1000);
@@ -1082,37 +1109,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     .setIcon(R.drawable.ic_info_outline_grey600_24dp)
                     .show();
         }
-    }
-
-    /**
-     * Calculate distance between two points in latitude and longitude taking
-     * into account height difference. If you are not interested in height
-     * difference pass 0.0. Uses Haversine method as its base.
-     *
-     * lat1, lon1 Start point lat2, lon2 End point el1 Start altitude in meters
-     * el2 End altitude in meters
-     * @returns Distance in Meters
-     */
-    public static double distance(double lat1, double lat2, double lon1,
-                                  double lon2, @Nullable Double el1p, @Nullable Double el2p) {
-
-        final int R = 6371; // Radius of the earth
-        double el1 = (el1p != null) ? el1p : 0;
-        double el2 = (el2p != null) ? el2p : 0;
-
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
-
-        double height = el1 - el2;
-
-        distance = Math.pow(distance, 2) + Math.pow(height, 2);
-
-        return Math.sqrt(distance);
     }
 
     @Override

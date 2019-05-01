@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 //import android.preference.PreferenceManager;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.WorkerThread;
 import android.text.Html;
@@ -95,5 +96,64 @@ public class SupportUtil {
     public static CustomCertManager getCertManager(Context ctx) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         return new CustomCertManager(ctx, preferences.getBoolean(ctx.getString(R.string.pref_key_trust_system_certs), true));
+    }
+
+    /**
+     * Calculate distance between two points in latitude and longitude taking
+     * into account height difference. If you are not interested in height
+     * difference pass 0.0. Uses Haversine method as its base.
+     *
+     * lat1, lon1 Start point lat2, lon2 End point el1 Start altitude in meters
+     * el2 End altitude in meters
+     * @returns Distance in Meters
+     */
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2, @Nullable Double el1p, @Nullable Double el2p) {
+
+        final int R = 6371; // Radius of the earth
+        double el1 = (el1p != null) ? el1p : 0;
+        double el2 = (el2p != null) ? el2p : 0;
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+        double height = el1 - el2;
+
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+        return Math.sqrt(distance);
+    }
+
+    public static String formatDuration(long seconds, Context context) {
+        long absSeconds = Math.abs(seconds);
+        String positive;
+        if (absSeconds >= (3600 * 24)) {
+            positive = String.format(
+                    "%d %s, %02d:%02d:%02d",
+                    absSeconds / (3600 * 24),
+                    context.getString(R.string.duration_days),
+                    (absSeconds % (3600 * 24)) / 3600,
+                    (absSeconds % 3600) / 60,
+                    absSeconds % 60);
+        }
+        else if (absSeconds >= 3600) {
+            positive = String.format(
+                    "%02d:%02d:%02d",
+                    absSeconds / 3600,
+                    (absSeconds % 3600) / 60,
+                    absSeconds % 60);
+        }
+        else {
+            positive = String.format(
+                    "%02d:%02d",
+                    absSeconds / 60,
+                    absSeconds % 60);
+        }
+        return seconds < 0 ? "-" + positive : positive;
     }
 }
