@@ -57,12 +57,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-//import butterknife.BindView;
-//import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
-import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.Item;
 import net.eneiluj.nextcloud.phonetrack.model.ItemAdapter;
@@ -722,7 +720,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     case ItemTouchHelper.LEFT: {
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
                         // get locations
-                        final List<DBLocation> locations = db.getLocationOfLogjob(dbLogjob.getId());
+                        final List<DBLogjobLocation> locations = db.getLocationOfLogjob(dbLogjob.getId());
                         db.deleteLogjob(dbLogjob.getId());
                         adapter.remove(dbLogjob);
                         refreshLists();
@@ -732,7 +730,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                     @Override
                                     public void onClick(View v) {
                                         db.addLogjob(dbLogjob);
-                                        for (DBLocation dbloc : locations) {
+                                        for (DBLogjobLocation dbloc : locations) {
                                             db.addLocation(dbloc);
                                         }
                                         refreshLists();

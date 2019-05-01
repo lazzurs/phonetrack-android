@@ -43,8 +43,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
-import net.eneiluj.nextcloud.phonetrack.model.DBColoredLocation;
-import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
+import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
@@ -118,7 +117,7 @@ public class MapActivity extends AppCompatActivity {
     private ImageButton btZoom;
     private ImageButton btZoomAuto;
 
-    private Map<String, DBLocation> locations;
+    private Map<String, ColoredLocation> locations;
     private Map<String, Marker> markers;
     private Map<String, Integer> colors;
 
@@ -700,10 +699,10 @@ public class MapActivity extends AppCompatActivity {
 
     private IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
         @Override
-        public void onFinish(Map<String, DBColoredLocation> newLocations, String message) {
+        public void onFinish(Map<String, ColoredLocation> newLocations, String message) {
             for (String devName : newLocations.keySet()) {
                 Log.i(TAG, "Results : "+devName+" | "+newLocations.get(devName));
-                DBColoredLocation loc = newLocations.get(devName);
+                ColoredLocation loc = newLocations.get(devName);
                 // marker already exists, check if color needs to be updated
                 if (markers.containsKey(devName)) {
                     String colorStr = loc.getColor();

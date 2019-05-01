@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
-import net.eneiluj.nextcloud.phonetrack.model.DBColoredLocation;
+import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
@@ -84,7 +84,7 @@ public class ServerResponse {
             super(response);
         }
 
-        public Map<String, DBColoredLocation> getPositions(DBSession session) throws JSONException {
+        public Map<String, ColoredLocation> getPositions(DBSession session) throws JSONException {
             return getPositionsFromJSON(new JSONObject(getContent()), session);
         }
     }
@@ -136,8 +136,8 @@ public class ServerResponse {
         return null;
     }
 
-    protected Map<String, DBColoredLocation> getPositionsFromJSON(JSONObject json, DBSession session) throws JSONException {
-        Map<String, DBColoredLocation> locations = new HashMap<>();
+    protected Map<String, ColoredLocation> getPositionsFromJSON(JSONObject json, DBSession session) throws JSONException {
+        Map<String, ColoredLocation> locations = new HashMap<>();
         if (json.has(session.getToken())) {
             JSONObject jsonLocs = json.getJSONObject(session.getToken());
             Iterator<String> keys = jsonLocs.keys();
@@ -145,8 +145,7 @@ public class ServerResponse {
                 String devName = keys.next();
                 JSONObject oneLoc = jsonLocs.getJSONObject(devName);
                 locations.put(devName,
-                        new DBColoredLocation(
-                                0, 0,
+                        new ColoredLocation(
                                 oneLoc.getDouble("lat"),
                                 oneLoc.getDouble("lon"),
                                 oneLoc.getLong("timestamp"),

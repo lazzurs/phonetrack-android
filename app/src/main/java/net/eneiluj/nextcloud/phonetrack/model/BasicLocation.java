@@ -3,14 +3,12 @@ package net.eneiluj.nextcloud.phonetrack.model;
 import androidx.annotation.Nullable;
 
 /**
- * DBLocation represents a location from the local SQLite database with all attributes.
+ * BasicLocation represents a location from the local SQLite database with all attributes.
  * key_id, key_logjobid, key_lat, key_lon, 4 key_time, 5 key_bearing,
  * 6 key_altitude, 7 key_speed, 8 key_accuracy, 9 key_satellites, 10 key_battery
  */
-public class DBLocation {
+public class BasicLocation {
 
-    private long id;
-    private long logjobId;
     private double lat;
     private double lon;
     private long timestamp;
@@ -22,12 +20,10 @@ public class DBLocation {
     private Double battery;
     private String userAgent;
 
-    public DBLocation(long id, long logjobId, double lat, double lon, long timestamp,
-                      @Nullable Double bearing, @Nullable Double altitude, @Nullable Double speed,
-                      @Nullable Double accuracy, @Nullable Long satellites, @Nullable Double battery,
-                      @Nullable String userAgent) {
-        this.id = id;
-        this.logjobId = logjobId;
+    public BasicLocation(double lat, double lon, long timestamp,
+                         @Nullable Double bearing, @Nullable Double altitude, @Nullable Double speed,
+                         @Nullable Double accuracy, @Nullable Long satellites, @Nullable Double battery,
+                         @Nullable String userAgent) {
         this.lat = lat;
         this.lon = lon;
         this.timestamp = timestamp;
@@ -40,28 +36,12 @@ public class DBLocation {
         this.userAgent = userAgent;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getUserAgent() {
         return userAgent;
     }
 
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
-    }
-
-    public long getLogjobId() {
-        return logjobId;
-    }
-
-    public void setLogjobId(long logjobId) {
-        this.logjobId = logjobId;
     }
 
     public double getLat() {
@@ -138,7 +118,7 @@ public class DBLocation {
 
     @Override
     public String toString() {
-        return "#DBLocation" + getId() + "/" + this.logjobId + ", " + this.lat + ", " +
+        return "#BasicLocation" + this.lat + ", " +
                 this.lon + ", " + this.timestamp + ", acc " + this.accuracy + ", speed : "+ this.speed +
                 ", sat : "+ this.satellites + ", bea : " + this.bearing + ", alt : " +this.altitude +
                 ", bat : " + this.battery;

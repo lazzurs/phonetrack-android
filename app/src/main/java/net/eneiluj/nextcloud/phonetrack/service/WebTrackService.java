@@ -19,11 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
-import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.WebTrackHelper;
 
@@ -121,10 +120,10 @@ public class WebTrackService extends IntentService {
                 // PhoneTrack logjob
                 if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
                     URL url = web.getUrlFromPhoneTrackLogjob(logjob);
-                    List<DBLocation> locations = db.getLocationOfLogjob(ljId);
+                    List<DBLogjobLocation> locations = db.getLocationOfLogjob(ljId);
                     // send one by one
                     if (locations.size() <= 5) {
-                        for (DBLocation loc : locations) {
+                        for (DBLogjobLocation loc : locations) {
                             long locId = loc.getId();
                             Map<String, String> params = dbLocationToMap(loc);
                             web.postPositionToPhoneTrack(url, params);
@@ -142,15 +141,15 @@ public class WebTrackService extends IntentService {
                     // send multiple locations per request
                     else {
                         url = web.getUrlMultipleFromPhoneTrackLogjob(logjob);
-                        List<DBLocation> tmpLocs = new ArrayList<>();
+                        List<DBLogjobLocation> tmpLocs = new ArrayList<>();
                         int n = 0;
-                        for (DBLocation loc : locations) {
+                        for (DBLogjobLocation loc : locations) {
                             tmpLocs.add(loc);
                             n++;
                             if (n%200 == 0) {
                                 JSONObject params = dbLocationsToJSON(tmpLocs);
                                 web.postMultiplePositionsToPhoneTrack(url, params);
-                                for (DBLocation locToDel : tmpLocs) {
+                                for (DBLogjobLocation locToDel : tmpLocs) {
                                     long locId = locToDel.getId();
                                     db.deleteLocation(locId);
                                     db.incNbSync(logjob);
@@ -166,7 +165,7 @@ public class WebTrackService extends IntentService {
                         if (tmpLocs.size() > 0) {
                             JSONObject params = dbLocationsToJSON(tmpLocs);
                             web.postMultiplePositionsToPhoneTrack(url, params);
-                            for (DBLocation locToDel : tmpLocs) {
+                            for (DBLogjobLocation locToDel : tmpLocs) {
                                 long locId = locToDel.getId();
                                 db.deleteLocation(locId);
                                 db.incNbSync(logjob);
@@ -182,8 +181,8 @@ public class WebTrackService extends IntentService {
                 // custom logjob
                 else {
                     String destUrl = logjob.getUrl();
-                    List<DBLocation> locations = db.getLocationOfLogjob(ljId);
-                    for (DBLocation loc : locations) {
+                    List<DBLogjobLocation> locations = db.getLocationOfLogjob(ljId);
+                    for (DBLogjobLocation loc : locations) {
                         long locId = loc.getId();
                         Map<String, String> params = dbLocationToMap(loc);
                         if (logjob.getPost()) {
@@ -269,7 +268,7 @@ public class WebTrackService extends IntentService {
      *
      * @return Map of parameters
      */
-    private Map<String, String> dbLocationToMap(DBLocation loc) {
+    private Map<String, String> dbLocationToMap(DBLogjobLocation loc) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[DBLOC to map "+loc+"]"); }
 
         Map<String, String> params = new HashMap<>();
@@ -286,13 +285,13 @@ public class WebTrackService extends IntentService {
         return params;
     }
 
-    private JSONObject dbLocationsToJSON(List<DBLocation> locations) throws JSONException {
+    private JSONObject dbLocationsToJSON(List<DBLogjobLocation> locations) throws JSONException {
         if (LoggerService.DEBUG) { Log.d(TAG, "[DBLOC to JSONObject]"); }
 
         JSONObject result = new JSONObject();
         JSONArray points = new JSONArray();
 
-        for (DBLocation loc : locations) {
+        for (DBLogjobLocation loc : locations) {
             JSONArray point = new JSONArray();
             point.put(loc.getLat());
             point.put(loc.getLon());

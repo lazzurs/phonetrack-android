@@ -44,8 +44,7 @@ import at.bitfire.cert4android.IOnCertificateDecision;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
-import net.eneiluj.nextcloud.phonetrack.model.DBColoredLocation;
-import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
+import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -595,7 +594,7 @@ public class SessionServerSyncHelper {
         private DBSession session;
         private IGetLastPosCallback callback;
         private List<Throwable> exceptions = new ArrayList<>();
-        private Map<String, DBColoredLocation> locations;
+        private Map<String, ColoredLocation> locations;
 
         public GetSessionlastPositionsTask(DBSession session, IGetLastPosCallback callback) {
             this.session = session;

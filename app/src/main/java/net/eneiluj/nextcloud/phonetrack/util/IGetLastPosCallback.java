@@ -1,10 +1,9 @@
 package net.eneiluj.nextcloud.phonetrack.util;
 
-import net.eneiluj.nextcloud.phonetrack.model.DBColoredLocation;
-import net.eneiluj.nextcloud.phonetrack.model.DBLocation;
+import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 
 import java.util.Map;
 
 public interface IGetLastPosCallback {
-    void onFinish(Map<String, DBColoredLocation> locations, String message);
+    void onFinish(Map<String, ColoredLocation> locations, String message);
 }
