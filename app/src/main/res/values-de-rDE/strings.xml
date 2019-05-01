@@ -63,9 +63,13 @@
     <string name="logjob_info_dialog_title">Über %s</string>
     <string name="logjob_info_nbsync">%d Standorte gesendet</string>
     <string name="logjob_info_nbnotsync">%d Standorte ausstehend</string>
-    <string name="logjob_info_lastloc">Letzter Standort erfasst bei\n%s</string>
-    <string name="logjob_info_lastsync">Letzte erfolgreiche Synchronisation bei\n%s</string>
-    <string name="logjob_info_lastsync_error">Letzter Synchronisierungsfehler bei:\n%s\n\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
+    <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Total distance\n%.2fm</string>
+    <string name="logjob_info_duration">Total duration\n%s</string>
+    <string name="logjob_info_nbpoints">Number of points\n%d</string>
+    <string name="duration_days">Tage</string>
     <string name="dialog_title_import_pt_url">PhoneTrack-Protokollierungs-Link importieren</string>
     <string name="dialog_msg_import_pt_url">Jeder kompatible Protokollierungs-Link, die in der PhoneTrack-Webschnittstelle angegeben ist</string>
     <string name="dialog_msg_create_session">Erstelle eine Protokollierungssitzung in der Nextcloud PhoneTrack App</string>

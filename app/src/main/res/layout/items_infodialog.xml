@@ -24,6 +24,7 @@
             android:id="@+id/infoNbPointsIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_dots_grey_24dp" />
 
         <TextView
@@ -47,6 +48,7 @@
             android:id="@+id/infoDistanceIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_length_grey_24dp" />
 
         <TextView
@@ -70,6 +72,7 @@
             android:id="@+id/infoDurationIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_timer_grey_24dp" />
 
         <TextView
@@ -93,6 +96,7 @@
             android:id="@+id/infoLastLocIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp" />
 
         <TextView
@@ -115,6 +119,7 @@
             android:id="@+id/infoNbsyncIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
             android:tint="#00ff00" />
 
@@ -139,6 +144,7 @@
             android:id="@+id/infoLastSyncIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
             android:tint="#00ff00" />
 
@@ -162,6 +168,7 @@
             android:id="@+id/infoNbnotsyncIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
             android:tint="#ff0000" />
 
@@ -186,6 +193,7 @@
             android:id="@+id/infoLastSyncErrIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
             android:tint="#ff0000" />
 

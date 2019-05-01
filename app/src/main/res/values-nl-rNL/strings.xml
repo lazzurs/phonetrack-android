@@ -63,9 +63,13 @@
     <string name="logjob_info_dialog_title">Over %s</string>
     <string name="logjob_info_nbsync">%d posities verzonden</string>
     <string name="logjob_info_nbnotsync">%d uitstaande posities</string>
-    <string name="logjob_info_lastloc">Laatste locatie verworven op\n %s</string>
-    <string name="logjob_info_lastsync">Laatste succesvolle synchronisatie op\n%s</string>
-    <string name="logjob_info_lastsync_error">Laatste synchronisatiefout op\n%s\n\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
+    <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Total distance\n%.2fm</string>
+    <string name="logjob_info_duration">Total duration\n%s</string>
+    <string name="logjob_info_nbpoints">Number of points\n%d</string>
+    <string name="duration_days">dagen</string>
     <string name="dialog_title_import_pt_url">Importeer een PhoneTrack logging link</string>
     <string name="dialog_msg_import_pt_url">Elke compatibele logging link die in de PhoneTrack-webinterface wordt gegeven</string>
     <string name="dialog_msg_create_session">Maak een logging sessie aan in de Nextcloud PhoneTrack app</string>

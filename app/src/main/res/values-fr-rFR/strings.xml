@@ -63,9 +63,13 @@
     <string name="logjob_info_dialog_title">À propos de %s</string>
     <string name="logjob_info_nbsync">%d positions envoyées</string>
     <string name="logjob_info_nbnotsync">%d positions en attente</string>
-    <string name="logjob_info_lastloc">Dernière position acquise le\n%s</string>
-    <string name="logjob_info_lastsync">Dernière synchronisation de position réussie le\n%s</string>
-    <string name="logjob_info_lastsync_error">Dernière erreur de synchronisation le\n%s\n\n%s</string>
+    <string name="logjob_info_lastloc">Dernière position acquise\nil y a %s à\n%s</string>
+    <string name="logjob_info_lastsync">Dernière synchronisation de position réussie\nil y a %s à\n%s</string>
+    <string name="logjob_info_lastsync_error">Dernière erreur de synchronisation\nil y a %s à\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Distance totale\n%.2fm</string>
+    <string name="logjob_info_duration">Durée totale\n%s</string>
+    <string name="logjob_info_nbpoints">Nombre de points\n%d</string>
+    <string name="duration_days">jours</string>
     <string name="dialog_title_import_pt_url">Importer un lien de logging PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">N\'importe quelle lien de logging fourni dans l\'interface web de PhoneTrack</string>
     <string name="dialog_msg_create_session">Créer une session de logging dans l\'application Nextcloud PhoneTrack</string>

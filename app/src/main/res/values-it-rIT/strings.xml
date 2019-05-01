@@ -63,9 +63,13 @@
     <string name="logjob_info_dialog_title">Circa %s</string>
     <string name="logjob_info_nbsync">%d posizioni inviate</string>
     <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
-    <string name="logjob_info_lastloc">Ultima posizione acquisita a\n%s</string>
-    <string name="logjob_info_lastsync">Ultima sincronizzazione riuscita a\n%s</string>
-    <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione a\n%s\n\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
+    <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
+    <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Total distance\n%.2fm</string>
+    <string name="logjob_info_duration">Total duration\n%s</string>
+    <string name="logjob_info_nbpoints">Number of points\n%d</string>
+    <string name="duration_days">giorni</string>
     <string name="dialog_title_import_pt_url">Importa l\'URL di registrazione di PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Qualsiasi URL di registrazione compatibile fornito nell\'interfaccia web PhoneTrack</string>
     <string name="dialog_msg_create_session">Creare una sessione di log nella app PhoneTrack su Nextcloud</string>
