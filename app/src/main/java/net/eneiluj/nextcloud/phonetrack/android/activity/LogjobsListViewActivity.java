@@ -999,6 +999,24 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
             if (LoggerService.DEBUG) { Log.d(TAG, "[LAST " + tsLastLoc + " "+tsLastSync+ "]"); }
 
+            List<DBLogjobLocation> cRLocations = db.getCurrentRunLocationsOfLogjob(ljId);
+            double totDistance = 0.0;
+            if (cRLocations.size() > 1) {
+                DBLogjobLocation loc;
+                DBLogjobLocation prevLoc = cRLocations.get(0);
+                int i = 1;
+                while (i < cRLocations.size()) {
+                    loc = cRLocations.get(i);
+                    totDistance += distance(
+                            prevLoc.getLat(), loc.getLat(),
+                            prevLoc.getLon(), loc.getLon(),
+                            prevLoc.getAltitude(), loc.getAltitude()
+                    );
+                    prevLoc = loc;
+                    i++;
+                }
+            }
+
             String nbsyncText = view.getContext().getString(R.string.logjob_info_nbsync, logjob.getNbSync());
             String nbnotsyncText = view.getContext().getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationNotSyncedCount(logjob.getId()));
             String lastLocText = "";
@@ -1055,6 +1073,37 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     .setIcon(R.drawable.ic_info_outline_grey600_24dp)
                     .show();
         }
+    }
+
+    /**
+     * Calculate distance between two points in latitude and longitude taking
+     * into account height difference. If you are not interested in height
+     * difference pass 0.0. Uses Haversine method as its base.
+     *
+     * lat1, lon1 Start point lat2, lon2 End point el1 Start altitude in meters
+     * el2 End altitude in meters
+     * @returns Distance in Meters
+     */
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2, @Nullable Double el1p, @Nullable Double el2p) {
+
+        final int R = 6371; // Radius of the earth
+        double el1 = (el1p != null) ? el1p : 0;
+        double el2 = (el2p != null) ? el2p : 0;
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+        double height = el1 - el2;
+
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+        return Math.sqrt(distance);
     }
 
     @Override

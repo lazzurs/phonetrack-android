@@ -578,7 +578,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
             // set currentRun of locations
             ContentValues locValues = new ContentValues();
-            values.put(key_currentRun, 0);
+            locValues.put(key_currentRun, 0);
             db.update(table_locations, locValues, key_logjobid + " = ?", new String[]{String.valueOf(logjob.getId())});
         }
     }
