@@ -152,41 +152,32 @@ public class LoggerService extends Service {
         // read user preferences
         updatePreferences(null);
 
-        boolean hasLocationUpdates = false;
         for (DBLogjob lj : ljs) {
             if (lj.isEnabled()) {
-                hasLocationUpdates = requestLocationUpdates(lj.getId());
+                requestLocationUpdates(lj.getId());
             }
         }
 
-        if (hasLocationUpdates) {
-            final Notification notification = showNotification(NOTIFICATION_ID);
-            startForeground(NOTIFICATION_ID, notification);
-            updateNotificationContent();
+        final Notification notification = showNotification(NOTIFICATION_ID);
+        startForeground(NOTIFICATION_ID, notification);
+        updateNotificationContent();
 
-            isRunning = true;
+        isRunning = true;
 
-            sendBroadcast(BROADCAST_LOCATION_STARTED);
+        sendBroadcast(BROADCAST_LOCATION_STARTED);
 
-            thread = new LoggerThread();
-            thread.start();
-            looper = thread.getLooper();
+        thread = new LoggerThread();
+        thread.start();
+        looper = thread.getLooper();
 
-            battery = getBatteryLevelOnce();
-            // register for battery level
-            this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        battery = getBatteryLevelOnce();
+        // register for battery level
+        this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                // track network connectivity changes
-                connectionMonitor = new ConnectionStateMonitor();
-                connectionMonitor.enable(getApplicationContext());
-            }
-        }
-        else {
-            final Notification notification = showNotification(NOTIFICATION_ID);
-            startForeground(NOTIFICATION_ID, notification);
-            if (DEBUG) { Log.d(TAG, "[onCreate : stop because no loc upd]"); }
-            stopSelf();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // track network connectivity changes
+            connectionMonitor = new ConnectionStateMonitor();
+            connectionMonitor.enable(getApplicationContext());
         }
     }
 
@@ -224,12 +215,8 @@ public class LoggerService extends Service {
                 }
                 String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
                 updatePreferences(providersValue);
-                boolean hasLocationUpdates = false;
                 for (long ljId : logjobs.keySet()) {
-                    hasLocationUpdates = requestLocationUpdates(ljId);
-                }
-                if (!hasLocationUpdates) {
-                    stopSelf();
+                    requestLocationUpdates(ljId);
                 }
             } else if (updateNotif && isRunning) {
                 updateNotificationContent();
@@ -257,16 +244,11 @@ public class LoggerService extends Service {
             if (isRunning) {
                 // it was modified
                 if (wasAlreadyThere) {
-                    if (!restartUpdates(ljId)) {
-                        // no valid providers after logjob update
-                        stopSelf();
-                    }
+                    restartUpdates(ljId);
                 }
                 // it was created
                 else {
-                    if (!requestLocationUpdates(ljId)) {
-                        stopSelf();
-                    }
+                    requestLocationUpdates(ljId);
                 }
             }
         }
