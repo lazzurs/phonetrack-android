@@ -1001,6 +1001,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
         mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sessionId);
         startActivityForResult(mapIntent, map);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(SettingsActivity.SETTINGS_LAST_SELECTED_SESSION_ID, sessionId);
+        editor.apply();
     }
 
     @Override

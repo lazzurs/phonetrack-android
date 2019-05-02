@@ -159,7 +159,11 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         ctx = getApplicationContext();
+        db = PhoneTrackSQLiteOpenHelper.getInstance(ctx);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        long sessionid = getIntent().getLongExtra(PARAM_SESSIONID, 0);
+        session = db.getSession(sessionid);
 
         toggleCircle = ContextCompat.getDrawable(ctx, R.drawable.ic_plain_circle_grey_24dp)
                 .getConstantState().newDrawable();
@@ -206,10 +210,7 @@ public class MapActivity extends AppCompatActivity {
                     PERMISSION_WRITE
             );
         }
-        db = PhoneTrackSQLiteOpenHelper.getInstance(ctx);
 
-        long sessionid = getIntent().getLongExtra(PARAM_SESSIONID, 0);
-        session = db.getSession(sessionid);
         Log.i(TAG, "CREATE map : session : "+session);
 
         //inflate and create the map (already done upper ;-) )
@@ -365,7 +366,7 @@ public class MapActivity extends AppCompatActivity {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayoutMap, toolbar, R.string.action_drawer_open, R.string.action_drawer_close);
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayoutMap.addDrawerListener(drawerToggle);
-        setTitle(getString(R.string.simple_map));
+        setTitle(getString(R.string.simple_map_title, session.getName()));
         drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackgroundColor(ThemeUtils.primaryColor(this));
         ImageView logoView = drawerLayoutMap.findViewById(R.id.drawer_logo_map);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
