@@ -3,12 +3,21 @@ package net.eneiluj.nextcloud.phonetrack.util;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
 import com.nextcloud.android.sso.aidl.NextcloudRequest;
 import com.nextcloud.android.sso.api.NextcloudAPI;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountPermissionNotGrantedException;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppNotSupportedException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.exceptions.TokenMismatchException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
+import com.nextcloud.android.sso.ui.UiExceptionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +33,9 @@ import java.net.MalformedURLException;
 import androidx.preference.PreferenceManager;
 import at.bitfire.cert4android.CustomCertManager;
 import net.eneiluj.nextcloud.phonetrack.BuildConfig;
+import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
+import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
+import net.eneiluj.nextcloud.phonetrack.android.fragment.LoginDialogFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 
 @WorkerThread
@@ -74,7 +86,7 @@ public class PhoneTrackClient {
         this.nextcloudAPI = nextcloudAPI;
     }
 
-    public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException {
+    public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException, TokenMismatchException {
         String target = "api/getsessions";
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to get sessions");
@@ -86,7 +98,7 @@ public class PhoneTrackClient {
         }
     }
 
-    public ServerResponse.ShareDeviceResponse shareDevice(CustomCertManager ccm, String token, String deviceName) throws JSONException, IOException {
+    public ServerResponse.ShareDeviceResponse shareDevice(CustomCertManager ccm, String token, String deviceName) throws JSONException, IOException, TokenMismatchException {
         String target = "api/sharedevice/" + token + "/" + deviceName;
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to get share device");
@@ -97,7 +109,7 @@ public class PhoneTrackClient {
         }
     }
 
-    public ServerResponse.CreateSessionResponse createSession(CustomCertManager ccm, String sessionName) throws JSONException, IOException {
+    public ServerResponse.CreateSessionResponse createSession(CustomCertManager ccm, String sessionName) throws JSONException, IOException, TokenMismatchException {
         String target = "api/createsession/" + sessionName;
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to create session");
@@ -108,7 +120,7 @@ public class PhoneTrackClient {
         }
     }
 
-    public ServerResponse.GetSessionLastPositionsResponse getSessionLastPositions(CustomCertManager ccm, DBSession session) throws JSONException, IOException {
+    public ServerResponse.GetSessionLastPositionsResponse getSessionLastPositions(CustomCertManager ccm, DBSession session) throws JSONException, IOException, TokenMismatchException {
         String target = "api/getuserlastpositions/" + session.getToken();
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to get session last positions");
@@ -119,7 +131,7 @@ public class PhoneTrackClient {
         }
     }
 
-    private ResponseData requestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, JSONObject params) {
+    private ResponseData requestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, JSONObject params) throws TokenMismatchException{
         StringBuffer result = new StringBuffer();
 
         NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
@@ -138,6 +150,20 @@ public class PhoneTrackClient {
             }
             Log.d(getClass().getSimpleName(), "RESSSS " + result.toString());
             inputStream.close();
+        } catch (TokenMismatchException e) {
+            Log.d(getClass().getSimpleName(), "Mismatcho SSO server request error "+e.toString());
+            /*try {
+                SingleAccountHelper.reauthenticateCurrentAccount(:smile:);
+            } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException | NextcloudFilesAppNotSupportedException ee) {
+                UiExceptionManager.showDialogForException(new SettingsActivity(), ee);
+            } catch (NextcloudFilesAppAccountPermissionNotGrantedException ee) {
+                // Unable to reauthenticate account just like that..
+                // TODO Show login screen here
+                LoginDialogFragment loginDialogFragment = new LoginDialogFragment();
+                loginDialogFragment.show(new SettingsActivity().getSupportFragmentManager(), "NoticeDialogFragment");
+            }*/
+            throw e;
+
         } catch (Exception e) {
             // TODO handle errors
             Log.d(getClass().getSimpleName(), "SSO server request error "+e.toString());

@@ -53,7 +53,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -1258,6 +1257,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(WebTrackService.BROADCAST_SYNC_FAILED);
         filter.addAction(SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED);
         filter.addAction(SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED);
+        filter.addAction(SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH);
         registerReceiver(mBroadcastReceiver, filter);
     }
 
@@ -1329,6 +1329,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED:
                     showToast(getString(R.string.sessions_sync_success));
+                    break;
+                case SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH:
+                    Snackbar.make(swipeRefreshLayout, R.string.error_token_mismatch, Snackbar.LENGTH_INDEFINITE).show();
                     break;
                 case LoggerService.BROADCAST_LOCATION_STARTED:
                     showToast(getString(R.string.tracking_started));

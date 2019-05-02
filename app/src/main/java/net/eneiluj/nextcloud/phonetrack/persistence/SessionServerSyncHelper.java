@@ -24,6 +24,7 @@ import com.google.gson.GsonBuilder;
 import com.nextcloud.android.sso.api.NextcloudAPI;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
 import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.exceptions.TokenMismatchException;
 import com.nextcloud.android.sso.helper.SingleAccountHelper;
 import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
@@ -63,6 +64,7 @@ public class SessionServerSyncHelper {
 
     public static final String BROADCAST_SESSIONS_SYNC_FAILED = "net.eneiluj.nextcloud.phonetrack.broadcast.sessions_sync_failed";
     public static final String BROADCAST_SESSIONS_SYNCED = "net.eneiluj.nextcloud.phonetrack.broadcast.sessions_synced";
+    public static final String BROADCAST_SSO_TOKEN_MISMATCH = "net.eneiluj.nextcloud.phonetrack.broadcast.token_mismatch";
 
     private static SessionServerSyncHelper instance;
 
@@ -317,7 +319,12 @@ public class SessionServerSyncHelper {
             // TODO avoid doing getsessions everytime
             //pushLocalChanges();
             //if (!onlyLocalChanges) {
+            if (client != null) {
                 status = pullRemoteChanges();
+            }
+            else {
+                status = LoginStatus.AUTH_FAILED;
+            }
             //}
             //dbHelper.debugPrintFullDB();
             Log.i(getClass().getSimpleName(), "SYNCHRONIZATION FINISHED");
@@ -403,7 +410,11 @@ public class SessionServerSyncHelper {
                 Log.e(getClass().getSimpleName(), "Exception", e);
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
+            } catch (TokenMismatchException e) {
+                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
+
             return status;
         }
 
@@ -424,6 +435,10 @@ public class SessionServerSyncHelper {
                 Intent intent = new Intent(BROADCAST_SESSIONS_SYNC_FAILED);
                 intent.putExtra(LoggerService.BROADCAST_ERROR_MESSAGE, errorString);
                 appContext.sendBroadcast(intent);
+                if (status == LoginStatus.SSO_TOKEN_MISMATCH) {
+                    Intent intent2 = new Intent(BROADCAST_SSO_TOKEN_MISMATCH);
+                    appContext.sendBroadcast(intent2);
+                }
             }
             else {
                 Intent intent = new Intent(BROADCAST_SESSIONS_SYNCED);
@@ -550,6 +565,9 @@ public class SessionServerSyncHelper {
                 }
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
+            } catch (TokenMismatchException e) {
+                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
             if (LoggerService.DEBUG) {
                 Log.i(getClass().getSimpleName(), "FINISHED share device");
@@ -632,6 +650,9 @@ public class SessionServerSyncHelper {
                 }
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
+            } catch (TokenMismatchException e) {
+                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
             if (LoggerService.DEBUG) {
                 Log.i(getClass().getSimpleName(), "FINISHED share device");

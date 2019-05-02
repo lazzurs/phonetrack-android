@@ -144,6 +144,7 @@
     <string name="error_share_dev_helper">Error when sharing device : %s</string>
     <string name="error_create_session_helper">Error when creating session : %s</string>
     <string name="error_create_session_exists">The session already exists</string>
+    <string name="error_token_mismatch">Please reauthenticate your SSO account in settings</string>
 
     <!-- Web errors -->
     <string name="e_illegal_redirect" translatable="false">Illegal redirect: %d</string>
