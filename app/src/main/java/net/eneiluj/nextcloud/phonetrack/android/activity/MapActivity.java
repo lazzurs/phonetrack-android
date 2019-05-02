@@ -36,6 +36,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -535,18 +536,28 @@ public class MapActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             setFrequency(frequencyEdit.getText().toString());
                             Log.i(TAG, "[CHANGE FREQ] "+frequencyEdit.getText().toString());
+                            // restore keyboard auto hide behaviour
+                            InputMethodManager inputMethodManager = (InputMethodManager) frequencyEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         }
                     });
 
                     fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            // what ever you want to do with No option.
+                            // restore keyboard auto hide behaviour
+                            InputMethodManager inputMethodManager = (InputMethodManager) frequencyEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         }
                     });
 
                     // create the alert dialog
                     Dialog fromUrlDialog = fromUrlBuilder.create();
                     fromUrlDialog.show();
+                    frequencyEdit.setSelectAllOnFocus(true);
+                    frequencyEdit.requestFocus();
+                    // show keyboard
+                    InputMethodManager inputMethodManager = (InputMethodManager) frequencyEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 }
             }
 

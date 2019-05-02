@@ -188,6 +188,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
         });
         Preference minTimePref = findPreference("mintime");
+        minTimePref.setOnPreferenceClickListener(clickListener);
         minTimePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
@@ -209,6 +210,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
         });
         Preference minDistancePref = findPreference("mindistance");
+        minDistancePref.setOnPreferenceClickListener(clickListener);
         minDistancePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
@@ -230,6 +232,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
         });
         Preference minAccuracyPref = findPreference("minaccuracy");
+        minAccuracyPref.setOnPreferenceClickListener(clickListener);
         minAccuracyPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
