@@ -121,6 +121,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     RecyclerView listNavigationCategories;
     RecyclerView listNavigationMenu;
     RecyclerView listView;
+    Snackbar ssoSnackbar;
 
     private ActionBarDrawerToggle drawerToggle;
     private ItemAdapter adapter = null;
@@ -159,6 +160,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, server_settings);
         }*/
+        ssoSnackbar = null;
 
         String categoryAdapterSelectedItem = ADAPTER_KEY_ALL;
         if (savedInstanceState != null) {
@@ -1341,9 +1343,14 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED:
                     showToast(getString(R.string.sessions_sync_success));
+                    if (ssoSnackbar != null) {
+                        ssoSnackbar.dismiss();
+                        ssoSnackbar = null;
+                    }
                     break;
                 case SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH:
-                    Snackbar.make(swipeRefreshLayout, R.string.error_token_mismatch, Snackbar.LENGTH_INDEFINITE).show();
+                    ssoSnackbar = Snackbar.make(swipeRefreshLayout, R.string.error_token_mismatch, Snackbar.LENGTH_INDEFINITE);
+                    ssoSnackbar.show();
                     break;
                 case LoggerService.BROADCAST_LOCATION_STARTED:
                     showToast(getString(R.string.tracking_started));
