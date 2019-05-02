@@ -323,7 +323,7 @@ public class SessionServerSyncHelper {
                 status = pullRemoteChanges();
             }
             else {
-                status = LoginStatus.AUTH_FAILED;
+                status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
             //}
             //dbHelper.debugPrintFullDB();
