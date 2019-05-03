@@ -490,9 +490,16 @@ public class LoggerService extends Service {
     private Notification showNotification(int mId) {
         if (DEBUG) { Log.d(TAG, "[showNotification " + mId + "]"); }
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean lowImportance = prefs.getBoolean(getString(R.string.pref_key_notification_importance), false);
+        int priority = NotificationCompat.PRIORITY_DEFAULT;
+        if (lowImportance) {
+            priority = NotificationCompat.PRIORITY_MIN;
+        }
+
         final String channelId = String.valueOf(mId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(channelId);
+            createNotificationChannel(channelId, lowImportance);
         }
         String nbLocations = String.valueOf(db.getLocationNotSyncedCount());
         String nbSent = String.valueOf(db.getNbTotalSync());
@@ -500,6 +507,7 @@ public class LoggerService extends Service {
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_notify_24dp)
                         .setContentTitle(getString(R.string.app_name))
+                        .setPriority(priority)
                         .setOnlyAlertOnce(true)
                         .setContentText(String.format(getString(R.string.is_running), nbLocations, nbSent));
                         //.setSmallIcon(R.drawable.ic_stat_notify_24dp)
@@ -529,8 +537,12 @@ public class LoggerService extends Service {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private void createNotificationChannel(String channelId) {
-        NotificationChannel chan = new NotificationChannel(channelId, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
+    private void createNotificationChannel(String channelId, boolean lowImportance) {
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        if (lowImportance) {
+            importance = NotificationManager.IMPORTANCE_MIN;
+        }
+        NotificationChannel chan = new NotificationChannel(channelId, getString(R.string.app_name), importance);
         mNotificationManager.createNotificationChannel(chan);
     }
 
