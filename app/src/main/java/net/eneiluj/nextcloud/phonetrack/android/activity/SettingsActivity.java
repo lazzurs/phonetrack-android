@@ -120,7 +120,7 @@ public class SettingsActivity extends AppCompatActivity {
         urlWarnHttp = findViewById(R.id.settings_url_warn_http);
 
         // disable SSO on Android versions where it crashes
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
             use_sso_switch.setVisibility(View.GONE);
         }
 
