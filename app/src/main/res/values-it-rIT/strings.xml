@@ -33,6 +33,7 @@
     <string name="simple_edit_cu">Modifica log personalizzato</string>
     <string name="simple_about">Info su</string>
     <string name="simple_map">Mappa</string>
+    <string name="simple_map_title">Sessione %s</string>
     <string name="action_session_created">Sessione creata</string>
     <string name="action_logjob_deleted">Log eliminato</string>
     <string name="action_logjob_restored">Log ripristinato</string>
@@ -63,12 +64,12 @@
     <string name="logjob_info_dialog_title">Circa %s</string>
     <string name="logjob_info_nbsync">%d posizioni inviate</string>
     <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
-    <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Total distance\n%.2fm</string>
-    <string name="logjob_info_duration">Total duration\n%s</string>
-    <string name="logjob_info_nbpoints">Number of points\n%d</string>
+    <string name="logjob_info_lastloc">Ultima posizione acquisita\n%s fa alle\n%s</string>
+    <string name="logjob_info_lastsync">Ultima sincronizzazione riuscita\n%s fa alle\n%s</string>
+    <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione\n%s fa alle\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Distanza totale\n%.2fm</string>
+    <string name="logjob_info_duration">Durata totale\n%s</string>
+    <string name="logjob_info_nbpoints">Numero di punti\n%d</string>
     <string name="duration_days">giorni</string>
     <string name="dialog_title_import_pt_url">Importa l\'URL di registrazione di PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Qualsiasi URL di registrazione compatibile fornito nell\'interfaccia web PhoneTrack</string>
@@ -137,6 +138,7 @@
     <string name="error_share_dev_helper">Errore durante la condivisione del dispositivo: %s</string>
     <string name="error_create_session_helper">Errore durante la creazione della sessione : %s</string>
     <string name="error_create_session_exists">La sessione già esiste</string>
+    <string name="error_token_mismatch">Si prega di riattivare il tuo account SSO nelle impostazioni</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Sicurezza della connessione</string>

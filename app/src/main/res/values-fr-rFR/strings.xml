@@ -33,6 +33,7 @@
     <string name="simple_edit_cu">Éditer un log job personnalisé</string>
     <string name="simple_about">À propos</string>
     <string name="simple_map">Carte</string>
+    <string name="simple_map_title">Session %s</string>
     <string name="action_session_created">Session créée</string>
     <string name="action_logjob_deleted">Log job supprimé</string>
     <string name="action_logjob_restored">Log job restauré</string>
@@ -137,6 +138,7 @@
     <string name="error_share_dev_helper">Erreur du partage de l\'appareil : %s</string>
     <string name="error_create_session_helper">Erreur lors de la création de la session: %s</string>
     <string name="error_create_session_exists">La session existe déjà</string>
+    <string name="error_token_mismatch">Please reauthenticate your SSO account in settings</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Sécurité de la connexion</string>

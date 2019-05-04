@@ -33,6 +33,7 @@
     <string name="simple_edit_cu">Benutzerdefinierten Protokollierungsauftrag bearbeiten</string>
     <string name="simple_about">Über</string>
     <string name="simple_map">Karte</string>
+    <string name="simple_map_title">%s Sitzung</string>
     <string name="action_session_created">Sitzung erstellt</string>
     <string name="action_logjob_deleted">Protokollierungsauftrag gelöscht</string>
     <string name="action_logjob_restored">Protokollierungsauftrag wiederhergestellt</string>
@@ -63,12 +64,12 @@
     <string name="logjob_info_dialog_title">Über %s</string>
     <string name="logjob_info_nbsync">%d Standorte gesendet</string>
     <string name="logjob_info_nbnotsync">%d Standorte ausstehend</string>
-    <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Total distance\n%.2fm</string>
-    <string name="logjob_info_duration">Total duration\n%s</string>
-    <string name="logjob_info_nbpoints">Number of points\n%d</string>
+    <string name="logjob_info_lastloc">Letzter Standort erfasst vor \n%s bei\n%s</string>
+    <string name="logjob_info_lastsync">Letzte erfolgreiche Synchronisation vor \n%s bei \n%s</string>
+    <string name="logjob_info_lastsync_error">Letzter Synchronisierungsfehler vor \n%s bei\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Gesamtstrecke\n%.2fm</string>
+    <string name="logjob_info_duration">Gesamtdauer\n%s</string>
+    <string name="logjob_info_nbpoints">Anzahl der Datenpunkte\n%d</string>
     <string name="duration_days">Tage</string>
     <string name="dialog_title_import_pt_url">PhoneTrack-Protokollierungs-Link importieren</string>
     <string name="dialog_msg_import_pt_url">Jeder kompatible Protokollierungs-Link, die in der PhoneTrack-Webschnittstelle angegeben ist</string>
@@ -137,6 +138,7 @@
     <string name="error_share_dev_helper">Fehler bei der Freigabe des Geräts : %s</string>
     <string name="error_create_session_helper">Fehler beim Erstellen der Sitzung : %s</string>
     <string name="error_create_session_exists">Die Sitzung existiert bereits</string>
+    <string name="error_token_mismatch">Bitte bestätigen Sie Ihr SSO-Konto in den Einstellungen erneut</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Verbindungssicherheit</string>

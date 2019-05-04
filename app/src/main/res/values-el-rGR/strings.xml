@@ -33,6 +33,7 @@
     <string name="simple_edit_cu">Επεξεργασία προσαρμοσμένης καταγραφής</string>
     <string name="simple_about">Σχετικά</string>
     <string name="simple_map">Χάρτης</string>
+    <string name="simple_map_title">Session %s</string>
     <string name="action_session_created">Η συνεδρία δημιουργήθηκε</string>
     <string name="action_logjob_deleted">Η εργασία καταγραφής διαγράφηκε</string>
     <string name="action_logjob_restored">Η εργασία καταγραφής αποκαταστάθηκε</string>
@@ -63,12 +64,12 @@
     <string name="logjob_info_dialog_title">Περί %s</string>
     <string name="logjob_info_nbsync">%d τοποθεσίες εστάλησαν</string>
     <string name="logjob_info_nbnotsync">%d τοποθεσίες αναμένονται</string>
-    <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Total distance\n%.2fm</string>
-    <string name="logjob_info_duration">Total duration\n%s</string>
-    <string name="logjob_info_nbpoints">Number of points\n%d</string>
+    <string name="logjob_info_lastloc">Τελευταία τοποθεσία ανακτήθηκε πριν\n%s στις\n%s</string>
+    <string name="logjob_info_lastsync">Τελευταίος επιτυχής συγχρονισμός πριν\n%s στις\n%s</string>
+    <string name="logjob_info_lastsync_error">Τελευταίο σφάλμα συγχρονισμού πριν\n%s στις\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Συνολική απόσταση\n%.2fm</string>
+    <string name="logjob_info_duration">Συνολική διάρκεια\n%s</string>
+    <string name="logjob_info_nbpoints">Αριθμός σημείων\n%d</string>
     <string name="duration_days">μέρες</string>
     <string name="dialog_title_import_pt_url">Εισαγωγή συνδέσμου καταγραφής PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Οποιοσδήποτε συμβατός σύνδεσμος καταγραφής δόθηκε στο γραφικό περιβάλλον του PhoneTrack</string>
@@ -137,6 +138,7 @@
     <string name="error_share_dev_helper">Σφάλμα κατά την κοινοποίηση της συσκευής : %s</string>
     <string name="error_create_session_helper">Σφάλμα κατά τη δημιουργία συνεδρίας : %s</string>
     <string name="error_create_session_exists">Η συνεδρία υπάρχει ήδη</string>
+    <string name="error_token_mismatch">Please reauthenticate your SSO account in settings</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Ασφάλεια σύνδεσης</string>

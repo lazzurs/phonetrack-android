@@ -33,6 +33,7 @@
     <string name="simple_edit_cu">Редактировать задание журнала пользователя</string>
     <string name="simple_about">О программе</string>
     <string name="simple_map">Карта</string>
+    <string name="simple_map_title">Session %s</string>
     <string name="action_session_created">Сессия создана</string>
     <string name="action_logjob_deleted">Задание журнала удалено</string>
     <string name="action_logjob_restored">Задание журнала восстановлено</string>
@@ -137,6 +138,7 @@
     <string name="error_share_dev_helper">Ошибка совместного использования устройства : %s</string>
     <string name="error_create_session_helper">Ошибка при создании сессии : %s</string>
     <string name="error_create_session_exists">Сессия уже существует</string>
+    <string name="error_token_mismatch">Please reauthenticate your SSO account in settings</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - безопасность подключения</string>
