@@ -452,6 +452,7 @@ public class MapActivity extends AppCompatActivity {
             NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, null, R.drawable.ic_phone_android_grey_24dp);
             itemsNavigationDevice.add(item);
         }
+        bringMarkersToFrontByTimestamp();
 
         adapterDevices = new NavigationAdapter(new NavigationAdapter.ClickListener() {
             @Override
@@ -465,8 +466,7 @@ public class MapActivity extends AppCompatActivity {
                 selectedDeviceItemId = item.id;
                 if (!selectedDeviceItemId.equals(ID_ITEM_ALL_DEVICES)) {
                     Marker m = markers.get(selectedDeviceItemId);
-                    map.getOverlays().remove(m);
-                    map.getOverlays().add(m);
+                    bringMarkerToFront(m);
                 }
 
                 // update views
@@ -580,6 +580,29 @@ public class MapActivity extends AppCompatActivity {
         startRefresh();
         // to update freq displayed value
         setupNavigationMenu();
+    }
+
+    private void bringMarkerToFront(Marker m) {
+        map.getOverlays().remove(m);
+        map.getOverlays().add(m);
+    }
+
+    private void bringMarkersToFrontByTimestamp() {
+        List<String> devNames = new ArrayList<>();
+        devNames.addAll(markers.keySet());
+        Collections.sort(devNames, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                if (locations.get(s1).getTimestamp() == locations.get(s2).getTimestamp()) {
+                    return 0;
+                }
+                boolean yep = (locations.get(s1).getTimestamp() - locations.get(s2).getTimestamp()) > 0;
+                return yep ? 1 : -1;
+            }
+        });
+        for (String devName : devNames) {
+            bringMarkerToFront(markers.get(devName));
+        }
     }
 
     private void zoomOnAllMarkers() {
