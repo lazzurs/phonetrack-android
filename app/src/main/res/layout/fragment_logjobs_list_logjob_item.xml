@@ -92,9 +92,9 @@
 
             <ImageButton
                 android:id="@+id/mapButton"
-                android:layout_width="65dp"
+                android:layout_width="48dp"
                 android:layout_height="match_parent"
-                android:src="@android:drawable/ic_dialog_map"
+                android:src="@drawable/ic_map_grey_24dp"
                 android:tint="#999999"
                 android:clickable="true"
 
@@ -108,10 +108,11 @@
                     android:layout_centerVertical="true">
             <ImageButton
                 android:id="@+id/infoButton"
-                android:layout_width="65dp"
+                android:layout_width="48dp"
                 android:layout_height="match_parent"
-                android:src="@android:drawable/ic_dialog_info"
+                android:src="@drawable/ic_info_grey600_24dp"
                 android:tint="#999999"
+                android:layout_gravity="center"
                 android:clickable="true"
 
                 android:background="#00000000"
@@ -121,7 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="bottom|center_horizontal"
-                    android:minWidth="65dp"
+                    android:minWidth="48dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -170,10 +171,16 @@
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/logjobEnabled"
-                    android:layout_width="65dp"
+                    android:layout_width="48dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="right|center_vertical"
-                    android:paddingRight="4dp" />
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
+
+                    android:paddingLeft="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingEnd="4dp" />
 
             </LinearLayout>
 
