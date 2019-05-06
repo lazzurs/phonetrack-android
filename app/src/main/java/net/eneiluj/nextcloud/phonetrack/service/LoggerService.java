@@ -318,6 +318,9 @@ public class LoggerService extends Service {
                 locListeners.put(ljId, ll);
                 lastLocations.put(ljId, null);
                 lastUpdateRealtime.put(ljId, Long.valueOf(0));
+            } else {
+                // Update listener for changed parameters
+                locListeners.get(ljId).populateFromLogjob(lj);
             }
         }
         // it has been deleted or disabled
@@ -605,6 +608,14 @@ public class LoggerService extends Service {
         private boolean keepGpsOn;
 
         public mLocationListener(DBLogjob logjob) {
+            populateFromLogjob(logjob);
+        }
+
+        /**
+         * Populate logging job and cache values
+         * @param The logging job
+         */
+        public void populateFromLogjob(DBLogjob logjob) {
             this.logjob = logjob;
             this.logjobId = logjob.getId();
             this.keepGpsOn = logjob.keepGpsOnBetweenFixes();
