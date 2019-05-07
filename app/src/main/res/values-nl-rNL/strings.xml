@@ -70,6 +70,7 @@
     <string name="logjob_info_distance">Total distance\n%.2fm</string>
     <string name="logjob_info_duration">Total duration\n%s</string>
     <string name="logjob_info_nbpoints">Number of points\n%d</string>
+    <string name="reset_current_run">Reset statistics</string>
     <string name="duration_days">dagen</string>
     <string name="dialog_title_import_pt_url">Importeer een PhoneTrack logging link</string>
     <string name="dialog_msg_import_pt_url">Elke compatibele logging link die in de PhoneTrack-webinterface wordt gegeven</string>
@@ -102,6 +103,8 @@
     <string name="settings_submit">Verbinden</string>
     <string name="settings_submitting">Verbinding maken &#8230;</string>
     <string name="settings_theme_title">Thema</string>
+    <string name="settings_notification_importance_title">Low notification importance</string>
+    <string name="settings_reset_stats">Reset stats on logjob activation</string>
     <string name="settings_providers_title">Locatie aanbieders</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Netwerk</string>

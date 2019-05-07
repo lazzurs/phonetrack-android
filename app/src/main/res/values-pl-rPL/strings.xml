@@ -33,7 +33,7 @@
     <string name="simple_edit_cu">Edytuj niestandardowe zadanie rejestratora</string>
     <string name="simple_about">O aplikacji</string>
     <string name="simple_map">Mapa</string>
-    <string name="simple_map_title">Session %s</string>
+    <string name="simple_map_title">Sesja %s</string>
     <string name="action_session_created">Utworzono sesję</string>
     <string name="action_logjob_deleted">Zadanie rejestratora zostało usunięte</string>
     <string name="action_logjob_restored">Zadanie rejestratora zostało przywrócone</string>
@@ -64,12 +64,13 @@
     <string name="logjob_info_dialog_title">O %s</string>
     <string name="logjob_info_nbsync">%d wysłane lokalizacje</string>
     <string name="logjob_info_nbnotsync">%d lokalizacje oczekujące</string>
-    <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Total distance\n%.2fm</string>
-    <string name="logjob_info_duration">Total duration\n%s</string>
-    <string name="logjob_info_nbpoints">Number of points\n%d</string>
+    <string name="logjob_info_lastloc">Ostatnia lokalizacja nabyta\n%s temu w\n%s</string>
+    <string name="logjob_info_lastsync">Ostatnia pomyślna synchronizacja\n%s temu w\n%s</string>
+    <string name="logjob_info_lastsync_error">Ostatni błąd synchronizacji\n%s temu w\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Całkowita odległość\n%.2fm</string>
+    <string name="logjob_info_duration">Całkowity czas trwania\n%s</string>
+    <string name="logjob_info_nbpoints">Ilość punktów\n%d</string>
+    <string name="reset_current_run">Reset statistics</string>
     <string name="duration_days">dni</string>
     <string name="dialog_title_import_pt_url">Zaimportuj link do logowania PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Dowolny zgodny link do logowania podany w interfejsie internetowym PhoneTrack</string>
@@ -102,6 +103,8 @@
     <string name="settings_submit">Połącz</string>
     <string name="settings_submitting">Łączenie &#8230;</string>
     <string name="settings_theme_title">Motyw</string>
+    <string name="settings_notification_importance_title">Low notification importance</string>
+    <string name="settings_reset_stats">Reset stats on logjob activation</string>
     <string name="settings_providers_title">Dostawcy lokalizacji</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Sieć</string>
@@ -138,7 +141,7 @@
     <string name="error_share_dev_helper">Błąd podczas udostępniania urządzenia : %s</string>
     <string name="error_create_session_helper">Błąd podczas tworzenia sesji: %s</string>
     <string name="error_create_session_exists">Sesja już istnieje</string>
-    <string name="error_token_mismatch">Please reauthenticate your SSO account in settings</string>
+    <string name="error_token_mismatch">Ponownie uwierzytelnij swoje konto SSO w ustawieniach</string>
     <!-- Web errors -->
     <!-- Certificates -->
     <string name="certificate_notification_connection_security">PhoneTrack - Zabezpieczenia połączeń</string>
