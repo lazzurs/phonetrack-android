@@ -559,28 +559,31 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return enabled;
     }
 
+    public void resetLogjobCurrentRun(long ljId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        // reset nbSync
+        values.put(key_nbsync, 0);
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
+
+        // delete locations which are already synced
+        db.delete(table_locations,
+                key_logjobid + " = ? AND " + key_synced + " = 1",
+                new String[]{String.valueOf(ljId)});
+
+        // set currentRun of locations
+        ContentValues locValues = new ContentValues();
+        locValues.put(key_currentRun, 0);
+        db.update(table_locations, locValues, key_logjobid + " = ?", new String[]{String.valueOf(ljId)});
+    }
+
     public void toggleEnabled(@NonNull DBLogjob logjob, @Nullable ICallback callback) {
         logjob.setEnabled(!logjob.isEnabled());
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_enabled, logjob.isEnabled() ? "1" : "0");
-        // reset nbSync if logjob is enabled
-        if (logjob.isEnabled()) {
-            values.put(key_nbsync, 0);
-        }
+
         db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
-
-        if (logjob.isEnabled()) {
-            // delete locations which are already synced
-            db.delete(table_locations,
-                    key_logjobid + " = ? AND " + key_synced + " = 1",
-                    new String[]{String.valueOf(logjob.getId())});
-
-            // set currentRun of locations
-            ContentValues locValues = new ContentValues();
-            locValues.put(key_currentRun, 0);
-            db.update(table_locations, locValues, key_logjobid + " = ?", new String[]{String.valueOf(logjob.getId())});
-        }
     }
 
     public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken,

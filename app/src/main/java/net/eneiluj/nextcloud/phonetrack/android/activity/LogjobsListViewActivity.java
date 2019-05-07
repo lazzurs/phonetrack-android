@@ -1141,6 +1141,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
                         }
                     })
+                    .setNeutralButton(R.string.reset_current_run, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            db.resetLogjobCurrentRun(ljId);
+                            dialog.dismiss();
+                            refreshLists();
+                        }
+                    })
                     .setIcon(R.drawable.ic_info_outline_grey600_24dp)
                     .show();
         }
