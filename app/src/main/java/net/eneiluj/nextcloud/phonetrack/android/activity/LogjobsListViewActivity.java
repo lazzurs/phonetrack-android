@@ -758,8 +758,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         break;
                     }
                     case ItemTouchHelper.RIGHT: {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        boolean resetOnToggle = preferences.getBoolean(getString(R.string.pref_key_reset_stats), false);
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
-                        db.toggleEnabled(dbLogjob, syncCallBack);
+                        db.toggleEnabled(dbLogjob, syncCallBack, resetOnToggle);
                         refreshLists();
                         notifyLoggerService(dbLogjob.getId());
                         break;
@@ -989,8 +991,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     public void onLogjobEnabledClick(int position, View view) {
         DBLogjob logjob = (DBLogjob) adapter.getItem(position);
         if (logjob != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            boolean resetOnToggle = preferences.getBoolean(getString(R.string.pref_key_reset_stats), false);
             PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
-            db.toggleEnabled(logjob, syncCallBack);
+            db.toggleEnabled(logjob, syncCallBack, resetOnToggle);
             adapter.notifyItemChanged(position);
             refreshLists();
 

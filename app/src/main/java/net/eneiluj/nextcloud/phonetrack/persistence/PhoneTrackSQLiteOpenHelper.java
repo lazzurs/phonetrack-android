@@ -577,13 +577,17 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         db.update(table_locations, locValues, key_logjobid + " = ?", new String[]{String.valueOf(ljId)});
     }
 
-    public void toggleEnabled(@NonNull DBLogjob logjob, @Nullable ICallback callback) {
+    public void toggleEnabled(@NonNull DBLogjob logjob, @Nullable ICallback callback, boolean resetStats) {
         logjob.setEnabled(!logjob.isEnabled());
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(key_enabled, logjob.isEnabled() ? "1" : "0");
 
         db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
+
+        if (resetStats && logjob.isEnabled()) {
+            resetLogjobCurrentRun(logjob.getId());
+        }
     }
 
     public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken,

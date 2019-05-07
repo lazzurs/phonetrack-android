@@ -54,6 +54,11 @@
         android:key="@string/pref_key_notification_importance"
         android:title="@string/settings_notification_importance_title" />
 
+    <SwitchPreferenceCompat
+        android:icon="@drawable/ic_sync_grey_24dp"
+        android:key="@string/pref_key_reset_stats"
+        android:title="@string/settings_reset_stats" />
+
     <PreferenceScreen
         android:key="@string/pref_key_certs"
         android:persistent="false"
