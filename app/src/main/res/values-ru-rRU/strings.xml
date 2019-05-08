@@ -70,7 +70,7 @@
     <string name="logjob_info_distance">Общее расстояние\n%.2fm</string>
     <string name="logjob_info_duration">Общее время\n%s</string>
     <string name="logjob_info_nbpoints">Количество точек\n%d</string>
-    <string name="reset_current_run">Reset statistics</string>
+    <string name="reset_current_run">Сброс статистики</string>
     <string name="duration_days">дней</string>
     <string name="dialog_title_import_pt_url">Импорт ссылки для журнала PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Любой совместимый URL журнала в веб-интерфейсе PhoneTrack</string>

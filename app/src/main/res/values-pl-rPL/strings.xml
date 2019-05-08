@@ -70,7 +70,7 @@
     <string name="logjob_info_distance">Całkowita odległość\n%.2fm</string>
     <string name="logjob_info_duration">Całkowity czas trwania\n%s</string>
     <string name="logjob_info_nbpoints">Ilość punktów\n%d</string>
-    <string name="reset_current_run">Reset statistics</string>
+    <string name="reset_current_run">Resetuj statystyki</string>
     <string name="duration_days">dni</string>
     <string name="dialog_title_import_pt_url">Zaimportuj link do logowania PhoneTrack</string>
     <string name="dialog_msg_import_pt_url">Dowolny zgodny link do logowania podany w interfejsie internetowym PhoneTrack</string>
@@ -103,8 +103,8 @@
     <string name="settings_submit">Połącz</string>
     <string name="settings_submitting">Łączenie &#8230;</string>
     <string name="settings_theme_title">Motyw</string>
-    <string name="settings_notification_importance_title">Low notification importance</string>
-    <string name="settings_reset_stats">Reset stats on logjob activation</string>
+    <string name="settings_notification_importance_title">Nie pokazuj powiadomienia</string>
+    <string name="settings_reset_stats">Resetuj statystyki przy aktywacji rejestrowania</string>
     <string name="settings_providers_title">Dostawcy lokalizacji</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Sieć</string>
