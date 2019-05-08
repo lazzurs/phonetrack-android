@@ -152,32 +152,44 @@ public class LoggerService extends Service {
         // read user preferences
         updatePreferences(null);
 
+        int nbEnabled = 0;
         for (DBLogjob lj : ljs) {
             if (lj.isEnabled()) {
                 requestLocationUpdates(lj.getId());
+                nbEnabled++;
             }
         }
 
-        final Notification notification = showNotification(NOTIFICATION_ID);
-        startForeground(NOTIFICATION_ID, notification);
-        updateNotificationContent();
+        if (nbEnabled > 0) {
+            final Notification notification = showNotification(NOTIFICATION_ID);
+            startForeground(NOTIFICATION_ID, notification);
+            updateNotificationContent();
 
-        isRunning = true;
+            isRunning = true;
 
-        sendBroadcast(BROADCAST_LOCATION_STARTED);
+            sendBroadcast(BROADCAST_LOCATION_STARTED);
 
-        thread = new LoggerThread();
-        thread.start();
-        looper = thread.getLooper();
+            thread = new LoggerThread();
+            thread.start();
+            looper = thread.getLooper();
 
-        battery = getBatteryLevelOnce();
-        // register for battery level
-        this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            battery = getBatteryLevelOnce();
+            // register for battery level
+            this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // track network connectivity changes
-            connectionMonitor = new ConnectionStateMonitor();
-            connectionMonitor.enable(getApplicationContext());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // track network connectivity changes
+                connectionMonitor = new ConnectionStateMonitor();
+                connectionMonitor.enable(getApplicationContext());
+            }
+        }
+        else {
+            final Notification notification = showNotification(NOTIFICATION_ID);
+            startForeground(NOTIFICATION_ID, notification);
+            if (DEBUG) {
+                Log.d(TAG, "[onCreate : stop because no logjob enabled]");
+            }
+            stopSelf();
         }
     }
 
