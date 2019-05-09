@@ -412,7 +412,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         });
 
-        // show snackbar after 60s to switch back to old login method
+        // don't show old login method because SSO+weblogin is enough
+        // TODO cleanup
+        /*// show snackbar after 60s to switch back to old login method
         new Handler().postDelayed(() -> {
             Snackbar.make(webView, R.string.fallback_weblogin_text, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.fallback_weblogin_back, new View.OnClickListener() {
@@ -421,7 +423,7 @@ public class SettingsActivity extends AppCompatActivity {
                             initLegacyLogin(field_url.getText().toString());
                         }
                     }).show();
-        }, 60 * 1000);
+        }, 60 * 1000);*/
     }
 
     private String getWebLoginUserAgent() {
