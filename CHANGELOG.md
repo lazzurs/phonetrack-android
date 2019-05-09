@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - get device colors from server in map view
 [#58](https://gitlab.com/eneiluj/phonetrack-android/issues/58) @markussvn
 - ability to create a remote session
+- more information/stats in info dialog
+- option to reset logjob stats when activated
+- map button on logjob list item
+[#72](https://gitlab.com/eneiluj/phonetrack-android/issues/72) @markussvn
+- option to reduce notification importance
+[#64](https://gitlab.com/eneiluj/phonetrack-android/issues/64) @wiktor-k
 
 ### Changed
 - make dark theme really black
@@ -34,12 +40,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - when asking for map view, remember last selected session and preselect it
 [#59](https://gitlab.com/eneiluj/phonetrack-android/issues/59) @markussvn
 [#73](https://gitlab.com/eneiluj/phonetrack-android/issues/73) @markussvn
+- session title in map action bar
+- marker z-index order by timestamp
+[#71](https://gitlab.com/eneiluj/phonetrack-android/issues/71) @markussvn
+- improve some icons
 
 ### Fixed
 - reset last sync error when sync succeeds
 [#62](https://gitlab.com/eneiluj/phonetrack-android/issues/62) @markussvn
 - sort device name in map sidebar
 [#57](https://gitlab.com/eneiluj/phonetrack-android/issues/57) @markussvn
+- keyboard behaviour in logjob edition and map
+[#63](https://gitlab.com/eneiluj/phonetrack-android/issues/63) @Valdnet
+- logger service starts even if OS location is disabled
+[#70](https://gitlab.com/eneiluj/phonetrack-android/issues/70) @markussvn
+- pressing back in settings now applies app color correctly
+[#34](https://gitlab.com/eneiluj/phonetrack-android/issues/34) @Valdnet
+- apply logjob minimum accuracy change while running
+[!1](https://gitlab.com/eneiluj/phonetrack-android/merge_requests/1) @creywood
 
 ## 0.0.10 – 2019-03-11
 ### Changed
