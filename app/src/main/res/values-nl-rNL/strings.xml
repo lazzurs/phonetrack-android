@@ -64,13 +64,13 @@
     <string name="logjob_info_dialog_title">Over %s</string>
     <string name="logjob_info_nbsync">%d posities verzonden</string>
     <string name="logjob_info_nbnotsync">%d uitstaande posities</string>
-    <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
-    <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Total distance\n%.2fm</string>
-    <string name="logjob_info_duration">Total duration\n%s</string>
-    <string name="logjob_info_nbpoints">Number of points\n%d</string>
-    <string name="reset_current_run">Reset statistics</string>
+    <string name="logjob_info_lastloc">Laatste locatie verworven\n%s geleden op\n%s</string>
+    <string name="logjob_info_lastsync">Laatste succesvolle synchronisatie\n%s geleden op\n%s</string>
+    <string name="logjob_info_lastsync_error">Laatste synchronisatie fout\n%s geleden op\n%s\n\n%s</string>
+    <string name="logjob_info_distance">Totale afstand\n%.2fm</string>
+    <string name="logjob_info_duration">Totale duur\n%s</string>
+    <string name="logjob_info_nbpoints">Aantal punten\n%d</string>
+    <string name="reset_current_run">Reset statistieken</string>
     <string name="duration_days">dagen</string>
     <string name="dialog_title_import_pt_url">Importeer een PhoneTrack logging link</string>
     <string name="dialog_msg_import_pt_url">Elke compatibele logging link die in de PhoneTrack-webinterface wordt gegeven</string>
@@ -103,8 +103,8 @@
     <string name="settings_submit">Verbinden</string>
     <string name="settings_submitting">Verbinding maken &#8230;</string>
     <string name="settings_theme_title">Thema</string>
-    <string name="settings_notification_importance_title">Low notification importance</string>
-    <string name="settings_reset_stats">Reset stats on logjob activation</string>
+    <string name="settings_notification_importance_title">Laag belang van kennisgeving</string>
+    <string name="settings_reset_stats">Reset statistieken bij logjob activering</string>
     <string name="settings_providers_title">Locatie aanbieders</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Netwerk</string>
@@ -192,9 +192,9 @@
     <!-- Key / Values for preferences -->
     <string name="pref_value_theme_light">Licht</string>
     <string name="pref_value_theme_dark">Donker</string>
-    <string name="fallback_weblogin_text">Revert to old login method</string>
+    <string name="fallback_weblogin_text">Terug naar oude login methode</string>
     <string name="fallback_weblogin_back">Vorige</string>
-    <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
+    <string name="use_sso_toggle">Gebruik account van Nextcloud Bestanden app</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d geselecteerd</item>

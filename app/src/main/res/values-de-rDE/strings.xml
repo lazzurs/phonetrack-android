@@ -51,8 +51,8 @@
     <string name="fab_create_custom">Neuer benutzerdefinierter Protokollierungsauftrag</string>
     <string name="setting_min_distance">Minimale Entfernung</string>
     <string name="setting_min_distance_long">Mindestentfernung (in Meter) zwischen zwei erfassten Punkten</string>
-    <string name="setting_min_time">Mindestzeitabstand</string>
-    <string name="setting_min_time_long">Mindestzeit (in Sekunden) zwischen zwei erfassten Punkten</string>
+    <string name="setting_min_time">Mindestdauer</string>
+    <string name="setting_min_time_long">Mindestdauer (in Sekunden) zwischen zwei erfassten Punkten</string>
     <string name="setting_min_accuracy">Mindestgenauigkeit</string>
     <string name="setting_min_accuracy_long">Minimal benötigte Genauigkeit (in Meter) der erfassten Punkte</string>
     <string name="setting_keepgps_title">GPS zwischen den Positionsbestimmungen eingeschaltet lassen</string>
@@ -70,7 +70,7 @@
     <string name="logjob_info_distance">Gesamtstrecke\n%.2fm</string>
     <string name="logjob_info_duration">Gesamtdauer\n%s</string>
     <string name="logjob_info_nbpoints">Anzahl der Datenpunkte\n%d</string>
-    <string name="reset_current_run">Reset statistics</string>
+    <string name="reset_current_run">Statistiken zurücksetzen</string>
     <string name="duration_days">Tage</string>
     <string name="dialog_title_import_pt_url">PhoneTrack-Protokollierungs-Link importieren</string>
     <string name="dialog_msg_import_pt_url">Jeder kompatible Protokollierungs-Link, die in der PhoneTrack-Webschnittstelle angegeben ist</string>
@@ -103,8 +103,8 @@
     <string name="settings_submit">Verbinden</string>
     <string name="settings_submitting">Verbindung wird aufgebaut &#8230;</string>
     <string name="settings_theme_title">Thema</string>
-    <string name="settings_notification_importance_title">Low notification importance</string>
-    <string name="settings_reset_stats">Reset stats on logjob activation</string>
+    <string name="settings_notification_importance_title">Geringe Benachrichtigungswichtigkeit</string>
+    <string name="settings_reset_stats">Statistiken bei der Aktivierung von Protokollierungsaufgaben zurücksetzen</string>
     <string name="settings_providers_title">Standortdienste</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Netzwerk</string>
