@@ -638,7 +638,7 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(SETTINGS_USE_SSO, true);
         editor.putString(SETTINGS_SSO_URL, account.url+"/");
-        editor.putString(SETTINGS_SSO_USERNAME, account.username);
+        editor.putString(SETTINGS_SSO_USERNAME, account.name);
         editor.apply();
 
         final Intent data = new Intent();
