@@ -187,7 +187,7 @@ public class SessionServerSyncHelper {
         boolean useSSO = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
         boolean classicURLConfigured = !PreferenceManager.getDefaultSharedPreferences(context).getString(
                 SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS
-        ).isEmpty();
+        ).equals(SettingsActivity.DEFAULT_SETTINGS);
         return useSSO || classicURLConfigured;
     }
 
