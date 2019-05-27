@@ -1,7 +1,9 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.http.SslCertificate;
@@ -10,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -43,6 +46,7 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.LoginDialogFragment;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
+import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil.LoginStatus;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
@@ -62,6 +66,9 @@ import java.util.Map;
  * Created by stefan on 22.09.15.
  */
 public class SettingsActivity extends AppCompatActivity {
+
+    private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
+    private final static int PERMISSION_GET_ACCOUNTS = 42;
 
     public static final String SETTINGS_USE_SSO = "settingsUseSSO";
     public static final String SETTINGS_SSO_URL = "settingsSSOUrl";
@@ -119,12 +126,16 @@ public class SettingsActivity extends AppCompatActivity {
         btn_submit = findViewById(R.id.settings_submit);
         urlWarnHttp = findViewById(R.id.settings_url_warn_http);
 
-        // disable SSO on Android versions where it crashes
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-            use_sso_switch.setVisibility(View.GONE);
-        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED) {
 
-        //ButterKnife.bind(this);
+            if (LoggerService.DEBUG) { Log.d(TAG, "[request get accounts permission]"); }
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.GET_ACCOUNTS},
+                    PERMISSION_GET_ACCOUNTS
+            );
+        }
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
