@@ -109,4 +109,10 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_keepgps_title"
         android:summary="@string/setting_keepgps_summary" />
 
+    <CheckBoxPreference
+        android:icon="@android:drawable/ic_menu_always_landscape_portrait"
+        android:key="usesignificantmotion"
+        android:title="@string/setting_significantmotion_title"
+        android:summary="@string/setting_significantmotion_summary" />
+
 </PreferenceScreen>

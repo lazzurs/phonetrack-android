@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 //import android.preference.EditTextPreference;
 import androidx.core.view.MenuItemCompat;
+import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 //import android.preference.ListPreference;
 //import android.preference.Preference;
@@ -42,6 +44,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
     private EditTextPreference editToken;
     private EditTextPreference editDevicename;
+    private CheckBoxPreference editUseSignificantMotion;
 
     private AlertDialog.Builder selectBuilder;
     private AlertDialog selectDialog;
@@ -125,6 +128,17 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             }
 
         });
+
+        Preference significantMotionPref = findPreference("usesignificantmotion");
+        significantMotionPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                updateEnabledPreferencesForSignificantMotion((Boolean) newValue);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -153,7 +167,8 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         int newMinTime = getMintime();
         int newMinDistance = getMindistance();
         int newMinAccuracy = getMinaccuracy();
-        boolean newKeepGpsOn = getKeepGpsOn();
+        boolean newUseSignificantMotion = getUseSignificantMotion();
+        boolean newKeepGpsOn = newUseSignificantMotion ? false : getKeepGpsOn();
 
         // if this is an existing logjob
         if (logjob.getId() != 0) {
@@ -164,12 +179,14 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                     logjob.keepGpsOnBetweenFixes() == newKeepGpsOn &&
                     logjob.getMinDistance() == newMinDistance &&
                     logjob.getMinAccuracy() == newMinAccuracy &&
-                    logjob.getDeviceName().equals(newDevicename)) {
+                    logjob.getDeviceName().equals(newDevicename) &&
+                    logjob.useSignificantMotion() == newUseSignificantMotion) {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
                 System.out.println("====== update logjob");
                 logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename,
-                        false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, callback);
+                        false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
+                        newUseSignificantMotion, callback);
                 notifyLoggerService(logjob.getId());
                 //listener.onLogjobUpdated(logjob);
             }
@@ -177,7 +194,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         // this is a new logjob
         else {
             DBLogjob newLogjob = new DBLogjob(0, newTitle, newUrl, newToken, newDevicename,
-                    newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn ,
+                    newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, newUseSignificantMotion,
                     false, false, 0);
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
@@ -316,6 +333,15 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         editDevicename.setText(logjob.getDeviceName());
         editDevicename.setSummary(logjob.getDeviceName());
 
+        // Setup significant motion option, only show if device supports it
+        editUseSignificantMotion = (CheckBoxPreference) this.findPreference("usesignificantmotion");
+        editUseSignificantMotion.setChecked(logjob.useSignificantMotion());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            updateEnabledPreferencesForSignificantMotion(logjob.useSignificantMotion());
+        } else {
+            editUseSignificantMotion.setVisible(false);
+        }
+
         // manage session list
         sessionList = db.getSessionsNotShared();
         sessionNameList = new ArrayList<>();
@@ -384,6 +410,16 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     }
     private String getDevicename() {
         return editDevicename.getText();
+    }
+
+    protected boolean getUseSignificantMotion() {
+        return editUseSignificantMotion.isChecked();
+    }
+
+    private void updateEnabledPreferencesForSignificantMotion(boolean sigMotionEnabled) {
+        editMinaccuracy.setEnabled(!sigMotionEnabled);
+        editMindistance.setEnabled(!sigMotionEnabled);
+        editKeepGpsOn.setEnabled(!sigMotionEnabled);
     }
 
     private void setFieldsFromSession(DBSession s) {

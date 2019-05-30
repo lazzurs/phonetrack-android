@@ -43,7 +43,7 @@ public class EditPhoneTrackLogjobActivity extends EditLogjobActivity {
                 0, "",  getString(R.string.default_nextcloud_url), getString(R.string.default_session_token),
                 android.os.Build.MODEL.replaceAll(" ", "").replaceAll("/", ""),
                 60, 5, 50,
-                false,false,false, 0
+                false, false, false,false, 0
         );
 
         String url;

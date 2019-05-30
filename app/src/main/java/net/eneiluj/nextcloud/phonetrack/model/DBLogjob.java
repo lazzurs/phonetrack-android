@@ -1,7 +1,5 @@
 package net.eneiluj.nextcloud.phonetrack.model;
 
-import android.util.Log;
-
 import java.io.Serializable;
 
 /**
@@ -21,10 +19,11 @@ public class DBLogjob implements Item, Serializable {
     private boolean keepGpsOnBetweenFixes;
     private boolean enabled;
     private int nbSync;
+    private boolean useSignificantMotion = true;
 
     public DBLogjob(long id, String title, String url, String token, String deviceName,
                     int minTime, int minDistance, int minAccuracy, boolean keepGpsOnBetweenFixes,
-                    boolean post, boolean enabled, int nbSync) {
+                    boolean useSignificantMotion, boolean post, boolean enabled, int nbSync) {
         this.id = id;
         this.title = title;
         this.url = url;
@@ -36,6 +35,7 @@ public class DBLogjob implements Item, Serializable {
         this.minTime = minTime;
         this.enabled = enabled;
         this.keepGpsOnBetweenFixes = keepGpsOnBetweenFixes;
+        this.useSignificantMotion = useSignificantMotion;
         this.nbSync = nbSync;
     }
 
@@ -70,6 +70,8 @@ public class DBLogjob implements Item, Serializable {
     public boolean keepGpsOnBetweenFixes() {
         return keepGpsOnBetweenFixes;
     }
+
+    public boolean useSignificantMotion() { return useSignificantMotion; }
 
     public void setKeepGpsOnBetweenFixes(boolean keepGpsOnBetweenFixes) {
         this.keepGpsOnBetweenFixes = keepGpsOnBetweenFixes;

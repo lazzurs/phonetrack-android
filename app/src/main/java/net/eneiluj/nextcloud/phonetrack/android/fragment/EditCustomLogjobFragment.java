@@ -89,7 +89,8 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
             } else {
                 System.out.println("====== update logjob");
                 logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "",
-                        newPost, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, callback);
+                        newPost, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, false,
+                        callback);
                 notifyLoggerService(logjob.getId());
                 //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
                 //listener.onLogjobUpdated(logjob);
@@ -98,7 +99,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         // this is a new logjob
         else {
             DBLogjob newLogjob = new DBLogjob(0, newTitle, newURL, "", "",
-                    newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
+                    newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, false,
                     newPost, false, 0);
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
