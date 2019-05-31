@@ -391,7 +391,9 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             editUseSignificantMotionInterval.setChecked(logjob.getMinTime() > 0);
 
             editLocationRequestTimeout = (EditTextPreference) this.findPreference("significantmotiontimeout");
-            editLocationRequestTimeout.setSummary(String.valueOf(logjob.getLocationRequestTimeout()));
+            String timeoutVal = String.valueOf(logjob.getLocationRequestTimeout());
+            editLocationRequestTimeout.setText(timeoutVal);
+            editLocationRequestTimeout.setSummary(timeoutVal);
 
             updateEnabledPreferencesForSignificantMotion(logjob.useSignificantMotion());
         } else {
