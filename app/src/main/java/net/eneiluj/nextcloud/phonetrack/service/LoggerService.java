@@ -110,9 +110,6 @@ public class LoggerService extends Service {
 
     private final int SECONDS_WAIT_FOR_GPS_SIG_MOTION = 60;
     private Map<Long, SignificantMotionJobWorker> mSignificantMotionJobs;
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-    private SignificantMotionListener mSignificantMotionListener;
 
     private ConnectionStateMonitor connectionMonitor;
 
@@ -149,10 +146,6 @@ public class LoggerService extends Service {
         logjobs = new HashMap<>();
         mSignificantMotionJobs = new HashMap<>();
 
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
-        mSignificantMotionListener = new SignificantMotionListener();
-
         List<DBLogjob> ljs = db.getLogjobs();
         for (DBLogjob ljob : ljs) {
             if (ljob.isEnabled()) {
@@ -162,7 +155,6 @@ public class LoggerService extends Service {
                 lastLocations.put(ljob.getId(), null);
                 lastUpdateRealtime.put(ljob.getId(), Long.valueOf(0));
 
-                // Assume motion exists when beginning logging
                 SignificantMotionJobWorker jw = new SignificantMotionJobWorker(ljob, ll);
                 mSignificantMotionJobs.put(ljob.getId(), jw);
             }
@@ -843,23 +835,6 @@ public class LoggerService extends Service {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private class SignificantMotionListener extends TriggerEventListener {
-
-        @Override
-        public void onTrigger(TriggerEvent event) {
-            Log.i(TAG, "Significant motion seen");
-            for (SignificantMotionJobWorker sigMotJob: mSignificantMotionJobs.values()) {
-                sigMotJob.flagSignificantMotion();
-            }
-
-            // Request notification for next significant motion
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                mSensorManager.requestTriggerSensor(mSignificantMotionListener, mSensor);
-            }
-        }
-    }
-
     private void acceptAndSyncLocation(long logjobId, Location loc) {
         lastLocations.put(logjobId, loc);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -878,7 +853,8 @@ public class LoggerService extends Service {
         startService(syncOneDev);
     }
 
-    private class SignificantMotionJobWorker {
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private class SignificantMotionJobWorker extends TriggerEventListener {
         private mLocationListener mLocationListener;
         private DBLogjob mLogJob;
         private long mJobId;
@@ -892,10 +868,18 @@ public class LoggerService extends Service {
         private Boolean mMotionDetected;
         private Location mCachedNetworkResult;
 
+        private SensorManager mSensorManager;
+        private Sensor mSensor;
+
+        private long mIntervalTimeMillis;
+        private boolean mUseInterval;
 
         SignificantMotionJobWorker(DBLogjob logjob, mLocationListener listener) {
             populate(logjob);
             mLocationListener = listener;
+
+            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
         }
 
         private void populate(DBLogjob logjob) {
@@ -909,54 +893,16 @@ public class LoggerService extends Service {
             mTimeoutHandler = null;
             mTimeoutRunnable = null;
             mCachedNetworkResult = null;
-        }
 
-        private void flagSignificantMotion() {
-
-            // Flag motion in interval
-            mMotionDetected = true;
-
-            // If the job hasn't taken a sample for longer than its interval sample immediately
-            long millis = SystemClock.elapsedRealtime() - mLastUpdateRealtime;
-            if (millis > mLogJob.getMinTime() * 1000) {
-                // If there is a runnable waiting for the next interval we know we haven't already requested a location.
-                // This checks helps us prevent having two sampling sequences running for the same job.
-                if (mIntervalHandler != null) {
-                    // Stop waiting runnable
-                    mIntervalHandler.removeCallbacks(mIntervalRunnable);
-                    mIntervalRunnable = null;
-                    mIntervalHandler = null;
-
-                    // Request the sample
-                    Log.i(TAG, "Triggering immediate sample after significant motion due to " + millis + "ms since last point");
-                    requestLocationUpdates(mJobId);
-                }
-            }
-        }
-
-        private Runnable createIntervalDelayRunnable() {
-
-            Runnable intervalDelayRunnable = new Runnable() {
-                public void run() {
-                    if (mMotionDetected) {
-                        Log.i(TAG, "Significant motion detected during delay, recording point");
-                        requestLocationUpdates(mJobId);
-                    } else {
-                        Log.i(TAG, "No significant motion, not recording point");
-
-                        long millisDelay = mLogJob.getMinTime() * 1000;
-                        scheduleSampleAfterInterval(millisDelay);
-                    }
-                }
-            };
-            return intervalDelayRunnable;
+            mIntervalTimeMillis = mLogJob.getMinTime() * 1000;
+            mUseInterval = mIntervalTimeMillis > 0;
         }
 
         private Runnable createSampleTimeoutDelayRunnable() {
 
             Runnable runnable = new Runnable() {
                 public void run() {
-                    Log.i(TAG, "delayyyyyy returned");
+                    Log.d(TAG, "Sampling timeout hit");
 
                     if (mCachedNetworkResult != null) {
                         // Cancel location request
@@ -964,7 +910,7 @@ public class LoggerService extends Service {
                             locManager.removeUpdates(mLocationListener);
                         }
 
-                        Log.i(TAG, "Reached timeout before GPS sample, using network sample");
+                        Log.d(TAG, "Reached timeout before GPS sample, using network sample");
                         acceptAndSyncLocation(mJobId, mCachedNetworkResult);
 
                         mCachedNetworkResult = null;
@@ -980,36 +926,50 @@ public class LoggerService extends Service {
 
                     // Request significant motion notification
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        mSensorManager.requestTriggerSensor(mSignificantMotionListener, mSensor);
+                        mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
                     }
 
                     // Schedule sample for X seconds from last sample
-                    long delayMillis = mLogJob.getMinTime() * 1000;
-                    if (mLastUpdateRealtime != null) {
-                        delayMillis -= SystemClock.elapsedRealtime() - mLastUpdateRealtime;
+                    if (mUseInterval) {
+                        long delayMillis = mIntervalTimeMillis;
+                        if (mLastUpdateRealtime != null) {
+                            delayMillis -= SystemClock.elapsedRealtime() - mLastUpdateRealtime;
+                        }
+                        scheduleSampleAfterInterval(delayMillis);
                     }
-                    scheduleSampleAfterInterval(delayMillis);
                 }
             };
             return runnable;
         }
 
         private void scheduleSampleAfterInterval(long millisDelay) {
-            Log.i(TAG, "Scheduling sampling delay for " + millisDelay + " millis");
+            Log.d(TAG, "Scheduling sampling delay for " + millisDelay/1000.0 + "s");
             // Create new handler if one doesn't exist
             if (mIntervalHandler == null) {
                 mIntervalHandler = new Handler();
             }
+
+            mIntervalRunnable = new Runnable() {
+                public void run() {
+                    if (mMotionDetected) {
+                        Log.d(TAG, "Significant motion detected during delay, recording point");
+                        requestLocationUpdates(mJobId);
+                    } else {
+                        Log.d(TAG, "No significant motion, not recording point");
+
+                        scheduleSampleAfterInterval(mIntervalTimeMillis);
+                    }
+                }
+            };
+
             // Create and post
-            mIntervalRunnable = createIntervalDelayRunnable();
             mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
         }
-
 
         private void handleLocationChange(Location loc) {
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER) || !useGps) {
                 // Got GPS result, accept
-                Log.i(TAG, "Got result, immediately accepting");
+                Log.d(TAG, "Got result, immediately accepting");
 
                 // Cancel timeout runnable
                 if (mTimeoutHandler != null) {
@@ -1039,13 +999,14 @@ public class LoggerService extends Service {
 
                 // Request significant motion notification
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mSensorManager.requestTriggerSensor(mSignificantMotionListener, mSensor);
+                    mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
                 }
 
-                // Schedule sample for X seconds from last sample
-                scheduleSampleAfterInterval(mLogJob.getMinTime() * 1000);
+                // If using an interval, schedule sample for X seconds from last sample
+                if (mUseInterval)
+                    scheduleSampleAfterInterval(mLogJob.getMinTime() * 1000);
             } else {
-                Log.i(TAG, "Network location returned first, caching");
+                Log.d(TAG, "Network location returned first, caching");
                 // Cache lower quality network result
                 mCachedNetworkResult = loc;
             }
@@ -1076,6 +1037,44 @@ public class LoggerService extends Service {
                     mTimeoutRunnable = null;
                 }
                 mTimeoutHandler = null;
+            }
+        }
+
+        @Override
+        public void onTrigger(TriggerEvent event) {
+            Log.d(TAG, "Significant motion seen");
+
+            // Flag motion in interval
+            mMotionDetected = true;
+
+            // If the job doesn't have a minimum interval, or hasn't taken a sample for longer than its interval,
+            // sample immediately
+            long millisSinceLast = SystemClock.elapsedRealtime() - mLastUpdateRealtime;
+            if (!mUseInterval || millisSinceLast > mIntervalTimeMillis) {
+                // If not using an interval, definitely request updates
+                boolean requestUpdates = !mUseInterval;
+
+                // If we're interval-based and there is a runnable waiting for the next interval we know we haven't
+                // already requested a location. This checks helps us prevent having two sampling sequences running
+                // for the same job.
+                if (mUseInterval && mIntervalHandler != null) {
+                    // Stop waiting runnable
+                    mIntervalHandler.removeCallbacks(mIntervalRunnable);
+                    mIntervalRunnable = null;
+
+                    Log.d(TAG, "Triggering immediate sample after significant motion due to " +
+                            millisSinceLast / 1000.0 + "s since last point");
+
+                    requestUpdates = true;
+                }
+
+                if (requestUpdates)
+                    requestLocationUpdates(mJobId);
+            }
+
+            // Request notification for next significant motion
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
             }
         }
     }

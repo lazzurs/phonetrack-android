@@ -263,7 +263,10 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 else if (getMindistance() < 0) {
                     showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
                 }
-                else if (getMintime() < 1) {
+                else if (getUseSignificantMotion() && getMintime() < 0) {
+                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+                }
+                else if (!getUseSignificantMotion() && getMintime() < 1) {
                     showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
                 }
                 else if (getMinaccuracy() < 1) {
