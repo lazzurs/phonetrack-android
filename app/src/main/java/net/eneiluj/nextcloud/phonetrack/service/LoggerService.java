@@ -108,7 +108,6 @@ public class LoggerService extends Service {
     private boolean useNet = true;
     public static boolean DEBUG = true;
 
-    private final int SECONDS_WAIT_FOR_GPS_SIG_MOTION = 60;
     private Map<Long, SignificantMotionJobWorker> mSignificantMotionJobs;
 
     private ConnectionStateMonitor connectionMonitor;
@@ -873,6 +872,7 @@ public class LoggerService extends Service {
 
         private long mIntervalTimeMillis;
         private boolean mUseInterval;
+        private int mLocationTimeout;
 
         SignificantMotionJobWorker(DBLogjob logjob, mLocationListener listener) {
             populate(logjob);
@@ -896,6 +896,7 @@ public class LoggerService extends Service {
 
             mIntervalTimeMillis = mLogJob.getMinTime() * 1000;
             mUseInterval = mIntervalTimeMillis > 0;
+            mLocationTimeout = mLogJob.getLocationRequestTimeout();
         }
 
         private Runnable createSampleTimeoutDelayRunnable() {
@@ -1015,12 +1016,15 @@ public class LoggerService extends Service {
         private void startResultTimeout() {
             mCachedNetworkResult = null;
 
-            if (mTimeoutHandler == null)
-                mTimeoutHandler= new Handler();
+            if (mLocationTimeout > 0) {
+                if (mTimeoutHandler == null)
+                    mTimeoutHandler = new Handler();
 
-            // Create and post
-            mTimeoutRunnable = createSampleTimeoutDelayRunnable();
-            mTimeoutHandler.postDelayed(mTimeoutRunnable, SECONDS_WAIT_FOR_GPS_SIG_MOTION * 1000);
+                // Create and post
+                mTimeoutRunnable = createSampleTimeoutDelayRunnable();
+                Log.d(TAG, "Waiting " + mLocationTimeout + "s for timeout");
+                mTimeoutHandler.postDelayed(mTimeoutRunnable, mLocationTimeout * 1000);
+            }
         }
 
         private void stop() {

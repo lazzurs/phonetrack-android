@@ -109,10 +109,34 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_keepgps_title"
         android:summary="@string/setting_keepgps_summary" />
 
-    <CheckBoxPreference
-        android:icon="@android:drawable/ic_menu_always_landscape_portrait"
+    <PreferenceCategory
+        android:key="significantmotioncategory"
+        android:title="@string/setting_significantmotion">
+
+    <SwitchPreferenceCompat
         android:key="usesignificantmotion"
-        android:title="@string/setting_significantmotion_title"
+        android:title="@string/setting_significantmotion_enabled"
         android:summary="@string/setting_significantmotion_summary" />
 
+    <SwitchPreferenceCompat
+        android:key="significantmotioninterval"
+        android:title="@string/setting_significantmotion_min_time_applied"
+        android:summary="@string/setting_significantmotion_min_time_applied_summary" />
+
+    <EditTextPreference
+        android:id="@+id/editSigMotionTimeout"
+        android:defaultValue="60"
+        android:dialogMessage="@string/setting_significantmotion_timeout_summary"
+        android:dialogTitle="@string/setting_significantmotion_timeout"
+        android:key="significantmotiontimeout"
+        android:selectAllOnFocus="true"
+        android:persistent="false"
+        android:numeric="integer"
+        android:maxLength="5"
+        android:title="@string/setting_significantmotion_timeout"
+        android:summary="@string/setting_significantmotion_timeout_summary"
+        />
+
+
+    </PreferenceCategory>
 </PreferenceScreen>

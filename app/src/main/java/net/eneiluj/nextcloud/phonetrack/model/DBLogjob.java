@@ -20,10 +20,12 @@ public class DBLogjob implements Item, Serializable {
     private boolean enabled;
     private int nbSync;
     private boolean useSignificantMotion = true;
+    private int locationRequestTimeout;
 
     public DBLogjob(long id, String title, String url, String token, String deviceName,
                     int minTime, int minDistance, int minAccuracy, boolean keepGpsOnBetweenFixes,
-                    boolean useSignificantMotion, boolean post, boolean enabled, int nbSync) {
+                    boolean useSignificantMotion, int timeout, boolean post, boolean enabled,
+                    int nbSync) {
         this.id = id;
         this.title = title;
         this.url = url;
@@ -36,6 +38,7 @@ public class DBLogjob implements Item, Serializable {
         this.enabled = enabled;
         this.keepGpsOnBetweenFixes = keepGpsOnBetweenFixes;
         this.useSignificantMotion = useSignificantMotion;
+        this.locationRequestTimeout = timeout;
         this.nbSync = nbSync;
     }
 
@@ -71,10 +74,16 @@ public class DBLogjob implements Item, Serializable {
         return keepGpsOnBetweenFixes;
     }
 
-    public boolean useSignificantMotion() { return useSignificantMotion; }
-
     public void setKeepGpsOnBetweenFixes(boolean keepGpsOnBetweenFixes) {
         this.keepGpsOnBetweenFixes = keepGpsOnBetweenFixes;
+    }
+
+    public void setUseSignificantMotion(boolean useSignificantMotion) {
+        this.useSignificantMotion = useSignificantMotion;
+    }
+
+    public void setLocationRequestTimeout(int timeout) {
+        this.locationRequestTimeout = timeout;
     }
 
     public boolean setAttrFromLoggingUrl(String loggingUrl) {
@@ -148,6 +157,14 @@ public class DBLogjob implements Item, Serializable {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean useSignificantMotion() {
+        return useSignificantMotion;
+    }
+
+    public int getLocationRequestTimeout() {
+        return locationRequestTimeout;
     }
 
     @Override
