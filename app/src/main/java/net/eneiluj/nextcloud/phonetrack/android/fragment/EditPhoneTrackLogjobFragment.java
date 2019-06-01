@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 //import android.preference.EditTextPreference;
@@ -383,7 +385,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         editDevicename.setSummary(logjob.getDeviceName());
 
         // Setup significant motion option, only show if device supports it
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if (deviceSupportsSignificantMotion()) {
             editUseSignificantMotion = (SwitchPreferenceCompat) this.findPreference("usesignificantmotion");
             editUseSignificantMotion.setChecked(logjob.useSignificantMotion());
 
@@ -547,5 +549,17 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 editURL.setSummary(nextURL);
             }
         }
+    }
+
+
+    /**
+     * Verify if the device supports the significant motion sensor
+     */
+    private boolean deviceSupportsSignificantMotion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
+            return false;
+
+        SensorManager sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        return sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION) != null;
     }
 }
