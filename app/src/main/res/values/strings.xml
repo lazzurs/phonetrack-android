@@ -58,7 +58,6 @@
     <string name="setting_keepgps_title">Keep GPS on between fixes</string>
     <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
     <string name="setting_significantmotion">Significant Motion</string>
-
     <string name="setting_significantmotion_enabled">Enabled</string>
     <string name="setting_significantmotion_title">Only sample after significant motion</string>
     <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before taking next sample. Reduces battery use considerably in some cases. Incompatible with some other options.</string>
@@ -66,8 +65,6 @@
     <string name="setting_significantmotion_min_time_applied_summary">Don\'t record a position every time motion is detected, apply the minimum time between two points. Reduces battery usage.</string>
     <string name="setting_significantmotion_timeout">Location timeout</string>
     <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Reduces battery usage in areas with no coverage. If using both GPS and network this also determines after how long the lower quality network sample will be used. Set to zero to disable timeout.</string>
-
-
     <string name="logjob_title_log_to">Log to %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">myDeviceName</string>

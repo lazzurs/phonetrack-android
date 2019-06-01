@@ -44,6 +44,8 @@ import static android.webkit.URLUtil.isValidUrl;
 //public class EditLogjobFragment extends PreferencesFragment {
 public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
+    private static final String TAG = EditPhoneTrackLogjobFragment.class.getSimpleName();
+
     public static final int MINIMUM_TIME_DEFAULT_STANDARD = 60;
     public static final int MINIMUM_TIME_DEFAULT_SIG_MOTION = 300;
 
@@ -399,6 +401,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
             updateEnabledPreferencesForSignificantMotion(logjob.useSignificantMotion());
         } else {
+            Log.i(TAG, "Device doesn't support significant motion");
             PreferenceCategory significantMotionCategory = (PreferenceCategory) this.findPreference("significantmotioncategory");
             significantMotionCategory.setVisible(false);
         }
