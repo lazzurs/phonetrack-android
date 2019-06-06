@@ -137,6 +137,6 @@ xmlns:tools="http://schemas.android.com/tools"
         android:summary="@string/setting_significantmotion_timeout_summary"
         />
 
-
     </PreferenceCategory>
+
 </PreferenceScreen>

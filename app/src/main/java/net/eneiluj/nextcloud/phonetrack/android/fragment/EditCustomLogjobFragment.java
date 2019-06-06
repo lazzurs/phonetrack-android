@@ -70,10 +70,17 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         String newTitle = getTitle();
         String newURL = getURL();
         boolean newPost = getPost();
-        int newMinTime = getMintime();
+        boolean newUseSignificantMotion = getUseSignificantMotion();
+        int newMinTime = 0;
+        // Store the interval as zero if we're not using it (ie. when sampling with significant motion and
+        // not using an interval)
+        if (!newUseSignificantMotion || getUseSignificantMotionInterval()) {
+            newMinTime = getMintime();
+        }
         int newMinDistance = getMindistance();
         int newMinAccuracy = getMinaccuracy();
-        boolean newKeepGpsOn = getKeepGpsOn();
+        boolean newKeepGpsOn = newUseSignificantMotion ? false : getKeepGpsOn();
+        int newTimeout = getLocationRequestTimeout();
 
         // if this is an existing logjob
         if (logjob.getId() != 0) {
@@ -83,14 +90,16 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                     logjob.getMinTime() == newMinTime &&
                     logjob.keepGpsOnBetweenFixes() == newKeepGpsOn &&
                     logjob.getMinDistance() == newMinDistance &&
-                    logjob.getMinAccuracy() == newMinAccuracy
+                    logjob.getMinAccuracy() == newMinAccuracy &&
+                    logjob.useSignificantMotion() == newUseSignificantMotion &&
+                    logjob.getLocationRequestTimeout() == newTimeout
                     ) {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
                 System.out.println("====== update logjob");
                 logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "",
-                        newPost, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, false,
-                        0, callback);
+                        newPost, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
+                        newUseSignificantMotion, newTimeout, callback);
                 notifyLoggerService(logjob.getId());
                 //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
                 //listener.onLogjobUpdated(logjob);
@@ -99,8 +108,8 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         // this is a new logjob
         else {
             DBLogjob newLogjob = new DBLogjob(0, newTitle, newURL, "", "",
-                    newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, false,
-                    0, newPost, false, 0);
+                    newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
+                    newUseSignificantMotion, newTimeout, newPost, false, 0);
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
         }

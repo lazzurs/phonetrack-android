@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +23,8 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.SwitchPreferenceCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.ShareActionProvider;
@@ -54,10 +58,15 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         void onLogjobUpdated(DBLogjob logjob);
     }
 
+    private static final String TAG = EditLogjobFragment.class.getSimpleName();
+
     public static final String PARAM_LOGJOB_ID = "logjobId";
     public static final String PARAM_NEWLOGJOB = "newLogjob";
     private static final String SAVEDKEY_LOGJOB = "logjob";
     private static final String SAVEDKEY_ORIGINAL_LOGJOB = "original_logjob";
+
+    public static final int MINIMUM_TIME_DEFAULT_STANDARD = 60;
+    public static final int MINIMUM_TIME_DEFAULT_SIG_MOTION = 300;
 
     protected DBLogjob logjob;
     //@Nullable
@@ -81,6 +90,9 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     protected EditTextPreference editMindistance;
     protected EditTextPreference editMinaccuracy;
     protected CheckBoxPreference editKeepGpsOn;
+    protected SwitchPreferenceCompat editUseSignificantMotion;
+    protected SwitchPreferenceCompat editUseSignificantMotionInterval;
+    protected androidx.preference.EditTextPreference editLocationRequestTimeout;
 
     private DialogInterface.OnClickListener deleteDialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
@@ -253,6 +265,28 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             }
         });
 
+        Preference significantMotionPref = findPreference("usesignificantmotion");
+        significantMotionPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                updateEnabledPreferencesForSignificantMotion((Boolean) newValue);
+                return true;
+            }
+        });
+
+        Preference significantMotionUseIntervalPref = findPreference("significantmotioninterval");
+        significantMotionUseIntervalPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                updateEnabledPreferencesForSignificantMotion(getUseSignificantMotion(), (Boolean) newValue);
+                return true;
+            }
+        });
+
         // delete confirmation
         deleteDialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -356,6 +390,12 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
                 else if (getMinaccuracy() < 1) {
                     showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
                 }
+                else if (getUseSignificantMotion() && getMintime() < 30) {
+                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+                }
+                else if (!getUseSignificantMotion() && getMintime() < 1) {
+                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+                }
                 else {
                     saveLogjob(null);
                     listener.close();
@@ -437,6 +477,26 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
         editKeepGpsOn = (CheckBoxPreference) this.findPreference("keepgpson");
         editKeepGpsOn.setChecked(logjob.keepGpsOnBetweenFixes());
+
+        // Setup significant motion option, only show if device supports it
+        if (deviceSupportsSignificantMotion()) {
+            editUseSignificantMotion = (SwitchPreferenceCompat) this.findPreference("usesignificantmotion");
+            editUseSignificantMotion.setChecked(logjob.useSignificantMotion());
+
+            editUseSignificantMotionInterval = (SwitchPreferenceCompat) this.findPreference("significantmotioninterval");
+            editUseSignificantMotionInterval.setChecked(logjob.getMinTime() > 0);
+
+            editLocationRequestTimeout = (androidx.preference.EditTextPreference) this.findPreference("significantmotiontimeout");
+            String timeoutVal = String.valueOf(logjob.getLocationRequestTimeout());
+            editLocationRequestTimeout.setText(timeoutVal);
+            editLocationRequestTimeout.setSummary(timeoutVal);
+
+            updateEnabledPreferencesForSignificantMotion(logjob.useSignificantMotion());
+        } else {
+            Log.i(TAG, "Device doesn't support significant motion");
+            PreferenceCategory significantMotionCategory = (PreferenceCategory) this.findPreference("significantmotioncategory");
+            significantMotionCategory.setVisible(false);
+        }
     }
 
     protected String getTitle() {
@@ -468,9 +528,52 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         return editKeepGpsOn.isChecked();
     }
 
+    protected boolean getUseSignificantMotion() {
+        return editUseSignificantMotion.isChecked();
+    }
+
+    protected boolean getUseSignificantMotionInterval() {
+        return editUseSignificantMotionInterval.isChecked();
+    }
+
+    protected int getLocationRequestTimeout() {
+        return Integer.parseInt(editLocationRequestTimeout.getText());
+    }
+
     protected void showToast(CharSequence text, int duration) {
         Context context = getActivity();
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
+    }
+
+    private void updateEnabledPreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval) {
+        editMinaccuracy.setEnabled(!sigMotionEnabled);
+        editMindistance.setEnabled(!sigMotionEnabled);
+        editMintime.setEnabled(useInterval);
+        editKeepGpsOn.setEnabled(!sigMotionEnabled);
+        editLocationRequestTimeout.setEnabled(sigMotionEnabled);
+        editUseSignificantMotionInterval.setEnabled(sigMotionEnabled);
+
+        // If changing significant motion setting update default value for minimum time
+        if (sigMotionEnabled != getUseSignificantMotion()) {
+            String newValue = Integer.toString(sigMotionEnabled ? MINIMUM_TIME_DEFAULT_SIG_MOTION : MINIMUM_TIME_DEFAULT_STANDARD);
+            editMintime.setText(newValue);
+            editMintime.setSummary(newValue);
+        }
+    }
+
+    private void updateEnabledPreferencesForSignificantMotion(boolean sigMotionEnabled) {
+        updateEnabledPreferencesForSignificantMotion(sigMotionEnabled, getUseSignificantMotionInterval());
+    }
+
+    /**
+     * Verify if the device supports the significant motion sensor
+     */
+    private boolean deviceSupportsSignificantMotion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
+            return false;
+
+        SensorManager sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        return sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION) != null;
     }
 }
