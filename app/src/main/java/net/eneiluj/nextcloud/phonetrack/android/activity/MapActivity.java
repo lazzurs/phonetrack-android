@@ -13,8 +13,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -68,6 +70,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
@@ -120,7 +123,7 @@ public class MapActivity extends AppCompatActivity {
 
     private Map<String, ColoredLocation> locations;
     private Map<String, Marker> markers;
-    private Map<String, Integer> colors;
+    private Map<String, CustomLocationMarkerDrawable> markerDrawables;
 
     private DBSession session;
     private PhoneTrackSQLiteOpenHelper db;
@@ -189,8 +192,8 @@ public class MapActivity extends AppCompatActivity {
 
 
         markers = new HashMap<>();
-        colors = new HashMap<>();
         locations = new HashMap<>();
+        markerDrawables = new HashMap<>();
         selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
 
         //load/initialize the osmdroid configuration, this can be done
@@ -673,36 +676,6 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    public BitmapDrawable writeOnDrawable(int drawableId, String text, int markerColor, int textColorId){
-
-        Bitmap bm = BitmapFactory.decodeResource(ctx.getResources(), drawableId).copy(Bitmap.Config.ARGB_8888, true);
-        bm = Bitmap.createScaledBitmap(bm, 70, 70, true);
-
-        Canvas canvas = new Canvas(bm);
-        Paint paintCol = new Paint();
-
-        ColorFilter filter = new PorterDuffColorFilter(
-                markerColor,
-                PorterDuff.Mode.SRC_IN
-        );
-        paintCol.setColorFilter(filter);
-
-        canvas.drawBitmap(bm, 0, 0, paintCol);
-
-        Paint paint = new Paint();
-
-        paint.setStyle(Paint.Style.FILL);
-        //paint.setColor(Color.BLACK);
-        paint.setColor(ContextCompat.getColor(ctx, textColorId));
-        paint.setTextSize(35);
-        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        float textWidth = paint.measureText(text);
-
-        canvas.drawText(text, bm.getWidth()/2 - textWidth/2, bm.getHeight()/2, paint);
-
-        return new BitmapDrawable(ctx.getResources(), bm);
-    }
-
     private Timer timer;
     private TimerTask timerTask;
 
@@ -738,14 +711,17 @@ public class MapActivity extends AppCompatActivity {
             for (String devName : newLocations.keySet()) {
                 Log.i(TAG, "Results : "+devName+" | "+newLocations.get(devName));
                 ColoredLocation loc = newLocations.get(devName);
+                CustomLocationMarkerDrawable markerDrawable;
                 // marker already exists, check if color needs to be updated
                 if (markers.containsKey(devName)) {
+                    markerDrawable = markerDrawables.get(devName);
+
                     String colorStr = loc.getColor();
                     if (colorStr != null) {
                         int newColor = Color.parseColor(colorStr);
-                        Marker m = markers.get(devName);
-                        int currentColor = colors.get(devName);
-                        if (newColor != currentColor) {
+                        int currentColor = markerDrawable.getColor();
+                        Double currentAccuracy = markerDrawable.getAccuracy();
+                        if (newColor != currentColor || currentAccuracy != loc.getAccuracy()) {
                             int textColor;
                             if (ThemeUtils.isBrightColor(newColor)) {
                                 textColor = android.R.color.black;
@@ -753,8 +729,7 @@ public class MapActivity extends AppCompatActivity {
                             else {
                                 textColor = android.R.color.white;
                             }
-                            BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), newColor, textColor);
-                            m.setIcon(bmd);
+                            markerDrawable.update(newColor, textColor, loc.getAccuracy());
                         }
                     }
                 }
@@ -776,12 +751,14 @@ public class MapActivity extends AppCompatActivity {
                     else {
                         textColor = android.R.color.white;
                     }
-                    BitmapDrawable bmd = writeOnDrawable(R.mipmap.ic_marker, devName.substring(0, 1), color, textColor);
-                    m.setIcon(bmd);
+                    markerDrawable = new CustomLocationMarkerDrawable(R.mipmap.ic_marker, devName.substring(0, 1), color, textColor, loc.getAccuracy());
+                    m.setIcon(markerDrawable);
+
                     map.getOverlays().add(m);
                     markers.put(devName, m);
-                    colors.put(devName, color);
+                    markerDrawables.put(devName, markerDrawable);
                 }
+
                 // always update location data
                 locations.put(devName, loc);
                 Marker m = markers.get(devName);
@@ -822,6 +799,7 @@ public class MapActivity extends AppCompatActivity {
                 map.getOverlays().remove(markers.get(devToDel));
                 markers.remove(devToDel);
                 locations.remove(devToDel);
+                markerDrawables.remove(devToDel);
             }
 
             map.invalidate();
@@ -1014,5 +992,149 @@ public class MapActivity extends AppCompatActivity {
             Collections.addAll(ret, files);
         }
         return ret;
+    }
+
+    /**
+     * Marker drawable icon with accuracy
+     */
+    private class CustomLocationMarkerDrawable extends Drawable  {
+        // Cached values
+        final String mLetter;
+        final int mDrawableId;
+        private Double mAccuracy;
+        private int mColor;
+
+        // Main part of the icon, which is only regenerated on colour change
+        private Bitmap mBitmap;
+
+        private final Paint mPaint;
+        private final Paint mAccuracyPaint;
+        private final Paint mAccuracyBorderPaint;
+
+        /**
+         * Constructor
+         * @param drawableId Drawable identifier for the icon resource
+         * @param text Letter to place on the marker
+         * @param markerColor Primary color
+         * @param textColorId Text color
+         * @param accuracy Location accuracy
+         */
+        public CustomLocationMarkerDrawable(int drawableId, String text, int markerColor, int textColorId, Double accuracy) {
+            // Cache values
+            mLetter = text;
+            mDrawableId = drawableId;
+
+            // Create paints
+            mPaint = new Paint();
+            mAccuracyPaint = new Paint();
+            mAccuracyBorderPaint = new Paint();
+
+            // Initialize icon and accuracy paints
+            update(markerColor, textColorId, accuracy);
+        }
+
+        /**
+         * Update for changed color or accuracy
+         * @param markerColor Primary color
+         * @param textColorId Text color
+         * @param accuracy Location accuracy
+         */
+        public void update(int markerColor, int textColorId, Double accuracy) {
+            mBitmap = BitmapFactory.decodeResource(ctx.getResources(), mDrawableId).copy(Bitmap.Config.ARGB_8888, true);
+            mBitmap = Bitmap.createScaledBitmap(mBitmap, 70, 70, true);
+
+            // Cache for use updating accuracy circle
+            mColor = markerColor;
+
+            Canvas canvas = new Canvas(mBitmap);
+            Paint paintCol = new Paint();
+
+            ColorFilter filter = new PorterDuffColorFilter(
+                    markerColor,
+                    PorterDuff.Mode.SRC_IN
+            );
+            paintCol.setColorFilter(filter);
+
+            canvas.drawBitmap(mBitmap, 0, 0, paintCol);
+
+            Paint paint = new Paint();
+
+            paint.setStyle(Paint.Style.FILL);
+            //paint.setColor(Color.BLACK);
+            paint.setColor(ContextCompat.getColor(ctx, textColorId));
+            paint.setTextSize(35);
+            paint.setAntiAlias(true);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            float textWidth = paint.measureText(mLetter);
+
+            canvas.drawText(mLetter, mBitmap.getWidth()/2 - textWidth/2, mBitmap.getHeight()/2, paint);
+
+            // Store accuracy
+            mAccuracy = accuracy;
+
+            // Create accuracy paints for updated color
+            mAccuracyPaint.setAntiAlias(false);
+            mAccuracyPaint.setStyle(Paint.Style.FILL);
+            mAccuracyPaint.setColor(mColor);
+            mAccuracyPaint.setAlpha(45);
+
+            mAccuracyBorderPaint.setAntiAlias(true);
+            mAccuracyBorderPaint.setStyle(Paint.Style.STROKE);
+            mAccuracyBorderPaint.setColor(mColor);
+            mAccuracyBorderPaint.setAlpha(180);
+        }
+
+        public Double getAccuracy() {
+            return mAccuracy;
+        }
+
+        public int getColor() {
+            return mColor;
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            final Rect bounds = getBounds();
+
+            // Draw accuracy, if we have one
+            if (mAccuracy != null) {
+                final float accuracyRadius = map.getProjection().metersToPixels(mAccuracy.floatValue());
+
+                // Avoid drawing if it's going to be very small
+                if (accuracyRadius > 15) {
+                    canvas.drawCircle(bounds.centerX(), bounds.centerY()+getIntrinsicHeight()/2, accuracyRadius, mAccuracyPaint);
+                    canvas.drawCircle(bounds.centerX(), bounds.centerY()+getIntrinsicHeight()/2, accuracyRadius, mAccuracyBorderPaint);
+                }
+            }
+
+            // Draw main icon
+            canvas.drawBitmap(mBitmap, bounds.centerX() - mBitmap.getWidth()/2, bounds.centerY() + mBitmap.getHeight()/2 - mBitmap.getHeight(), mPaint);
+
+            // Debug marker
+            // canvas.drawCircle(bounds.centerX(), bounds.centerY() + getIntrinsicHeight()/2, 5, mPaint);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.OPAQUE;
+        }
+
+        @Override
+        public void setAlpha(int arg0) {
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter arg0) {
+        }
+
+        @Override
+        public int getIntrinsicWidth() {
+            return mBitmap.getWidth();
+        }
+
+        @Override
+        public int getIntrinsicHeight() {
+            return mBitmap.getHeight();
+        }
     }
 }

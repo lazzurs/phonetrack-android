@@ -75,7 +75,7 @@
     <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
     <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
     <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Total distance\n%.2fm</string>
+    <string name="logjob_info_distance">Total distance\n%s</string>
     <string name="logjob_info_duration">Total duration\n%s</string>
     <string name="logjob_info_nbpoints">Number of points\n%d</string>
     <string name="reset_current_run">Reset statistics</string>

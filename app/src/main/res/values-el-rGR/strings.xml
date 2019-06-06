@@ -67,7 +67,7 @@
     <string name="logjob_info_lastloc">Τελευταία τοποθεσία ανακτήθηκε πριν\n%s στις\n%s</string>
     <string name="logjob_info_lastsync">Τελευταίος επιτυχής συγχρονισμός πριν\n%s στις\n%s</string>
     <string name="logjob_info_lastsync_error">Τελευταίο σφάλμα συγχρονισμού πριν\n%s στις\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Συνολική απόσταση\n%.2fm</string>
+    <string name="logjob_info_distance">Total distance\n%s</string>
     <string name="logjob_info_duration">Συνολική διάρκεια\n%s</string>
     <string name="logjob_info_nbpoints">Αριθμός σημείων\n%d</string>
     <string name="reset_current_run">Επαναφορά στατιστικών</string>

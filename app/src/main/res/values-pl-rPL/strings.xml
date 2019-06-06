@@ -67,7 +67,7 @@
     <string name="logjob_info_lastloc">Ostatnia lokalizacja nabyta\n%s temu w\n%s</string>
     <string name="logjob_info_lastsync">Ostatnia pomyślna synchronizacja\n%s temu w\n%s</string>
     <string name="logjob_info_lastsync_error">Ostatni błąd synchronizacji\n%s temu w\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Całkowita odległość\n%.2fm</string>
+    <string name="logjob_info_distance">Total distance\n%s</string>
     <string name="logjob_info_duration">Całkowity czas trwania\n%s</string>
     <string name="logjob_info_nbpoints">Ilość punktów\n%d</string>
     <string name="reset_current_run">Resetuj statystyki</string>
