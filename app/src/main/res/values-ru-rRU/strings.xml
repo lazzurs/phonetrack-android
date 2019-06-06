@@ -59,7 +59,7 @@
     <string name="setting_keepgps_summary">Это позволит получить более точную позицию, но сократит время жизни батареи. Используйте когда минимальное время меньше 60 секунд.</string>
     <string name="logjob_title_log_to">Запись в %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
-    <string name="default_device_name">myDeviceName</string>
+    <string name="default_device_name">имяУстройства</string>
     <string name="default_session_token">supertoken</string>
     <string name="logjob_info_dialog_title">О %s</string>
     <string name="logjob_info_nbsync">%d положений передано</string>
@@ -67,7 +67,7 @@
     <string name="logjob_info_lastloc">Последнее местоположение получено\n%s назад в\n%s</string>
     <string name="logjob_info_lastsync">Последняя успешная синхронизация \n%s тому назад в\n%s</string>
     <string name="logjob_info_lastsync_error">Ошибка при синхронизации\n%s тому назад в\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Общее расстояние\n%.2fm</string>
+    <string name="logjob_info_distance">Total distance\n%s</string>
     <string name="logjob_info_duration">Общее время\n%s</string>
     <string name="logjob_info_nbpoints">Количество точек\n%d</string>
     <string name="reset_current_run">Сброс статистики</string>
@@ -103,8 +103,8 @@
     <string name="settings_submit">Подключится</string>
     <string name="settings_submitting">Подключение &#8230;</string>
     <string name="settings_theme_title">Тема</string>
-    <string name="settings_notification_importance_title">Low notification importance</string>
-    <string name="settings_notification_importance_subtitle">Reduce logging notification importance</string>
+    <string name="settings_notification_importance_title">Низкая важность уведомления</string>
+    <string name="settings_notification_importance_subtitle">Уменьшить важность сообщений журнала</string>
     <string name="settings_reset_stats">Reset stats on logjob activation</string>
     <string name="settings_reset_stats_subtitle">Reset statistics in logjob information dialog when logjob is activated</string>
     <string name="settings_providers_title">Поставщик местоположения</string>

@@ -78,6 +78,8 @@ import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
+import static net.eneiluj.nextcloud.phonetrack.util.SupportUtil.formatDistance;
+
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
     private final static int PERMISSION_LOCATION = 1;
@@ -1084,7 +1086,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 iView.findViewById(R.id.infoNbPointsLayout).setVisibility(View.GONE);
             }
             if (totDistance != 0.0) {
-                String totDistanceText = view.getContext().getString(R.string.logjob_info_distance, totDistance);
+                String formattedDistance = formatDistance(totDistance, view.getContext());
+                String totDistanceText = view.getContext().getString(R.string.logjob_info_distance, formattedDistance);
 
                 TextView tv3 = iView.findViewById(R.id.infoDistanceText);
                 tv3.setText(totDistanceText);

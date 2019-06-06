@@ -67,7 +67,7 @@
     <string name="logjob_info_lastloc">Dernière position acquise\nil y a %s à\n%s</string>
     <string name="logjob_info_lastsync">Dernière synchronisation de position réussie\nil y a %s à\n%s</string>
     <string name="logjob_info_lastsync_error">Dernière erreur de synchronisation\nil y a %s à\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Distance totale\n%.2fm</string>
+    <string name="logjob_info_distance">Distance totale\n%s</string>
     <string name="logjob_info_duration">Durée totale\n%s</string>
     <string name="logjob_info_nbpoints">Nombre de points\n%d</string>
     <string name="reset_current_run">Réinitialiser les statistiques</string>

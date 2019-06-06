@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -155,5 +156,18 @@ public class SupportUtil {
                     absSeconds % 60);
         }
         return seconds < 0 ? "-" + positive : positive;
+    }
+
+    public static String formatDistance(double meters, Context context) {
+        String result;
+        DecimalFormat df2 = new DecimalFormat( "#,###,###,##0.00" );
+
+        if (meters < 1000) {
+            result = df2.format(meters) + "m";
+        }
+        else {
+            result = df2.format(meters/1000) + "km";
+        }
+        return result;
     }
 }

@@ -67,7 +67,7 @@
     <string name="logjob_info_lastloc">Letzter Standort erfasst vor \n%s bei\n%s</string>
     <string name="logjob_info_lastsync">Letzte erfolgreiche Synchronisation vor \n%s bei \n%s</string>
     <string name="logjob_info_lastsync_error">Letzter Synchronisierungsfehler vor \n%s bei\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Gesamtstrecke\n%.2fm</string>
+    <string name="logjob_info_distance">Total distance\n%s</string>
     <string name="logjob_info_duration">Gesamtdauer\n%s</string>
     <string name="logjob_info_nbpoints">Anzahl der Datenpunkte\n%d</string>
     <string name="reset_current_run">Statistiken zurücksetzen</string>
