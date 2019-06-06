@@ -57,8 +57,7 @@
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters)</string>
     <string name="setting_keepgps_title">Keep GPS on between fixes</string>
     <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
-    <string name="setting_significantmotion">Significant Motion</string>
-    <string name="setting_significantmotion_enabled">Enabled</string>
+    <string name="setting_significantmotion_enabled">Significant motion mode</string>
     <string name="setting_significantmotion_title">Only sample after significant motion</string>
     <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before taking next sample. Reduces battery use considerably in some cases. Incompatible with some other options.</string>
     <string name="setting_significantmotion_min_time_applied">Apply minimum time</string>

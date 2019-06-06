@@ -23,7 +23,6 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.preference.PreferenceCategory;
 import androidx.preference.SwitchPreferenceCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
@@ -271,7 +270,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                updateEnabledPreferencesForSignificantMotion((Boolean) newValue);
+                updateVisiblePreferencesForSignificantMotion((Boolean) newValue);
                 return true;
             }
         });
@@ -282,7 +281,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                updateEnabledPreferencesForSignificantMotion(getUseSignificantMotion(), (Boolean) newValue);
+                updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), (Boolean) newValue);
                 return true;
             }
         });
@@ -491,11 +490,12 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             editLocationRequestTimeout.setText(timeoutVal);
             editLocationRequestTimeout.setSummary(timeoutVal);
 
-            updateEnabledPreferencesForSignificantMotion(logjob.useSignificantMotion());
+            updateVisiblePreferencesForSignificantMotion(logjob.useSignificantMotion());
         } else {
             Log.i(TAG, "Device doesn't support significant motion");
-            PreferenceCategory significantMotionCategory = (PreferenceCategory) this.findPreference("significantmotioncategory");
-            significantMotionCategory.setVisible(false);
+            editUseSignificantMotion.setVisible(false);
+            editUseSignificantMotionInterval.setVisible(false);
+            editLocationRequestTimeout.setVisible(false);
         }
     }
 
@@ -546,13 +546,13 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         toast.show();
     }
 
-    private void updateEnabledPreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval) {
-        editMinaccuracy.setEnabled(!sigMotionEnabled);
-        editMindistance.setEnabled(!sigMotionEnabled);
-        editMintime.setEnabled(useInterval);
-        editKeepGpsOn.setEnabled(!sigMotionEnabled);
-        editLocationRequestTimeout.setEnabled(sigMotionEnabled);
-        editUseSignificantMotionInterval.setEnabled(sigMotionEnabled);
+    private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval) {
+        editMinaccuracy.setVisible(!sigMotionEnabled);
+        editMindistance.setVisible(!sigMotionEnabled);
+        editMintime.setVisible(useInterval);
+        editKeepGpsOn.setVisible(!sigMotionEnabled);
+        editLocationRequestTimeout.setVisible(sigMotionEnabled);
+        editUseSignificantMotionInterval.setVisible(sigMotionEnabled);
 
         // If changing significant motion setting update default value for minimum time
         if (sigMotionEnabled != getUseSignificantMotion()) {
@@ -562,8 +562,8 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         }
     }
 
-    private void updateEnabledPreferencesForSignificantMotion(boolean sigMotionEnabled) {
-        updateEnabledPreferencesForSignificantMotion(sigMotionEnabled, getUseSignificantMotionInterval());
+    private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled) {
+        updateVisiblePreferencesForSignificantMotion(sigMotionEnabled, getUseSignificantMotionInterval());
     }
 
     /**

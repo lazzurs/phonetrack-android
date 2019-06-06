@@ -61,6 +61,11 @@ xmlns:tools="http://schemas.android.com/tools"
         android:summary=""
         android:title="@string/setting_devicename" />
 
+    <SwitchPreferenceCompat
+        android:key="usesignificantmotion"
+        android:title="@string/setting_significantmotion_enabled"
+        android:summary="@string/setting_significantmotion_summary" />
+
     <EditTextPreference
         android:id="@+id/editMinDistance"
         android:defaultValue="5"
@@ -74,6 +79,11 @@ xmlns:tools="http://schemas.android.com/tools"
         android:numeric="integer"
         android:maxLength="4"
         android:title="@string/setting_min_distance" />
+
+    <SwitchPreferenceCompat
+        android:key="significantmotioninterval"
+        android:title="@string/setting_significantmotion_min_time_applied"
+        android:summary="@string/setting_significantmotion_min_time_applied_summary" />
 
     <EditTextPreference
         android:id="@+id/editMinTime"
@@ -109,20 +119,6 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_keepgps_title"
         android:summary="@string/setting_keepgps_summary" />
 
-    <PreferenceCategory
-        android:key="significantmotioncategory"
-        android:title="@string/setting_significantmotion">
-
-    <SwitchPreferenceCompat
-        android:key="usesignificantmotion"
-        android:title="@string/setting_significantmotion_enabled"
-        android:summary="@string/setting_significantmotion_summary" />
-
-    <SwitchPreferenceCompat
-        android:key="significantmotioninterval"
-        android:title="@string/setting_significantmotion_min_time_applied"
-        android:summary="@string/setting_significantmotion_min_time_applied_summary" />
-
     <EditTextPreference
         android:id="@+id/editSigMotionTimeout"
         android:defaultValue="60"
@@ -136,7 +132,5 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_significantmotion_timeout"
         android:summary="@string/setting_significantmotion_timeout_summary"
         />
-
-    </PreferenceCategory>
 
 </PreferenceScreen>
