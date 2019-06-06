@@ -477,15 +477,15 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         editKeepGpsOn = (CheckBoxPreference) this.findPreference("keepgpson");
         editKeepGpsOn.setChecked(logjob.keepGpsOnBetweenFixes());
 
+        editUseSignificantMotion = (SwitchPreferenceCompat) this.findPreference("usesignificantmotion");
+        editUseSignificantMotionInterval = (SwitchPreferenceCompat) this.findPreference("significantmotioninterval");
+        editLocationRequestTimeout = (androidx.preference.EditTextPreference) this.findPreference("significantmotiontimeout");
+
         // Setup significant motion option, only show if device supports it
         if (deviceSupportsSignificantMotion()) {
-            editUseSignificantMotion = (SwitchPreferenceCompat) this.findPreference("usesignificantmotion");
             editUseSignificantMotion.setChecked(logjob.useSignificantMotion());
-
-            editUseSignificantMotionInterval = (SwitchPreferenceCompat) this.findPreference("significantmotioninterval");
             editUseSignificantMotionInterval.setChecked(logjob.getMinTime() > 0);
 
-            editLocationRequestTimeout = (androidx.preference.EditTextPreference) this.findPreference("significantmotiontimeout");
             String timeoutVal = String.valueOf(logjob.getLocationRequestTimeout());
             editLocationRequestTimeout.setText(timeoutVal);
             editLocationRequestTimeout.setSummary(timeoutVal);
