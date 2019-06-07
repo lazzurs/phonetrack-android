@@ -949,6 +949,10 @@ public class LoggerService extends Service {
                 public void run() {
                     if (mMotionDetected) {
                         Log.d(TAG, "Significant motion detected during delay, recording point");
+
+                        // Assists with ensuring we don't end up with two interval sequences running for one job
+                        mIntervalRunnable = null;
+
                         requestLocationUpdates(mJobId);
                     } else {
                         Log.d(TAG, "No significant motion, not recording point");
@@ -1060,7 +1064,7 @@ public class LoggerService extends Service {
                 // If we're interval-based and there is a runnable waiting for the next interval we know we haven't
                 // already requested a location. This checks helps us prevent having two sampling sequences running
                 // for the same job.
-                if (mUseInterval && mIntervalHandler != null) {
+                if (mUseInterval && mIntervalRunnable != null) {
                     // Stop waiting runnable
                     mIntervalHandler.removeCallbacks(mIntervalRunnable);
                     mIntervalRunnable = null;
