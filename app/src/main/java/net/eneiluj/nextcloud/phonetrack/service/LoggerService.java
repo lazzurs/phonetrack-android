@@ -958,6 +958,10 @@ public class LoggerService extends Service {
                 }
             };
 
+            // Ensure significant motion notifications are enabled
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+                mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
+
             // Create and post
             mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
         }
