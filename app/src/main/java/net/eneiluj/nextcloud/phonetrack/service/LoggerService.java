@@ -931,13 +931,8 @@ public class LoggerService extends Service {
                     }
 
                     // Schedule sample for X seconds from last sample
-                    if (mUseInterval) {
-                        long delayMillis = mIntervalTimeMillis;
-                        if (mLastUpdateRealtime != null) {
-                            delayMillis -= SystemClock.elapsedRealtime() - mLastUpdateRealtime;
-                        }
-                        scheduleSampleAfterInterval(delayMillis);
-                    }
+                    if (mUseInterval)
+                        scheduleSampleAfterInterval(mIntervalTimeMillis);
                 }
             };
             return runnable;
