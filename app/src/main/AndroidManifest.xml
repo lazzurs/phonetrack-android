@@ -16,6 +16,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- For SSO account import -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <!-- For SMS logjob activation -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <!-- Needed if app targets API >= 21 -->
     <uses-feature android:name="android.hardware.location.gps" />
@@ -143,6 +145,15 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="net.eneiluj.nextcloud.phonetrack.service.SmsListener"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 

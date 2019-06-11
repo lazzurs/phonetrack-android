@@ -61,6 +61,25 @@
         android:title="@string/settings_reset_stats"
         android:summary="@string/settings_reset_stats_subtitle" />
 
+    <CheckBoxPreference
+        android:icon="@drawable/ic_sync_grey_24dp"
+        android:key="@string/pref_key_sms"
+        android:title="@string/settings_sms"
+        android:summary="@string/settings_sms_subtitle" />
+
+    <EditTextPreference
+        android:id="@+id/editSmsKeyword"
+        android:defaultValue="phonetrack"
+        android:icon="@drawable/ic_title_grey_24dp"
+        android:dialogMessage="@string/settings_sms_keyword_long"
+        android:dialogTitle="@string/settings_sms_keyword_title"
+        android:key="@string/pref_key_sms_keyword"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:persistent="true"
+        android:summary="phonetrack"
+        android:title="@string/settings_sms_keyword_title" />
+
     <PreferenceScreen
         android:key="@string/pref_key_certs"
         android:persistent="false"

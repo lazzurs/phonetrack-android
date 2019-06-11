@@ -1,29 +1,43 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.Manifest;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.PreferenceManager;
 
+import android.util.Log;
 import android.view.Window;
 
+import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
+
+import java.security.Permission;
 
 /**
  * Allows to change application settings.
  */
 
 public class PreferencesActivity extends AppCompatActivity {
+
+    private static final String TAG = PreferencesActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setResult(RESULT_CANCELED);
         getSupportFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new PreferencesFragment())
+                .replace(android.R.id.content, new PreferencesFragment(), "preftag")
                 .commit();
         setupActionBar();
     }
@@ -49,6 +63,31 @@ public class PreferencesActivity extends AppCompatActivity {
                 int colorDark = ThemeUtils.primaryDarkColor(this);
                 window.setStatusBarColor(colorDark);
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PreferencesFragment.PERMISSION_SMS:
+                if (grantResults.length > 0) {
+                    Log.d(TAG, "[permission result] "+grantResults[0]);
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    }
+                    else {
+                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putBoolean(getString(R.string.pref_key_sms), false);
+                        editor.apply();
+
+                        PreferencesFragment frag = ((PreferencesFragment) getSupportFragmentManager().findFragmentByTag("preftag"));
+                        if (frag != null) {
+                            frag.disableSms();
+                        }
+                    }
+                }
+                break;
         }
     }
 }

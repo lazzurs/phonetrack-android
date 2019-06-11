@@ -119,6 +119,10 @@
     <string name="settings_notification_importance_subtitle">Reduce logging notification importance</string>
     <string name="settings_reset_stats">Reset stats on logjob activation</string>
     <string name="settings_reset_stats_subtitle">Reset statistics in logjob information dialog when logjob is activated</string>
+    <string name="settings_sms">Listen to SMS</string>
+    <string name="settings_sms_subtitle">Well well</string>
+    <string name="settings_sms_keyword_title">SMS keyword to react to</string>
+    <string name="settings_sms_keyword_long">When the phone will receive an SMS with this keyword as content...</string>
     <string name="settings_providers_title">Location providers</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Network</string>
@@ -194,6 +198,7 @@
     <string name="error_invalid_mindistance">Invalid minimum distance</string>
     <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
     <string name="error_invalid_timeout">Invalid timeout</string>
+    <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
 
     <!-- Snackbar Actions -->
 
@@ -240,6 +245,8 @@
     <string name="pref_key_reset_trust" translatable="false">resetTrust</string>
     <string name="pref_key_theme" translatable="false">darkTheme</string>
     <string name="pref_key_color" translatable="false">appColor</string>
+    <string name="pref_key_sms" translatable="false">listenSMS</string>
+    <string name="pref_key_sms_keyword" translatable="false">SMSkeyword</string>
     <string name="pref_key_autostart" translatable="false">autostart</string>
     <string name="pref_key_shownbsynced" translatable="false">shownbsynced</string>
     <string name="pref_value_theme_light">Light</string>

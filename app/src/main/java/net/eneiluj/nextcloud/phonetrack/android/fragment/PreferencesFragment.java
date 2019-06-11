@@ -1,14 +1,22 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 //import android.preference.Preference;
 //import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 //import android.preference.PreferenceFragment;
@@ -22,6 +30,8 @@ import androidx.preference.SwitchPreferenceCompat;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -33,6 +43,7 @@ import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import at.bitfire.cert4android.CustomCertManager;
 import net.eneiluj.nextcloud.phonetrack.R;
 
+import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
@@ -43,6 +54,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
 
     public final static String UPDATED_PROVIDERS = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS";
     public final static String UPDATED_PROVIDERS_VALUE = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
+
+    public final static int PERMISSION_SMS = 3;
+
+    private static final String TAG = PreferencesFragment.class.getSimpleName();
 
     private List<String> providersList;
 
@@ -116,6 +131,57 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             }
         });
 
+        final EditTextPreference smsKeywordPref = (EditTextPreference) findPreference(getString(R.string.pref_key_sms_keyword));
+        String keyword = sp.getString(getString(R.string.pref_key_sms_keyword), "phonetrack");
+        smsKeywordPref.setSummary(keyword);
+        smsKeywordPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                String newValueString = (String) newValue;
+                if (newValueString == null || newValueString.equals("")) {
+                    showToast(getString(R.string.error_invalid_sms_keyword), Toast.LENGTH_LONG);
+                    return false;
+                }
+                else {
+                    preference.setSummary((CharSequence) newValue);
+                    return true;
+                }
+            }
+
+        });
+        final CheckBoxPreference smsPref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_sms));
+        smsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean listenToSms = (Boolean) newValue;
+                if (listenToSms) {
+                    if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
+                            != PackageManager.PERMISSION_GRANTED) {
+
+                        if (LoggerService.DEBUG) {
+                            Log.d(TAG, "[request receive sms permission]");
+                        }
+                        ActivityCompat.requestPermissions(
+                                getActivity(),
+                                new String[]{Manifest.permission.RECEIVE_SMS},
+                                PERMISSION_SMS
+                        );
+                    }
+                    smsKeywordPref.setVisible(true);
+                }
+                else {
+                    smsKeywordPref.setVisible(false);
+                }
+                return true;
+            }
+        });
+
+        if (!smsPref.isChecked()) {
+            smsKeywordPref.setVisible(false);
+        }
+
         ListPreference providersListPref = (ListPreference) providersPref;
         providersList = new ArrayList<>();
         providersList.add(getString(R.string.providers_gps));
@@ -175,5 +241,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 })
                 .setNegativeButton(getString(R.string.simple_cancel), null)
                 .show();
+    }
+    public void disableSms() {
+        final CheckBoxPreference smsPref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_sms));
+        smsPref.setChecked(false);
+    }
+
+    protected void showToast(CharSequence text, int duration) {
+        Context context = getActivity();
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 }
