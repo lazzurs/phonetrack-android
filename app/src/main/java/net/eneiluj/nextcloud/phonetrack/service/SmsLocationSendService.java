@@ -67,6 +67,8 @@ public class SmsLocationSendService extends IntentService {
     private SmsLocationSendService.LocationThread thread;
     private Looper looper;
 
+    private int c = 0;
+
     private String from;
 
     public SmsLocationSendService() {
@@ -103,7 +105,7 @@ public class SmsLocationSendService extends IntentService {
                         Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
         ) {
-            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, ll, looper);
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
         } else {
             Log.d("Location", "no permissionnnnnnnnnn");
         }
@@ -111,6 +113,21 @@ public class SmsLocationSendService extends IntentService {
     }
 
     private void send(Location location) {
+        c++;
+        // retry if accuracy is not good enough
+        // send anyway if we tried more than 60 times
+        if (location.hasAccuracy() && location.getAccuracy() > 25 && c < 60) {
+            Log.d("Location", "bad accuracy: " + location.getAccuracy());
+            locManager.removeUpdates(ll);
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
+            }
+            return;
+        }
 
         Log.d("Location", "my location is " + location.toString());
         Log.d("Location", "send sms to " + from);
