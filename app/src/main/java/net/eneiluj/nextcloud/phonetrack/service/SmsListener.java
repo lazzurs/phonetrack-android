@@ -50,10 +50,11 @@ public class SmsListener extends BroadcastReceiver {
                     String msgBody = msgs[i].getMessageBody();
                     msgContent += msgBody;
                 }
-                Log.d(TAG, "Received message: '" + msgContent.trim() + "'");
+                msgContent = msgContent.trim().toLowerCase();
+                Log.d(TAG, "Received message: '" + msgContent + "'");
                 Log.d(TAG, "current keyword: '" + keyword + "'");
                 Log.d(TAG, "Received from: " + msg_from);
-                if (msgContent.trim().equals(keyword)) {
+                if (msgContent.equals(keyword.toLowerCase())) {
                     Log.d(TAG, "We received the keyword: "+keyword);
                     keywordReceived(msg_from, context);
                 }

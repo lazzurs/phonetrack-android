@@ -132,6 +132,8 @@ public class SmsLocationSendService extends IntentService {
         Log.d("Location", "send sms to " + from);
 
         String smsContent = "Current position: geo:"+location.getLatitude()+","+location.getLongitude()+"?z=14";
+        smsContent += "\nhttps://www.openstreetmap.org/?mlat="+location.getLatitude()+"&mlon="+location.getLongitude();
+        smsContent += "#map=14/"+location.getLatitude()+"/"+location.getLongitude();
         Log.d("Location", "SMS content " + smsContent);
 
         if (ActivityCompat.checkSelfPermission(
