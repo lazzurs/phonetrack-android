@@ -777,7 +777,7 @@ public class MapActivity extends AppCompatActivity {
                     text += "\n"+getString(R.string.popup_bearing_value, loc.getBearing());
                 }
                 if (loc.getSatellites() != null) {
-                    text += "\n"+getString(R.string.popup_satellites)+" : "+loc.getSatellites();
+                    text += "\n"+getString(R.string.popup_satellites, loc.getSatellites());
                 }
                 if (loc.getBattery() != null) {
                     text += "\n"+getString(R.string.popup_battery_value, loc.getBattery());

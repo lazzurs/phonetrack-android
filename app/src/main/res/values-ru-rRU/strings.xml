@@ -67,7 +67,7 @@
     <string name="logjob_info_lastloc">Последнее местоположение получено\n%s назад в\n%s</string>
     <string name="logjob_info_lastsync">Последняя успешная синхронизация \n%s тому назад в\n%s</string>
     <string name="logjob_info_lastsync_error">Ошибка при синхронизации\n%s тому назад в\n%s\n\n%s</string>
-    <string name="logjob_info_distance">Total distance\n%s</string>
+    <string name="logjob_info_distance">Общее расстояние\n%sm</string>
     <string name="logjob_info_duration">Общее время\n%s</string>
     <string name="logjob_info_nbpoints">Количество точек\n%d</string>
     <string name="reset_current_run">Сброс статистики</string>
