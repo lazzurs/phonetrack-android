@@ -135,15 +135,15 @@ public class SmsLocationSendService extends IntentService {
 
         double battery = getBatteryLevelOnce();
 
-        String smsContent1 = "* Battery: "+battery+"%";
+        String smsContent1 = "* "+getString(R.string.popup_battery_value, battery);
         if (location.hasAltitude()) {
-            smsContent1 += "\n* Altitude: "+location.getAltitude()+"m";
+            smsContent1 += "\n* "+getString(R.string.popup_altitude_value, location.getAltitude());
         }
         if (location.hasAccuracy()) {
-            smsContent1 += "\n* Accuracy: "+location.getAccuracy()+"m";
+            smsContent1 += "\n* "+getString(R.string.popup_accuracy_value, location.getAccuracy());
         }
-        String smsContent2 = "* Geo link:\ngeo:"+location.getLatitude()+","+location.getLongitude()+"?z=14\n";
-        smsContent2 += "* Web link:\nhttps://www.openstreetmap.org/?mlat="+location.getLatitude()+"&mlon="+location.getLongitude();
+        String smsContent2 = "* "+getString(R.string.sms_geo_link)+":\ngeo:"+location.getLatitude()+","+location.getLongitude()+"?z=14\n";
+        smsContent2 += "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+location.getLatitude()+"&mlon="+location.getLongitude();
         smsContent2 += "#map=14/"+location.getLatitude()+"/"+location.getLongitude();
         Log.d("Location", "SMS content " + smsContent1);
         Log.d("Location", "SMS content 2 " + smsContent2);
