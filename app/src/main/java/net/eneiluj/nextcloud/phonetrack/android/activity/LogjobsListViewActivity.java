@@ -82,7 +82,7 @@ import static net.eneiluj.nextcloud.phonetrack.util.SupportUtil.formatDistance;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
-    private final static int PERMISSION_LOCATION = 1;
+    public final static int PERMISSION_LOCATION = 1;
     private final static int PERMISSION_FOREGROUND = 2;
 
     private final static int PERMISSION_FOREGROUND_SERVICE = 1;

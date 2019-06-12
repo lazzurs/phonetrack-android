@@ -71,23 +71,36 @@ public class PreferencesActivity extends AppCompatActivity {
         switch (requestCode) {
             case PreferencesFragment.PERMISSION_SMS:
                 if (grantResults.length > 0) {
-                    Log.d(TAG, "[permission result] "+grantResults[0]);
+                    Log.d(TAG, "[permission SMS result] "+grantResults[0]);
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     }
                     else {
-                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putBoolean(getString(R.string.pref_key_sms), false);
-                        editor.apply();
-
-                        PreferencesFragment frag = ((PreferencesFragment) getSupportFragmentManager().findFragmentByTag("preftag"));
-                        if (frag != null) {
-                            frag.disableSms();
-                        }
+                        disableSms();
                     }
                 }
                 break;
+            case PreferencesFragment.PERMISSION_SMS_SEND:
+                if (grantResults.length > 0) {
+                    Log.d(TAG, "[permission SEND SMS result] "+grantResults[0]);
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    }
+                    else {
+                        disableSms();
+                    }
+                }
+                break;
+        }
+    }
+
+    private void disableSms() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(getString(R.string.pref_key_sms), false);
+        editor.apply();
+
+        PreferencesFragment frag = ((PreferencesFragment) getSupportFragmentManager().findFragmentByTag("preftag"));
+        if (frag != null) {
+            frag.disableSms();
         }
     }
 }

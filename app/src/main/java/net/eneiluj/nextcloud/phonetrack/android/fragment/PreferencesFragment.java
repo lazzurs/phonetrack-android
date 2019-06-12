@@ -56,6 +56,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     public final static String UPDATED_PROVIDERS_VALUE = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
 
     public final static int PERMISSION_SMS = 3;
+    public final static int PERMISSION_SMS_SEND = 4;
 
     private static final String TAG = PreferencesFragment.class.getSimpleName();
 
@@ -167,6 +168,18 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                                 getActivity(),
                                 new String[]{Manifest.permission.RECEIVE_SMS},
                                 PERMISSION_SMS
+                        );
+                    }
+                    if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SEND_SMS)
+                            != PackageManager.PERMISSION_GRANTED) {
+
+                        if (LoggerService.DEBUG) {
+                            Log.d(TAG, "[request send sms permission]");
+                        }
+                        ActivityCompat.requestPermissions(
+                                getActivity(),
+                                new String[]{Manifest.permission.SEND_SMS},
+                                PERMISSION_SMS_SEND
                         );
                     }
                     smsKeywordPref.setVisible(true);
