@@ -12,8 +12,8 @@ import android.os.Handler;
 import android.os.Looper;
 //import android.preference.EditTextPreference;
 import androidx.preference.CheckBoxPreference;
-//import androidx.preference.EditTextPreference;
-import com.takisoft.fix.support.v7.preference.EditTextPreference;
+import androidx.preference.EditTextPreference;
+//import com.takisoft.fix.support.v7.preference.EditTextPreference;
 //import android.preference.ListPreference;
 //import android.preference.Preference;
 import androidx.preference.Preference;
@@ -140,7 +140,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
         Preference.OnPreferenceClickListener clickListener =  new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                EditText input = ((EditTextPreference) preference).getEditText();
+                EditText input = ((com.takisoft.fix.support.v7.preference.EditTextPreference) preference).getEditText();
                 input.setSelectAllOnFocus(true);
                 input.requestFocus();
                 input.setSelected(true);
