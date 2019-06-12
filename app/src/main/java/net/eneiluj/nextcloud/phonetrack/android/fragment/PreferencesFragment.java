@@ -167,7 +167,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                         }
                         ActivityCompat.requestPermissions(
                                 getActivity(),
-                                new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS},
+                                new String[]{
+                                        Manifest.permission.SEND_SMS,
+                                        Manifest.permission.RECEIVE_SMS
+                                },
                                 PERMISSION_SMS_SEND_AND_RECEIVE
                         );
                     }

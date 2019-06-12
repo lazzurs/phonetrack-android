@@ -96,7 +96,6 @@ public class SmsLocationSendService extends IntentService {
             Log.d(TAG, "[sms send start]");
         }
 
-
         from = intent.getStringExtra("from");
 
         ll = new mLocationListener();
@@ -116,7 +115,7 @@ public class SmsLocationSendService extends IntentService {
         c++;
         // retry if accuracy is not good enough
         // send anyway if we tried more than 60 times
-        if (location.hasAccuracy() && location.getAccuracy() > 25 && c < 60) {
+        if (location.hasAccuracy() && location.getAccuracy() > 50 && c < 60) {
             Log.d("Location", "bad accuracy: " + location.getAccuracy());
             locManager.removeUpdates(ll);
             if (ActivityCompat.checkSelfPermission(

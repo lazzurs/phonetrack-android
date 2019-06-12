@@ -194,12 +194,14 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setupNavigationMenu();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+        || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             if (LoggerService.DEBUG) { Log.d(TAG, "[request location permission]"); }
             ActivityCompat.requestPermissions(
                     this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     PERMISSION_LOCATION
             );
         }
