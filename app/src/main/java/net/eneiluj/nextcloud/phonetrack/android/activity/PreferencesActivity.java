@@ -69,19 +69,9 @@ public class PreferencesActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case PreferencesFragment.PERMISSION_SMS:
+            case PreferencesFragment.PERMISSION_SMS_SEND_AND_RECEIVE:
                 if (grantResults.length > 0) {
-                    Log.d(TAG, "[permission SMS result] "+grantResults[0]);
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    }
-                    else {
-                        disableSms();
-                    }
-                }
-                break;
-            case PreferencesFragment.PERMISSION_SMS_SEND:
-                if (grantResults.length > 0) {
-                    Log.d(TAG, "[permission SEND SMS result] "+grantResults[0]);
+                    Log.d(TAG, "[permission SEND'N'RECEIVE SMS result] "+grantResults[0]);
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     }
                     else {

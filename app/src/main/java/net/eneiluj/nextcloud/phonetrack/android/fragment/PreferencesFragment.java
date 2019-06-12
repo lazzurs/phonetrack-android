@@ -55,8 +55,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     public final static String UPDATED_PROVIDERS = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS";
     public final static String UPDATED_PROVIDERS_VALUE = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
 
-    public final static int PERMISSION_SMS = 3;
-    public final static int PERMISSION_SMS_SEND = 4;
+    public final static int PERMISSION_SMS_SEND_AND_RECEIVE = 4;
 
     private static final String TAG = PreferencesFragment.class.getSimpleName();
 
@@ -158,19 +157,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Boolean listenToSms = (Boolean) newValue;
                 if (listenToSms) {
-                    if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
-                            != PackageManager.PERMISSION_GRANTED) {
-
-                        if (LoggerService.DEBUG) {
-                            Log.d(TAG, "[request receive sms permission]");
-                        }
-                        ActivityCompat.requestPermissions(
-                                getActivity(),
-                                new String[]{Manifest.permission.RECEIVE_SMS},
-                                PERMISSION_SMS
-                        );
-                    }
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SEND_SMS)
+                            != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
                             != PackageManager.PERMISSION_GRANTED) {
 
                         if (LoggerService.DEBUG) {
@@ -178,10 +167,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                         }
                         ActivityCompat.requestPermissions(
                                 getActivity(),
-                                new String[]{Manifest.permission.SEND_SMS},
-                                PERMISSION_SMS_SEND
+                                new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS},
+                                PERMISSION_SMS_SEND_AND_RECEIVE
                         );
                     }
+
                     smsKeywordPref.setVisible(true);
                 }
                 else {
