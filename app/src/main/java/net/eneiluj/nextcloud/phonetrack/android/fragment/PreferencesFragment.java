@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
+//import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 //import android.preference.PreferenceFragment;
@@ -34,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
@@ -90,6 +92,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
+        // hide the keyboard when this window gets the focus
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         Preference resetTrust = findPreference(getString(R.string.pref_key_reset_trust));
         resetTrust.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
