@@ -53,10 +53,17 @@
     <string name="setting_min_distance_long">Ελάχιστη απόσταση μεταξύ δύο καταγεγραμμένων σημείων (μέτρα)</string>
     <string name="setting_min_time">Ελάχιστος χρόνος</string>
     <string name="setting_min_time_long">Ελάχιστος χρόνος μεταξύ δύο καταγεγραμμένων σημείων (δευτερόλεπτα)</string>
-    <string name="setting_min_accuracy">Ελάχιστη Ακρίβεια</string>
+    <string name="setting_min_accuracy">Ελάχιστη ακρίβεια</string>
     <string name="setting_min_accuracy_long">Ελάχιστη ακρίβεια για καταγεγραμμένα σημεία (μέτρα)</string>
     <string name="setting_keepgps_title">Διατήρηση ανοιχτού GPS μεταξύ των επιδιορθώσεων</string>
     <string name="setting_keepgps_summary">Αυτό θα φέρει πιο ακριβείς θέσεις, αλλά θα έχει μεγαλύτερη επίδραση στη διάρκεια ζωής μπαταρίας. Χρησιμοποιείστε το όταν ελάχιστος χρόνος είναι κάτω από 60 δευτερόλεπτα.</string>
+    <string name="setting_significantmotion_enabled">Significant motion mode</string>
+    <string name="setting_significantmotion_title">Get position only after significant motion</string>
+    <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before getting next position. Saves a lot of battery in some cases. Incompatible with some other options.</string>
+    <string name="setting_significantmotion_min_time_applied">Apply minimum time</string>
+    <string name="setting_significantmotion_min_time_applied_summary">Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
+    <string name="setting_significantmotion_timeout">Location timeout</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout.</string>
     <string name="logjob_title_log_to">Καταγραφή σε %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">τοΌνομαΣυσκευήςμου</string>
@@ -84,12 +91,14 @@
     <string name="map_choose_frequency_dialog_message">Πόσα δευτερόλεπτα μεταξύ δύο ανανεώσεις χάρτη ;</string>
     <string name="item_all_devices_label">Όλες οι συσκευές</string>
     <string name="popup_battery_value">Επίπεδο μπαταρίας: %.2f%%</string>
-    <string name="popup_altitude_value">Υψόμετρο: %.2fμ</string>
-    <string name="popup_accuracy_value">Ακρίβεια: %.2fμ</string>
-    <string name="popup_satellites">Δορυφόροι</string>
-    <string name="popup_bearing_value">Κατεύθυνση : %.2f °</string>
-    <string name="popup_speed_value">Ταχύτητα : %.2fχλμ/ω</string>
+    <string name="popup_altitude_value">Altitude: %.2fm</string>
+    <string name="popup_accuracy_value">Accuracy: %.2fm</string>
+    <string name="popup_satellites">Satellites: %d</string>
+    <string name="popup_bearing_value">Bearing: %.2f°</string>
+    <string name="popup_speed_value">Speed: %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
+    <string name="sms_geo_link">Geo link</string>
+    <string name="sms_osm_link">OSM link</string>
     <string name="map_choose_layer">Επιλογή υπηρεσίας παροχής πλακιδίων χάρτη</string>
     <string name="drawer_connect_hint">Πίεσε εδώ για να σύνδεση</string>
     <string name="is_running">τρέχει (%s εκκρεμούν, %s εστάλησαν)</string>
@@ -107,6 +116,10 @@
     <string name="settings_notification_importance_subtitle">Μείωση σπουδαιότητας ειδοποίησης καταγραφής</string>
     <string name="settings_reset_stats">Επαναφορά στατιστικών στην ενεργοποίηση του logjob</string>
     <string name="settings_reset_stats_subtitle">Επαναφορά στατιστικών στις πληροφορίες εργασιών καταγραφής, όταν η εργασία είναι ενεργή</string>
+    <string name="settings_sms">Listen to SMS</string>
+    <string name="settings_sms_subtitle">Listen to incoming SMS and answer location information if following keyword is received</string>
+    <string name="settings_sms_keyword_title">SMS keyword</string>
+    <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back</string>
     <string name="settings_providers_title">Πάροχοι τοποθεσίας</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Δίκτυο</string>
@@ -165,6 +178,8 @@
     <string name="error_invalid_mintime">Μη έγκυρος ελάχιστος χρόνος</string>
     <string name="error_invalid_mindistance">Μη έγκυρη ελάχιστη απόσταση</string>
     <string name="error_invalid_minaccuracy">Μη έγκυρη ελάχιστη ακρίβεια</string>
+    <string name="error_invalid_timeout">Invalid timeout</string>
+    <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

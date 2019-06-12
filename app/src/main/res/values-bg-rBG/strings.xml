@@ -53,10 +53,17 @@
     <string name="setting_min_distance_long">Minimum distance between two logged points (meters)</string>
     <string name="setting_min_time">Minimum time</string>
     <string name="setting_min_time_long">Minimum time between two logged points (seconds)</string>
-    <string name="setting_min_accuracy">Minimum Accuracy</string>
+    <string name="setting_min_accuracy">Minimum accuracy</string>
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters)</string>
     <string name="setting_keepgps_title">Keep GPS on between fixes</string>
     <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
+    <string name="setting_significantmotion_enabled">Significant motion mode</string>
+    <string name="setting_significantmotion_title">Get position only after significant motion</string>
+    <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before getting next position. Saves a lot of battery in some cases. Incompatible with some other options.</string>
+    <string name="setting_significantmotion_min_time_applied">Apply minimum time</string>
+    <string name="setting_significantmotion_min_time_applied_summary">Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
+    <string name="setting_significantmotion_timeout">Location timeout</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout.</string>
     <string name="logjob_title_log_to">Log to %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">myDeviceName</string>
@@ -84,12 +91,14 @@
     <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
     <string name="item_all_devices_label">All devices</string>
     <string name="popup_battery_value">Battery level : %.2f%%</string>
-    <string name="popup_altitude_value">Altitude : %.2fm</string>
-    <string name="popup_accuracy_value">Accuracy : %.2fm</string>
-    <string name="popup_satellites">Сателити</string>
-    <string name="popup_bearing_value">Bearing : %.2f°</string>
-    <string name="popup_speed_value">Speed : %.2fkm/h</string>
+    <string name="popup_altitude_value">Altitude: %.2fm</string>
+    <string name="popup_accuracy_value">Accuracy: %.2fm</string>
+    <string name="popup_satellites">Satellites: %d</string>
+    <string name="popup_bearing_value">Bearing: %.2f°</string>
+    <string name="popup_speed_value">Speed: %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
+    <string name="sms_geo_link">Geo link</string>
+    <string name="sms_osm_link">OSM link</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
     <string name="is_running">running (%s pending, %s sent)</string>
@@ -107,6 +116,10 @@
     <string name="settings_notification_importance_subtitle">Reduce logging notification importance</string>
     <string name="settings_reset_stats">Reset stats on logjob activation</string>
     <string name="settings_reset_stats_subtitle">Reset statistics in logjob information dialog when logjob is activated</string>
+    <string name="settings_sms">Listen to SMS</string>
+    <string name="settings_sms_subtitle">Listen to incoming SMS and answer location information if following keyword is received</string>
+    <string name="settings_sms_keyword_title">SMS keyword</string>
+    <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back</string>
     <string name="settings_providers_title">Location providers</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Network</string>
@@ -165,6 +178,8 @@
     <string name="error_invalid_mintime">Invalid minimum time</string>
     <string name="error_invalid_mindistance">Invalid minimum distance</string>
     <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
+    <string name="error_invalid_timeout">Invalid timeout</string>
+    <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->
