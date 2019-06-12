@@ -8,11 +8,13 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.HandlerThread;
@@ -131,10 +133,20 @@ public class SmsLocationSendService extends IntentService {
         Log.d("Location", "my location is " + location.toString());
         Log.d("Location", "send sms to " + from);
 
-        String smsContent = "Current position: geo:"+location.getLatitude()+","+location.getLongitude()+"?z=14";
-        smsContent += "\nhttps://www.openstreetmap.org/?mlat="+location.getLatitude()+"&mlon="+location.getLongitude();
-        smsContent += "#map=14/"+location.getLatitude()+"/"+location.getLongitude();
-        Log.d("Location", "SMS content " + smsContent);
+        double battery = getBatteryLevelOnce();
+
+        String smsContent1 = "* Battery: "+battery+"%";
+        if (location.hasAltitude()) {
+            smsContent1 += "\n* Altitude: "+location.getAltitude()+"m";
+        }
+        if (location.hasAccuracy()) {
+            smsContent1 += "\n* Accuracy: "+location.getAccuracy()+"m";
+        }
+        String smsContent2 = "* Geo link:\ngeo:"+location.getLatitude()+","+location.getLongitude()+"?z=14\n";
+        smsContent2 += "* Web link:\nhttps://www.openstreetmap.org/?mlat="+location.getLatitude()+"&mlon="+location.getLongitude();
+        smsContent2 += "#map=14/"+location.getLatitude()+"/"+location.getLongitude();
+        Log.d("Location", "SMS content " + smsContent1);
+        Log.d("Location", "SMS content 2 " + smsContent2);
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -142,7 +154,8 @@ public class SmsLocationSendService extends IntentService {
         ) == PackageManager.PERMISSION_GRANTED
         ) {
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(from, null, smsContent, null, null);
+            smsManager.sendTextMessage(from, null, smsContent1, null, null);
+            smsManager.sendTextMessage(from, null, smsContent2, null, null);
             thread.interrupt();
             locManager.removeUpdates(ll);
         } else {
@@ -242,6 +255,19 @@ public class SmsLocationSendService extends IntentService {
             if (DEBUG) { Log.d(TAG, "[run]"); }
             super.run();
         }
+    }
+
+    private double getBatteryLevelOnce() {
+        Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        if(level == -1 || scale == -1) {
+            return 0.0;
+        }
+
+        double batLevel = ((double)level / (double)scale) * 100.0;
+        batLevel = Math.round(batLevel * 100.0) / 100.0;
+        return batLevel;
     }
 
 }
