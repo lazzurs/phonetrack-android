@@ -79,10 +79,10 @@ public class SmsListener extends BroadcastReceiver {
                 startAlarm(context, from);
             }
             else if (words[1].equals("startlogjobs")) {
-                startOrStopLogjobs(context, true);
+                startOrStopLogjobs(context, true, from);
             }
             else if (words[1].equals("stoplogjobs")) {
-                startOrStopLogjobs(context, false);
+                startOrStopLogjobs(context, false, from);
             }
         }
         else {
@@ -158,11 +158,14 @@ public class SmsListener extends BroadcastReceiver {
         }
     }
 
-    private void startOrStopLogjobs(Context context, boolean start) {
+    private void startOrStopLogjobs(Context context, boolean start, String from) {
+        SmsManager smsManager = SmsManager.getDefault();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean resetOnToggle = prefs.getBoolean(context.getString(R.string.pref_key_reset_stats), false);
         PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
         List<DBLogjob> logjobs = db.getLogjobs();
+
+        int nbLogjobToggled = 0;
 
         for (DBLogjob lj: logjobs) {
             // we toggle disabled logjobs if this is the start command
@@ -171,18 +174,34 @@ public class SmsListener extends BroadcastReceiver {
                 (!start && lj.isEnabled())
             ) {
                 db.toggleEnabled(lj, null, resetOnToggle);
+
+                // let LoggerService know
+                Intent intent = new Intent(context, LoggerService.class);
+                intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
+                intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
+                context.startService(intent);
+
+                // update potential logjob list view
+                Intent broadcastIntent = new Intent(BROADCAST_LOCATION_UPDATED);
+                broadcastIntent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, lj.getId());
+                context.sendBroadcast(broadcastIntent);
+
+                nbLogjobToggled++;
             }
-
-            // let LoggerService know
-            Intent intent = new Intent(context, LoggerService.class);
-            intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
-            intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
-            context.startService(intent);
-
-            // update potential logjob list view
-            Intent broadcastIntent = new Intent(BROADCAST_LOCATION_UPDATED);
-            broadcastIntent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, lj.getId());
-            context.sendBroadcast(broadcastIntent);
+        }
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.SEND_SMS
+        ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            String smsContent;
+            if (start) {
+                smsContent = context.getString(R.string.sms_logjobs_started, nbLogjobToggled);
+            }
+            else {
+                smsContent = context.getString(R.string.sms_logjobs_stopped, nbLogjobToggled);
+            }
+            smsManager.sendTextMessage(from, null, smsContent, null, null);
         }
     }
 }
