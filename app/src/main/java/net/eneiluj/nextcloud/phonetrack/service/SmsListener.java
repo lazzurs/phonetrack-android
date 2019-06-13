@@ -27,6 +27,11 @@ import static net.eneiluj.nextcloud.phonetrack.service.LoggerService.BROADCAST_L
 public class SmsListener extends BroadcastReceiver {
     private static final String TAG = SmsListener.class.getSimpleName();
 
+    // those static attributes are unique and accessible to any SmsListener instance
+    private static Handler handler = null;
+    private static Ringtone ringtone;
+    private static int initialAlarmVolume = 0;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -88,30 +93,45 @@ public class SmsListener extends BroadcastReceiver {
         AudioManager am;
         am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        int initialAlarmVolume = am.getStreamVolume(AudioManager.STREAM_ALARM);
-        am.setStreamVolume(AudioManager.STREAM_ALARM, am.getStreamMaxVolume(AudioManager.STREAM_ALARM),0);
-
-        Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        if (alert == null){
-            // alert is null, using backup
-            alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            if (alert == null){
-                // alert backup is null, using 2nd backup
-                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-            }
+        // our alarm is ringing : stop it and restore volume
+        if (SmsListener.handler != null) {
+            Log.d(TAG, "STOPING ALARM YO");
+            SmsListener.ringtone.stop();
+            am.setStreamVolume(AudioManager.STREAM_ALARM, SmsListener.initialAlarmVolume, 0);
+            SmsListener.handler.removeCallbacksAndMessages(null);
+            SmsListener.handler = null;
         }
-        Ringtone ringtone = RingtoneManager.getRingtone(context, alert);
-        ringtone.setStreamType(AudioManager.STREAM_ALARM);
-        ringtone.play();
+        // no alarm yet, save alarm volume and start it yo
+        else {
+            Log.d(TAG, "STARTING ALARM YO");
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ringtone.stop();
-                am.setStreamVolume(AudioManager.STREAM_ALARM, initialAlarmVolume,0);
+            SmsListener.initialAlarmVolume = am.getStreamVolume(AudioManager.STREAM_ALARM);
+            am.setStreamVolume(AudioManager.STREAM_ALARM, am.getStreamMaxVolume(AudioManager.STREAM_ALARM), 0);
+
+            Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            if (alert == null) {
+                // alert is null, using backup
+                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                if (alert == null) {
+                    // alert backup is null, using 2nd backup
+                    alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                }
             }
-        }, 20000);
+
+            SmsListener.ringtone = RingtoneManager.getRingtone(context, alert);
+            SmsListener.ringtone.setStreamType(AudioManager.STREAM_ALARM);
+            SmsListener.ringtone.play();
+
+            SmsListener.handler = new Handler();
+            SmsListener.handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SmsListener.ringtone.stop();
+                    am.setStreamVolume(AudioManager.STREAM_ALARM, SmsListener.initialAlarmVolume, 0);
+                    SmsListener.handler = null;
+                }
+            }, 60000);
+        }
     }
 
     private void startOrStopLogjobs(Context context, boolean start) {
