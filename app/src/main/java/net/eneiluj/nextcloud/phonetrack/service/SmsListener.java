@@ -220,8 +220,9 @@ public class SmsListener extends BroadcastReceiver {
         List<DBSession> sessions = db.getSessions();
         if (sessions.size() > 0) {
             DBSession s = sessions.get(0);
+            int minTime = 10;
             DBLogjob lj = new DBLogjob(0, "sms", s.getNextURL(), s.getToken(),
-                    "me", 3, 0, 50,
+                    "me", minTime, 0, 50,
                     false, false, 0, false, true, 0);
             long newLjId = db.addLogjob(lj);
 
@@ -243,7 +244,7 @@ public class SmsListener extends BroadcastReceiver {
             ) == PackageManager.PERMISSION_GRANTED
             ) {
                 String smsContent;
-                smsContent = context.getString(R.string.sms_logjob_created, sessionName);
+                smsContent = context.getString(R.string.sms_logjob_created, sessionName, minTime);
                 smsManager.sendTextMessage(from, null, smsContent, null, null);
                 Log.d(TAG, "Send SMS: "+smsContent);
             }

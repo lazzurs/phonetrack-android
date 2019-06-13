@@ -103,7 +103,7 @@
     <string name="sms_alarm_stopped">Alarm has been stopped</string>
     <string name="sms_logjobs_started">%d logjobs have been started</string>
     <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
-    <string name="sms_logjob_created">A logjob has been created in session %s</string>
+    <string name="sms_logjob_created">A logjob with %d seconds frequency has been created in session %s</string>
     <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
     <string name="map_choose_layer">Scegli un provider di mappe</string>
     <string name="drawer_connect_hint">Tocca qui per connetterti</string>

@@ -103,7 +103,7 @@
     <string name="sms_alarm_stopped">L\'alarme a été arrêtée</string>
     <string name="sms_logjobs_started">%d logjobs ont été lancés</string>
     <string name="sms_logjobs_stopped">%d logjobs ont été stoppés</string>
-    <string name="sms_logjob_created">Un logjob a été créé dans la session %s</string>
+    <string name="sms_logjob_created">Un logjob d\'une fréquence de %d secondes a été créé dans la session %s</string>
     <string name="sms_logjob_creation_impossible">Impossible de créer un logjob, aucune session trouvée</string>
     <string name="map_choose_layer">Choisissez un fournisseur de tuiles</string>
     <string name="drawer_connect_hint">Appuyez ici pour vous connecter</string>

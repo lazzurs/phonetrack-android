@@ -103,7 +103,7 @@
     <string name="sms_alarm_stopped">Der Wecker wurde deaktiviert</string>
     <string name="sms_logjobs_started">%d Protokollierungsaufträge wurden gestartet</string>
     <string name="sms_logjobs_stopped">%d Protokollierungsaufträge wurden angehalten</string>
-    <string name="sms_logjob_created">A logjob has been created in session %s</string>
+    <string name="sms_logjob_created">A logjob with %d seconds frequency has been created in session %s</string>
     <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
     <string name="map_choose_layer">Wähle einen Map Tile Provider</string>
     <string name="drawer_connect_hint">Antippen, um Verbindung herzustellen</string>
