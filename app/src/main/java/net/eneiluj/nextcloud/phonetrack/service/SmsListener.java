@@ -78,7 +78,15 @@ public class SmsListener extends BroadcastReceiver {
         if (words.length > 1) {
             // make some noise!
             if (words[1].equals("alarm")) {
-                startAlarm(context, from);
+                int duration = 60;
+                if (words.length > 2) {
+                    try {
+                        duration = Integer.parseInt(words[2]);
+                    }
+                    catch (Exception e) {
+                    }
+                }
+                startAlarm(context, from, duration);
             }
             else if (words[1].equals("startlogjobs")) {
                 startOrStopLogjobs(context, true, from);
@@ -87,7 +95,15 @@ public class SmsListener extends BroadcastReceiver {
                 startOrStopLogjobs(context, false, from);
             }
             else if (words[1].equals("create")) {
-                createLogjob(context, from);
+                int minTime = 10;
+                if (words.length > 2) {
+                    try {
+                        minTime = Integer.parseInt(words[2]);
+                    }
+                    catch (Exception e) {
+                    }
+                }
+                createLogjob(context, from, minTime);
             }
         }
         else {
@@ -98,7 +114,7 @@ public class SmsListener extends BroadcastReceiver {
         }
     }
 
-    private void startAlarm(Context context, String from) {
+    private void startAlarm(Context context, String from, int duration) {
         SmsManager smsManager = SmsManager.getDefault();
         AudioManager am;
         am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -142,7 +158,6 @@ public class SmsListener extends BroadcastReceiver {
             SmsListener.ringtone.play();
 
             SmsListener.handler = new Handler();
-            int duration = 60000;
             SmsListener.handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -150,15 +165,16 @@ public class SmsListener extends BroadcastReceiver {
                     am.setStreamVolume(AudioManager.STREAM_ALARM, SmsListener.initialAlarmVolume, 0);
                     SmsListener.handler = null;
                 }
-            }, 60000);
+            }, duration*1000);
 
             if (ActivityCompat.checkSelfPermission(
                     context,
                     Manifest.permission.SEND_SMS
             ) == PackageManager.PERMISSION_GRANTED
             ) {
-                String smsContent = context.getString(R.string.sms_alarm_started, duration/1000);
+                String smsContent = context.getString(R.string.sms_alarm_started, duration);
                 smsManager.sendTextMessage(from, null, smsContent, null, null);
+                Log.d(TAG, "Send SMS: "+smsContent);
             }
         }
     }
@@ -210,7 +226,7 @@ public class SmsListener extends BroadcastReceiver {
         }
     }
 
-    private void createLogjob(Context context, String from) {
+    private void createLogjob(Context context, String from, int minTime) {
         Log.d(TAG, "CREATE LOGJOB YO");
         SmsManager smsManager = SmsManager.getDefault();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -220,7 +236,6 @@ public class SmsListener extends BroadcastReceiver {
         List<DBSession> sessions = db.getSessions();
         if (sessions.size() > 0) {
             DBSession s = sessions.get(0);
-            int minTime = 10;
             DBLogjob lj = new DBLogjob(0, "sms", s.getNextURL(), s.getToken(),
                     "me", minTime, 0, 50,
                     false, false, 0, false, true, 0);
@@ -244,7 +259,7 @@ public class SmsListener extends BroadcastReceiver {
             ) == PackageManager.PERMISSION_GRANTED
             ) {
                 String smsContent;
-                smsContent = context.getString(R.string.sms_logjob_created, sessionName, minTime);
+                smsContent = context.getString(R.string.sms_logjob_created, minTime, sessionName);
                 smsManager.sendTextMessage(from, null, smsContent, null, null);
                 Log.d(TAG, "Send SMS: "+smsContent);
             }
