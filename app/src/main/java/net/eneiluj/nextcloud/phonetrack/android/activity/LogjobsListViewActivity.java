@@ -71,6 +71,7 @@ import net.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
@@ -1278,6 +1279,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
      */
     private void registerBroadcastReceiver() {
         IntentFilter filter = new IntentFilter();
+        filter.addAction(SmsListener.BROADCAST_LOGJOB_LIST_UPDATED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_STARTED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_STOPPED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_UPDATED);
@@ -1307,6 +1309,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 return;
             }
             switch (intent.getAction()) {
+                case SmsListener.BROADCAST_LOGJOB_LIST_UPDATED:
+                    refreshLists();
+                    break;
                 case LoggerService.BROADCAST_LOCATION_UPDATED:
                     long ljId = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast loc updated " + ljId + "]"); }

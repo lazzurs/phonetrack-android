@@ -22,6 +22,7 @@ import androidx.preference.PreferenceManager;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
 import java.util.List;
@@ -30,6 +31,7 @@ import static net.eneiluj.nextcloud.phonetrack.service.LoggerService.BROADCAST_L
 
 public class SmsListener extends BroadcastReceiver {
     private static final String TAG = SmsListener.class.getSimpleName();
+    public static final String BROADCAST_LOGJOB_LIST_UPDATED = "net.eneiluj.nextcloud.phonetrack.broadcast.logjob_list_updated";
 
     // those static attributes are unique and accessible to any SmsListener instance
     private static Handler handler = null;
@@ -83,6 +85,9 @@ public class SmsListener extends BroadcastReceiver {
             }
             else if (words[1].equals("stoplogjobs")) {
                 startOrStopLogjobs(context, false, from);
+            }
+            else if (words[1].equals("create")) {
+                createLogjob(context, from);
             }
         }
         else {
@@ -204,6 +209,59 @@ public class SmsListener extends BroadcastReceiver {
             smsManager.sendTextMessage(from, null, smsContent, null, null);
         }
     }
+
+    private void createLogjob(Context context, String from) {
+        Log.d(TAG, "CREATE LOGJOB YO");
+        SmsManager smsManager = SmsManager.getDefault();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean resetOnToggle = prefs.getBoolean(context.getString(R.string.pref_key_reset_stats), false);
+        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
+
+        List<DBSession> sessions = db.getSessions();
+        if (sessions.size() > 0) {
+            DBSession s = sessions.get(0);
+            DBLogjob lj = new DBLogjob(0, "sms", s.getNextURL(), s.getToken(),
+                    "me", 3, 0, 50,
+                    false, false, 0, false, true, 0);
+            long newLjId = db.addLogjob(lj);
+
+            // let LoggerService know
+            Intent intent = new Intent(context, LoggerService.class);
+            intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
+            intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, newLjId);
+            context.startService(intent);
+
+            // update potential logjob list view
+            Intent broadcastIntent = new Intent(BROADCAST_LOGJOB_LIST_UPDATED);
+            context.sendBroadcast(broadcastIntent);
+
+            String sessionName = s.getName();
+
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.SEND_SMS
+            ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                String smsContent;
+                smsContent = context.getString(R.string.sms_logjob_created, sessionName);
+                smsManager.sendTextMessage(from, null, smsContent, null, null);
+                Log.d(TAG, "Send SMS: "+smsContent);
+            }
+        }
+        else {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.SEND_SMS
+            ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                String smsContent;
+                smsContent = context.getString(R.string.sms_logjob_creation_impossible);
+                smsManager.sendTextMessage(from, null, smsContent, null, null);
+                Log.d(TAG, "Send SMS: "+smsContent);
+            }
+        }
+    }
+
 }
 
 
