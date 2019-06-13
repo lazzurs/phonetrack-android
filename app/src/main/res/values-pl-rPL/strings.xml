@@ -123,7 +123,7 @@
     <string name="settings_sms">Nadsłuchuj wiadomość SMS</string>
     <string name="settings_sms_subtitle">Nadsłuchuje przychodzące wiadomości SMS i odbiera informacje o lokalizacji, jeśli odebrano słowo kluczowe</string>
     <string name="settings_sms_keyword_title">Słowo kluczowe SMS</string>
-    <string name="settings_sms_keyword_long">Jeśli telefon otrzyma wiadomość SMS zawierającą to słowo kluczowe, zostaną odesłane informacje o lokalizacji</string>
+    <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
     <string name="settings_sms_keyword_long3">Available commands:\n- alarm\n- startlogjobs\n- stoplogjobs</string>
     <string name="settings_providers_title">Dostawcy lokalizacji</string>

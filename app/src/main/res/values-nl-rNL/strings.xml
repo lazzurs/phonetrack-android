@@ -123,7 +123,7 @@
     <string name="settings_sms">Luister naar SMS</string>
     <string name="settings_sms_subtitle">Luister naar inkomende SMS en beantwoord locatiegegevens als het volgende trefwoord wordt ontvangen</string>
     <string name="settings_sms_keyword_title">SMS trefwoord</string>
-    <string name="settings_sms_keyword_long">Als deze telefoon een SMS ontvangt die dit trefwoord bevat, worden de locatiegegevens teruggestuurd</string>
+    <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
     <string name="settings_sms_keyword_long3">Available commands:\n- alarm\n- startlogjobs\n- stoplogjobs</string>
     <string name="settings_providers_title">Locatie aanbieders</string>

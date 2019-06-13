@@ -123,7 +123,7 @@
     <string name="settings_sms">Écouter les SMS</string>
     <string name="settings_sms_subtitle">Écouter les SMS entrants et répondre les informations de localisation si le mot clé suivant est reçu</string>
     <string name="settings_sms_keyword_title">Mot-clé SMS</string>
-    <string name="settings_sms_keyword_long">Si ce téléphone reçoit un SMS qui contient juste ce mot-clé, les informations de localisation seront renvoyées</string>
+    <string name="settings_sms_keyword_long">Si ce téléphone reçoit un SMS qui contient juste ce mot-clé, les informations de localisation seront renvoyées.</string>
     <string name="settings_sms_keyword_long2">Vous pouvez aussi envoyer des commandes avec cette syntaxe : MOTCLE COMMANDE</string>
     <string name="settings_sms_keyword_long3">Comandes disponibles :\n-alarm\n- startlogjobs\n- stoplogjobs</string>
     <string name="settings_providers_title">Fournisseurs de localisation</string>
