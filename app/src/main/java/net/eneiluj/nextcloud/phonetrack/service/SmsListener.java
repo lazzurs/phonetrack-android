@@ -28,13 +28,17 @@ import androidx.preference.PreferenceManager;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static net.eneiluj.nextcloud.phonetrack.service.LoggerService.BROADCAST_LOCATION_UPDATED;
 
 public class SmsListener extends BroadcastReceiver {
     private static final String TAG = SmsListener.class.getSimpleName();
@@ -75,9 +79,6 @@ public class SmsListener extends BroadcastReceiver {
     }
 
     private void keywordReceived(String msgContent, String from, Context context) {
-        //PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
-        //int nbLogjobs = db.getLogjobs().size();
-
         // send location information
         Intent serviceIntent = new Intent(context, SmsLocationSendService.class);
         serviceIntent.putExtra("from", from);
@@ -89,11 +90,11 @@ public class SmsListener extends BroadcastReceiver {
             if (words[1].equals("alarm")) {
                 startAlarm(context);
             }
-            else if (words[1].equals("logjobs")) {
-                //startLogjobs();
+            else if (words[1].equals("startlogjobs")) {
+                startLogjobs(context);
             }
             else if (words[1].equals("stoplogjobs")) {
-                //stopLogjobs();
+                //stopLogjobs(context);
             }
         }
     }
@@ -127,6 +128,30 @@ public class SmsListener extends BroadcastReceiver {
                 am.setStreamVolume(AudioManager.STREAM_ALARM, initialAlarmVolume,0);
             }
         }, 20000);
+    }
+
+    private void startLogjobs(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean resetOnToggle = prefs.getBoolean(context.getString(R.string.pref_key_reset_stats), false);
+        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
+        List<DBLogjob> logjobs = db.getLogjobs();
+
+        for (DBLogjob lj: logjobs) {
+            if (!lj.isEnabled()) {
+                db.toggleEnabled(lj, null, resetOnToggle);
+            }
+
+            // let LoggerService know
+            Intent intent = new Intent(context, LoggerService.class);
+            intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
+            intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
+            context.startService(intent);
+
+            // update potential logjob list view
+            Intent broadcastIntent = new Intent(BROADCAST_LOCATION_UPDATED);
+            broadcastIntent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, lj.getId());
+            context.sendBroadcast(broadcastIntent);
+        }
     }
 }
 

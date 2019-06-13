@@ -115,7 +115,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             SectionItem section = (SectionItem) item;
             ((SectionViewHolder) holder).sectionTitle.setText(section.geTitle());
         } else {
-            final DBLogjob logjob = (DBLogjob) item;
+            final DBLogjob mylogjob = (DBLogjob) item;
+            final DBLogjob logjob = db.getLogjob(mylogjob.getId());
             final LogjobViewHolder nvHolder = ((LogjobViewHolder) holder);
             nvHolder.logjobSwipeable.setAlpha(1.0f);
             nvHolder.logjobTitle.setText(Html.fromHtml(logjob.getTitle()));
@@ -128,6 +129,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getUrl()));
             }
 
+            Log.d(TAG, "[UUUUUUUUUUUUUUPDATE logjob enabled : ]"+logjob.isEnabled());
             nvHolder.logjobEnabled.setChecked(logjob.isEnabled());
             if (nvHolder.logjobEnabled.isChecked()) {
                 nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ThemeUtils.primaryDarkColor(db.getContext()), PorterDuff.Mode.SRC_IN);

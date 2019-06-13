@@ -106,9 +106,14 @@ public class SmsLocationSendService extends IntentService {
                         Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
         ) {
-            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
+            if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
+            }
+            else {
+                Log.d("Location", "GPS is disabled, impossible to get position to send SMS");
+            }
         } else {
-            Log.d("Location", "no permissionnnnnnnnnn");
+            Log.d("Location", "no permission to access GPS location");
         }
 
     }
@@ -161,7 +166,6 @@ public class SmsLocationSendService extends IntentService {
         } else {
             Log.d("SMS", "no permissionnnnnnnnnn to send");
         }
-
 
     }
 
