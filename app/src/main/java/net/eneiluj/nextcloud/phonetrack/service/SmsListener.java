@@ -1,42 +1,26 @@
 package net.eneiluj.nextcloud.phonetrack.service;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 //import android.preference.PreferenceManager;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
-import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static net.eneiluj.nextcloud.phonetrack.service.LoggerService.BROADCAST_LOCATION_UPDATED;
 
@@ -91,10 +75,10 @@ public class SmsListener extends BroadcastReceiver {
                 startAlarm(context);
             }
             else if (words[1].equals("startlogjobs")) {
-                startLogjobs(context);
+                startOrStopLogjobs(context, true);
             }
             else if (words[1].equals("stoplogjobs")) {
-                //stopLogjobs(context);
+                startOrStopLogjobs(context, false);
             }
         }
     }
@@ -130,14 +114,18 @@ public class SmsListener extends BroadcastReceiver {
         }, 20000);
     }
 
-    private void startLogjobs(Context context) {
+    private void startOrStopLogjobs(Context context, boolean start) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean resetOnToggle = prefs.getBoolean(context.getString(R.string.pref_key_reset_stats), false);
         PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
         List<DBLogjob> logjobs = db.getLogjobs();
 
         for (DBLogjob lj: logjobs) {
-            if (!lj.isEnabled()) {
+            // we toggle disabled logjobs if this is the start command
+            // we toggle enabled logjobs if this is NOT the start command
+            if ((start && !lj.isEnabled()) ||
+                (!start && lj.isEnabled())
+            ) {
                 db.toggleEnabled(lj, null, resetOnToggle);
             }
 
