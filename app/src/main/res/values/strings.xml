@@ -99,6 +99,8 @@
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_geo_link">Geo link</string>
     <string name="sms_osm_link">OSM link</string>
+    <string name="sms_alarm_started">Alarm will ring during %d seconds</string>
+    <string name="sms_alarm_stopped">Alarm has been stopped</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
 

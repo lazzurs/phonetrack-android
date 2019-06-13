@@ -1,18 +1,22 @@
 package net.eneiluj.nextcloud.phonetrack.service;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 //import android.preference.PreferenceManager;
+import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -68,16 +72,11 @@ public class SmsListener extends BroadcastReceiver {
     }
 
     private void keywordReceived(String msgContent, String from, Context context) {
-        // send location information
-        Intent serviceIntent = new Intent(context, SmsLocationSendService.class);
-        serviceIntent.putExtra("from", from);
-        context.startService(serviceIntent);
-
-        // make some noise!
         String[] words = msgContent.split("\\s+");
         if (words.length > 1) {
+            // make some noise!
             if (words[1].equals("alarm")) {
-                startAlarm(context);
+                startAlarm(context, from);
             }
             else if (words[1].equals("startlogjobs")) {
                 startOrStopLogjobs(context, true);
@@ -86,10 +85,16 @@ public class SmsListener extends BroadcastReceiver {
                 startOrStopLogjobs(context, false);
             }
         }
+        else {
+            // send location information
+            Intent serviceIntent = new Intent(context, SmsLocationSendService.class);
+            serviceIntent.putExtra("from", from);
+            context.startService(serviceIntent);
+        }
     }
 
-    private void startAlarm(Context context) {
-
+    private void startAlarm(Context context, String from) {
+        SmsManager smsManager = SmsManager.getDefault();
         AudioManager am;
         am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
@@ -100,6 +105,15 @@ public class SmsListener extends BroadcastReceiver {
             am.setStreamVolume(AudioManager.STREAM_ALARM, SmsListener.initialAlarmVolume, 0);
             SmsListener.handler.removeCallbacksAndMessages(null);
             SmsListener.handler = null;
+
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.SEND_SMS
+            ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                String smsContent = context.getString(R.string.sms_alarm_stopped);
+                smsManager.sendTextMessage(from, null, smsContent, null, null);
+            }
         }
         // no alarm yet, save alarm volume and start it yo
         else {
@@ -123,6 +137,7 @@ public class SmsListener extends BroadcastReceiver {
             SmsListener.ringtone.play();
 
             SmsListener.handler = new Handler();
+            int duration = 60000;
             SmsListener.handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -131,6 +146,15 @@ public class SmsListener extends BroadcastReceiver {
                     SmsListener.handler = null;
                 }
             }, 60000);
+
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.SEND_SMS
+            ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                String smsContent = context.getString(R.string.sms_alarm_started, duration/1000);
+                smsManager.sendTextMessage(from, null, smsContent, null, null);
+            }
         }
     }
 
