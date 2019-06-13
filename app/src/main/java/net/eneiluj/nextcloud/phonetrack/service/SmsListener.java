@@ -10,8 +10,13 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -24,6 +29,12 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class SmsListener extends BroadcastReceiver {
     private static final String TAG = SmsListener.class.getSimpleName();
@@ -38,8 +49,7 @@ public class SmsListener extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
         SmsMessage[] msgs = null;
         String msg_from = "";
-        if (bundle != null && listenToSms) {
-            //---retrieve the SMS message received---
+        if (bundle != null && listenToSms && keyword != null && !keyword.equals("")) {
             try {
                 Object[] pdus = (Object[]) bundle.get("pdus");
                 msgs = new SmsMessage[pdus.length];
@@ -54,9 +64,9 @@ public class SmsListener extends BroadcastReceiver {
                 Log.d(TAG, "Received message: '" + msgContent + "'");
                 Log.d(TAG, "current keyword: '" + keyword + "'");
                 Log.d(TAG, "Received from: " + msg_from);
-                if (msgContent.equals(keyword.toLowerCase())) {
+                if (msgContent.startsWith(keyword.trim().toLowerCase())) {
                     Log.d(TAG, "We received the keyword: "+keyword);
-                    keywordReceived(msg_from, context);
+                    keywordReceived(msgContent, msg_from, context);
                 }
             } catch (Exception e) {
                 Log.d(TAG, "SMS Exception caught: " + e.getMessage());
@@ -64,13 +74,59 @@ public class SmsListener extends BroadcastReceiver {
         }
     }
 
-    private void keywordReceived(String from, Context context) {
-        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
-        int nbLogjobs = db.getLogjobs().size();
+    private void keywordReceived(String msgContent, String from, Context context) {
+        //PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
+        //int nbLogjobs = db.getLogjobs().size();
 
+        // send location information
         Intent serviceIntent = new Intent(context, SmsLocationSendService.class);
         serviceIntent.putExtra("from", from);
         context.startService(serviceIntent);
+
+        // make some noise!
+        String[] words = msgContent.split("\\s+");
+        if (words.length > 1) {
+            if (words[1].equals("alarm")) {
+                startAlarm(context);
+            }
+            else if (words[1].equals("logjobs")) {
+                //startLogjobs();
+            }
+            else if (words[1].equals("stoplogjobs")) {
+                //stopLogjobs();
+            }
+        }
+    }
+
+    private void startAlarm(Context context) {
+
+        AudioManager am;
+        am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        int initialAlarmVolume = am.getStreamVolume(AudioManager.STREAM_ALARM);
+        am.setStreamVolume(AudioManager.STREAM_ALARM, am.getStreamMaxVolume(AudioManager.STREAM_ALARM),0);
+
+        Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if (alert == null){
+            // alert is null, using backup
+            alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            if (alert == null){
+                // alert backup is null, using 2nd backup
+                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            }
+        }
+        Ringtone ringtone = RingtoneManager.getRingtone(context, alert);
+        ringtone.setStreamType(AudioManager.STREAM_ALARM);
+        ringtone.play();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ringtone.stop();
+                am.setStreamVolume(AudioManager.STREAM_ALARM, initialAlarmVolume,0);
+            }
+        }, 20000);
     }
 }
 
