@@ -99,6 +99,10 @@
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_geo_link">Lien geo</string>
     <string name="sms_osm_link">Lien OSM</string>
+    <string name="sms_alarm_started">L\'alarme sonnera pendant %d secondes</string>
+    <string name="sms_alarm_stopped">L\'alarme a été arrêtée</string>
+    <string name="sms_logjobs_started">%d logjobs ont été lancés</string>
+    <string name="sms_logjobs_stopped">%d logjobs ont été stoppés</string>
     <string name="map_choose_layer">Choisissez un fournisseur de tuiles</string>
     <string name="drawer_connect_hint">Appuyez ici pour vous connecter</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
@@ -120,6 +124,8 @@
     <string name="settings_sms_subtitle">Écouter les SMS entrants et répondre les informations de localisation si le mot clé suivant est reçu</string>
     <string name="settings_sms_keyword_title">Mot-clé SMS</string>
     <string name="settings_sms_keyword_long">Si ce téléphone reçoit un SMS qui contient juste ce mot-clé, les informations de localisation seront renvoyées</string>
+    <string name="settings_sms_keyword_long2">Vous pouvez aussi envoyer des commandes avec cette syntaxe : MOTCLE COMMANDE</string>
+    <string name="settings_sms_keyword_long3">Comandes disponibles :\n-alarm\n- startlogjobs\n- stoplogjobs</string>
     <string name="settings_providers_title">Fournisseurs de localisation</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Réseau</string>

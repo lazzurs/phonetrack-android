@@ -57,13 +57,13 @@
     <string name="setting_min_accuracy_long">Minimalna dokładność dla zarejestrowanych punktów (metry)</string>
     <string name="setting_keepgps_title">Zachowaj GPS pomiędzy poprawkami</string>
     <string name="setting_keepgps_summary">Pozwoli to uzyskać dokładniejsze pozycje, ale będzie miało większy wpływ na żywotność baterii. Użyj go, gdy minimalny czas jest poniżej 60 sekund.</string>
-    <string name="setting_significantmotion_enabled">Significant motion mode</string>
-    <string name="setting_significantmotion_title">Get position only after significant motion</string>
-    <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before getting next position. Saves a lot of battery in some cases. Incompatible with some other options.</string>
-    <string name="setting_significantmotion_min_time_applied">Apply minimum time</string>
-    <string name="setting_significantmotion_min_time_applied_summary">Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
-    <string name="setting_significantmotion_timeout">Location timeout</string>
-    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout.</string>
+    <string name="setting_significantmotion_enabled">Znaczący tryb ruchu</string>
+    <string name="setting_significantmotion_title">Zdobądź pozycję tylko po znaczącym ruchu</string>
+    <string name="setting_significantmotion_summary">Eksperymentalnie: Czeka na znaczący ruch przed uzyskaniem następnej pozycji. W niektórych przypadkach oszczędza dużo baterii. Niezgodny z niektórymi innymi opcjami.</string>
+    <string name="setting_significantmotion_min_time_applied">Zastosuj minimalny czas</string>
+    <string name="setting_significantmotion_min_time_applied_summary">Nie zapisuje pozycji przy każdym wykryciu ruchu, czeka na „minimalny czas” między dwoma punktami. Oszczędza to baterię.</string>
+    <string name="setting_significantmotion_timeout">Limit czasu lokalizacji</string>
+    <string name="setting_significantmotion_timeout_summary">Czas, na który będzie czekać na ustalenie pojedynczej lokalizacji (sekundy). Oszczędza baterię w obszarach słabego zasięgu. Jeśli używasz jednocześnie GPS i sieci, określa to również, jak długo będzie używana pozycja sieci przy niższej jej jakości. Ustaw na zero, aby wyłączyć limit czasu.</string>
     <string name="logjob_title_log_to">Zaloguj się do %s</string>
     <string name="default_nextcloud_url">https://twojnextcloud.pl</string>
     <string name="default_device_name">nazwaMojegoUrządzenia</string>
@@ -91,14 +91,18 @@
     <string name="map_choose_frequency_dialog_message">Ile sekund między odświeżeniem mapy?</string>
     <string name="item_all_devices_label">Wszystkie urządzenia</string>
     <string name="popup_battery_value">Poziom baterii : %.2f%%</string>
-    <string name="popup_altitude_value">Altitude: %.2fm</string>
-    <string name="popup_accuracy_value">Accuracy: %.2fm</string>
-    <string name="popup_satellites">Satellites: %d</string>
-    <string name="popup_bearing_value">Bearing: %.2f°</string>
-    <string name="popup_speed_value">Speed: %.2fkm/h</string>
+    <string name="popup_altitude_value">Wysokość: %.2fm</string>
+    <string name="popup_accuracy_value">Dokładność: %.2fm</string>
+    <string name="popup_satellites">Satelity: %d</string>
+    <string name="popup_bearing_value">Kierunek: %.2f°</string>
+    <string name="popup_speed_value">Prędkość: %.2fkm/h</string>
     <string name="popup_user_agent">Aplikacja</string>
-    <string name="sms_geo_link">Geo link</string>
-    <string name="sms_osm_link">OSM link</string>
+    <string name="sms_geo_link">Link Geo</string>
+    <string name="sms_osm_link">Link OSM</string>
+    <string name="sms_alarm_started">Alarm will ring during %d seconds</string>
+    <string name="sms_alarm_stopped">Alarm has been stopped</string>
+    <string name="sms_logjobs_started">%d logjobs have been started</string>
+    <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
     <string name="map_choose_layer">Wybierz dostawcę kafelka mapy</string>
     <string name="drawer_connect_hint">Naciśnij tutaj, aby się połączyć</string>
     <string name="is_running">uruchomionych (%s oczekujących, %s wysłanych)</string>
@@ -116,10 +120,12 @@
     <string name="settings_notification_importance_subtitle">Nie pokazuje powiadomienia o włączonej rejestracji</string>
     <string name="settings_reset_stats">Resetuj statystyki przy aktywacji rejestrowania</string>
     <string name="settings_reset_stats_subtitle">Resetuje statystyki w oknie informacyjnym przy aktywacji rejestrowania</string>
-    <string name="settings_sms">Listen to SMS</string>
-    <string name="settings_sms_subtitle">Listen to incoming SMS and answer location information if following keyword is received</string>
-    <string name="settings_sms_keyword_title">SMS keyword</string>
-    <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back</string>
+    <string name="settings_sms">Nadsłuchuj wiadomość SMS</string>
+    <string name="settings_sms_subtitle">Nadsłuchuje przychodzące wiadomości SMS i odbiera informacje o lokalizacji, jeśli odebrano słowo kluczowe</string>
+    <string name="settings_sms_keyword_title">Słowo kluczowe SMS</string>
+    <string name="settings_sms_keyword_long">Jeśli telefon otrzyma wiadomość SMS zawierającą to słowo kluczowe, zostaną odesłane informacje o lokalizacji</string>
+    <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- alarm\n- startlogjobs\n- stoplogjobs</string>
     <string name="settings_providers_title">Dostawcy lokalizacji</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Sieć</string>
@@ -178,8 +184,8 @@
     <string name="error_invalid_mintime">Nieprawidłowy minimalny czas</string>
     <string name="error_invalid_mindistance">Nieprawidłowa minimalna odległość</string>
     <string name="error_invalid_minaccuracy">Nieprawidłowa dokładność minimalna</string>
-    <string name="error_invalid_timeout">Invalid timeout</string>
-    <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
+    <string name="error_invalid_timeout">Nieprawidłowy limit czasu</string>
+    <string name="error_invalid_sms_keyword">Nieprawidłowe słowo kluczowe SMS</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

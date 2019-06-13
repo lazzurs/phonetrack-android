@@ -99,6 +99,10 @@
     <string name="popup_user_agent">Felhasználói azonosító</string>
     <string name="sms_geo_link">Geo link</string>
     <string name="sms_osm_link">OSM link</string>
+    <string name="sms_alarm_started">Alarm will ring during %d seconds</string>
+    <string name="sms_alarm_stopped">Alarm has been stopped</string>
+    <string name="sms_logjobs_started">%d logjobs have been started</string>
+    <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
     <string name="is_running">futás (%s függőben,%s elküldve)</string>
@@ -120,6 +124,8 @@
     <string name="settings_sms_subtitle">Listen to incoming SMS and answer location information if following keyword is received</string>
     <string name="settings_sms_keyword_title">SMS keyword</string>
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back</string>
+    <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- alarm\n- startlogjobs\n- stoplogjobs</string>
     <string name="settings_providers_title">Location providers</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Network</string>

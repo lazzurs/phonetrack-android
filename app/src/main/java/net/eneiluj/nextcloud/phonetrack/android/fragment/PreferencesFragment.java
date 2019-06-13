@@ -139,6 +139,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         final EditTextPreference smsKeywordPref = (EditTextPreference) findPreference(getString(R.string.pref_key_sms_keyword));
         String keyword = sp.getString(getString(R.string.pref_key_sms_keyword), "phonetrack");
         smsKeywordPref.setSummary(keyword);
+        smsKeywordPref.setDialogMessage(
+                getString(R.string.settings_sms_keyword_long)+"\n"
+                        + getString(R.string.settings_sms_keyword_long2)+"\n"
+                        + getString(R.string.settings_sms_keyword_long3)
+        );
         smsKeywordPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
