@@ -94,7 +94,7 @@ public class SmsListener extends BroadcastReceiver {
             else if (words[1].equals("stoplogjobs")) {
                 startOrStopLogjobs(context, false, from);
             }
-            else if (words[1].equals("create")) {
+            else if (words[1].equals("createlogjob")) {
                 int minTime = 10;
                 if (words.length > 2) {
                     try {

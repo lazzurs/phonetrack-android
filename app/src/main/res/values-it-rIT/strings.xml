@@ -127,7 +127,7 @@
     <string name="settings_sms_keyword_title">Parola chiave SMS</string>
     <string name="settings_sms_keyword_long">Se questo telefono riceve un SMS che contiene solo questa parola chiave, le informazioni sulla posizione verranno inviate di nuovo.</string>
     <string name="settings_sms_keyword_long2">Puoi anche inviare comandi con questa sintassi: COMANDO KEYWORD</string>
-    <string name="settings_sms_keyword_long3">Comandi disponibili:\n- sveglia\n- startlogjobs\n- posti di lavoro di stoplog</string>
+    <string name="settings_sms_keyword_long3">Comandi disponibili:\n- alarm\n- startlogjobs\n- stoplogjobs</string>
     <string name="settings_providers_title">Fornitori di posizione</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Rete</string>
