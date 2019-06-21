@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- new logjob mode: only log if there was a significant move
+[#76](https://gitlab.com/eneiluj/phonetrack-android/issues/76) @creywood
+[!3](https://gitlab.com/eneiluj/phonetrack-android/merge_requests/3) @creywood
+- accuracy circle
+[#61](https://gitlab.com/eneiluj/phonetrack-android/issues/61) @creywood
+[!4](https://gitlab.com/eneiluj/phonetrack-android/merge_requests/4) @creywood
+- now able to receive commands by SMS
+(send back location, alarm, startlogjobs, stoplogjobs, createlogjob)
+[#17](https://gitlab.com/eneiluj/phonetrack-android/issues/17) @ShareTheKnowledge
+
+### Changed
+- format distance in info dialog
+[#88](https://gitlab.com/eneiluj/phonetrack-android/issues/88) @markussvn
+
+### Fixed
+- SSO is now working with all Android versions
+
+## 0.0.11 – 2019-05-14
+### Added
 - web login
 - SSO login (only on Android 9, 8 and 4 for the moment)
 - get device colors from server in map view
