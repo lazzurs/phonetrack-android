@@ -14,9 +14,11 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -135,6 +137,8 @@ public class SmsLocationSendService extends IntentService {
             return;
         }
 
+        locManager.removeUpdates(ll);
+
         Log.d("Location", "my location is " + location.toString());
         Log.d("Location", "send sms to " + from);
 
@@ -148,10 +152,9 @@ public class SmsLocationSendService extends IntentService {
             smsContent1 += "\n* "+getString(R.string.popup_accuracy_value, location.getAccuracy());
         }
         String smsContent2 = "* "+getString(R.string.sms_geo_link)+":\ngeo:"+location.getLatitude()+","+location.getLongitude()+"?z=14\n";
-        smsContent2 += "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+location.getLatitude()+"&mlon="+location.getLongitude();
-        smsContent2 += "#map=14/"+location.getLatitude()+"/"+location.getLongitude();
-        Log.d("Location", "SMS content " + smsContent1);
-        Log.d("Location", "SMS content 2 " + smsContent2);
+        String smsContent3 = "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+location.getLatitude()+"&mlon="+location.getLongitude();
+        smsContent3 += "#map=14/"+location.getLatitude()+"/"+location.getLongitude();
+        Log.d("Location1", "SMS content " + smsContent1 + " " + smsContent1.length());
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -160,9 +163,30 @@ public class SmsLocationSendService extends IntentService {
         ) {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(from, null, smsContent1, null, null);
-            smsManager.sendTextMessage(from, null, smsContent2, null, null);
-            thread.interrupt();
-            locManager.removeUpdates(ll);
+            // delay second and third SMS sending
+            final String smsContent2f = smsContent2;
+            Handler handler2 = new Handler();
+            handler2.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("Location2", "SMS content 2 " + smsContent2f + " " + smsContent2f.length());
+                    smsManager.sendTextMessage(from, null, smsContent2f, null, null);
+
+                }
+            }, 1000);
+
+            final String smsContent3f = smsContent3;
+            Handler handler3 = new Handler();
+            handler3.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("Location3", "SMS content 3 " + smsContent3f + " " + smsContent3f.length());
+                    smsManager.sendTextMessage(from, null, smsContent3f, null, null);
+                    thread.interrupt();
+
+                }
+            }, 2000);
+
         } else {
             Log.d("SMS", "no permissionnnnnnnnnn to send");
         }
