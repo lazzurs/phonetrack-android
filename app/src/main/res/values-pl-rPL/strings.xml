@@ -127,7 +127,7 @@
     <string name="settings_sms_keyword_title">Słowo kluczowe SMS</string>
     <string name="settings_sms_keyword_long">Jeśli telefon otrzyma wiadomość SMS zawierającą to słowo kluczowe, zostaną odesłane informacje o lokalizacji.</string>
     <string name="settings_sms_keyword_long2">Możesz także wysyłać polecenia z taką składnią: POLECENIE KLUCZOWE</string>
-    <string name="settings_sms_keyword_long3">Dostępne komendy:\n- alarm\n- startlogjobs\n- stoplogjobs</string>
+    <string name="settings_sms_keyword_long3">Dostępne komendy:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
     <string name="settings_providers_title">Dostawcy lokalizacji</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Sieć</string>

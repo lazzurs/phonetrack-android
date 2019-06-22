@@ -127,7 +127,7 @@
     <string name="settings_sms_keyword_title">SMS trefwoord</string>
     <string name="settings_sms_keyword_long">Als deze telefoon een SMS ontvangt die dit trefwoord bevat, worden locatiegegevens teruggestuurd.</string>
     <string name="settings_sms_keyword_long2">Je kunt ook opdrachten verzenden met deze syntax: TREFWOORD OPDRACHT</string>
-    <string name="settings_sms_keyword_long3">Beschikbare opdrachten:\n- alarm\n- startlogjobs\n- stoplogjobs</string>
+    <string name="settings_sms_keyword_long3">Beschikbare opdrachten:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
     <string name="settings_providers_title">Locatie aanbieders</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Netwerk</string>
