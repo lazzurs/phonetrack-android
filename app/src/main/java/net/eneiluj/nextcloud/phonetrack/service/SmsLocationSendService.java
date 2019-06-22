@@ -35,9 +35,11 @@ import java.net.NoRouteToHostException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -143,6 +145,9 @@ public class SmsLocationSendService extends IntentService {
         Log.d("Location", "send sms to " + from);
 
         double battery = getBatteryLevelOnce();
+        
+        String latStr = String.format(Locale.ENGLISH,"%.7f", location.getLatitude());
+        String lonStr = String.format(Locale.ENGLISH,"%.7f", location.getLongitude());
 
         String smsContent1 = "* "+getString(R.string.popup_battery_value, battery);
         if (location.hasAltitude()) {
@@ -151,9 +156,9 @@ public class SmsLocationSendService extends IntentService {
         if (location.hasAccuracy()) {
             smsContent1 += "\n* "+getString(R.string.popup_accuracy_value, location.getAccuracy());
         }
-        String smsContent2 = "* "+getString(R.string.sms_geo_link)+":\ngeo:"+location.getLatitude()+","+location.getLongitude()+"?z=14\n";
-        String smsContent3 = "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+location.getLatitude()+"&mlon="+location.getLongitude();
-        smsContent3 += "#map=14/"+location.getLatitude()+"/"+location.getLongitude();
+        String smsContent2 = "* "+getString(R.string.sms_geo_link)+":\ngeo:"+latStr+","+lonStr+"?z=14\n";
+        String smsContent3 = "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+latStr+"&mlon="+lonStr;
+        smsContent3 += "#map=14/"+latStr+"/"+lonStr;
         Log.d("Location1", "SMS content " + smsContent1 + " " + smsContent1.length());
 
         if (ActivityCompat.checkSelfPermission(
