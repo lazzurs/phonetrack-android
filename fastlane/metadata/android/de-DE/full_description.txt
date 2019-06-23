@@ -1,27 +1,27 @@
 PhoneTrack ist eine Anwendung zur kontinuierlichen Protokollierung von Standortkoordinaten.
-Anwendung funktioniert im Hintergrund. Punkte werden in der gewählten Frequenz gespeichert und in Echtzeit auf einen Server hochgeladen. Dieser Logger funktioniert mit der [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud App] oder einen beliebigen benutzerdefinierten Server (GET oder POST HTTP-Anfragen).
+Die Anwendung wird im Hintergrund ausgeführt. Datenpunkte werden in der gewählten Häufigkeit gespeichert und in Echtzeit auf einen Server hochgeladen. Diese Protokollierung funktioniert mit der [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud App] oder einen beliebigen benutzerdefinierten Server (GET oder POST HTTP-Anfragen).
 
 # Funktionen
 
-- Protokollierung an mehreren Zielen mit mehreren Einstellungen (Frequenz, min. Abstand, min. Genauigkeit)
-- Bei PhoneTrack Nextcloud App anmelden (PhoneTrack Log Job)
-- Loggen Sie sich auf jedem Server ein, der HTTP GET oder POST-Anfragen empfangen kann (benutzerdefinierter Log-Job)
-- Positionen speichern, wenn Netzwerk nicht verfügbar ist
-- Beim Systemstart starten
-- Geräte einer Nextcloud PhoneTrack-Sitzung auf einer Karte anzeigen
-- Dunkles Design
-- Mehrsprachiges User-Interface (übersetzt auf https://crowdin.com/project/phonetrack)
+• Protokollierung an mehreren Zielen mit mehreren Einstellungen (Häufigkeit, min. Abstand, min. Genauigkeit)
+• Protokollierung in PhoneTrack-Nextcloud-App (PhoneTrack-Protokollierungsaufgabe)
+• Protokollierung zu jedem Server, der HTTP GET- oder POST-Anfragen empfangen kann (benutzerdefinierte Protokollierungsaufgabe)
+• Speichert auch dann Standorte, wenn Netzwerk nicht verfügbar ist
+• Beim Systemstart starten
+• Ermöglicht das Anzeigen von Geräten einer Nextcloud-PhoneTrack-Sitzung auf einer Karte
+• Dunkle Farbgestaltung
+- Mehrsprachige Benutzeroberfläche (übersetzt auf https://crowdin.com/project/phonetrack)
 
 # Voraussetzungen
 
 Wenn Sie sich bei Nextcloud PhoneTrack-App anmelden möchten:
 
-- Nextcloud-Instanz läuft
+- Nextcloud-Instanz wird ausgeführt
 - Nextcloud PhoneTrack App aktiviert
 
-Andernfalls, keine Voraussetzungen! (Außer Android>=4.1)
+Ansonsten keine weiteren Voraussetzungen! (Außer Android ≧ 4.1)
 
 # Alternativen
 
-Wenn Sie diese App nicht haben und Sie nach Alternativen suchen:
-Werfen Sie einen Blick auf die Protokollierungsmethoden/Anwendungen im PhoneTrack Wiki: https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods.
+Wenn Sie diese App nicht nutzen möchten und nach Alternativen suchen:
+Werfen Sie einen Blick auf die Protokollierungsmethoden/-Apps im PhoneTrack Wiki: https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods.

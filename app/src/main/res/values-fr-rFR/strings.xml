@@ -91,7 +91,7 @@
     <string name="map_choose_frequency_dialog_message">Combien de secondes entre les rafraichissements ?</string>
     <string name="item_all_devices_label">Tous les appareils</string>
     <string name="popup_battery_value">Batterie : %.2f%%</string>
-    <string name="popup_altitude_value">Altitude: %.2fm</string>
+    <string name="popup_altitude_value">Altitude : %.2fm</string>
     <string name="popup_accuracy_value">Précision: %.2fm</string>
     <string name="popup_satellites">Satellites: %d</string>
     <string name="popup_bearing_value">Azimut: %.2f°</string>
