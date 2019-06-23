@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,6 +27,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 //import android.support.v4.widget.DrawerLayout;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -506,11 +510,19 @@ public class MapActivity extends AppCompatActivity {
         final NavigationAdapter.NavigationItem itemFreq = new NavigationAdapter.NavigationItem("freq", getString(R.string.action_frequency), freq, R.drawable.ic_timer_grey_24dp);
         //final NavigationAdapter.NavigationItem itemSettings = new NavigationAdapter.NavigationItem("settings", getString(R.string.action_settings), null, R.drawable.ic_settings_grey600_24dp);
         //final NavigationAdapter.NavigationItem itemAbout = new NavigationAdapter.NavigationItem("about", getString(R.string.simple_about), null, R.drawable.ic_info_outline_grey600_24dp);
+        final NavigationAdapter.NavigationItem itemPin = new NavigationAdapter.NavigationItem("pin", getString(R.string.action_pin_to_homescreen), null, R.drawable.ic_add_menu_grey_24dp);
 
         ArrayList<NavigationAdapter.NavigationItem> itemsMenu = new ArrayList<>();
         itemsMenu.add(itemFreq);
         //itemsMenu.add(itemSettings);
         //itemsMenu.add(itemAbout);
+
+        // If the platform supports pinned shortcuts, show menu item
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            if (ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+                itemsMenu.add(itemPin);
+            }
+        }
 
         NavigationAdapter adapterMenu = new NavigationAdapter(new NavigationAdapter.ClickListener() {
             @Override
@@ -562,6 +574,35 @@ public class MapActivity extends AppCompatActivity {
                     // show keyboard
                     InputMethodManager inputMethodManager = (InputMethodManager) frequencyEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                } else if (item == itemPin) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+
+                        if (ShortcutManagerCompat.isRequestPinShortcutSupported(getApplicationContext())) {
+                            long sessionId = getIntent().getLongExtra(PARAM_SESSIONID, 0);
+
+                            // Main app intent
+                            Intent mainIntent = new Intent(getApplicationContext(), LogjobsListViewActivity.class);
+                            mainIntent.setAction(Intent.ACTION_VIEW);
+
+                            // Map intent
+                            Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                            mapIntent.setAction(Intent.ACTION_VIEW);
+                            // Add session id
+                            mapIntent.putExtra(PARAM_SESSIONID, sessionId);
+
+                            // Build shortcut
+                            ShortcutInfoCompat pinShortcutInfo = new ShortcutInfoCompat.Builder(MapActivity.this, "map" + sessionId)
+                                    .setShortLabel(session.getName())
+                                    .setLongLabel(getString(R.string.homescreen_map_shortcut_long_title, session.getName()))
+                                    .setIcon(IconCompat.createWithResource(MapActivity.this, R.drawable.ic_plain_circle_white_24dp))
+                                    .setIntents(new Intent[]{mainIntent, mapIntent})
+                                    .build();
+
+                            // Request to launcher to pin shortcut
+                            ShortcutManagerCompat.requestPinShortcut(getApplicationContext(), pinShortcutInfo, null);
+                        }
+
+                    }
                 }
             }
 
