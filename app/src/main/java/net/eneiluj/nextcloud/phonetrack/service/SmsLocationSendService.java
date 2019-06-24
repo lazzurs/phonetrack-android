@@ -145,7 +145,7 @@ public class SmsLocationSendService extends IntentService {
         Log.d("Location", "send sms to " + from);
 
         double battery = getBatteryLevelOnce();
-        
+
         String latStr = String.format(Locale.ENGLISH,"%.7f", location.getLatitude());
         String lonStr = String.format(Locale.ENGLISH,"%.7f", location.getLongitude());
 
