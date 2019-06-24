@@ -1,12 +1,24 @@
 PhoneTrack est une application pour loguer en continu des coordonnées géographiques.
-L'application fonctionne en arrière-plan. Les points sont sauvés à une fréquence choisie et envoyés à un serveur en temps réel. Ce logueur fonctionne avec [https://gitlab.com/eneiluj/phonetrack-oc l'appli Nextcloud PhoneTrack] ou n'importe quel serveur personnalisé (requêtes HTTP GET ou POST).
+L'application fonctionne en arrière-plan. Les points sont sauvés à une fréquence
+choisie et
+envoyés à un serveur en temps réel. Ce logger fonctionne avec
+[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] ou n'importe quel
+serveur personnalisé (requêtes HTTP GET ou POST). L'application PhoneTrack peut également être contrôlée à distance
+par des commandes SMS.
+
 
 # Fonctionnalités
 
-- Loguer vers plusieurs destinations avec plusieurs configurations (fréquence, distance min, précision min)
+- Loguer vers plusieurs destinations avec plusieurs configurations (fréquence, distance min, précision min, mouvement significatif)
 - Loguer vers l'appli PhoneTrack Nextcloud (log job PhoneTrack)
 - Loguer vers n'importe quel serveur capable de recevoir des requêtes HTTP GET ou POST (log job personnalisé)
 - Stocker les positions quand le réseau est inaccessible
+- Contrôle à distance par SMS :
+    - connaitre la position
+    - activer l'alarme
+    - démarrer tous les logjobs
+    - arrêter tous les logjobs
+    - créer un logjob
 - Démarrer au lancement du système
 - Afficher les appareils d'une session PhoneTrack Nextcloud sur une carte
 - Thème sombre
@@ -23,5 +35,5 @@ Sinon, pas de prérequis ! (À part Android>=4.1)
 
 # Alternatives
 
-Si vous n'aimez pas cette appli et que vous cherchez des alternatives :
-Faites un tour du côté des méthodes/applis de logging dans le wiki de PhoneTrack : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .
+Si vous n'aimez pas cette application et que vous cherchez des alternatives : jetez un coup d'oeil aux méthodes/applications de logging
+dans le wiki PhoneTrack : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .

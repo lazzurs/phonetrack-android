@@ -1,12 +1,23 @@
 Το PhoneTrack είναι μία εφαρμογή συνεχούς καταγραφής συντεταγμένων τοποθεσίας.
-Η εφαρμογή λειτουργεί στο παρασκήνιο. Τα σημεία αποθηκεύονται στην επιλεγμένη συχνότητα και ανεβαίνουν σε έναν διακομιστή σε πραγματικό χρόνο. Αυτό το καταγραφικό λειτουργεί με το [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] ή οποιονδήποτε άλλο προσαρμοσμένο διακομιστή (GET ή POST HTTP αιτήσεις).
+Η εφαρμογή λειτουργεί στο παρασκήνιο. Points are saved at chosen frequency and
+uploaded to a server in real time. This logger works with
+[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
+custom server (GET or POST HTTP requests). PhoneTrack app can also be remotely
+controlled by SMS commands.
+
 
 # Δυνατότητες
 
-- Καταγραφή σε πολλούς προορισμούς με πολλαπλές ρυθμίσεις (συχνότητα, ελάχιστη απόσταση, ελάχιστη ακρίβεια)
+- Log to multiple destinations with multiple settings (frequency, min distance, min accuracy, significant move)
 - Καταγραφή στην εφαρμογή PhoneTrack Nextcloud (εργασία καταγραφής PhoneTrack)
 - Καταγραφή σε οποιονδήποτε διακομιστή που μπορεί να λάβει αιτήματα HTTP GET ή POST (προσαρμοσμένη εργασία καταγραφής)
 - Αποθήκευση θέσεων όταν το δίκτυο δεν είναι διαθέσιμο
+- Remote control by SMS:
+    - get position
+    - activate alarm
+    - start all logjobs
+    - stop all logjobs
+    - create a logjob
 - Εκκίνηση κατά την εκκίνηση του συστήματος
 - Εμφάνιση συσκευών στο χάρτη μίας συνεδρίας του Nextcloud PhoneTrack
 - Σκοτεινό θέμα
@@ -23,5 +34,5 @@
 
 # Εναλλακτικές
 
-Αν δε χρησιμοποιείτε αυτή την εφαρμογή και ψάχνετε για εναλλακτικές λύσεις:
-Ρίξτε μια ματιά στις μεθόδους καταγραφής/εφαρμογές στο PhoneTrack wiki: https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods.
+If you don't like this app and you are looking for alternatives: Have a look at the logging methods/apps
+in PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .

@@ -1,12 +1,23 @@
 PhoneTrack to aplikacja do ciągłego rejestrowania współrzędnych lokalizacji.
-Aplikacja działa w tle. Punkty są zapisywane według ustawionej częstotliwości i przesyłane na serwer w czasie rzeczywistym. Rejestrator działa z aplikacją [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud] lub dowolnym niestandardowym serwerem (żądania HTTP GET lub POST).
+Aplikacja działa w tle. Points are saved at chosen frequency and
+uploaded to a server in real time. This logger works with
+[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
+custom server (GET or POST HTTP requests). PhoneTrack app can also be remotely
+controlled by SMS commands.
+
 
 # Funkcje
 
-- Rejestrowanie wielu miejsc docelowych z wieloma ustawieniami (częstotliwość, odległość min, dokładność min)
+- Log to multiple destinations with multiple settings (frequency, min distance, min accuracy, significant move)
 - Logowanie się do aplikacji PhoneTrack Nextcloud (zadanie rejestratora PhoneTrack)
 - Rejestrowanie do dowolnego serwera, który może odbierać żądania HTTP GET lub POST (niestandardowe zadanie rejestratora)
 - Przechowywanie pozycji, gdy sieć jest niedostępna
+- Remote control by SMS:
+    - get position
+    - activate alarm
+    - start all logjobs
+    - stop all logjobs
+    - create a logjob
 - Uruchamianie się przy starcie systemu
 - Wyświetlanie na mapie sesję urządzenia PhoneTrack Nextcloud
 - Ciemny motyw
@@ -23,5 +34,5 @@ Przeciwnie, brak wymagań! (Z wyjątkiem Androida> = 4.1)
 
 # Alternatywy
 
-Jeśli nie masz tej aplikacji i szukasz alternatyw:
-Zapoznaj się z metodami rejestrowania/aplikacjami w witrynie PhoneTrack wiki: https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods.
+If you don't like this app and you are looking for alternatives: Have a look at the logging methods/apps
+in PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .

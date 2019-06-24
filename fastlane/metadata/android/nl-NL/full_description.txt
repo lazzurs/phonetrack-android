@@ -1,5 +1,10 @@
 PhoneTrack is een applicatie voor het continu loggen van locatiecoördinaten.
-De toepassing werkt op de achtergrond. Punten worden op de gekozen frequentie opgeslagen en in real time geüpload naar een server. Deze logger werkt met[https://gitlab.com/eneiluj/phonetrack-oc Nextcloud PhoneTrack app] of elke willekeurige aangepaste server (HTTP GET of POST verzoeken).
+De toepassing werkt op de achtergrond. Punten worden opgeslagen op gekozen frequentie en
+geüpload naar een server in real time. Deze logger werkt met
+[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] of andere
+aangepaste server (GET of POST HTTP-verzoeken). PhoneTrack app kan ook op afstand worden
+aangestuurd door SMS-commando's.
+
 
 # Functies
 
@@ -7,6 +12,12 @@ De toepassing werkt op de achtergrond. Punten worden op de gekozen frequentie op
 - Log naar PhoneTrack Nextcloud app (PhoneTrack log job)
 - Log naar elke server die HTTP GET- of POST-verzoeken kan ontvangen (aangepaste logopdracht)
 - Sla posities op wanneer het netwerk niet beschikbaar is
+Bestuur via SMS:
+    - positie verkrijgen
+    - alarm activeren
+    - start alle logtaken
+    - stop alle logtaken
+    - maak een nieuw logboek aan
 - Start bij het opstarten van het systeem
 - Apparaten van een Nextcloud PhoneTrack-sessie op een kaart weergeven
 - Donker thema
@@ -23,5 +34,5 @@ Anders, geen vereisten! (Behalve Android>=4.1)
 
 # Alternatieven
 
-Als deze app je niet bevalt en je op zoek bent naar alternatieven:
-Neem een kijkje op de loggermethoden/apps in PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .
+Als deze app niet bevalt en je zoekt naar alternatieven: kijk eens naar de logmethoden/apps
+in PhoneTrack wiki: https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .

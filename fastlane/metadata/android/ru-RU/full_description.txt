@@ -1,12 +1,23 @@
 PhoneTrack - это приложение для непрерывной записи координат.
-Приложение работает в фоновом режиме. Координаты точек с заданной частотой загружаются на сервер в реальном времени. Этот регистратор работает с [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] или с любым пользовательским сервером (GET или POST HTTP запросы).
+Приложение работает в фоновом режиме. Points are saved at chosen frequency and
+uploaded to a server in real time. This logger works with
+[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
+custom server (GET or POST HTTP requests). PhoneTrack app can also be remotely
+controlled by SMS commands.
+
 
 # Возможности
 
-- Записывает в несколько направлений с разными настройками (частота, мин. расстояние, мин. точность)
+- Log to multiple destinations with multiple settings (frequency, min distance, min accuracy, significant move)
 - Запись в приложение PhoneTrack Nextcloud (PhoneTrack log job)
 - Записать на любой сервер, который может получать запросы HTTP GET или POST (custom log job)
 - Сохраняет позиции, когда сеть недоступна
+- Remote control by SMS:
+    - get position
+    - activate alarm
+    - start all logjobs
+    - stop all logjobs
+    - create a logjob
 - Запуск при загрузке системы
 - Отображает устройства сеанса Nextcloud PhoneTrack на карте
 Тёмная тема
@@ -23,5 +34,5 @@ PhoneTrack - это приложение для непрерывной запи�
 
 # Альтернативы
 
-Если не это приложение, и вы ищете альтернативы:
-Посмотрите на методы записи/приложения в PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .
+If you don't like this app and you are looking for alternatives: Have a look at the logging methods/apps
+in PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .

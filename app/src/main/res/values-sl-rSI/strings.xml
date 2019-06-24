@@ -41,7 +41,7 @@
     <string name="action_drawer_open">open side menu</string>
     <string name="action_drawer_close">close side menu</string>
     <string name="action_frequency">Set refresh frequency</string>
-    <string name="menu_delete">Delete</string>
+    <string name="menu_delete">Izbriši</string>
     <string name="menu_save">Save</string>
     <string name="menu_select_session">Use PhoneTrack session</string>
     <string name="menu_from_url">Use PhoneTrack logging link</string>
