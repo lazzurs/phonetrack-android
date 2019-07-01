@@ -594,7 +594,7 @@ public class MapActivity extends AppCompatActivity {
                             ShortcutInfoCompat pinShortcutInfo = new ShortcutInfoCompat.Builder(MapActivity.this, "map" + sessionId)
                                     .setShortLabel(session.getName())
                                     .setLongLabel(getString(R.string.homescreen_map_shortcut_long_title, session.getName()))
-                                    .setIcon(IconCompat.createWithResource(MapActivity.this, R.drawable.ic_plain_circle_white_24dp))
+                                    .setIcon(IconCompat.createWithResource(MapActivity.this, R.drawable.ic_map_grey_24dp))
                                     .setIntents(new Intent[]{mainIntent, mapIntent})
                                     .build();
 
