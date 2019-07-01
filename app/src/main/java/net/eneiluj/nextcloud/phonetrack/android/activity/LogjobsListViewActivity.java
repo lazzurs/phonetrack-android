@@ -242,7 +242,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         swipeRefreshLayout.setRefreshing(false);
         //db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
+            swipeRefreshLayout.setEnabled(true);
             synchronize();
+        }
+        else {
+            swipeRefreshLayout.setEnabled(false);
         }
 
         registerBroadcastReceiver();
@@ -336,6 +340,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 }
             }
         });
+
+        if (!db.getPhonetrackServerSyncHelper().isSyncPossible()) {
+            swipeRefreshLayout.setEnabled(false);
+        }
 
         fabMenu.setOnMenuToggleListener(new com.github.clans.fab.FloatingActionMenu.OnMenuToggleListener() {
             @Override
@@ -1295,6 +1303,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED);
         filter.addAction(SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED);
         filter.addAction(SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH);
+        filter.addAction(SessionServerSyncHelper.BROADCAST_NETWORK_AVAILABLE);
+        filter.addAction(SessionServerSyncHelper.BROADCAST_NETWORK_UNAVAILABLE);
         registerReceiver(mBroadcastReceiver, filter);
     }
 
@@ -1402,6 +1412,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 case LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED:
                     showToast(getString(R.string.location_permission_denied), Toast.LENGTH_LONG);
                     ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+                    break;
+                case SessionServerSyncHelper.BROADCAST_NETWORK_AVAILABLE:
+                    swipeRefreshLayout.setEnabled(true);
+                    break;
+                case SessionServerSyncHelper.BROADCAST_NETWORK_UNAVAILABLE:
+                    swipeRefreshLayout.setEnabled(false);
                     break;
             }
         }

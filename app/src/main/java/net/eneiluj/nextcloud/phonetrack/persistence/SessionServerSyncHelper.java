@@ -65,6 +65,8 @@ public class SessionServerSyncHelper {
     public static final String BROADCAST_SESSIONS_SYNC_FAILED = "net.eneiluj.nextcloud.phonetrack.broadcast.sessions_sync_failed";
     public static final String BROADCAST_SESSIONS_SYNCED = "net.eneiluj.nextcloud.phonetrack.broadcast.sessions_synced";
     public static final String BROADCAST_SSO_TOKEN_MISMATCH = "net.eneiluj.nextcloud.phonetrack.broadcast.token_mismatch";
+    public static final String BROADCAST_NETWORK_AVAILABLE = "net.eneiluj.nextcloud.phonetrack.broadcast.network_available";
+    public static final String BROADCAST_NETWORK_UNAVAILABLE = "net.eneiluj.nextcloud.phonetrack.broadcast.network_unavailable";
 
     private static SessionServerSyncHelper instance;
 
@@ -100,6 +102,8 @@ public class SessionServerSyncHelper {
             cert4androidReady = true;
             if (isSyncPossible()) {
                 scheduleSync(false);
+                Intent intent2 = new Intent(BROADCAST_NETWORK_AVAILABLE);
+                appContext.sendBroadcast(intent2);
             }
         }
 
@@ -179,6 +183,16 @@ public class SessionServerSyncHelper {
             updateNetworkStatus();
             if (isSyncPossible()) {
                 scheduleSync(false);
+                Intent intent2 = new Intent(BROADCAST_NETWORK_AVAILABLE);
+                appContext.sendBroadcast(intent2);
+            }
+        }
+
+        @Override
+        public void onLost(Network network) {
+            if (!isSyncPossible()) {
+                Intent intent2 = new Intent(BROADCAST_NETWORK_UNAVAILABLE);
+                appContext.sendBroadcast(intent2);
             }
         }
     }
