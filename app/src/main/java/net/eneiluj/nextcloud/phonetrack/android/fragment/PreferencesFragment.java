@@ -106,8 +106,31 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             }
         });
 
-        final SwitchPreferenceCompat themePref = (SwitchPreferenceCompat) findPreference(getString(R.string.pref_key_theme));
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+        final CheckBoxPreference useServerColorPref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_use_server_color));
+
+        Boolean useServerColor = sp.getBoolean(getString(R.string.pref_key_use_server_color), false);
+        if (useServerColor) {
+            findPreference(getString(R.string.pref_key_color)).setVisible(false);
+        }
+
+        useServerColorPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean useServerColor = (Boolean) newValue;
+                if (useServerColor) {
+                    findPreference(getString(R.string.pref_key_color)).setVisible(false);
+                }
+                else {
+                    findPreference(getString(R.string.pref_key_color)).setVisible(true);
+                }
+                return true;
+            }
+        });
+
+        final SwitchPreferenceCompat themePref = (SwitchPreferenceCompat) findPreference(getString(R.string.pref_key_theme));
+
         Boolean darkTheme = sp.getBoolean(getString(R.string.pref_key_theme), false);
 
         setThemePreferenceSummary(themePref, darkTheme);
@@ -256,6 +279,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         ((ColorPreferenceCompat) preference).setValue(lobsterPicker.getColor());
+                        if (getActivity() != null) {
+                            getActivity().recreate();
+                        }
                     }
                 })
                 .setNegativeButton(getString(R.string.simple_cancel), null)
