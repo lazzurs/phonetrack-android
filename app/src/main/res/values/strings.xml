@@ -135,6 +135,8 @@
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
     <string name="settings_sms_keyword_long3">Available commands:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
+    <string name="settings_use_server_color_title">Use server color</string>
+    <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
     <string name="settings_providers_title">Location providers</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Network</string>
@@ -149,6 +151,11 @@
     <string name="settings_cert_reset">Reset (un)trusted certificates</string>
     <string name="settings_cert_reset_summary">Resets trust of all custom certificates</string>
     <string name="settings_cert_reset_toast">All custom certificates have been cleared</string>
+    <string name="settings_network_category">Network</string>
+    <string name="settings_logging_category">Logging</string>
+    <string name="settings_sms_category">Sms</string>
+    <string name="settings_theming_category">Theming</string>
+
     <string name="tracking_started">Logging started</string>
     <string name="tracking_stopped">Logging stopped</string>
     <string name="gps_disabled_warning">Warning : Gps disabled</string>
@@ -259,6 +266,7 @@
     <string name="pref_key_color" translatable="false">appColor</string>
     <string name="pref_key_sms" translatable="false">listenSMS</string>
     <string name="pref_key_sms_keyword" translatable="false">SMSkeyword</string>
+    <string name="pref_key_use_server_color" translatable="false">useServerColor</string>
     <string name="pref_key_autostart" translatable="false">autostart</string>
     <string name="pref_key_shownbsynced" translatable="false">shownbsynced</string>
     <string name="pref_value_theme_light">Light</string>

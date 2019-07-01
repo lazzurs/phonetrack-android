@@ -3,6 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <PreferenceCategory
+        android:title="@string/settings_network_category"
+        android:key="settings_network_category">
     <Preference
         android:icon="@drawable/ic_account_circle_grey_24dp"
         android:title="@string/settings_server_settings">
@@ -10,6 +13,29 @@
             android:targetClass="net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity"
             android:targetPackage="@string/applicationId" />
     </Preference>
+
+        <PreferenceScreen
+            android:key="@string/pref_key_certs"
+            android:persistent="false"
+            android:icon="@drawable/ic_https_grey_24dp"
+            android:title="@string/settings_cert_category">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="@string/pref_key_trust_system_certs"
+                android:title="@string/settings_cert_trust_system"
+                android:summaryOn="@string/settings_cert_trust_system_on"
+                android:summaryOff="@string/settings_cert_trust_system_off" />
+            <Preference
+                android:key="@string/pref_key_reset_trust"
+                android:title="@string/settings_cert_reset"
+                android:summary="@string/settings_cert_reset_summary" />
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_logging_category"
+        android:key="settings_logging_category">
 
     <ListPreference
         android:icon="@android:drawable/ic_menu_mylocation"
@@ -33,6 +59,25 @@
         android:summary="@string/pref_shownbsynced_summary"
         android:defaultValue="@string/pref_shownbsynced_default" />
 
+        <CheckBoxPreference
+            android:icon="@drawable/ic_notifications_grey_24dp"
+            android:key="@string/pref_key_notification_importance"
+            android:title="@string/settings_notification_importance_title"
+            android:summary="@string/settings_notification_importance_subtitle" />
+
+        <CheckBoxPreference
+            android:icon="@drawable/ic_sync_grey_24dp"
+            android:key="@string/pref_key_reset_stats"
+            android:title="@string/settings_reset_stats"
+            android:summary="@string/settings_reset_stats_subtitle" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_theming_category"
+        android:key="settings_theming_category">
+
     <SwitchPreferenceCompat
         android:defaultValue="@string/pref_value_theme_light"
         android:icon="@drawable/ic_brightness_2_grey_24dp"
@@ -40,7 +85,14 @@
         android:summary="%s"
         android:title="@string/settings_theme_title" />
 
-    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+        <CheckBoxPreference
+            android:icon="@drawable/ic_palette_grey_24dp"
+            android:key="@string/pref_key_use_server_color"
+            android:title="@string/settings_use_server_color_title"
+            android:summary="@string/settings_use_server_color_subtitle" />
+
+
+        <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
         android:defaultValue="@color/primary"
         android:icon="@drawable/ic_palette_grey_24dp"
         android:key="@string/pref_key_color"
@@ -48,19 +100,12 @@
         android:title="@string/settings_color_title"
         app:colorShape="circle"
         app:showDialog="false" />
+    </PreferenceCategory>
 
-    <CheckBoxPreference
-        android:icon="@drawable/ic_notifications_grey_24dp"
-        android:key="@string/pref_key_notification_importance"
-        android:title="@string/settings_notification_importance_title"
-        android:summary="@string/settings_notification_importance_subtitle" />
 
-    <CheckBoxPreference
-        android:icon="@drawable/ic_sync_grey_24dp"
-        android:key="@string/pref_key_reset_stats"
-        android:title="@string/settings_reset_stats"
-        android:summary="@string/settings_reset_stats_subtitle" />
-
+    <PreferenceCategory
+        android:title="@string/settings_sms_category"
+        android:key="settings_sms_category">
     <CheckBoxPreference
         android:icon="@drawable/ic_sms_grey_24dp"
         android:key="@string/pref_key_sms"
@@ -79,22 +124,8 @@
         android:persistent="true"
         android:summary="phonetrack"
         android:title="@string/settings_sms_keyword_title" />
+    </PreferenceCategory>
 
-    <PreferenceScreen
-        android:key="@string/pref_key_certs"
-        android:persistent="false"
-        android:icon="@drawable/ic_https_grey_24dp"
-        android:title="@string/settings_cert_category">
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="@string/pref_key_trust_system_certs"
-            android:title="@string/settings_cert_trust_system"
-            android:summaryOn="@string/settings_cert_trust_system_on"
-            android:summaryOff="@string/settings_cert_trust_system_off" />
-        <Preference
-            android:key="@string/pref_key_reset_trust"
-            android:title="@string/settings_cert_reset"
-            android:summary="@string/settings_cert_reset_summary" />
-    </PreferenceScreen>
+
 
 </PreferenceScreen>

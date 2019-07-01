@@ -273,8 +273,12 @@ public class SessionServerSyncHelper {
             }
             syncTask.execute();
             // get NC color
-            GetNCColorTask getColorTask = new GetNCColorTask();
-            getColorTask.execute();
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+            boolean settingServerColor = preferences.getBoolean(appContext.getString(R.string.pref_key_use_server_color), false);
+            if (settingServerColor) {
+                GetNCColorTask getColorTask = new GetNCColorTask();
+                getColorTask.execute();
+            }
         } else if (!onlyLocalChanges) {
             Log.d(getClass().getSimpleName(), "... scheduled");
             syncScheduled = true;
