@@ -87,47 +87,59 @@ public class PhoneTrackClient {
     }
 
     public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException, TokenMismatchException {
-        String target = "api/getsessions";
+        String target = "/index.php/apps/phonetrack/" + "api/getsessions";
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to get sessions");
             //return new ServerResponse.SessionsResponse(new ResponseData("[]", lastETag, lastModified));
             return new ServerResponse.SessionsResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
         }
         else {
-            return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_GET, null, lastETag, true));
+            return new ServerResponse.SessionsResponse(requestServer(ccm, target, METHOD_GET, null, lastETag, true, false));
+        }
+    }
+
+    public ServerResponse.CapabilitiesResponse getColor(CustomCertManager ccm) throws JSONException, IOException, TokenMismatchException {
+        String target = "/ocs/v2.php/cloud/capabilities";
+        if (nextcloudAPI != null) {
+            Log.d(getClass().getSimpleName(), "using SSO to get color");
+            //return new ServerResponse.SessionsResponse(new ResponseData("[]", lastETag, lastModified));
+            return new ServerResponse.CapabilitiesResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
+        }
+        else {
+            return new ServerResponse.CapabilitiesResponse(requestServer(ccm, target, METHOD_GET, null, null, true, true));
         }
     }
 
     public ServerResponse.ShareDeviceResponse shareDevice(CustomCertManager ccm, String token, String deviceName) throws JSONException, IOException, TokenMismatchException {
-        String target = "api/sharedevice/" + token + "/" + deviceName;
+        String target = "/index.php/apps/phonetrack/" + "api/sharedevice/" + token + "/" + deviceName;
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to get share device");
             return new ServerResponse.ShareDeviceResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
         }
         else {
-            return new ServerResponse.ShareDeviceResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+            return new ServerResponse.ShareDeviceResponse(requestServer(ccm, target, METHOD_GET, null, null, true, false));
         }
     }
 
     public ServerResponse.CreateSessionResponse createSession(CustomCertManager ccm, String sessionName) throws JSONException, IOException, TokenMismatchException {
-        String target = "api/createsession/" + sessionName;
+        String target = "/index.php/apps/phonetrack/" + "api/createsession/" + sessionName;
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to create session");
             return new ServerResponse.CreateSessionResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
         }
         else {
-            return new ServerResponse.CreateSessionResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+            return new ServerResponse.CreateSessionResponse(requestServer(ccm, target, METHOD_GET, null, null, true, false));
         }
     }
 
     public ServerResponse.GetSessionLastPositionsResponse getSessionLastPositions(CustomCertManager ccm, DBSession session) throws JSONException, IOException, TokenMismatchException {
-        String target = "api/getuserlastpositions/" + session.getToken();
+        String target = "/index.php/apps/phonetrack/" + "api/getuserlastpositions/" + session.getToken();
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to get session last positions");
             return new ServerResponse.GetSessionLastPositionsResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
         }
         else {
-            return new ServerResponse.GetSessionLastPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, true));
+            return new ServerResponse.GetSessionLastPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, true, false));
         }
     }
 
@@ -136,7 +148,7 @@ public class PhoneTrackClient {
 
         NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
                 .setMethod(method)
-                .setUrl("/index.php/apps/phonetrack/" + target)
+                .setUrl(target)
                 .build();
 
         try {
@@ -181,11 +193,11 @@ public class PhoneTrackClient {
      * @throws MalformedURLException
      * @throws IOException
      */
-    private ResponseData requestServer(CustomCertManager ccm, String target, String method, JSONObject params, String lastETag, boolean needLogin)
+    private ResponseData requestServer(CustomCertManager ccm, String target, String method, JSONObject params, String lastETag, boolean needLogin, boolean isOCSRequest)
             throws IOException {
         StringBuffer result = new StringBuffer();
         // setup connection
-        String targetURL = url + "index.php/apps/phonetrack/" + target;
+        String targetURL = url + target.replaceAll("^/", "");
         HttpURLConnection con = SupportUtil.getHttpURLConnection(ccm, targetURL);
         con.setRequestMethod(method);
         if (needLogin) {
@@ -198,6 +210,9 @@ public class PhoneTrackClient {
         con.setRequestProperty("User-Agent", "phonetrack-android/" + BuildConfig.VERSION_NAME);
         if (lastETag != null && METHOD_GET.equals(method)) {
             con.setRequestProperty("If-None-Match", lastETag);
+        }
+        if (isOCSRequest) {
+            con.setRequestProperty("OCS-APIRequest", "true");
         }
         con.setConnectTimeout(10 * 1000); // 10 seconds
         Log.d(getClass().getSimpleName(), method + " " + targetURL);

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -271,6 +272,9 @@ public class SessionServerSyncHelper {
                 callbacksPull = new ArrayList<>();
             }
             syncTask.execute();
+            // get NC color
+            GetNCColorTask getColorTask = new GetNCColorTask();
+            getColorTask.execute();
         } else if (!onlyLocalChanges) {
             Log.d(getClass().getSimpleName(), "... scheduled");
             syncScheduled = true;
@@ -470,6 +474,98 @@ public class SessionServerSyncHelper {
             }
         }
     }
+
+    private class GetNCColorTask extends AsyncTask<Void, Void, LoginStatus> {
+
+        private final List<ICallback> callbacks = new ArrayList<>();
+        private PhoneTrackClient client;
+        private List<Throwable> exceptions = new ArrayList<>();
+
+        public GetNCColorTask() {
+
+        }
+
+        public void addCallbacks(List<ICallback> callbacks) {
+            this.callbacks.addAll(callbacks);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected LoginStatus doInBackground(Void... voids) {
+            client = createPhoneTrackClient(); // recreate PhoneTrackClients on every sync in case the connection settings was changed
+            Log.i(getClass().getSimpleName(), "STARTING get color");
+
+            LoginStatus status = LoginStatus.OK;
+
+            if (client != null) {
+                status = getNextcloudColor();
+            }
+            else {
+                status = LoginStatus.SSO_TOKEN_MISMATCH;
+            }
+
+            Log.i(getClass().getSimpleName(), "Get color FINISHED");
+            return status;
+        }
+
+        /**
+         * Pull remote Changes: update or create each remote session and remove remotely deleted sessions.
+         */
+        private LoginStatus getNextcloudColor() {
+            Log.d(getClass().getSimpleName(), "getNextcloudColor()");
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+            String lastETag = preferences.getString(SettingsActivity.SETTINGS_KEY_ETAG, null);
+            long lastModified = preferences.getLong(SettingsActivity.SETTINGS_KEY_LAST_MODIFIED, 0);
+            LoginStatus status;
+            try {
+
+                ServerResponse.CapabilitiesResponse response = client.getColor(customCertManager);
+                String color = response.getColor();
+
+                status = LoginStatus.OK;
+
+                // update ETag and Last-Modified in order to reduce size of next response
+                SharedPreferences.Editor editor = preferences.edit();
+
+                if (color != null && !color.isEmpty()) {
+                    int intColor = Color.parseColor(color);
+                    Log.d(getClass().getSimpleName(), "COLOR from server is "+color);
+                    editor.putInt(appContext.getString(R.string.pref_key_color), intColor);
+                }
+                else {
+                    //editor.remove(SettingsActivity.SETTINGS_KEY_ETAG);
+                }
+
+                editor.apply();
+            } catch (ServerResponse.NotModifiedException e) {
+                Log.d(getClass().getSimpleName(), "No changes, nothing to do.");
+                status = LoginStatus.OK;
+            } catch (IOException e) {
+                Log.e(getClass().getSimpleName(), "Exception", e);
+                exceptions.add(e);
+                status = LoginStatus.CONNECTION_FAILED;
+            } catch (JSONException e) {
+                Log.e(getClass().getSimpleName(), "Exception", e);
+                exceptions.add(e);
+                status = LoginStatus.JSON_FAILED;
+            } catch (TokenMismatchException e) {
+                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                status = LoginStatus.SSO_TOKEN_MISMATCH;
+            }
+
+            return status;
+        }
+
+        @Override
+        protected void onPostExecute(LoginStatus status) {
+            super.onPostExecute(status);
+        }
+    }
+
 
     private NextcloudAPI.ApiConnectedListener apiCallback = new NextcloudAPI.ApiConnectedListener() {
         @Override

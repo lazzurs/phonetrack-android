@@ -8,8 +8,15 @@ import androidx.preference.PreferenceManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +27,10 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Provides entity classes for handling server responses with a single logjob ({@link SessionResponse}) or a list of phonetrack ({@link SessionsResponse}).
@@ -56,6 +67,16 @@ public class ServerResponse {
                 //}
             }
             return sessionsList;
+        }
+    }
+
+    public static class CapabilitiesResponse extends ServerResponse {
+        public CapabilitiesResponse(PhoneTrackClient.ResponseData response) {
+            super(response);
+        }
+
+        public String getColor() throws IOException {
+            return getColorFromContent(getContent());
         }
     }
 
@@ -134,6 +155,31 @@ public class ServerResponse {
             }
         }
         return null;
+    }
+
+    protected String getColorFromContent(String content) throws IOException {
+        //System.out.println(content);
+        String result = null;
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory
+                    .newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+
+            InputStream stream = new ByteArrayInputStream(content.getBytes());
+            Document doc = db.parse(stream);
+            doc.getDocumentElement().normalize();
+            // Locate the Tag Name
+            NodeList nodelist = doc.getElementsByTagName("color");
+            if (nodelist.getLength() > 0) {
+                result = nodelist.item(0).getTextContent();
+                System.out.println("I GOT THE COLOR from server: "+result);
+            }
+        }
+        catch (ParserConfigurationException e) {
+        }
+        catch (SAXException e) {
+        }
+        return result;
     }
 
     protected Map<String, ColoredLocation> getPositionsFromJSON(JSONObject json, DBSession session) throws JSONException {

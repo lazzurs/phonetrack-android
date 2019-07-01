@@ -9,30 +9,50 @@ import net.eneiluj.nextcloud.phonetrack.R;
 
 public class ThemeUtils {
 
+    private static int defaultColor = Color.parseColor("#0000FF");
+
     public static int primaryColor(Context context) {
-        int color = PreferenceManager.getDefaultSharedPreferences(context)
-                .getInt(
-                        context.getString(R.string.pref_key_color),
-                        ContextCompat.getColor(context, R.color.primary)
-                );
+        int color;
+        try {
+            color = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getInt(
+                            context.getString(R.string.pref_key_color),
+                            ContextCompat.getColor(context, R.color.primary)
+                    );
+        }
+        catch (ClassCastException e) {
+            color = defaultColor;
+        }
         return color;
     }
 
     public static int primaryColorTransparent(Context context) {
-        int color = PreferenceManager.getDefaultSharedPreferences(context)
-                .getInt(
-                        context.getString(R.string.pref_key_color),
-                        ContextCompat.getColor(context, R.color.primary)
-                );
+        int color;
+        try {
+            color = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getInt(
+                            context.getString(R.string.pref_key_color),
+                            ContextCompat.getColor(context, R.color.primary)
+                    );
+        }
+        catch (ClassCastException e) {
+            color = defaultColor;
+        }
         return manipulateColor(color, 1, 150);
     }
 
     public static int primaryDarkColor(Context context) {
-        int color = PreferenceManager.getDefaultSharedPreferences(context)
-                .getInt(context.getString(
-                        R.string.pref_key_color),
-                        ContextCompat.getColor(context, R.color.primary)
-                );
+        int color;
+        try {
+            color = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getInt(
+                            context.getString(R.string.pref_key_color),
+                            ContextCompat.getColor(context, R.color.primary)
+                    );
+        }
+        catch (ClassCastException e) {
+            color = defaultColor;
+        }
         return manipulateColor(color, 0.7f);
     }
 
