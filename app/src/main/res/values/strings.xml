@@ -41,6 +41,7 @@
     <string name="action_drawer_open">open side menu</string>
     <string name="action_drawer_close">close side menu</string>
     <string name="action_frequency">Set refresh frequency</string>
+    <string name="action_pin_to_homescreen">Pin map to home screen</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_save">Save</string>
     <string name="menu_select_session">Use PhoneTrack session</string>
@@ -107,6 +108,7 @@
     <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
+    <string name="homescreen_map_shortcut_long_title">Map for %s</string>
 
 
 
