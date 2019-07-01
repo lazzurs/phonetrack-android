@@ -41,6 +41,7 @@
     <string name="action_drawer_open">abrir menú lateral</string>
     <string name="action_drawer_close">cerrar menú lateral</string>
     <string name="action_frequency">Set refresh frequency</string>
+    <string name="action_pin_to_homescreen">Pin map to home screen</string>
     <string name="menu_delete">Eliminar</string>
     <string name="menu_save">Guardar</string>
     <string name="menu_select_session">Use PhoneTrack session</string>
@@ -107,6 +108,7 @@
     <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
+    <string name="homescreen_map_shortcut_long_title">Map for %s</string>
     <string name="is_running">procesando (%s pendiente, %s enviado)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Cuenta</string>
@@ -128,6 +130,8 @@
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
     <string name="settings_sms_keyword_long3">Available commands:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
+    <string name="settings_use_server_color_title">Use server color</string>
+    <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
     <string name="settings_providers_title">Proveedores de ubicación</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Network</string>
@@ -142,6 +146,10 @@
     <string name="settings_cert_reset">Reiniciar certificados en los que (no) se confía</string>
     <string name="settings_cert_reset_summary">Reinicializa la confianza en todos los certificados personalizados</string>
     <string name="settings_cert_reset_toast">Se han borrado todos los certificados personalizados</string>
+    <string name="settings_network_category">Network</string>
+    <string name="settings_logging_category">Logging</string>
+    <string name="settings_sms_category">Sms</string>
+    <string name="settings_theming_category">Theming</string>
     <string name="tracking_started">Registro iniciado</string>
     <string name="tracking_stopped">Registro parado</string>
     <string name="gps_disabled_warning">Aviso: gps desactivado</string>

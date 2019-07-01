@@ -41,6 +41,7 @@
     <string name="action_drawer_open">ouvrir le menu latéral</string>
     <string name="action_drawer_close">fermer le menu latéral</string>
     <string name="action_frequency">Changer la fréquence de rafraichissement</string>
+    <string name="action_pin_to_homescreen">Raccourci vers la carte sur l\'écran d\'accueil</string>
     <string name="menu_delete">Supprimer</string>
     <string name="menu_save">Enregistrer</string>
     <string name="menu_select_session">Utiliser une session PhoneTrack</string>
@@ -107,6 +108,7 @@
     <string name="sms_logjob_creation_impossible">Impossible de créer un logjob, aucune session trouvée</string>
     <string name="map_choose_layer">Choisissez un fournisseur de tuiles</string>
     <string name="drawer_connect_hint">Appuyez ici pour vous connecter</string>
+    <string name="homescreen_map_shortcut_long_title">Carte pour %s</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>
@@ -128,6 +130,8 @@
     <string name="settings_sms_keyword_long">Si ce téléphone reçoit un SMS qui contient juste ce mot-clé, les informations de localisation seront renvoyées.</string>
     <string name="settings_sms_keyword_long2">Vous pouvez aussi envoyer des commandes avec cette syntaxe : MOTCLE COMMANDE</string>
     <string name="settings_sms_keyword_long3">Comandes disponibles :\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
+    <string name="settings_use_server_color_title">Utiliser la couleur du serveur</string>
+    <string name="settings_use_server_color_subtitle">Récupérer la couleur du serveur pendant la synchronisation et l\'utiliser comme couleur principale de l\'appli</string>
     <string name="settings_providers_title">Fournisseurs de localisation</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Réseau</string>
@@ -142,6 +146,10 @@
     <string name="settings_cert_reset">Réinitialiser la confiance pour les certificats</string>
     <string name="settings_cert_reset_summary">Réinitialiser la confiance de tous les certificats personnels</string>
     <string name="settings_cert_reset_toast">Tous les certificats personnels ont été effacés</string>
+    <string name="settings_network_category">Réseau</string>
+    <string name="settings_logging_category">Logging</string>
+    <string name="settings_sms_category">Sms</string>
+    <string name="settings_theming_category">Apparence</string>
     <string name="tracking_started">Logging lancé</string>
     <string name="tracking_stopped">Logging arrêté</string>
     <string name="gps_disabled_warning">Attention : Gps désactivé</string>

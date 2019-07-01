@@ -41,6 +41,7 @@
     <string name="action_drawer_open">Seitenmenü öffnen</string>
     <string name="action_drawer_close">Seitenmenü schließen</string>
     <string name="action_frequency">Aktualisierungshäufigkeit festlegen</string>
+    <string name="action_pin_to_homescreen">Pin map to home screen</string>
     <string name="menu_delete">Löschen</string>
     <string name="menu_save">Speichern</string>
     <string name="menu_select_session">PhoneTrack-Sitzung verwenden</string>
@@ -105,8 +106,9 @@
     <string name="sms_logjobs_stopped">%d Protokollierungsaufträge wurden angehalten</string>
     <string name="sms_logjob_created">Ein Protokollierungsauftrag aller %d Sekunden wurde in der Sitzung %s erstellt</string>
     <string name="sms_logjob_creation_impossible">Erstellen des Protolierungsauftrags fehlgeschlagen. Es wurde keine Sitzung gefunden</string>
-    <string name="map_choose_layer">Wähle einen Map Tile Provider</string>
+    <string name="map_choose_layer">Map Tile Provider wählen</string>
     <string name="drawer_connect_hint">Antippen, um Verbindung herzustellen</string>
+    <string name="homescreen_map_shortcut_long_title">Map for %s</string>
     <string name="is_running">wird ausgeführt (%s ausstehend, %s gesendet)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
@@ -128,6 +130,8 @@
     <string name="settings_sms_keyword_long">Wenn dieses Gerät eine SMS empfängt, die nur dieses Schlüsselwort enthält, werden Standortinformationen zurückgesendet.</string>
     <string name="settings_sms_keyword_long2">Sie können Befehle auch mit dieser Struktur senden: SCHLÜSSELWORT BEFEHL</string>
     <string name="settings_sms_keyword_long3">Verfügbare Befehle:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
+    <string name="settings_use_server_color_title">Use server color</string>
+    <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
     <string name="settings_providers_title">Standortdienste</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Netzwerk</string>
@@ -142,6 +146,10 @@
     <string name="settings_cert_reset">Alle Zertifikate (vertrauenswürdige/nicht vertrauenswürdige) zurücksetzen</string>
     <string name="settings_cert_reset_summary">Vertrauen in alle benutzerdefinierten Zertifikate widerrufen</string>
     <string name="settings_cert_reset_toast">Alle benutzerdefinierten Zertifikate wurden gelöscht</string>
+    <string name="settings_network_category">Netzwerk</string>
+    <string name="settings_logging_category">Logging</string>
+    <string name="settings_sms_category">Sms</string>
+    <string name="settings_theming_category">Theming</string>
     <string name="tracking_started">Protokollierung gestartet</string>
     <string name="tracking_stopped">Protokollierung angehalten</string>
     <string name="gps_disabled_warning">Achtung: GPS deaktiviert</string>
