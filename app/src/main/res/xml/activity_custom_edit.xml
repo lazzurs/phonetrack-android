@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="logjob_preferences">
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editTitle"
         android:defaultValue="plop"
         android:icon="@drawable/ic_title_grey_24dp"
@@ -15,7 +15,7 @@
         android:summary=""
         android:title="@string/setting_title" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editUrl"
         android:defaultValue="plop"
         android:icon="@drawable/ic_link_grey_24dp"
@@ -39,7 +39,7 @@
         android:title="@string/setting_significantmotion_enabled"
         android:summary="@string/setting_significantmotion_summary" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editMinDistance"
         android:defaultValue="5"
         android:icon="@drawable/ic_length_grey_24dp"
@@ -58,7 +58,7 @@
         android:title="@string/setting_significantmotion_min_time_applied"
         android:summary="@string/setting_significantmotion_min_time_applied_summary" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editMinTime"
         android:defaultValue="60"
         android:icon="@drawable/ic_timer_grey_24dp"
@@ -72,7 +72,7 @@
         android:maxLength="5"
         android:title="@string/setting_min_time" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editMinAccuracy"
         android:defaultValue="50"
         android:icon="@drawable/ic_accuracy_grey_24dp"
@@ -92,7 +92,7 @@
         android:title="@string/setting_keepgps_title"
         android:summary="@string/setting_keepgps_summary" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editSigMotionTimeout"
         android:defaultValue="60"
         android:dialogMessage="@string/setting_significantmotion_timeout_summary"

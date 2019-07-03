@@ -10,7 +10,7 @@ xmlns:tools="http://schemas.android.com/tools"
     android:title="Logjob settings"
 -->
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editTitle"
         android:defaultValue="plop"
         android:icon="@drawable/ic_title_grey_24dp"
@@ -23,7 +23,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:summary=""
         android:title="@string/setting_title" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editUrl"
         android:defaultValue="plop"
         android:icon="@drawable/ic_cloud_grey_24dp"
@@ -36,7 +36,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:summary=""
         android:title="@string/setting_lj_url" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editToken"
         android:icon="@drawable/ic_lock_grey_24dp"
         android:dialogMessage="@string/setting_token_long"
@@ -48,7 +48,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:summary=""
         android:title="@string/setting_token" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editDevicename"
         android:defaultValue="plop"
         android:icon="@drawable/ic_phone_android_grey_24dp"
@@ -66,7 +66,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_significantmotion_enabled"
         android:summary="@string/setting_significantmotion_summary" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editMinDistance"
         android:defaultValue="5"
         android:icon="@drawable/ic_length_grey_24dp"
@@ -85,7 +85,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_significantmotion_min_time_applied"
         android:summary="@string/setting_significantmotion_min_time_applied_summary" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editMinTime"
         android:defaultValue="60"
         android:icon="@drawable/ic_timer_grey_24dp"
@@ -99,7 +99,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:maxLength="5"
         android:title="@string/setting_min_time" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editMinAccuracy"
         android:defaultValue="50"
         android:icon="@drawable/ic_accuracy_grey_24dp"
@@ -119,7 +119,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:title="@string/setting_keepgps_title"
         android:summary="@string/setting_keepgps_summary" />
 
-    <EditTextPreference
+    <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editSigMotionTimeout"
         android:defaultValue="60"
         android:dialogMessage="@string/setting_significantmotion_timeout_summary"
