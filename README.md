@@ -31,6 +31,12 @@ This app is pretty simple so it has a low inpact on battery life. There has been
 * Send locations to PhoneTrack Nextcloud app
 * Send locations to custom server with GET or POST requests
 * Store positions when network is not available
+* Remote control by SMS:
+    * get position
+    * activate alarm
+    * start all logjobs
+    * stop all logjobs
+    * create a logjob
 * Launch on system startup
 * Display devices of a Nextcloud PhoneTrack session on a map
 * Dark theme
@@ -74,12 +80,12 @@ Then open/import the project in Android studio and build it.
 
 ## :eyes: Screenshots
 
-![1](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/b29ea339fbb3a1dede386847e710fb49/1.png)
-![2](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/c21cf9f1c58bd2341073b9a910d0d5ae/2.png)
-![3](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/bfbbe80b0dd35303f81154a727b732d3/3.png)
-![4](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/cd1110b94bcd634fbbb314a590a7e3e9/4.png)
-![5](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/82ab4bba86fab9f3e09ace3875ed2e67/5.png)
-![6](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/2cea3c089c828540629246dc6f394ad5/6.png)
+[1<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/b29ea339fbb3a1dede386847e710fb49/1.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/b29ea339fbb3a1dede386847e710fb49/1.png)
+[2<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/c21cf9f1c58bd2341073b9a910d0d5ae/2.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/c21cf9f1c58bd2341073b9a910d0d5ae/2.png)
+[3<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/bfbbe80b0dd35303f81154a727b732d3/3.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/bfbbe80b0dd35303f81154a727b732d3/3.png)
+[4<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/cd1110b94bcd634fbbb314a590a7e3e9/4.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/cd1110b94bcd634fbbb314a590a7e3e9/4.png)
+[5<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/82ab4bba86fab9f3e09ace3875ed2e67/5.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/82ab4bba86fab9f3e09ace3875ed2e67/5.png)
+[6<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/2cea3c089c828540629246dc6f394ad5/6.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/2cea3c089c828540629246dc6f394ad5/6.png)
 
 ## :notebook: License
 This project is licensed under the [GNU GENERAL PUBLIC LICENSE](/LICENSE).
