@@ -16,7 +16,7 @@
     <string name="mandatory">(mandatory)</string>
     <string name="setting_devicename">Nome do dispositivo</string>
     <string name="setting_devicename_long">Device name or reservation token</string>
-    <string name="setting_token">Session token</string>
+    <string name="setting_token">Token de sessão</string>
     <string name="setting_token_long">Session identification token</string>
     <string name="setting_lj_url">Nextcloud address</string>
     <string name="setting_lj_url_long">Nextcloud address of target PhoneTrack instance hosting the session</string>

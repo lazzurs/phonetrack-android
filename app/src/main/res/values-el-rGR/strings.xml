@@ -41,7 +41,7 @@
     <string name="action_drawer_open">άνοιγμα πλευρικού μενού</string>
     <string name="action_drawer_close">κλείσιμο πλευρικού μενού</string>
     <string name="action_frequency">Ορισμός συχνότητας ανανέωσης</string>
-    <string name="action_pin_to_homescreen">Pin map to home screen</string>
+    <string name="action_pin_to_homescreen">Καρφίτσωμα χάρτη στην αρχική οθόνη</string>
     <string name="menu_delete">Διαγραφή</string>
     <string name="menu_save">Αποθήκευση</string>
     <string name="menu_select_session">Χρήση συνεδρίας PhoneTrack</string>
@@ -62,7 +62,9 @@
     <string name="setting_significantmotion_title">Λήψη θέσης μόνο μετά από σημαντική κίνηση</string>
     <string name="setting_significantmotion_summary">Πειραματικό: Αναμονή για σημαντική κίνηση πριν τη λήψη της επόμενης θέσης. Εξοικονομεί πολλή ενέργεια σε κάποιες περιπτώσεις. Ασύμβατη με κάποιες άλλες επιλογές.</string>
     <string name="setting_significantmotion_min_time_applied">Εφαρμογή ελάχιστου χρόνου</string>
-    <string name="setting_significantmotion_min_time_applied_summary">Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
+    <string name="setting_significantmotion_min_time_applied_summary">Αποφυγή καταγραφής θέσης με κάθε κίνηση. Αναμονή \"ελάχιστου χρόνου\" μεταξύ δύο σημείων. Προσφέρει εξοικονόμηση ενέργειας.
+
+Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
     <string name="setting_significantmotion_timeout">Λήξη χρονικού ορίου θέσης</string>
     <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout.</string>
     <string name="logjob_title_log_to">Καταγραφή σε %s</string>
