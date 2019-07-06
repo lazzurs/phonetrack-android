@@ -55,7 +55,7 @@
     <string name="setting_min_time">Tiempo mínimo</string>
     <string name="setting_min_time_long">Tiempo mínimo entre dos puntos registrados (segundos)</string>
     <string name="setting_min_accuracy">Precisión mínima</string>
-    <string name="setting_min_accuracy_long">Precisión mínima para puntos registrados (metros)</string>
+    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Mantener el GPS encendido entre localizaciones</string>
     <string name="setting_keepgps_summary">Esto conseguirá posiciones más precisas pero tendrá mayor impacto en la duración de la batería. Utilizar cuando el tiempo mínimo sea menor de 60 segundos.</string>
     <string name="setting_significantmotion_enabled">Modo de movimiento significativo</string>

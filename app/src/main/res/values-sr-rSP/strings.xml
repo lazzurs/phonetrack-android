@@ -55,7 +55,7 @@
     <string name="setting_min_time">Минимално време</string>
     <string name="setting_min_time_long">Минимално време између све излоговане тачке (у секундама)</string>
     <string name="setting_min_accuracy">Minimum accuracy</string>
-    <string name="setting_min_accuracy_long">Минимална прецизност излогованих тачака (у метрима)</string>
+    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Држи ГПС између исправки</string>
     <string name="setting_keepgps_summary">Овим ћете добити прецизнију позицију, али ће имати више ефекта на батерију. Користити га када је минимално време испод 60 секунди.</string>
     <string name="setting_significantmotion_enabled">Significant motion mode</string>

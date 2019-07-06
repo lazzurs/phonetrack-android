@@ -55,7 +55,7 @@
     <string name="setting_min_time">Minimálny čas</string>
     <string name="setting_min_time_long">Min. čas medzi dvoma zaznamenanými bodmi (sekundy)</string>
     <string name="setting_min_accuracy">Minimálna presnosť</string>
-    <string name="setting_min_accuracy_long">Min. presnosť na uloženie bodov (metre)</string>
+    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Nechať GPS zapnuté medzi fixami</string>
     <string name="setting_keepgps_summary">Presnejšia poloha bodov, ale viac náročnejšie na životnosť batérie. Použite, keď Minimálny čas je pod 60sek.</string>
     <string name="setting_significantmotion_enabled">Significant motion mode</string>

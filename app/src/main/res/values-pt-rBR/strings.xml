@@ -55,7 +55,7 @@
     <string name="setting_min_time">Minimum time</string>
     <string name="setting_min_time_long">Minimum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Precisão mínima</string>
-    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters)</string>
+    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Keep GPS on between fixes</string>
     <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
     <string name="setting_significantmotion_enabled">Significant motion mode</string>

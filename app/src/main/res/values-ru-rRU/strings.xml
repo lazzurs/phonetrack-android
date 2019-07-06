@@ -55,7 +55,7 @@
     <string name="setting_min_time">Минимальное время</string>
     <string name="setting_min_time_long">Минимальное время между двумя сохранёнными точками (секунд)</string>
     <string name="setting_min_accuracy">Минимальная точность</string>
-    <string name="setting_min_accuracy_long">Минимальная точность для сохранённых точкек (метров)</string>
+    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Сохранять GPS до фиксации</string>
     <string name="setting_keepgps_summary">Это позволит получить более точную позицию, но сократит время жизни батареи. Используйте когда минимальное время меньше 60 секунд.</string>
     <string name="setting_significantmotion_enabled">Режим увеличенных перемещений</string>

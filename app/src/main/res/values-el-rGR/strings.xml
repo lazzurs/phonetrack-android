@@ -55,7 +55,7 @@
     <string name="setting_min_time">Ελάχιστος χρόνος</string>
     <string name="setting_min_time_long">Ελάχιστος χρόνος μεταξύ δύο καταγεγραμμένων σημείων (δευτερόλεπτα)</string>
     <string name="setting_min_accuracy">Ελάχιστη ακρίβεια</string>
-    <string name="setting_min_accuracy_long">Ελάχιστη ακρίβεια για καταγεγραμμένα σημεία (μέτρα)</string>
+    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Διατήρηση ανοιχτού GPS μεταξύ των επιδιορθώσεων</string>
     <string name="setting_keepgps_summary">Αυτό θα φέρει πιο ακριβείς θέσεις, αλλά θα έχει μεγαλύτερη επίδραση στη διάρκεια ζωής μπαταρίας. Χρησιμοποιείστε το όταν ελάχιστος χρόνος είναι κάτω από 60 δευτερόλεπτα.</string>
     <string name="setting_significantmotion_enabled">Λειτουργία σημαντικής κίνησης</string>
