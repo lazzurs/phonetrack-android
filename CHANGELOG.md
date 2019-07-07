@@ -15,13 +15,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - now able to receive commands by SMS
 (send back location, alarm, startlogjobs, stoplogjobs, createlogjob)
 [#17](https://gitlab.com/eneiluj/phonetrack-android/issues/17) @ShareTheKnowledge
+- map shortcuts
+[!5](https://gitlab.com/eneiluj/phonetrack-android/merge_requests/5) @creywood
+- option to get server color
 
 ### Changed
 - format distance in info dialog
 [#88](https://gitlab.com/eneiluj/phonetrack-android/issues/88) @markussvn
+- enable/disable ability to refresh logjob list layout depending on network availability
+- organize settings with categories
 
 ### Fixed
 - SSO is now working with all Android versions
+- bug with EditTextPreference after theme change
 
 ## 0.0.11 – 2019-05-14
 ### Added
