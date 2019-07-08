@@ -23,6 +23,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -50,6 +52,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
@@ -269,6 +272,23 @@ public class MapActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_WRITE:
+                if (grantResults.length > 0) {
+                    Log.d(TAG, "[permission STORAGE result] "+grantResults[0]);
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        declareMapsForgeProvider();
+                    }
+                    else {
+
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
     public void onConfigurationChanged(android.content.res.Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.syncState();
@@ -328,6 +348,15 @@ public class MapActivity extends AppCompatActivity {
         );
 
         // MAPSFORGE
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            declareMapsForgeProvider();
+        }
+
+    }
+
+    private void declareMapsForgeProvider() {
+        Log.i(TAG, "[DECLARE MAPSFORGE]");
         MapsForgeTileSource.createInstance(this.getApplication());
         Set<File> mapfiles = findMapFiles();
         //do a simple scan of local storage for .map files.
