@@ -120,6 +120,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     com.github.clans.fab.FloatingActionButton fabCreatePhoneTrack;
     com.github.clans.fab.FloatingActionButton fabCreateCustom;
     com.github.clans.fab.FloatingActionButton fabCreateSession;
+    com.github.clans.fab.FloatingActionButton fabCreateMaps;
     com.github.clans.fab.FloatingActionMenu fabMenu;
     RecyclerView listNavigationCategories;
     RecyclerView listNavigationMenu;
@@ -180,6 +181,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         fabCreatePhoneTrack = findViewById(R.id.fab_create_phonetrack);
         fabCreateCustom = findViewById(R.id.fab_create_custom);
         fabCreateSession = findViewById(R.id.fab_create_session);
+        fabCreateMaps = findViewById(R.id.fab_create_maps);
         fabMenu = findViewById(R.id.floatingMenu);
         listNavigationCategories = findViewById(R.id.navigationList);
         listNavigationMenu = findViewById(R.id.navigationMenu);
@@ -353,10 +355,14 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 if (opened) {
                     if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
                         fabCreateSession.setVisibility(View.VISIBLE);
+                        fabCreateMaps.setVisibility(View.VISIBLE);
                     }
                     else {
                         fabCreateSession.setVisibility(View.GONE);
+                        fabCreateMaps.setVisibility(View.GONE);
                     }
+                    // remove this when Maps is released
+                    fabCreateMaps.setVisibility(View.GONE);
                 } else {
 
                 }
@@ -406,6 +412,14 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         });
 
+        fabCreateMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent createIntent = new Intent(getApplicationContext(), EditMapsLogjobActivity.class);
+                startActivityForResult(createIntent, create_logjob_cmd);
+                fabMenu.close(false);
+            }
+        });
         fabCreateCustom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
