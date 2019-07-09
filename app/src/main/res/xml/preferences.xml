@@ -38,7 +38,7 @@
         android:key="settings_logging_category">
 
     <ListPreference
-        android:icon="@android:drawable/ic_menu_mylocation"
+        android:icon="@drawable/ic_crosshairs_gps_grey_24dp"
         android:key="@string/pref_key_providers"
         android:summary=""
         android:title="@string/settings_providers_title"
@@ -46,7 +46,7 @@
         android:defaultValue="@string/pref_value_providers" />
 
     <CheckBoxPreference
-        android:icon="@android:drawable/ic_lock_power_off"
+        android:icon="@drawable/ic_power_grey_24dp"
         android:key="@string/pref_key_autostart"
         android:title="@string/pref_autostart_title"
         android:summary="@string/pref_autostart_summary"
@@ -125,7 +125,5 @@
         android:summary="phonetrack"
         android:title="@string/settings_sms_keyword_title" />
     </PreferenceCategory>
-
-
 
 </PreferenceScreen>

@@ -142,7 +142,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 PhoneTrack.setAppTheme(darkTheme);
                 setThemePreferenceSummary(themePref, darkTheme);
                 setThemePreferenceIcon(themePref, darkTheme);
-                
+
                 if (getActivity() != null) {
                     getActivity().recreate();
                 }
