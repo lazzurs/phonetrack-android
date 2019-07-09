@@ -2,40 +2,42 @@ package net.eneiluj.nextcloud.phonetrack.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-//import android.preference.PreferenceManager;
+import android.util.Log;
+
 import androidx.preference.PreferenceManager;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+//import android.preference.PreferenceManager;
 
 /**
  * Provides entity classes for handling server responses with a single logjob ({@link SessionResponse}) or a list of phonetrack ({@link SessionsResponse}).
  */
 public class ServerResponse {
+    private static final String TAG = ServerResponse.class.getSimpleName();
 
     public static class NotModifiedException extends IOException {
     }
@@ -158,7 +160,7 @@ public class ServerResponse {
     }
 
     protected String getColorFromContent(String content) throws IOException {
-        //System.out.println(content);
+        //Log.i(TAG, content);
         String result = null;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory
@@ -172,7 +174,7 @@ public class ServerResponse {
             NodeList nodelist = doc.getElementsByTagName("color");
             if (nodelist.getLength() > 0) {
                 result = nodelist.item(0).getTextContent();
-                System.out.println("I GOT THE COLOR from server: "+result);
+                Log.i(TAG,"I GOT THE COLOR from server: "+result);
             }
         }
         catch (ParserConfigurationException e) {

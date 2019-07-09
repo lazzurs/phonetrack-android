@@ -31,71 +31,85 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+        <LinearLayout
+            android:layout_width="60dp"
+            android:layout_height="260dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="#33000000"
+            android:orientation="vertical">
+        </LinearLayout>
+
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ic_map_layers"
-            android:src="@android:drawable/ic_menu_mapmode"
+            android:src="@drawable/ic_map_grey_24dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
+            android:padding="8dp"
             android:background="#00ffffff"
-            android:contentDescription="aaa"
+            android:contentDescription="@string/map_choose_layer"
             android:cropToPadding="true" />
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ic_center_map"
-            android:src="@android:drawable/ic_menu_mylocation"
+            android:src="@drawable/ic_crosshairs_gps_grey_24dp"
             android:layout_below="@+id/ic_map_layers"
             android:layout_alignLeft="@+id/ic_map_layers"
             android:layout_alignStart="@+id/ic_map_layers"
             android:layout_marginTop="10dp"
+            android:padding="8dp"
             android:background="#00ffffff"
-            android:contentDescription="aaa"
+            android:contentDescription="@string/center_map"
             android:cropToPadding="true" />
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ic_follow_me"
-            android:src="@android:drawable/ic_menu_directions"
+            android:src="@drawable/ic_directions_grey_24dp"
             android:background="#00ffffff"
-            android:contentDescription="bbb"
+            android:contentDescription="@string/follow_me"
             android:cropToPadding="true"
             android:layout_below="@+id/ic_center_map"
             android:layout_alignLeft="@+id/ic_center_map"
             android:layout_alignStart="@+id/ic_center_map"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:padding="8dp"/>
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ic_zoom_all"
-            android:src="@android:drawable/ic_menu_search"
+            android:src="@drawable/ic_magnify_grey_24dp"
             android:background="#00ffffff"
-            android:contentDescription="bbb"
+            android:contentDescription="@string/zoom_all_markers"
             android:cropToPadding="true"
             android:layout_below="@+id/ic_follow_me"
             android:layout_alignLeft="@+id/ic_center_map"
             android:layout_alignStart="@+id/ic_follow_me"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:padding="8dp"/>
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ic_zoom_auto"
-            android:src="@android:drawable/ic_menu_zoom"
+            android:src="@drawable/ic_magnify_plus_outline_grey_24dp"
             android:background="#00ffffff"
-            android:contentDescription="bbb"
+            android:contentDescription="@string/auto_zoom"
             android:cropToPadding="true"
             android:layout_below="@+id/ic_zoom_all"
             android:layout_alignLeft="@+id/ic_center_map"
             android:layout_alignStart="@+id/ic_zoom_all"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:padding="8dp"/>
     </RelativeLayout>
 
     </LinearLayout>

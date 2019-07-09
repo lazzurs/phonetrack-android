@@ -129,7 +129,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             //originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_LOGJOB);
         }
         setHasOptionsMenu(true);
-        System.out.println("SUPERCLASS on create : " + logjob);
+        Log.i(TAG,"SUPERCLASS on create : " + logjob);
 
         ///////////////
         //addPreferencesFromResource(R.xml.activity_edit);
@@ -444,7 +444,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        System.out.println("ACT CREATEDDDDDDD");
+        Log.i(TAG,"ACT CREATEDDDDDDD");
         //ButterKnife.bind(this, getView());
 
         // hide the keyboard when this window gets the focus

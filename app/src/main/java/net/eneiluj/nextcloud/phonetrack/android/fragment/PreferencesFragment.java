@@ -134,14 +134,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         Boolean darkTheme = sp.getBoolean(getString(R.string.pref_key_theme), false);
 
         setThemePreferenceSummary(themePref, darkTheme);
+        setThemePreferenceIcon(themePref, darkTheme);
         themePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Boolean darkTheme = (Boolean) newValue;
                 PhoneTrack.setAppTheme(darkTheme);
                 setThemePreferenceSummary(themePref, darkTheme);
-                //getActivity().setResult(Activity.RESULT_OK);
-                //getActivity().finish();
+                setThemePreferenceIcon(themePref, darkTheme);
+
                 if (getActivity() != null) {
                     getActivity().recreate();
                 }
@@ -290,6 +291,14 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     public void disableSms() {
         final CheckBoxPreference smsPref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_sms));
         smsPref.setChecked(false);
+    }
+
+    private void setThemePreferenceIcon(Preference preference, boolean darkThemeActive) {
+        if (darkThemeActive) {
+            preference.setIcon(R.drawable.ic_brightness_2_grey_24dp);
+        } else {
+            preference.setIcon(R.drawable.ic_sunny_grey_24dp);
+        }
     }
 
     protected void showToast(CharSequence text, int duration) {

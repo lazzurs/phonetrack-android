@@ -888,6 +888,12 @@ public class MapActivity extends AppCompatActivity {
         btZoomAuto = (ImageButton) findViewById(R.id.ic_zoom_auto);
         btLayers = (ImageButton) findViewById(R.id.ic_map_layers);
 
+        btDisplayMyLoc.setColorFilter(Color.WHITE);
+        btFollowMe.setColorFilter(Color.WHITE);
+        btZoom.setColorFilter(Color.WHITE);
+        btZoomAuto.setColorFilter(Color.WHITE);
+        btLayers.setColorFilter(Color.WHITE);
+
         if (prefs.getBoolean("map_myposition", true)) {
             btDisplayMyLoc.setBackground(toggleCircle);
             mLocationOverlay.enableMyLocation();

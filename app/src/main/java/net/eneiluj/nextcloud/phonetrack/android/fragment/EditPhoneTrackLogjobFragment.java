@@ -6,16 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-//import android.preference.EditTextPreference;
-import androidx.preference.EditTextPreference;
-//import android.preference.ListPreference;
-//import android.preference.Preference;
-import androidx.preference.Preference;
-//import android.preference.PreferenceFragment;
-import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
-import androidx.appcompat.view.ContextThemeWrapper;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,8 +13,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import androidx.annotation.Nullable;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
@@ -33,7 +26,15 @@ import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.webkit.URLUtil.isValidUrl;
+
+//import android.preference.EditTextPreference;
+//import android.preference.ListPreference;
+//import android.preference.Preference;
+//import android.preference.PreferenceFragment;
 
 //public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
 //public class EditLogjobFragment extends PreferencesFragment {
@@ -67,7 +68,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         endOnCreate();
 
-        System.out.println("PHONEFRAG on create : "+logjob);
+        Log.i(TAG, "PHONEFRAG on create : "+logjob);
 
         Preference.OnPreferenceClickListener clickListener =  new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -200,7 +201,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                     logjob.getLocationRequestTimeout() == newTimeout) {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
-                System.out.println("====== update logjob");
+                Log.i(TAG, "====== update logjob");
                 logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename,
                         false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                         newUseSignificantMotion, newTimeout, callback);
@@ -338,7 +339,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        System.out.println("PHONETRACK ACT CREATEDDDDDDD");
+        Log.i(TAG, "PHONETRACK ACT CREATEDDDDDDD");
 
         editToken = (EditTextPreference) this.findPreference("token");
         editToken.setText(logjob.getToken());
