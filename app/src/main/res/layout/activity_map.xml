@@ -41,6 +41,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
+            android:padding="8dp"
             android:background="#00ffffff"
             android:contentDescription="@string/map_choose_layer"
             android:cropToPadding="true" />
@@ -54,6 +55,7 @@
             android:layout_alignLeft="@+id/ic_map_layers"
             android:layout_alignStart="@+id/ic_map_layers"
             android:layout_marginTop="10dp"
+            android:padding="8dp"
             android:background="#00ffffff"
             android:contentDescription="@string/center_map"
             android:cropToPadding="true" />
@@ -69,7 +71,8 @@
             android:layout_below="@+id/ic_center_map"
             android:layout_alignLeft="@+id/ic_center_map"
             android:layout_alignStart="@+id/ic_center_map"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:padding="8dp"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -82,7 +85,8 @@
             android:layout_below="@+id/ic_follow_me"
             android:layout_alignLeft="@+id/ic_center_map"
             android:layout_alignStart="@+id/ic_follow_me"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:padding="8dp"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -95,7 +99,8 @@
             android:layout_below="@+id/ic_zoom_all"
             android:layout_alignLeft="@+id/ic_center_map"
             android:layout_alignStart="@+id/ic_zoom_all"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:padding="8dp"/>
     </RelativeLayout>
 
     </LinearLayout>
