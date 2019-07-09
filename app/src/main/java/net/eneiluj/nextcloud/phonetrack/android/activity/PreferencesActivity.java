@@ -27,7 +27,6 @@ import java.security.Permission;
 /**
  * Allows to change application settings.
  */
-
 public class PreferencesActivity extends AppCompatActivity {
 
     private static final String TAG = PreferencesActivity.class.getSimpleName();
