@@ -5,7 +5,17 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
+
+import com.google.gson.GsonBuilder;
+import com.nextcloud.android.sso.api.NextcloudAPI;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -21,10 +31,13 @@ import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
+import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.WebTrackHelper;
+import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
+import net.eneiluj.nextcloud.phonetrack.util.ServerResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,8 +130,28 @@ public class WebTrackService extends IntentService {
         for (DBLogjob logjob : logjobs) {
             long ljId = logjob.getId();
             try {
+                // Maps logjob
+                if (logjob.getDeviceName().isEmpty() && logjob.getToken().isEmpty() && logjob.getUrl().isEmpty()) {
+                    PhoneTrackClient client = createPhoneTrackClient();
+                    List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
+                    for (DBLogjobLocation loc : locations) {
+                        long locId = loc.getId();
+                        Map<String, String> params = dbLocationToMap(loc);
+                        //web.postPositionToPhoneTrack(url, params);
+                        web.postPositionToMaps(client, params);
+                        db.setLocationSynced(locId);
+                        db.incNbSync(logjob);
+                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
+                        Intent intent = new Intent(BROADCAST_SYNC_DONE);
+                        intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                        sendBroadcast(intent);
+                    }
+                    if (locations.size() > 0) {
+                        db.resetLastSyncError(ljId);
+                    }
+                }
                 // PhoneTrack logjob
-                if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
+                else if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
                     URL url = web.getUrlFromPhoneTrackLogjob(logjob);
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
                     // send one by one
@@ -319,5 +352,45 @@ public class WebTrackService extends IntentService {
         if (LoggerService.DEBUG) { Log.d(TAG, "[websync stop]"); }
         super.onDestroy();
     }
+
+    private PhoneTrackClient createPhoneTrackClient() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String url = "";
+        String username = "";
+        String password = "";
+        boolean useSSO = preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
+        if (useSSO) {
+            try {
+                SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(getApplicationContext());
+                NextcloudAPI nextcloudAPI = new NextcloudAPI(getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
+                return new PhoneTrackClient(url, username, password, nextcloudAPI);
+            }
+            catch (NextcloudFilesAppAccountNotFoundException e) {
+                return null;
+            }
+            catch (NoCurrentAccountSelectedException e) {
+                return null;
+            }
+        }
+        else {
+            url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+            username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
+            password = preferences.getString(SettingsActivity.SETTINGS_PASSWORD, SettingsActivity.DEFAULT_SETTINGS);
+            return new PhoneTrackClient(url, username, password, null);
+        }
+    }
+
+    private NextcloudAPI.ApiConnectedListener apiCallback = new NextcloudAPI.ApiConnectedListener() {
+        @Override
+        public void onConnected() {
+            // ignore this one..
+            Log.d(getClass().getSimpleName(), "API connected!!!!");
+        }
+
+        @Override
+        public void onError(Exception ex) {
+            // TODO handle error in your app
+        }
+    };
 
 }

@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import android.util.Log;
 
+import com.nextcloud.android.sso.exceptions.TokenMismatchException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,6 +30,8 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
+import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
+import net.eneiluj.nextcloud.phonetrack.util.ServerResponse;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 
 import at.bitfire.cert4android.CustomCertManager;
@@ -284,6 +288,26 @@ public class WebTrackHelper {
         }
         if (LoggerService.DEBUG) { Log.d(TAG, "[postWithParams response: " + response + "]"); }
         return response;
+    }
+
+    public void postPositionToMaps(PhoneTrackClient client, Map<String, String> params) throws IOException {
+        if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps]"); }
+        //String response = postWithParams(url, params);
+        int deviceId = 0;
+        try {
+            ServerResponse.MapsAddPointResponse response = client.mapsAddPoint(certManager, params);
+
+            deviceId = response.getDeviceId();
+        } catch (JSONException e) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed: " + e + "]"); }
+        } catch (TokenMismatchException e) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed: " + e + "]"); }
+        } catch (Exception e) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed: " + e + "]"); }
+        }
+        if (deviceId == 0) {
+            throw new IOException(context.getString(R.string.e_server_response));
+        }
     }
 
     /**

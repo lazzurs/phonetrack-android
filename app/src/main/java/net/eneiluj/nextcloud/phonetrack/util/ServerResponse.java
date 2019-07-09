@@ -42,6 +42,16 @@ public class ServerResponse {
     public static class NotModifiedException extends IOException {
     }
 
+    public static class MapsAddPointResponse extends ServerResponse {
+        public MapsAddPointResponse(PhoneTrackClient.ResponseData response) {
+            super(response);
+        }
+
+        public int getDeviceId() throws JSONException, Exception {
+            return getDeviceIdFromJSON(new JSONObject(getContent()));
+        }
+    }
+
     public static class SessionResponse extends ServerResponse {
         public SessionResponse(PhoneTrackClient.ResponseData response) {
             super(response);
@@ -157,6 +167,15 @@ public class ServerResponse {
             }
         }
         return null;
+    }
+
+    protected int getDeviceIdFromJSON(JSONObject json) throws JSONException, Exception {
+        int deviceId = 0;
+        String sessionId;
+        if (json.has("deviceId")) {
+            deviceId = json.getInt("deviceId");
+        }
+        return deviceId;
     }
 
     protected String getColorFromContent(String content) throws IOException {

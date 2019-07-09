@@ -1,5 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.util;
 
+import android.os.Build;
+import android.util.ArrayMap;
 import android.util.Base64;
 import android.util.Log;
 
@@ -12,6 +14,7 @@ import com.nextcloud.android.sso.exceptions.TokenMismatchException;
 
 import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
+import net.eneiluj.nextcloud.phonetrack.persistence.WebTrackHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import at.bitfire.cert4android.CustomCertManager;
 
@@ -73,6 +78,29 @@ public class PhoneTrackClient {
         this.username = username;
         this.password = password;
         this.nextcloudAPI = nextcloudAPI;
+    }
+
+    public ServerResponse.MapsAddPointResponse mapsAddPoint(CustomCertManager ccm, Map<String, String> params) throws JSONException, IOException, TokenMismatchException {
+        String target = "/index.php/apps/maps/api/1.0/devices";
+        String userAgent = Build.MODEL
+                .replaceAll(" ", "")
+                .replaceAll("/", "");
+        userAgent += " (PhoneTrack)";
+        Map<String, String> mapsParams = new HashMap<>();
+        mapsParams.put("lat", params.get(WebTrackHelper.PARAM_LAT));
+        mapsParams.put("lng", params.get(WebTrackHelper.PARAM_LON));
+        mapsParams.put("timestamp", params.get(WebTrackHelper.PARAM_TIME));
+        mapsParams.put("user_agent", userAgent);
+        mapsParams.put("altitude", params.get(WebTrackHelper.PARAM_ALT));
+        mapsParams.put("battery", params.get(WebTrackHelper.PARAM_BATTERY));
+        mapsParams.put("accuracy", params.get(WebTrackHelper.PARAM_ACCURACY));
+        if (nextcloudAPI != null) {
+            Log.d(getClass().getSimpleName(), "using SSO to add point to Maps");
+            return new ServerResponse.MapsAddPointResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_POST, mapsParams));
+        }
+        else {
+            return new ServerResponse.MapsAddPointResponse(requestServer(ccm, target, METHOD_POST, new JSONObject(mapsParams), null, true, false));
+        }
     }
 
     public ServerResponse.SessionsResponse getSessions(CustomCertManager ccm, long lastModified, String lastETag) throws JSONException, IOException, TokenMismatchException {
@@ -132,13 +160,22 @@ public class PhoneTrackClient {
         }
     }
 
-    private ResponseData requestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, JSONObject params) throws TokenMismatchException{
+    private ResponseData requestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, Map<String, String> params) throws TokenMismatchException{
         StringBuffer result = new StringBuffer();
 
-        NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
-                .setMethod(method)
-                .setUrl(target)
-                .build();
+        NextcloudRequest nextcloudRequest;
+        if (params == null) {
+            nextcloudRequest = new NextcloudRequest.Builder()
+                    .setMethod(method)
+                    .setUrl(target).build();
+        }
+        else {
+            nextcloudRequest = new NextcloudRequest.Builder()
+                    .setMethod(method)
+                    .setUrl(target)
+                    .setParameter(params)
+                    .build();
+        }
 
         try {
             Log.d(getClass().getSimpleName(), "BEGGGGGGGGGGG ");
