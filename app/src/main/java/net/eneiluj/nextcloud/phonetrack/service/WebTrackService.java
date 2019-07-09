@@ -132,22 +132,26 @@ public class WebTrackService extends IntentService {
             try {
                 // Maps logjob
                 if (logjob.getDeviceName().isEmpty() && logjob.getToken().isEmpty() && logjob.getUrl().isEmpty()) {
-                    PhoneTrackClient client = createPhoneTrackClient();
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
-                    for (DBLogjobLocation loc : locations) {
-                        long locId = loc.getId();
-                        Map<String, String> params = dbLocationToMap(loc);
-                        //web.postPositionToPhoneTrack(url, params);
-                        web.postPositionToMaps(client, params);
-                        db.setLocationSynced(locId);
-                        db.incNbSync(logjob);
-                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
-                        Intent intent = new Intent(BROADCAST_SYNC_DONE);
-                        intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
-                        sendBroadcast(intent);
-                    }
                     if (locations.size() > 0) {
-                        db.resetLastSyncError(ljId);
+                        if (!db.getPhonetrackServerSyncHelper().isConfigured(getApplicationContext())) {
+                            throw new Exception(getString(R.string.error_no_account_maps));
+                        }
+                        PhoneTrackClient client = createPhoneTrackClient();
+                        for (DBLogjobLocation loc : locations) {
+                            long locId = loc.getId();
+                            Map<String, String> params = dbLocationToMap(loc);
+                            web.postPositionToMaps(client, params);
+                            db.setLocationSynced(locId);
+                            db.incNbSync(logjob);
+                            db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
+                            Intent intent = new Intent(BROADCAST_SYNC_DONE);
+                            intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                            sendBroadcast(intent);
+                        }
+                        if (locations.size() > 0) {
+                            db.resetLastSyncError(ljId);
+                        }
                     }
                 }
                 // PhoneTrack logjob
@@ -246,6 +250,9 @@ public class WebTrackService extends IntentService {
             } catch (JSONException e2) {
                 anyError = true;
                 handleError(e2, ljId);
+            } catch (Exception e3) {
+                anyError = true;
+                handleError(e3, ljId);
             }
         }
         // retry only if there was any error and tracking is on
