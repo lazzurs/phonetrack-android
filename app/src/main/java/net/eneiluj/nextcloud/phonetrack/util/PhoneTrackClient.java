@@ -1,23 +1,17 @@
 package net.eneiluj.nextcloud.phonetrack.util;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
-
-import android.app.Activity;
-import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+
 import com.nextcloud.android.sso.aidl.NextcloudRequest;
 import com.nextcloud.android.sso.api.NextcloudAPI;
-import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
-import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountPermissionNotGrantedException;
-import com.nextcloud.android.sso.exceptions.NextcloudFilesAppNotSupportedException;
-import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
 import com.nextcloud.android.sso.exceptions.TokenMismatchException;
-import com.nextcloud.android.sso.helper.SingleAccountHelper;
-import com.nextcloud.android.sso.model.SingleSignOnAccount;
-import com.nextcloud.android.sso.ui.UiExceptionManager;
+
+import net.eneiluj.nextcloud.phonetrack.BuildConfig;
+import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,16 +24,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 
-import androidx.preference.PreferenceManager;
 import at.bitfire.cert4android.CustomCertManager;
-import net.eneiluj.nextcloud.phonetrack.BuildConfig;
-import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
-import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
-import net.eneiluj.nextcloud.phonetrack.android.fragment.LoginDialogFragment;
-import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 
 @WorkerThread
 public class PhoneTrackClient {
+    private static final String TAG = PhoneTrackClient.class.getSimpleName();
 
     /**
      * This entity class is used to return relevant data of the HTTP reponse.
@@ -237,7 +226,7 @@ public class PhoneTrackClient {
             throw new ServerResponse.NotModifiedException();
         }
 
-        System.out.println("METHOD : "+method);
+        Log.i(TAG, "METHOD : "+method);
         BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String line;
         while ((line = rd.readLine()) != null) {

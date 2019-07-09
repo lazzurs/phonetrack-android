@@ -1,22 +1,25 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.os.Bundle;
-//import android.preference.EditTextPreference;
-import androidx.preference.CheckBoxPreference;
-//import android.preference.ListPreference;
-//import android.preference.Preference;
-import androidx.preference.Preference;
-//import android.preference.PreferenceFragment;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.annotation.Nullable;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
+//import android.preference.EditTextPreference;
+//import android.preference.ListPreference;
+//import android.preference.Preference;
+//import android.preference.PreferenceFragment;
+
 public class EditCustomLogjobFragment extends EditLogjobFragment {
+    private static final String TAG = EditCustomLogjobFragment.class.getSimpleName();
 
     private CheckBoxPreference editPost;
 
@@ -32,7 +35,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
 
         endOnCreate();
 
-        System.out.println("CUSTOM on create : "+logjob);
+        Log.i(TAG, "CUSTOM on create : "+logjob);
 
         Preference postPref = findPreference("post");
         postPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -96,12 +99,12 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                     ) {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
-                System.out.println("====== update logjob");
+                Log.i(TAG, "====== update logjob");
                 logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "",
                         newPost, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                         newUseSignificantMotion, newTimeout, callback);
                 notifyLoggerService(logjob.getId());
-                //System.out.println("AFFFFFFTTTTTTEEERRRRR : "+logjob);
+                //Log.i(TAG, "AFFFFFFTTTTTTEEERRRRR : "+logjob);
                 //listener.onLogjobUpdated(logjob);
             }
         }
@@ -134,7 +137,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        System.out.println("CUSTOM ACT CREATEDDDDDDD");
+        Log.i(TAG,"CUSTOM ACT CREATEDDDDDDD");
 
         editPost = (CheckBoxPreference) this.findPreference("post");
         editPost.setChecked(logjob.getPost());
