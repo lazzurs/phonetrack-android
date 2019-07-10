@@ -55,7 +55,7 @@
     <string name="setting_min_time">Minimum tijdstip</string>
     <string name="setting_min_time_long">Minimale tijd tussen twee gelogde punten (seconden)</string>
     <string name="setting_min_accuracy">Minimum nauwkeurigheid</string>
-    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
+    <string name="setting_min_accuracy_long">Minimale nauwkeurigheid voor gelogde punten (meters). Log niet als de nauwkeurigheid waarde groter is dan:</string>
     <string name="setting_keepgps_title">GPS ingeschakeld houden tussen fixes</string>
     <string name="setting_keepgps_summary">Dit zal nauwkeuriger posities geven, maar zal meer effect hebben op het batterijverbruik. Gebruik het wanneer de minimale tijd onder de 60 seconden is.</string>
     <string name="setting_significantmotion_enabled">Bewegingsmodus aanzienlijk</string>

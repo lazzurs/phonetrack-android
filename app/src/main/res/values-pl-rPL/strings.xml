@@ -55,7 +55,7 @@
     <string name="setting_min_time">Minimalny czas</string>
     <string name="setting_min_time_long">Minimalny czas między dwoma zarejestrowanymi punktami (sekundy)</string>
     <string name="setting_min_accuracy">Minimalna dokładność</string>
-    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
+    <string name="setting_min_accuracy_long">Minimalna dokładność dla zarejestrowanych punktów (metry). Nie loguj się, jeśli wartość dokładności jest większa niż:</string>
     <string name="setting_keepgps_title">Zachowaj GPS pomiędzy poprawkami</string>
     <string name="setting_keepgps_summary">Pozwoli to uzyskać dokładniejsze pozycje, ale będzie miało większy wpływ na żywotność baterii. Użyj go, gdy minimalny czas jest poniżej 60 sekund.</string>
     <string name="setting_significantmotion_enabled">Znaczący tryb ruchu</string>
@@ -127,11 +127,11 @@
     <string name="settings_sms">Nadsłuchuj wiadomość SMS</string>
     <string name="settings_sms_subtitle">Nadsłuchuje przychodzące wiadomości SMS i wysyła informacje o lokalizacji, jeśli odebrano słowo kluczowe</string>
     <string name="settings_sms_keyword_title">Słowo kluczowe SMS</string>
-    <string name="settings_sms_keyword_long">Jeśli telefon otrzyma wiadomość SMS zawierającą to słowo kluczowe, zostaną odesłane informacje o lokalizacji.</string>
+    <string name="settings_sms_keyword_long">Jeśli telefon otrzyma to słowo kluczowe w wiadomości SMS, wtedy zostaną odesłane informacje o lokalizacji.</string>
     <string name="settings_sms_keyword_long2">Możesz także wysyłać polecenia z taką składnią: POLECENIE KLUCZOWE</string>
     <string name="settings_sms_keyword_long3">Dostępne komendy:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
     <string name="settings_use_server_color_title">Użyj koloru serwera</string>
-    <string name="settings_use_server_color_subtitle">Uzyskuje kolor serwera podczas synchronizacji i używaj go jako głównego koloru aplikacji</string>
+    <string name="settings_use_server_color_subtitle">Uzyskuje kolor serwera podczas synchronizacji i używa go jako głównego koloru aplikacji</string>
     <string name="settings_providers_title">Dostawcy lokalizacji</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Sieć</string>
