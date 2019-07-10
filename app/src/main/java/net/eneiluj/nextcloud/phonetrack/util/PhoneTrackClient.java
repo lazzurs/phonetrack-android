@@ -85,7 +85,7 @@ public class PhoneTrackClient {
         String userAgent = Build.MODEL
                 .replaceAll(" ", "")
                 .replaceAll("/", "");
-        userAgent += " (PhoneTrack)";
+        userAgent += " (PhoneTrack/Android)";
         Map<String, String> mapsParams = new HashMap<>();
         mapsParams.put("lat", params.get(WebTrackHelper.PARAM_LAT));
         mapsParams.put("lng", params.get(WebTrackHelper.PARAM_LON));
