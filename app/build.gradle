@@ -39,6 +39,10 @@ android {
         }
     }
     flavorDimensions "default"
+    // solves cert4android crash
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
