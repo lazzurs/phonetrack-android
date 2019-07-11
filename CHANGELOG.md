@@ -18,16 +18,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - map shortcuts
 [!5](https://gitlab.com/eneiluj/phonetrack-android/merge_requests/5) @creywood
 - option to get server color
+- Nextcloud Maps logjob (not visible for the moment)
 
 ### Changed
 - format distance in info dialog
 [#88](https://gitlab.com/eneiluj/phonetrack-android/issues/88) @markussvn
 - enable/disable ability to refresh logjob list layout depending on network availability
 - organize settings with categories
+- update libs and cert4android
+- cleaner logs
+- improve map buttons, transparent background
 
 ### Fixed
 - SSO is now working with all Android versions
 - bug with EditTextPreference after theme change
+- mapsforge is available right after accepting storage permission
+[#102](https://gitlab.com/eneiluj/phonetrack-android/issues/102) @Valdnet
+- use local icons instead of system ones
+[!6](https://gitlab.com/eneiluj/phonetrack-android/merge_requests/6) @AndyScherzinger
+- cert4android crash when accepting certificate
 
 ## 0.0.11 – 2019-05-14
 ### Added
