@@ -107,10 +107,16 @@ public class SmsListener extends BroadcastReceiver {
             }
         }
         else {
-            // send location information
-            Intent serviceIntent = new Intent(context, SmsLocationSendService.class);
-            serviceIntent.putExtra("from", from);
-            context.startService(serviceIntent);
+            // don't answer if we're already trying to answer this phone number
+            if (!SmsLocationSendService.isRunning.containsKey(from) || !SmsLocationSendService.isRunning.get(from)) {
+                // send location information
+                Intent serviceIntent = new Intent(context, SmsLocationSendService.class);
+                serviceIntent.putExtra("from", from);
+                context.startService(serviceIntent);
+            }
+            else {
+                Log.d(TAG, "Sms location service already running for "+from);
+            }
         }
     }
 

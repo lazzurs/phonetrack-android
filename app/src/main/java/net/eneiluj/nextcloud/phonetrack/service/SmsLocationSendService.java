@@ -66,6 +66,8 @@ public class SmsLocationSendService extends IntentService {
 
     private static final String TAG = SmsLocationSendService.class.getSimpleName();
 
+    public static Map<String, Boolean> isRunning = new HashMap<>();
+
     private PhoneTrackSQLiteOpenHelper db;
     private LocationManager locManager;
     public static boolean DEBUG = true;
@@ -103,6 +105,8 @@ public class SmsLocationSendService extends IntentService {
         }
 
         from = intent.getStringExtra("from");
+
+        isRunning.put(from, true);
 
         ll = new mLocationListener();
         if (ActivityCompat.checkSelfPermission(
@@ -204,6 +208,7 @@ public class SmsLocationSendService extends IntentService {
     @Override
     public void onDestroy() {
         if (LoggerService.DEBUG) { Log.d(TAG, "[send sms stop]"); }
+        isRunning.put(from, false);
         super.onDestroy();
     }
 
