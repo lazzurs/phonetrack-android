@@ -160,10 +160,10 @@ public class SmsLocationSendService extends IntentService {
         if (location.hasAccuracy()) {
             smsContent1 += "\n* "+getString(R.string.popup_accuracy_value, location.getAccuracy());
         }
-        String smsContent2 = "* "+getString(R.string.sms_geo_link)+":\ngeo:"+latStr+","+lonStr+"?z=14\n";
-        String smsContent3 = "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+latStr+"&mlon="+lonStr;
-        smsContent3 += "#map=14/"+latStr+"/"+lonStr;
-        Log.d("Location1", "SMS content " + smsContent1 + " " + smsContent1.length());
+        smsContent1 += "\n* "+getString(R.string.sms_geo_link)+":\ngeo:"+latStr+","+lonStr+"?z=14\n";
+        String smsContent2 = "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+latStr+"&mlon="+lonStr;
+        smsContent2 += "#map=14/"+latStr+"/"+lonStr;
+        Log.d("Location1", "SMS content '" + smsContent1 + "' length:" + smsContent1.length());
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -178,24 +178,11 @@ public class SmsLocationSendService extends IntentService {
             handler2.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("Location2", "SMS content 2 " + smsContent2f + " " + smsContent2f.length());
+                    Log.d("Location2", "SMS content 2 '" + smsContent2f + "' length:" + smsContent2f.length());
                     smsManager.sendTextMessage(from, null, smsContent2f, null, null);
 
                 }
             }, 1000);
-
-            final String smsContent3f = smsContent3;
-            Handler handler3 = new Handler();
-            handler3.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d("Location3", "SMS content 3 " + smsContent3f + " " + smsContent3f.length());
-                    smsManager.sendTextMessage(from, null, smsContent3f, null, null);
-                    thread.interrupt();
-
-                }
-            }, 2000);
-
         } else {
             Log.d("SMS", "no permissionnnnnnnnnn to send");
         }
