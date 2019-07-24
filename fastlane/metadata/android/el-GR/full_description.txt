@@ -1,23 +1,23 @@
 Το PhoneTrack είναι μία εφαρμογή συνεχούς καταγραφής συντεταγμένων τοποθεσίας.
-Η εφαρμογή λειτουργεί στο παρασκήνιο. Points are saved at chosen frequency and
-uploaded to a server in real time. This logger works with
-[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
-custom server (GET or POST HTTP requests). PhoneTrack app can also be remotely
-controlled by SMS commands.
+Η εφαρμογή λειτουργεί στο παρασκήνιο. Τα σημεία αποθηκεύονται στην επιλεγμένη συχνότητα και
+ανεβαίνουν στο διακομιστή ζωντανά. Αυτή η εφαρμογή καταγραφής λειτουργεί με
+[https://gitlab.com/eneiluj/phonetrack-oc Εφαρμογή PhoneTrack Nextcloud] ή οποιοδήποτε
+προσαρμοσμένος διακομιστής (GET ή POST HTTP αιτήματα). Η εφαρμογή PhoneTrack μπορεί επίσης απομακρυσμένα
+να χειριστεί με εντολές SMS.
 
 
 # Δυνατότητες
 
-- Log to multiple destinations with multiple settings (frequency, min distance, min accuracy, significant move)
+- Καταγραφή σε πολλούς προορισμούς με πολλαπλές ρυθμίσεις (συχνότητα, ελάχιστη απόσταση, ελάχιστη ακρίβεια, σημαντική κίνηση)
 - Καταγραφή στην εφαρμογή PhoneTrack Nextcloud (εργασία καταγραφής PhoneTrack)
 - Καταγραφή σε οποιονδήποτε διακομιστή που μπορεί να λάβει αιτήματα HTTP GET ή POST (προσαρμοσμένη εργασία καταγραφής)
 - Αποθήκευση θέσεων όταν το δίκτυο δεν είναι διαθέσιμο
-- Remote control by SMS:
-    - get position
-    - activate alarm
-    - start all logjobs
-    - stop all logjobs
-    - create a logjob
+- Απομακρυσμένος έλεγχος μέσω SMS:
+    - λήψη θέσης
+    - ενεργοποίηση συναγερμού
+    - εκκίνηση όλων των εργασιών καταγραφής
+    - παύση όλων των εργασιών καταγραφής
+    - δημιουργία νέας εργασίας καταγραφής
 - Εκκίνηση κατά την εκκίνηση του συστήματος
 - Εμφάνιση συσκευών στο χάρτη μίας συνεδρίας του Nextcloud PhoneTrack
 - Σκοτεινό θέμα
@@ -34,5 +34,5 @@ controlled by SMS commands.
 
 # Εναλλακτικές
 
-If you don't like this app and you are looking for alternatives: Have a look at the logging methods/apps
-in PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .
+Αν δε σας αρέσει η συγκεκριμένη εφαρμογή και ψάχνετε για εναλλακτικές: Ρίξτε μια ματιά στις μεθόδους / εφαρμογές καταγραφής
+στο PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .

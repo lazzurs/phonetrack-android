@@ -13,7 +13,7 @@ controlled by SMS commands.
 - Записать на любой сервер, который может получать запросы HTTP GET или POST (custom log job)
 - Сохраняет позиции, когда сеть недоступна
 - Remote control by SMS:
-    - get position
+    - получить позицию
     - activate alarm
     - start all logjobs
     - stop all logjobs

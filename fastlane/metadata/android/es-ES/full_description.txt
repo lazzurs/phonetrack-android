@@ -1,36 +1,36 @@
-PhoneTrack is an application for continuous logging of location coordinates.
-Application works in background. Points are saved at chosen frequency and
+PhoneTrack es una aplicación para el registro continuo de coordenadas de ubicación.
+La aplicación funciona en segundo plano. Los puntos se guardan con la frecuencia elegida y
 uploaded to a server in real time. This logger works with
 [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
 custom server (GET or POST HTTP requests). PhoneTrack app can also be remotely
 controlled by SMS commands.
 
 
-# Features
+# Características
 
-- Log to multiple destinations with multiple settings (frequency, min distance, min accuracy, significant move)
-- Log to PhoneTrack Nextcloud app (PhoneTrack log job)
-- Log to any server which can receive HTTP GET or POST requests (custom log job)
-- Store positions when network is not available
-- Remote control by SMS:
-    - get position
-    - activate alarm
-    - start all logjobs
-    - stop all logjobs
-    - create a logjob
-- Start on system boot
-- Display devices of a Nextcloud PhoneTrack session on a map
-- Dark theme
-- Multi-Lingual User-Interface (translated on https://crowdin.com/project/phonetrack )
+- Registro en múltiples destinos con diferentes configuraciones (frecuencia, distancia y precisión mínima, movimiento significativo)
+- Registro en la app PhoneTrack de Nextcloud (trabajo de registro de PhoneTrack)
+- Registro en cualquier servidor que pueda recibir peticiones HTTP GET o POST (trabajo de registro personalizado)
+- Almacenamiento de posiciones cuando la red no está disponible
+- Control remoto por SMS:
+    - obtener posicion
+    - activar alarma
+    - iniciar todos los trabajos de registro
+    - detener todos los trabajos de registro
+    - crear un trabajo de registro
+- Iniciar al arrancar el sistema
+- Mostrar dispositivos de una sesión de PhoneTrack de Nextcloud en un mapa
+- Tema oscuro
+- Interfaz de usuario multilingüe (traducida en https://crowdin.com/project/phonetrack)
 
-# Requirements
+# Requisitos
 
-If you want to log to Nextcloud PhoneTrack app :
+Si quieres iniciar sesión en la app de Nextcloud PhoneTrack:
 
-- Nextcloud instance running
-- Nextcloud PhoneTrack app enabled
+- Instancia Nextcloud en ejecución
+- Aplicación Nextcloud PhoneTrack activada
 
-Otherwise, no requirements ! (Except Android>=4.1)
+Por lo demás, ¡no hay requisitos! (Except Android>=4.1)
 
 # Alternatives
 
