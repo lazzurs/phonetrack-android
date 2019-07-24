@@ -130,7 +130,7 @@
     <string name="settings_sms_keyword_title">SMS trefwoord</string>
     <string name="settings_sms_keyword_long">Als deze telefoon een SMS ontvangt die dit trefwoord bevat, worden locatiegegevens teruggestuurd.</string>
     <string name="settings_sms_keyword_long2">Je kunt ook opdrachten verzenden met deze syntax: TREFWOORD OPDRACHT</string>
-    <string name="settings_sms_keyword_long3">Available commands:\n- alarm [NBSECONDS(def=60)]\n- startlogjobs\n- stoplogjobs\n- createlogjob MINTIME</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s\n- %s\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Server kleur gebruiken</string>
     <string name="settings_use_server_color_subtitle">Server kleur ophalen bij het synchroniseren en gebruiken als app basiskleur</string>
     <string name="settings_providers_title">Locatie aanbieders</string>

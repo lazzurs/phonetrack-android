@@ -130,7 +130,7 @@
     <string name="settings_sms_keyword_title">SMS-Schlüsselwort</string>
     <string name="settings_sms_keyword_long">Wenn dieses Gerät eine SMS empfängt, die nur dieses Schlüsselwort enthält, werden Standortinformationen zurückgesendet.</string>
     <string name="settings_sms_keyword_long2">Sie können Befehle auch mit dieser Struktur senden: SCHLÜSSELWORT BEFEHL</string>
-    <string name="settings_sms_keyword_long3">Available commands:\n- alarm [NBSECONDS(def=60)]\n- startlogjobs\n- stoplogjobs\n- createlogjob MINTIME</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s\n- %s\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Farbe des Servers verwenden</string>
     <string name="settings_use_server_color_subtitle">Farbe des Servers beim Synchronisieren abrufen und als Farbe der Haupt-App verwenden</string>
     <string name="settings_providers_title">Standortdienste</string>
