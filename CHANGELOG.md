@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.0.12 – 2019-07-24
 ### Added
 - new logjob mode: only log if there was a significant move
 [#76](https://gitlab.com/eneiluj/phonetrack-android/issues/76) @creywood
