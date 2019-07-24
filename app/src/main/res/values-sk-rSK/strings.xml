@@ -231,7 +231,7 @@
     <string name="fallback_weblogin_back">Späť</string>
     <string name="use_sso_toggle">Použiť účet z aplikácie Nextcloud</string>
     <string name="center_map">Center map</string>
-    <string name="follow_me">Follow me</string>
+    <string name="follow_me">Sleduj ma</string>
     <string name="zoom_all_markers">Zoom all markers</string>
     <string name="auto_zoom">Automatické zväčšenie</string>
     <!-- Plurals -->

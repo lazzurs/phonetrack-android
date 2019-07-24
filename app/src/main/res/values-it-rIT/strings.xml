@@ -50,7 +50,7 @@
     <string name="fab_create_session">Crea una sessione</string>
     <string name="fab_create_phonetrack">Nuovo log di PhoneTrack</string>
     <string name="fab_create_custom">Nuovo log personalizzato</string>
-    <string name="fab_create_maps">New Nextcloud Maps log job</string>
+    <string name="fab_create_maps">Nuovo job di log Nextcloud Maps</string>
     <string name="setting_min_distance">Distanza minima</string>
     <string name="setting_min_distance_long">Distanza minima tra due punti registrati (metri)</string>
     <string name="setting_min_time">Intervallo di tempo minimo</string>
@@ -130,7 +130,7 @@
     <string name="settings_sms_keyword_title">Parola chiave SMS</string>
     <string name="settings_sms_keyword_long">Se questo telefono riceve un SMS che contiene solo questa parola chiave, le informazioni sulla posizione verranno inviate di nuovo.</string>
     <string name="settings_sms_keyword_long2">Puoi anche inviare comandi con questa sintassi: COMANDO KEYWORD</string>
-    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s\n- %s\n- %s MINTIME</string>
+    <string name="settings_sms_keyword_long3">Comandi disponibili:\n- %s [NBSECONDS(def=60)]\n- %s\n- %s\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Usa il colore del server</string>
     <string name="settings_use_server_color_subtitle">Ottieni il colore del server quando sincronizza e usalo come colore principale dell\'app</string>
     <string name="settings_providers_title">Fornitori di posizione</string>
@@ -173,7 +173,7 @@
     <string name="error_share_dev_helper">Errore durante la condivisione del dispositivo: %s</string>
     <string name="error_create_session_helper">Errore durante la creazione della sessione : %s</string>
     <string name="error_create_session_exists">La sessione già esiste</string>
-    <string name="error_no_account_maps">No account is configured, impossible to send positions to Nextcloud Maps</string>
+    <string name="error_no_account_maps">Nessun account è configurato, impossibile inviare posizioni a Nextcloud Maps</string>
     <string name="error_token_mismatch">Si prega di riattivare il tuo account SSO nelle impostazioni</string>
     <!-- Web errors -->
     <!-- Certificates -->
@@ -231,9 +231,9 @@ href=\"https://materialdesignicons.com/\"&gt;Icone Material Design&lt;/a&gt; pro
     <string name="fallback_weblogin_text">Ripristina il vecchio metodo di login</string>
     <string name="fallback_weblogin_back">Indietro</string>
     <string name="use_sso_toggle">Usa account da Nextcloud Files app</string>
-    <string name="center_map">Center map</string>
-    <string name="follow_me">Follow me</string>
-    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="center_map">Centra la mappa</string>
+    <string name="follow_me">Seguimi</string>
+    <string name="zoom_all_markers">Zoom di tutti i marcatori</string>
     <string name="auto_zoom">Zoom automatico</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
