@@ -50,6 +50,7 @@
     <string name="fab_create_session">Sitzung erstellen</string>
     <string name="fab_create_phonetrack">Neuer PhoneTrack-Protokollierungsauftrag</string>
     <string name="fab_create_custom">Neuer benutzerdefinierter Protokollierungsauftrag</string>
+    <string name="fab_create_maps">New Nextcloud Maps log job</string>
     <string name="setting_min_distance">Mindestentfernung</string>
     <string name="setting_min_distance_long">Mindestentfernung (in Meter) zwischen zwei erfassten Datenpunkte</string>
     <string name="setting_min_time">Mindestdauer</string>
@@ -129,7 +130,7 @@
     <string name="settings_sms_keyword_title">SMS-Schlüsselwort</string>
     <string name="settings_sms_keyword_long">Wenn dieses Gerät eine SMS empfängt, die nur dieses Schlüsselwort enthält, werden Standortinformationen zurückgesendet.</string>
     <string name="settings_sms_keyword_long2">Sie können Befehle auch mit dieser Struktur senden: SCHLÜSSELWORT BEFEHL</string>
-    <string name="settings_sms_keyword_long3">Verfügbare Befehle:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- alarm [NBSECONDS(def=60)]\n- startlogjobs\n- stoplogjobs\n- createlogjob MINTIME</string>
     <string name="settings_use_server_color_title">Farbe des Servers verwenden</string>
     <string name="settings_use_server_color_subtitle">Farbe des Servers beim Synchronisieren abrufen und als Farbe der Haupt-App verwenden</string>
     <string name="settings_providers_title">Standortdienste</string>
@@ -172,6 +173,7 @@
     <string name="error_share_dev_helper">Fehler bei der Freigabe des Geräts : %s</string>
     <string name="error_create_session_helper">Fehler beim Erstellen der Sitzung : %s</string>
     <string name="error_create_session_exists">Die Sitzung existiert bereits</string>
+    <string name="error_no_account_maps">No account is configured, impossible to send positions to Nextcloud Maps</string>
     <string name="error_token_mismatch">Bitte bestätigen Sie Ihr SSO-Konto in den Einstellungen erneut</string>
     <!-- Web errors -->
     <!-- Certificates -->
@@ -228,6 +230,10 @@
     <string name="fallback_weblogin_text">Zurück zur alte Anmeldemethode</string>
     <string name="fallback_weblogin_back">Zurück</string>
     <string name="use_sso_toggle">Konto aus der Nextcloud-Files-App verwenden</string>
+    <string name="center_map">Center map</string>
+    <string name="follow_me">Follow me</string>
+    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="auto_zoom">Automatischer Bildausschnitt</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d ausgewählt</item>

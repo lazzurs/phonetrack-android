@@ -50,6 +50,7 @@
     <string name="fab_create_session">Create a session</string>
     <string name="fab_create_phonetrack">New PhoneTrack log job</string>
     <string name="fab_create_custom">New Custom log job</string>
+    <string name="fab_create_maps">New Nextcloud Maps log job</string>
     <string name="setting_min_distance">Минимална удаљеност</string>
     <string name="setting_min_distance_long">Минимална удаљеност између две излоговане тачке (у метрима)</string>
     <string name="setting_min_time">Минимално време</string>
@@ -129,7 +130,7 @@
     <string name="settings_sms_keyword_title">SMS keyword</string>
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
-    <string name="settings_sms_keyword_long3">Available commands:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- alarm [NBSECONDS(def=60)]\n- startlogjobs\n- stoplogjobs\n- createlogjob MINTIME</string>
     <string name="settings_use_server_color_title">Use server color</string>
     <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
     <string name="settings_providers_title">Начин добављања позиције</string>
@@ -172,6 +173,7 @@
     <string name="error_share_dev_helper">Error when sharing device : %s</string>
     <string name="error_create_session_helper">Error when creating session : %s</string>
     <string name="error_create_session_exists">The session already exists</string>
+    <string name="error_no_account_maps">No account is configured, impossible to send positions to Nextcloud Maps</string>
     <string name="error_token_mismatch">Please reauthenticate your SSO account in settings</string>
     <!-- Web errors -->
     <!-- Certificates -->
@@ -228,6 +230,10 @@
     <string name="fallback_weblogin_text">Revert to old login method</string>
     <string name="fallback_weblogin_back">Back</string>
     <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
+    <string name="center_map">Center map</string>
+    <string name="follow_me">Follow me</string>
+    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="auto_zoom">Auto zoom</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d selected</item>

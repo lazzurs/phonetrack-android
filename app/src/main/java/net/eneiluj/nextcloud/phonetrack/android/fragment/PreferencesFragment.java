@@ -169,7 +169,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         smsKeywordPref.setDialogMessage(
                 getString(R.string.settings_sms_keyword_long)+"\n"
                         + getString(R.string.settings_sms_keyword_long2)+"\n"
-                        + getString(R.string.settings_sms_keyword_long3)
+                        + getString(R.string.settings_sms_keyword_long3, "alarm", "startlogjobs", "stoplogjobs", "createlogjob")
         );
         smsKeywordPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 

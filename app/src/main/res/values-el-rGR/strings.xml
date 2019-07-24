@@ -50,6 +50,7 @@
     <string name="fab_create_session">Δημιουργία συνεδρίας</string>
     <string name="fab_create_phonetrack">Νέα εργασία καταγραφής PhoneTrack</string>
     <string name="fab_create_custom">Νέα προσαρμοσμένη εργασία καταγραφής</string>
+    <string name="fab_create_maps">New Nextcloud Maps log job</string>
     <string name="setting_min_distance">Ελάχιστη απόσταση</string>
     <string name="setting_min_distance_long">Ελάχιστη απόσταση μεταξύ δύο καταγεγραμμένων σημείων (μέτρα)</string>
     <string name="setting_min_time">Ελάχιστος χρόνος</string>
@@ -131,7 +132,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="settings_sms_keyword_title">Λέξη-κλειδί SMS</string>
     <string name="settings_sms_keyword_long">Εάν αυτή η συσκευή λάβει SMS που περιλαμβάνει αυτή τη λέξη-κλειδί, οι πληροφορίες τοποθεσίας θα σταλούν ως απάντηση.</string>
     <string name="settings_sms_keyword_long2">Οι εντολές μπορούν να σταλούν και με αυτή τη σύνταξη: ΛΕΞΗ-ΚΛΕΙΔΙ ΕΝΤΟΛΗ</string>
-    <string name="settings_sms_keyword_long3">Διαθέσιμες εντολές:\n- συναγερμός\n- έναρξηκαταγραφής\n- παύσηκαταγραφής\n- δημιουργίακαταγραφής</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- alarm [NBSECONDS(def=60)]\n- startlogjobs\n- stoplogjobs\n- createlogjob MINTIME</string>
     <string name="settings_use_server_color_title">Χρήση χρώματος διακομιστή</string>
     <string name="settings_use_server_color_subtitle">Λήψη χρώματος διακομιστή κατά το συγχρονισμό και χρήση ως βασικού χρώματος τηε εφαρμογής</string>
     <string name="settings_providers_title">Πάροχοι τοποθεσίας</string>
@@ -174,6 +175,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="error_share_dev_helper">Σφάλμα κατά την κοινοποίηση της συσκευής : %s</string>
     <string name="error_create_session_helper">Σφάλμα κατά τη δημιουργία συνεδρίας : %s</string>
     <string name="error_create_session_exists">Η συνεδρία υπάρχει ήδη</string>
+    <string name="error_no_account_maps">No account is configured, impossible to send positions to Nextcloud Maps</string>
     <string name="error_token_mismatch">Παρακαλώ επαναπιστοποιήστε τον SSO λογαριασμό σας στις ρυθμίσεις</string>
     <!-- Web errors -->
     <!-- Certificates -->
@@ -230,6 +232,10 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="fallback_weblogin_text">Επιστροφή σε παλιά μέθοδο σύνδεσης</string>
     <string name="fallback_weblogin_back">Πίσω</string>
     <string name="use_sso_toggle">Χρήση λογαριασμού από την εφαρμογή Nextcloud Files</string>
+    <string name="center_map">Center map</string>
+    <string name="follow_me">Follow me</string>
+    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="auto_zoom">Αυτόματη μεγέθυνση</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d επιλέχθηκε</item>

@@ -50,6 +50,7 @@
     <string name="fab_create_session">Créer une session</string>
     <string name="fab_create_phonetrack">Nouveau log job PhoneTrack</string>
     <string name="fab_create_custom">Nouveau log job personnalisé</string>
+    <string name="fab_create_maps">Nouveau logjob Nextcloud Maps</string>
     <string name="setting_min_distance">Distance minimum</string>
     <string name="setting_min_distance_long">Distance minimum entre deux points logués (mètres)</string>
     <string name="setting_min_time">Temps minimum</string>
@@ -129,7 +130,7 @@
     <string name="settings_sms_keyword_title">Mot-clé SMS</string>
     <string name="settings_sms_keyword_long">Si ce téléphone reçoit un SMS qui contient juste ce mot-clé, les informations de localisation seront renvoyées.</string>
     <string name="settings_sms_keyword_long2">Vous pouvez aussi envoyer des commandes avec cette syntaxe : MOTCLE COMMANDE</string>
-    <string name="settings_sms_keyword_long3">Comandes disponibles :\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
+    <string name="settings_sms_keyword_long3">Comandes disponibles :\n- alarm [NBSECONDS(def=60)]\n- startlogjobs\n- stoplogjobs\n- createlogjob MINTIME</string>
     <string name="settings_use_server_color_title">Utiliser la couleur du serveur</string>
     <string name="settings_use_server_color_subtitle">Récupérer la couleur du serveur pendant la synchronisation et l\'utiliser comme couleur principale de l\'appli</string>
     <string name="settings_providers_title">Fournisseurs de localisation</string>
@@ -172,6 +173,7 @@
     <string name="error_share_dev_helper">Erreur du partage de l\'appareil : %s</string>
     <string name="error_create_session_helper">Erreur lors de la création de la session: %s</string>
     <string name="error_create_session_exists">La session existe déjà</string>
+    <string name="error_no_account_maps">Aucun compte n\'est configuré, impossible d\'envoyer les positions vers Nextcloud Maps</string>
     <string name="error_token_mismatch">Veuillez ré-authentifier votre compte SSO dans les paramètres</string>
     <!-- Web errors -->
     <!-- Certificates -->
@@ -228,6 +230,10 @@
     <string name="fallback_weblogin_text">Revenir à l\'ancienne méthode d\'authentification</string>
     <string name="fallback_weblogin_back">Précédent</string>
     <string name="use_sso_toggle">Utiliser un compte de l\'appli Nextcloud Files</string>
+    <string name="center_map">Centrer la carte</string>
+    <string name="follow_me">Suivre ma position</string>
+    <string name="zoom_all_markers">Zoomer sur tous les marqueurs</string>
+    <string name="auto_zoom">Zoom auto</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d sélectionnés</item>

@@ -50,6 +50,7 @@
     <string name="fab_create_session">Vytvoriť reláciu</string>
     <string name="fab_create_phonetrack">Nové PhoneTrack sledovanie</string>
     <string name="fab_create_custom">Nové vlastné sledovanie</string>
+    <string name="fab_create_maps">New Nextcloud Maps log job</string>
     <string name="setting_min_distance">Minimálna vzdialenosť</string>
     <string name="setting_min_distance_long">Min. vzdialenosť medzi dvoma zaznamenanými bodmi (metre)</string>
     <string name="setting_min_time">Minimálny čas</string>
@@ -129,7 +130,7 @@
     <string name="settings_sms_keyword_title">SMS fráza</string>
     <string name="settings_sms_keyword_long">Ak tento telefón príjme SMS s frázou, odosielateľovi bude odoslaná informácia o polohe.</string>
     <string name="settings_sms_keyword_long2">Môžete tiež odosielať príkazy s touto syntax: FRÁZA PRÍKAZ</string>
-    <string name="settings_sms_keyword_long3">Dostupné príkazy:\n- alarm\n- spustiť sledovania\n- zastaviť sledovania\n- vytvoriť sledovanie</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- alarm [NBSECONDS(def=60)]\n- startlogjobs\n- stoplogjobs\n- createlogjob MINTIME</string>
     <string name="settings_use_server_color_title">Použiť farbu zo servera</string>
     <string name="settings_use_server_color_subtitle">Získať farbu zo servera keď sa synchronizuje a použiť ju ako hlavnú farbu aplikácie</string>
     <string name="settings_providers_title">Poskytovatelia polohy</string>
@@ -172,6 +173,7 @@
     <string name="error_share_dev_helper">Chyba pri zdieľaní zariadenia : %s</string>
     <string name="error_create_session_helper">Chyba pri vytváraní relácie: %s</string>
     <string name="error_create_session_exists">Relácia už existuje</string>
+    <string name="error_no_account_maps">No account is configured, impossible to send positions to Nextcloud Maps</string>
     <string name="error_token_mismatch">Prosím zopakujte prihlásenie Vášho SSO konta v nastaveniach</string>
     <!-- Web errors -->
     <!-- Certificates -->
@@ -228,6 +230,10 @@
     <string name="fallback_weblogin_text">Vrátiť na starú metódu prihlasovania</string>
     <string name="fallback_weblogin_back">Späť</string>
     <string name="use_sso_toggle">Použiť účet z aplikácie Nextcloud</string>
+    <string name="center_map">Center map</string>
+    <string name="follow_me">Follow me</string>
+    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="auto_zoom">Automatické zväčšenie</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d označený

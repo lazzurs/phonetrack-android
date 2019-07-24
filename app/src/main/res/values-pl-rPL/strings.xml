@@ -50,6 +50,7 @@
     <string name="fab_create_session">Utwórz sesję</string>
     <string name="fab_create_phonetrack">Nowe zadanie rejestratora PhoneTrack</string>
     <string name="fab_create_custom">Nowe niestandardowe zadanie rejestratora</string>
+    <string name="fab_create_maps">New Nextcloud Maps log job</string>
     <string name="setting_min_distance">Minimalna odległość</string>
     <string name="setting_min_distance_long">Minimalna odległość między dwoma zarejestrowanymi punktami (metry)</string>
     <string name="setting_min_time">Minimalny czas</string>
@@ -129,7 +130,7 @@
     <string name="settings_sms_keyword_title">Słowo kluczowe SMS</string>
     <string name="settings_sms_keyword_long">Jeśli telefon otrzyma to słowo kluczowe w wiadomości SMS, wtedy zostaną odesłane informacje o lokalizacji.</string>
     <string name="settings_sms_keyword_long2">Możesz także wysyłać polecenia z taką składnią: POLECENIE KLUCZOWE</string>
-    <string name="settings_sms_keyword_long3">Dostępne komendy:\n- alarm\n- startlogjobs\n- stoplogjobs\n- createlogjob</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- alarm [NBSECONDS(def=60)]\n- startlogjobs\n- stoplogjobs\n- createlogjob MINTIME</string>
     <string name="settings_use_server_color_title">Użyj koloru serwera</string>
     <string name="settings_use_server_color_subtitle">Uzyskuje kolor serwera podczas synchronizacji i używa go jako głównego koloru aplikacji</string>
     <string name="settings_providers_title">Dostawcy lokalizacji</string>
@@ -172,6 +173,7 @@
     <string name="error_share_dev_helper">Błąd podczas udostępniania urządzenia : %s</string>
     <string name="error_create_session_helper">Błąd podczas tworzenia sesji: %s</string>
     <string name="error_create_session_exists">Sesja już istnieje</string>
+    <string name="error_no_account_maps">No account is configured, impossible to send positions to Nextcloud Maps</string>
     <string name="error_token_mismatch">Ponownie uwierzytelnij swoje konto SSO w ustawieniach</string>
     <!-- Web errors -->
     <!-- Certificates -->
@@ -228,6 +230,10 @@
     <string name="fallback_weblogin_text">Przywróć starą metodę logowania</string>
     <string name="fallback_weblogin_back">Wstecz</string>
     <string name="use_sso_toggle">Użyj konta z aplikacji Nextcloud Files</string>
+    <string name="center_map">Center map</string>
+    <string name="follow_me">Follow me</string>
+    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="auto_zoom">Automatyczne powiększanie</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">wybrano %d</item>
