@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.IntentService;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +28,8 @@ import android.telephony.SmsManager;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
@@ -78,6 +82,9 @@ public class SmsLocationSendService extends IntentService {
     private int c = 0;
 
     private String from;
+
+    private static int CHANNEL_ID = 11111;
+    private static int NOTIFICATION_ID = 1526756641;
 
     public SmsLocationSendService() {
         super("SmsLocationSendService");
@@ -180,7 +187,7 @@ public class SmsLocationSendService extends IntentService {
                 public void run() {
                     Log.d("Location2", "SMS content 2 '" + smsContent2f + "' length:" + smsContent2f.length());
                     smsManager.sendTextMessage(from, null, smsContent2f, null, null);
-
+                    notifySmsWasSent(from);
                 }
             }, 1000);
         } else {
@@ -188,6 +195,44 @@ public class SmsLocationSendService extends IntentService {
         }
 
     }
+
+    public void notifySmsWasSent(String from) {
+        createNotificationChannel();
+
+        String chanId = String.valueOf(CHANNEL_ID);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanId)
+                .setSmallIcon(R.drawable.ic_notify_24dp)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.sms_position_notification, from))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                // Set the intent that will fire when the user taps the notification
+                //.setContentIntent(pendingIntent)
+                //.setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        NOTIFICATION_ID++;
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String chanId = String.valueOf(CHANNEL_ID);
+            CharSequence name = getString(R.string.app_name);
+            //String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(chanId, name, importance);
+            //channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     /**
      * Cleanup
