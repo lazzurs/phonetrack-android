@@ -8,15 +8,18 @@ import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +27,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.provider.BaseColumns;
+import android.provider.ContactsContract;
 import android.telephony.SmsManager;
 import android.util.Log;
 
@@ -197,13 +202,23 @@ public class SmsLocationSendService extends IntentService {
     }
 
     public void notifySmsWasSent(String from) {
+        String notificationFrom = from;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED
+        ) {
+            String contactName = getContactDisplayNameByNumber(from);
+            if (!contactName.equals("?")) {
+                notificationFrom = contactName;
+            }
+        }
+
         createNotificationChannel();
 
         String chanId = String.valueOf(CHANNEL_ID);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanId)
                 .setSmallIcon(R.drawable.ic_notify_24dp)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.sms_position_notification, from))
+                .setContentText(getString(R.string.sms_position_notification, notificationFrom))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
                 // Set the intent that will fire when the user taps the notification
                 //.setContentIntent(pendingIntent)
@@ -231,6 +246,29 @@ public class SmsLocationSendService extends IntentService {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    public String getContactDisplayNameByNumber(String number) {
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+        String name = "?";
+
+        ContentResolver contentResolver = getContentResolver();
+        Cursor contactLookup = contentResolver.query(uri, new String[] {BaseColumns._ID,
+                ContactsContract.PhoneLookup.DISPLAY_NAME }, null, null, null);
+
+        try {
+            if (contactLookup != null && contactLookup.getCount() > 0) {
+                contactLookup.moveToNext();
+                name = contactLookup.getString(contactLookup.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
+                //String contactId = contactLookup.getString(contactLookup.getColumnIndex(BaseColumns._ID));
+            }
+        } finally {
+            if (contactLookup != null) {
+                contactLookup.close();
+            }
+        }
+
+        return name;
     }
 
 

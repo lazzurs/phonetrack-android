@@ -197,6 +197,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SEND_SMS)
                             != PackageManager.PERMISSION_GRANTED
                     || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
+                            != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS)
+                            != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS)
                             != PackageManager.PERMISSION_GRANTED) {
 
                         if (LoggerService.DEBUG) {
@@ -206,7 +210,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                                 getActivity(),
                                 new String[]{
                                         Manifest.permission.SEND_SMS,
-                                        Manifest.permission.RECEIVE_SMS
+                                        Manifest.permission.RECEIVE_SMS,
+                                        Manifest.permission.READ_CONTACTS,
+                                        Manifest.permission.GET_ACCOUNTS
                                 },
                                 PERMISSION_SMS_SEND_AND_RECEIVE
                         );
