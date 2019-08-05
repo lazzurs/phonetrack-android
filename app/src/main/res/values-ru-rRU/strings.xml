@@ -99,6 +99,7 @@
     <string name="popup_bearing_value">Азимут: %.2f°</string>
     <string name="popup_speed_value">Скорость: %.2fкм/ч</string>
     <string name="popup_user_agent">Агент пользователя</string>
+    <string name="sms_position_notification">Ваша позиция была отправлена по SMS на %s</string>
     <string name="sms_geo_link">Гео-ссылка</string>
     <string name="sms_osm_link">OSM ссылка</string>
     <string name="sms_alarm_started">Будильник будет звонить в течение %d секунд</string>

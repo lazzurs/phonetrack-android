@@ -99,6 +99,7 @@
     <string name="popup_bearing_value">Azimut: %.2f°</string>
     <string name="popup_speed_value">Vitesse: %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
+    <string name="sms_position_notification">Votre position a été envoyée par SMS à %s</string>
     <string name="sms_geo_link">Lien geo</string>
     <string name="sms_osm_link">Lien OSM</string>
     <string name="sms_alarm_started">L\'alarme sonnera pendant %d secondes</string>

@@ -101,6 +101,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="popup_bearing_value">Κατεύθυνση: %.2f°</string>
     <string name="popup_speed_value">Ταχύτητα: %.2fχλμ/ω</string>
     <string name="popup_user_agent">User-agent</string>
+    <string name="sms_position_notification">Your position was sent by SMS to %s</string>
     <string name="sms_geo_link">Γεωσύνδεσμος</string>
     <string name="sms_osm_link">Σύνδεσμος OSM</string>
     <string name="sms_alarm_started">Η ειδοποίηση θα ηχήσει για %d δευτερόλεπτα</string>

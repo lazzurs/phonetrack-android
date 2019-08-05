@@ -99,6 +99,7 @@
     <string name="popup_bearing_value">Bearing: %.2f°</string>
     <string name="popup_speed_value">Speed: %.2fkm/h</string>
     <string name="popup_user_agent">Felhasználói azonosító</string>
+    <string name="sms_position_notification">Your position was sent by SMS to %s</string>
     <string name="sms_geo_link">Geo link</string>
     <string name="sms_osm_link">OSM link</string>
     <string name="sms_alarm_started">Alarm will ring during %d seconds</string>

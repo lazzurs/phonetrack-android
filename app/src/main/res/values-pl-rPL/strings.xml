@@ -99,6 +99,7 @@
     <string name="popup_bearing_value">Kierunek: %.2f°</string>
     <string name="popup_speed_value">Prędkość: %.2fkm/h</string>
     <string name="popup_user_agent">Aplikacja</string>
+    <string name="sms_position_notification">Twoja pozycja została wysłana SMS-em na adres %s</string>
     <string name="sms_geo_link">Link Geo</string>
     <string name="sms_osm_link">Link OSM</string>
     <string name="sms_alarm_started">Alarm zadzwoni przez %d sekund</string>

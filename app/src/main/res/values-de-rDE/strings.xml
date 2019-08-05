@@ -99,6 +99,7 @@
     <string name="popup_bearing_value">Peilung: %.2f°</string>
     <string name="popup_speed_value">Geschwindigkeit: %.2fkm/h</string>
     <string name="popup_user_agent">User-Agent</string>
+    <string name="sms_position_notification">Ihre Position wurde per SMS an %s gesendet</string>
     <string name="sms_geo_link">Geo-Link</string>
     <string name="sms_osm_link">OSM-Link</string>
     <string name="sms_alarm_started">Der Wecker klingelt in %d Sekunden</string>

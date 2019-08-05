@@ -99,6 +99,7 @@
     <string name="popup_bearing_value">Rilevamento: %.2f°</string>
     <string name="popup_speed_value">Velocità: %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
+    <string name="sms_position_notification">Your position was sent by SMS to %s</string>
     <string name="sms_geo_link">Link Geo</string>
     <string name="sms_osm_link">Link OSM</string>
     <string name="sms_alarm_started">Allarme suonerà durante %d secondi</string>
