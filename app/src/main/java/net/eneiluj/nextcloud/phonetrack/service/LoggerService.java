@@ -108,6 +108,7 @@ public class LoggerService extends Service {
     private boolean useNet = true;
     public static boolean DEBUG = true;
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private Map<Long, SignificantMotionJobWorker> mSignificantMotionJobs;
 
     private ConnectionStateMonitor connectionMonitor;
@@ -143,7 +144,9 @@ public class LoggerService extends Service {
         lastUpdateRealtime = new HashMap<>();
         locListeners = new HashMap<>();
         logjobs = new HashMap<>();
-        mSignificantMotionJobs = new HashMap<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            mSignificantMotionJobs = new HashMap<>();
+        }
 
         List<DBLogjob> ljs = db.getLogjobs();
         for (DBLogjob ljob : ljs) {
@@ -154,8 +157,10 @@ public class LoggerService extends Service {
                 lastLocations.put(ljob.getId(), null);
                 lastUpdateRealtime.put(ljob.getId(), Long.valueOf(0));
 
-                SignificantMotionJobWorker jw = new SignificantMotionJobWorker(ljob, ll);
-                mSignificantMotionJobs.put(ljob.getId(), jw);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    SignificantMotionJobWorker jw = new SignificantMotionJobWorker(ljob, ll);
+                    mSignificantMotionJobs.put(ljob.getId(), jw);
+                }
             }
         }
 
@@ -341,15 +346,19 @@ public class LoggerService extends Service {
                 lastLocations.put(ljId, null);
                 lastUpdateRealtime.put(ljId, Long.valueOf(0));
 
-                // Assume motion exists when beginning logging
-                SignificantMotionJobWorker jw = new SignificantMotionJobWorker(lj, ll);
-                mSignificantMotionJobs.put(ljId, jw);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    // Assume motion exists when beginning logging
+                    SignificantMotionJobWorker jw = new SignificantMotionJobWorker(lj, ll);
+                    mSignificantMotionJobs.put(ljId, jw);
+                }
             } else {
                 // Update listener for changed parameters
                 locListeners.get(ljId).populateFromLogjob(lj);
 
-                mSignificantMotionJobs.get(ljId).stop();
-                mSignificantMotionJobs.get(ljId).populate(lj);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    mSignificantMotionJobs.get(ljId).stop();
+                    mSignificantMotionJobs.get(ljId).populate(lj);
+                }
             }
         }
         // it has been deleted or disabled
@@ -362,7 +371,9 @@ public class LoggerService extends Service {
                 lastLocations.remove(ljId);
                 lastUpdateRealtime.remove(ljId);
                 logjobs.remove(ljId);
-                mSignificantMotionJobs.remove(ljId);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    mSignificantMotionJobs.remove(ljId);
+                }
             }
         }
     }
@@ -386,7 +397,9 @@ public class LoggerService extends Service {
         // If using significant motion stop any runnables waiting for an interval
         DBLogjob lj = db.getLogjob(jobId);
         if (lj != null && lj.useSignificantMotion()) {
-            mSignificantMotionJobs.get(jobId).stop();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                mSignificantMotionJobs.get(jobId).stop();
+            }
         }
     }
 
@@ -436,7 +449,9 @@ public class LoggerService extends Service {
             if (hasLocationUpdates) {
                 if (lj.useSignificantMotion()) {
                     // If we don't get a GPS result back after a timeout, use the network result (if we have one) or reschedule
-                    mSignificantMotionJobs.get(ljId).startResultTimeout();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        mSignificantMotionJobs.get(ljId).startResultTimeout();
+                    }
                 }
             } else {
                 // no location provider available
@@ -690,7 +705,9 @@ public class LoggerService extends Service {
             if (DEBUG) { Log.d(TAG, "[location changed: " + logjobId + "/"+ logjob.getTitle() +" : bat : "+ battery+", " + loc + "]"); }
 
             if (useSignificantMotion) {
-                mSignificantMotionJobs.get(logjobId).handleLocationChange(loc);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    mSignificantMotionJobs.get(logjobId).handleLocationChange(loc);
+                }
             } else {
                 if (!skipLocation(logjob, loc))
                     acceptAndSyncLocation(logjobId, loc);
