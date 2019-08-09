@@ -176,6 +176,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         String newToken = getToken();
         String newDevicename = getDevicename();
         boolean newUseSignificantMotion = getUseSignificantMotion();
+        boolean newUseSignificantMotionMixed = getUseSignificantMotionMixed();
         int newMinTime = 0;
         // Store the interval as zero if we're not using it (ie. when sampling with significant motion and
         // not using an interval)
@@ -198,13 +199,14 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                     logjob.getMinAccuracy() == newMinAccuracy &&
                     logjob.getDeviceName().equals(newDevicename) &&
                     logjob.useSignificantMotion() == newUseSignificantMotion &&
+                    logjob.useSignificantMotionMixed() == newUseSignificantMotionMixed &&
                     logjob.getLocationRequestTimeout() == newTimeout) {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
                 Log.i(TAG, "====== update logjob");
                 logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename,
                         false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
-                        newUseSignificantMotion, newTimeout, callback);
+                        newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout, callback);
                 notifyLoggerService(logjob.getId());
                 //listener.onLogjobUpdated(logjob);
             }
@@ -213,7 +215,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         else {
             DBLogjob newLogjob = new DBLogjob(0, newTitle, newUrl, newToken, newDevicename,
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, newUseSignificantMotion,
-                    newTimeout, false, false, 0);
+                    newUseSignificantMotionMixed, newTimeout, false, false, 0);
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
         }

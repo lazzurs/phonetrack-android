@@ -891,6 +891,7 @@ public class LoggerService extends Service {
 
         private long mIntervalTimeMillis;
         private boolean mUseInterval;
+        private boolean mUseMixedMode;
         private int mLocationTimeout;
 
         SignificantMotionJobWorker(DBLogjob logjob, mLocationListener listener) {
@@ -915,6 +916,7 @@ public class LoggerService extends Service {
 
             mIntervalTimeMillis = mLogJob.getMinTime() * 1000;
             mUseInterval = mIntervalTimeMillis > 0;
+            mUseMixedMode = logjob.useSignificantMotionMixed();
             mLocationTimeout = mLogJob.getLocationRequestTimeout();
         }
 
@@ -950,8 +952,9 @@ public class LoggerService extends Service {
                     }
 
                     // Schedule sample for X seconds from last sample
-                    if (mUseInterval)
+                    if (mUseInterval) {
                         scheduleSampleAfterInterval(mIntervalTimeMillis);
+                    }
                 }
             };
             return runnable;
@@ -966,8 +969,13 @@ public class LoggerService extends Service {
 
             mIntervalRunnable = new Runnable() {
                 public void run() {
-                    if (mMotionDetected) {
-                        Log.d(TAG, "Significant motion detected during delay, recording point");
+                    if (mMotionDetected || mUseMixedMode) {
+                        if (mUseMixedMode) {
+                            Log.d(TAG, "End of delay in MIXED mode, recording point regardless of motion");
+                        }
+                        else {
+                            Log.d(TAG, "Significant motion detected during delay, recording point");
+                        }
 
                         // Assists with ensuring we don't end up with two interval sequences running for one job
                         mIntervalRunnable = null;
@@ -992,7 +1000,7 @@ public class LoggerService extends Service {
         private void handleLocationChange(Location loc) {
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER) || !useGps) {
                 // Got GPS result, accept
-                Log.d(TAG, "Got result, immediately accepting");
+                Log.d(TAG, "Got position result, immediately accepting");
 
                 // Cancel timeout runnable
                 if (mTimeoutHandler != null) {
@@ -1026,15 +1034,15 @@ public class LoggerService extends Service {
                 // Clear significant motion flag for next interval
                 mMotionDetected = false;
 
-
                 // Request significant motion notification
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
                 }
 
                 // If using an interval, schedule sample for X seconds from last sample
-                if (mUseInterval)
+                if (mUseInterval) {
                     scheduleSampleAfterInterval(mLogJob.getMinTime() * 1000);
+                }
             } else {
                 Log.d(TAG, "Network location returned first, caching");
                 // Cache lower quality network result
@@ -1102,26 +1110,48 @@ public class LoggerService extends Service {
             // If the job doesn't have a minimum interval, or hasn't taken a sample for longer than its interval,
             // sample immediately
             long millisSinceLast = SystemClock.elapsedRealtime() - mLastUpdateRealtime;
-            if (!mUseInterval || millisSinceLast > mIntervalTimeMillis) {
-                // If not using an interval, definitely request updates
-                boolean requestUpdates = !mUseInterval;
+            // without mixed mode
+            if (!mUseInterval || !mUseMixedMode) {
+                if (!mUseInterval || millisSinceLast > mIntervalTimeMillis) {
+                    // If not using an interval, definitely request updates
+                    boolean requestUpdates = !mUseInterval;
+
+                    // If we're interval-based and there is a runnable waiting for the next interval we know we haven't
+                    // already requested a location. This checks helps us prevent having two sampling sequences running
+                    // for the same job.
+                    if (mUseInterval && mIntervalRunnable != null) {
+                        // Stop waiting runnable
+                        mIntervalHandler.removeCallbacks(mIntervalRunnable);
+                        mIntervalRunnable = null;
+
+                        Log.d(TAG, "Triggering immediate sample after significant motion due to " +
+                                millisSinceLast / 1000.0 + "s since last point");
+
+                        requestUpdates = true;
+                    }
+
+                    if (requestUpdates) {
+                        requestLocationUpdates(mJobId);
+                    }
+                }
+            }
+            // with mixed mode
+            // we take the position anyway, then runnable has to be killed, it will be launched again
+            // when handling the position result
+            else {
+                Log.d(TAG, "Triggering immediate sample after significant motion because we're in MIXED mode");
 
                 // If we're interval-based and there is a runnable waiting for the next interval we know we haven't
                 // already requested a location. This checks helps us prevent having two sampling sequences running
                 // for the same job.
-                if (mUseInterval && mIntervalRunnable != null) {
+                if (mIntervalRunnable != null) {
+                    Log.d(TAG, "stop runnable because MIXED mode");
                     // Stop waiting runnable
                     mIntervalHandler.removeCallbacks(mIntervalRunnable);
                     mIntervalRunnable = null;
-
-                    Log.d(TAG, "Triggering immediate sample after significant motion due to " +
-                            millisSinceLast / 1000.0 + "s since last point");
-
-                    requestUpdates = true;
                 }
 
-                if (requestUpdates)
-                    requestLocationUpdates(mJobId);
+                requestLocationUpdates(mJobId);
             }
 
             // Request notification for next significant motion

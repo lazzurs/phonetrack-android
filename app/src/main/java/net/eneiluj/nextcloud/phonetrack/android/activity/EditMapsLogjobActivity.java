@@ -43,7 +43,8 @@ public class EditMapsLogjobActivity extends EditLogjobActivity {
 
         DBLogjob newLogjob = new DBLogjob(0, "",  "",
                 "", "", 60, 5, 50,
-                false, false, 60, false, false, 0);
+                false, false, false,
+                60, false, false, 0);
 
         String url;
 

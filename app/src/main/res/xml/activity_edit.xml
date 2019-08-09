@@ -99,6 +99,11 @@ xmlns:tools="http://schemas.android.com/tools"
         android:maxLength="5"
         android:title="@string/setting_min_time" />
 
+    <SwitchPreferenceCompat
+        android:key="usesignificantmotionmixed"
+        android:title="@string/setting_significantmotion_mixed"
+        android:summary="@string/setting_significantmotion_mixed_summary" />
+
     <com.takisoft.fix.support.v7.preference.EditTextPreference
         android:id="@+id/editMinAccuracy"
         android:defaultValue="50"

@@ -20,12 +20,13 @@ public class DBLogjob implements Item, Serializable {
     private boolean enabled;
     private int nbSync;
     private boolean useSignificantMotion = true;
+    private boolean useSignificantMotionMixed;
     private int locationRequestTimeout;
 
     public DBLogjob(long id, String title, String url, String token, String deviceName,
                     int minTime, int minDistance, int minAccuracy, boolean keepGpsOnBetweenFixes,
-                    boolean useSignificantMotion, int timeout, boolean post, boolean enabled,
-                    int nbSync) {
+                    boolean useSignificantMotion, boolean useSignificantMotionMixed, int timeout,
+                    boolean post, boolean enabled, int nbSync) {
         this.id = id;
         this.title = title;
         this.url = url;
@@ -38,6 +39,7 @@ public class DBLogjob implements Item, Serializable {
         this.enabled = enabled;
         this.keepGpsOnBetweenFixes = keepGpsOnBetweenFixes;
         this.useSignificantMotion = useSignificantMotion;
+        this.useSignificantMotionMixed = useSignificantMotionMixed;
         this.locationRequestTimeout = timeout;
         this.nbSync = nbSync;
     }
@@ -162,6 +164,15 @@ public class DBLogjob implements Item, Serializable {
     public boolean useSignificantMotion() {
         return useSignificantMotion;
     }
+
+    public boolean useSignificantMotionMixed() {
+        return useSignificantMotionMixed;
+    }
+
+    public void setSignificantMotionMixed(boolean useSignificantMotionMixed) {
+        this.useSignificantMotionMixed = useSignificantMotionMixed;
+    }
+
 
     public int getLocationRequestTimeout() {
         return locationRequestTimeout;

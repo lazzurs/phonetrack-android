@@ -91,6 +91,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     protected CheckBoxPreference editKeepGpsOn;
     protected SwitchPreferenceCompat editUseSignificantMotion;
     protected SwitchPreferenceCompat editUseSignificantMotionInterval;
+    protected SwitchPreferenceCompat editUseSignificantMotionMixed;
     protected androidx.preference.EditTextPreference editLocationRequestTimeout;
 
     private DialogInterface.OnClickListener deleteDialogClickListener;
@@ -479,12 +480,15 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
         editUseSignificantMotion = (SwitchPreferenceCompat) this.findPreference("usesignificantmotion");
         editUseSignificantMotionInterval = (SwitchPreferenceCompat) this.findPreference("significantmotioninterval");
+        editUseSignificantMotionMixed = (SwitchPreferenceCompat) this.findPreference("usesignificantmotionmixed");
         editLocationRequestTimeout = (androidx.preference.EditTextPreference) this.findPreference("significantmotiontimeout");
 
         // Setup significant motion option, only show if device supports it
         if (deviceSupportsSignificantMotion()) {
             editUseSignificantMotion.setChecked(logjob.useSignificantMotion());
             editUseSignificantMotionInterval.setChecked(logjob.getMinTime() > 0);
+
+            editUseSignificantMotionMixed.setChecked(logjob.useSignificantMotionMixed());
 
             String timeoutVal = String.valueOf(logjob.getLocationRequestTimeout());
             editLocationRequestTimeout.setText(timeoutVal);
@@ -495,6 +499,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             Log.i(TAG, "Device doesn't support significant motion");
             editUseSignificantMotion.setVisible(false);
             editUseSignificantMotionInterval.setVisible(false);
+            editUseSignificantMotionMixed.setVisible(false);
             editLocationRequestTimeout.setVisible(false);
         }
     }
@@ -536,6 +541,10 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         return editUseSignificantMotionInterval.isChecked();
     }
 
+    protected boolean getUseSignificantMotionMixed() {
+        return editUseSignificantMotionMixed.isChecked();
+    }
+
     protected int getLocationRequestTimeout() {
         return Integer.parseInt(editLocationRequestTimeout.getText());
     }
@@ -548,8 +557,8 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
     private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval) {
         editMinaccuracy.setVisible(!sigMotionEnabled);
-        //editMindistance.setVisible(!sigMotionEnabled);
         editMintime.setVisible(useInterval);
+        editUseSignificantMotionMixed.setVisible(useInterval);
         editKeepGpsOn.setVisible(!sigMotionEnabled);
         editLocationRequestTimeout.setVisible(sigMotionEnabled);
         editUseSignificantMotionInterval.setVisible(sigMotionEnabled);

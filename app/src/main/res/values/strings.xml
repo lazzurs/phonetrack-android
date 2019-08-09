@@ -64,6 +64,8 @@
     <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before getting next position. Saves a lot of battery in some cases. Incompatible with some other options.</string>
     <string name="setting_significantmotion_min_time_applied">Apply minimum time</string>
     <string name="setting_significantmotion_min_time_applied_summary">Don\'t record a position every time motion is detected, wait "minimum time" between two points. This saves battery.</string>
+    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"minimum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Location timeout</string>
     <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout.</string>
     <string name="logjob_title_log_to">Log to %s</string>

@@ -35,7 +35,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 14;
+    private static final int database_version = 15;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -56,6 +56,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_minAccuracy = "MINACCURACY";
     private static final String key_keepGpsOn = "KEEPGPSON";
     private static final String key_useSignificantMotion = "USESIGMOTION";
+    private static final String key_useSignificantMotionMixed = "USESIGMOTIONMIXED";
     private static final String key_locationTimeout = "LOCTIMEOUT";
     private static final String key_post = "POST";
     private static final String key_enabled = "ENABLED";
@@ -90,7 +91,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             key_keepGpsOn, key_post, key_enabled,
             key_nbsync, key_lastSyncTimestamp, key_lastLocTimestamp,
             key_lastSyncErrorTimestamp, key_lastSyncErrorText, key_useSignificantMotion,
-            key_locationTimeout};
+            key_useSignificantMotionMixed, key_locationTimeout};
     private static final String[] columnsLocations = {
             key_id, key_logjobid, key_lat, key_lon, key_time,
             key_bearing, key_altitude, key_speed, key_accuracy,
@@ -170,6 +171,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_lastSyncErrorText + " TEXT, " +
                 key_token + " TEXT, " +
                 key_useSignificantMotion + " INTEGER DEFAULT 0," +
+                key_useSignificantMotionMixed + " INTEGER DEFAULT 0," +
                 key_locationTimeout + " INTEGER)");
     }
 
@@ -214,6 +216,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         if (oldVersion < 14) {
             db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_useSignificantMotion + " INTEGER DEFAULT 0");
             db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_locationTimeout + " INTEGER");
+        }
+        if (oldVersion < 15) {
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_useSignificantMotionMixed + " INTEGER DEFAULT 0");
         }
     }
 
@@ -308,14 +313,14 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     /**
      * Creates a new logjob in the Database and adds a Synchronization Flag.
      */
-    @SuppressWarnings("UnusedReturnValue")
+    /*@SuppressWarnings("UnusedReturnValue")
     public long addLogjobAndSync(String title, String url, String token, String deviceName, int minTime, int minDistance, int minAccuracy, boolean keepGpsOn, boolean useSignificantMotion, int locationTimeout, int nbSync, boolean post) {
         // TODO there is an 'enabled' field
         DBLogjob dblj = new DBLogjob(0, title, url, token, deviceName, minTime, minDistance, minAccuracy, keepGpsOn, useSignificantMotion, locationTimeout, post,false, nbSync);
         long id = addLogjob(dblj);
         //getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
-    }
+    }*/
 
     /**
      * Inserts a logjob directly into the Database.
@@ -340,6 +345,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_url, logjob.getUrl());
         values.put(key_nbsync, logjob.getNbSync());
         values.put(key_useSignificantMotion, logjob.useSignificantMotion() ? "1" : "0");
+        values.put(key_useSignificantMotionMixed, logjob.useSignificantMotionMixed() ? "1" : "0");
         values.put(key_locationTimeout, logjob.getLocationRequestTimeout());
         return db.insert(table_logjobs, null, values);
     }
@@ -409,7 +415,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 cursor.getInt(7),
                 cursor.getInt(8) == 1,
                 cursor.getInt(16) == 1,
-                cursor.getInt(17),
+                cursor.getInt(17) == 1,
+                cursor.getInt(18),
                 cursor.getInt(9) == 1,
                 cursor.getInt(10) == 1,
                 cursor.getInt(11)
@@ -606,7 +613,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken,
                                         @Nullable String newUrl, @Nullable String newDevicename, boolean newPost,
                                         int newMinTime, int newMinDistance, int newMinAccuracy,
-                                        boolean newKeepGpsOn, boolean newUseSignificantMotion, int newLocationTimeout,
+                                        boolean newKeepGpsOn, boolean newUseSignificantMotion,
+                                        boolean newUseSignificantMotionMixed, int newLocationTimeout,
                                         @Nullable ICallback callback) {
 //        debugPrintFullDB();
         DBLogjob newLogjob;
@@ -617,8 +625,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                     oldLogjob.getToken(), oldLogjob.getDeviceName(),
                     oldLogjob.getMinTime(), oldLogjob.getMinDistance(), oldLogjob.getMinAccuracy(),
                     oldLogjob.keepGpsOnBetweenFixes(), oldLogjob.useSignificantMotion(),
-                    oldLogjob.getLocationRequestTimeout(), oldLogjob.getPost(),
-                    oldLogjob.isEnabled(), oldLogjob.getNbSync()
+                    oldLogjob.useSignificantMotionMixed(), oldLogjob.getLocationRequestTimeout(),
+                    oldLogjob.getPost(), oldLogjob.isEnabled(), oldLogjob.getNbSync()
             );
         }
         else {
@@ -626,8 +634,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             newLogjob = new DBLogjob(
                     oldLogjob.getId(), newTitle, newUrl, newToken, newDevicename,
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
-                    newUseSignificantMotion, newLocationTimeout, newPost,
-                    oldLogjob.isEnabled(), oldLogjob.getNbSync());
+                    newUseSignificantMotion, newUseSignificantMotionMixed, newLocationTimeout,
+                    newPost, oldLogjob.isEnabled(), oldLogjob.getNbSync());
         }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -641,6 +649,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_minAccuracy, newLogjob.getMinAccuracy());
         values.put(key_deviceName, newLogjob.getDeviceName());
         values.put(key_useSignificantMotion, newLogjob.useSignificantMotion() ? 1 : 0);
+        values.put(key_useSignificantMotionMixed, newLogjob.useSignificantMotionMixed() ? 1 : 0);
         values.put(key_locationTimeout, newLogjob.getLocationRequestTimeout());
         int rows = db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(newLogjob.getId())});
         // if data was changed, set new status and schedule sync (with callback); otherwise invoke callback directly.
