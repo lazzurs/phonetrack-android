@@ -127,6 +127,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     RecyclerView listView;
     Snackbar ssoSnackbar;
 
+    private View currentInfoDialogView = null;
+    private long currentInfoDialogLogjobId = -1;
+
     private ActionBarDrawerToggle drawerToggle;
     private ItemAdapter adapter = null;
     private NavigationAdapter adapterCategories;
@@ -253,7 +256,15 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         registerBroadcastReceiver();
 
+        updateCurrentInfoDialog();
+
         if (LoggerService.DEBUG) { Log.d(TAG, "[onResume END]"); }
+    }
+
+    private void updateCurrentInfoDialog() {
+        if (currentInfoDialogLogjobId != -1) {
+            updateInfoDialogContent(currentInfoDialogView, currentInfoDialogLogjobId, getApplicationContext());
+        }
     }
 
     /**
@@ -1053,121 +1064,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             DBLogjob logjob = db.getLogjob(logjobItem.getId());
             long ljId = logjob.getId();
             PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
-            long tsNow = new Date().getTime() / 1000;
-            long tsLastLoc = db.getLastLocTimestamp(ljId);
-            long diffLastLoc = tsNow - tsLastLoc;
-            long tsLastSync = db.getLastSyncTimestamp(ljId);
-            long diffLastSync = tsNow - tsLastSync;
-            SyncError lastSyncErr = db.getLastSyncError(ljId);
-            long diffLastSyncErr = tsNow - lastSyncErr.getTimestamp();
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-
-            if (LoggerService.DEBUG) { Log.d(TAG, "[LAST " + tsLastLoc + " "+tsLastSync+ "]"); }
-
-            List<DBLogjobLocation> cRLocations = db.getCurrentRunLocationsOfLogjob(ljId);
-            double totDistance = 0.0;
-            long duration = 0;
-            if (cRLocations.size() > 1) {
-                // distance
-                DBLogjobLocation loc;
-                DBLogjobLocation prevLoc = cRLocations.get(0);
-                int i = 1;
-                while (i < cRLocations.size()) {
-                    loc = cRLocations.get(i);
-                    totDistance += SupportUtil.distance(
-                            prevLoc.getLat(), loc.getLat(),
-                            prevLoc.getLon(), loc.getLon(),
-                            prevLoc.getAltitude(), loc.getAltitude()
-                    );
-                    prevLoc = loc;
-                    i++;
-                }
-                // duration
-                long tFirst = cRLocations.get(0).getTimestamp();
-                long tLast = cRLocations.get(cRLocations.size()-1).getTimestamp();
-                duration = tLast - tFirst;
-            }
-
-            String nbsyncText = view.getContext().getString(R.string.logjob_info_nbsync, logjob.getNbSync());
-            String nbnotsyncText = view.getContext().getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationNotSyncedCount(logjob.getId()));
-            String lastLocText = "";
-            String lastSyncText = "";
-            String lastSyncErrText = "";
-
             View iView = LayoutInflater.from(this).inflate(R.layout.items_infodialog, null);
-            TextView tv = iView.findViewById(R.id.infoNbsyncText);
-            tv.setText(nbsyncText);
-            TextView tv2 = iView.findViewById(R.id.infoNbnotsyncText);
-            tv2.setText(nbnotsyncText);
 
-            if (cRLocations.size() > 0) {
-                String nbPointsText = view.getContext().getString(R.string.logjob_info_nbpoints, cRLocations.size());
-
-                TextView tv3 = iView.findViewById(R.id.infoNbPointsText);
-                tv3.setText(nbPointsText);
-            }
-            else {
-                iView.findViewById(R.id.infoNbPointsLayout).setVisibility(View.GONE);
-            }
-            if (totDistance != 0.0) {
-                String formattedDistance = formatDistance(totDistance, view.getContext());
-                String totDistanceText = view.getContext().getString(R.string.logjob_info_distance, formattedDistance);
-
-                TextView tv3 = iView.findViewById(R.id.infoDistanceText);
-                tv3.setText(totDistanceText);
-            }
-            else {
-                iView.findViewById(R.id.infoDistanceLayout).setVisibility(View.GONE);
-            }
-            if (duration != 0) {
-                String formattedDuration = SupportUtil.formatDuration(duration, view.getContext());
-                String durationText = view.getContext().getString(R.string.logjob_info_duration, formattedDuration);
-
-                TextView tv3 = iView.findViewById(R.id.infoDurationText);
-                tv3.setText(durationText);
-            }
-            else {
-                iView.findViewById(R.id.infoDurationLayout).setVisibility(View.GONE);
-            }
-            if (tsLastLoc != 0) {
-                Date d = new Date(tsLastLoc*1000);
-                String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, view.getContext());
-                lastLocText = view.getContext().getString(R.string.logjob_info_lastloc, diffLastLocString, sdf.format(d));
-
-                TextView tv3 = iView.findViewById(R.id.infoLastLocText);
-                tv3.setText(lastLocText);
-            }
-            else {
-                iView.findViewById(R.id.infoLastLocLayout).setVisibility(View.GONE);
-            }
-            if (tsLastSync != 0) {
-                Date d = new Date(tsLastSync*1000);
-                String diffLastSyncString = SupportUtil.formatDuration(diffLastSync, view.getContext());
-                lastSyncText = view.getContext().getString(R.string.logjob_info_lastsync, diffLastSyncString, sdf.format(d));
-
-                TextView tv4 = iView.findViewById(R.id.infoLastSyncText);
-                tv4.setText(lastSyncText);
-            }
-            else {
-                iView.findViewById(R.id.infoLastSyncLayout).setVisibility(View.GONE);
-            }
-
-            if (lastSyncErr.getTimestamp() != 0) {
-                Date d = new Date(lastSyncErr.getTimestamp()*1000);
-                String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, view.getContext());
-                lastSyncErrText = view.getContext().getString(
-                        R.string.logjob_info_lastsync_error,
-                        diffLastLocString,
-                        sdf.format(d),
-                        lastSyncErr.getMessage());
-
-                TextView tv5 = iView.findViewById(R.id.infoLastSyncErrText);
-                tv5.setText(lastSyncErrText);
-            }
-            else {
-                iView.findViewById(R.id.infoLastSyncErrLayout).setVisibility(View.GONE);
-            }
+            updateInfoDialogContent(iView, ljId, view.getContext());
 
             AlertDialog.Builder builder;
             builder = new AlertDialog.Builder(new ContextThemeWrapper(view.getContext(), R.style.AppThemeDialog));
@@ -1175,7 +1074,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     .setView(iView)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-
+                            currentInfoDialogView = null;
+                            currentInfoDialogLogjobId = -1;
                         }
                     })
                     .setNeutralButton(R.string.reset_current_run, new DialogInterface.OnClickListener() {
@@ -1187,6 +1087,129 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     })
                     .setIcon(R.drawable.ic_info_outline_grey600_24dp)
                     .show();
+
+            currentInfoDialogView = iView;
+            currentInfoDialogLogjobId = ljId;
+        }
+    }
+
+    private void updateInfoDialogContent(View iView, long ljId, Context c) {
+        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(c);
+        DBLogjob logjob = db.getLogjob(ljId);
+        long tsNow = new Date().getTime() / 1000;
+        long tsLastLoc = db.getLastLocTimestamp(ljId);
+        long diffLastLoc = tsNow - tsLastLoc;
+        long tsLastSync = db.getLastSyncTimestamp(ljId);
+        long diffLastSync = tsNow - tsLastSync;
+        SyncError lastSyncErr = db.getLastSyncError(ljId);
+        long diffLastSyncErr = tsNow - lastSyncErr.getTimestamp();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+
+        if (LoggerService.DEBUG) { Log.d(TAG, "[LAST " + tsLastLoc + " "+tsLastSync+ "]"); }
+
+        List<DBLogjobLocation> cRLocations = db.getCurrentRunLocationsOfLogjob(ljId);
+        double totDistance = 0.0;
+        long duration = 0;
+        if (cRLocations.size() > 1) {
+            // distance
+            DBLogjobLocation loc;
+            DBLogjobLocation prevLoc = cRLocations.get(0);
+            int i = 1;
+            while (i < cRLocations.size()) {
+                loc = cRLocations.get(i);
+                totDistance += SupportUtil.distance(
+                        prevLoc.getLat(), loc.getLat(),
+                        prevLoc.getLon(), loc.getLon(),
+                        prevLoc.getAltitude(), loc.getAltitude()
+                );
+                prevLoc = loc;
+                i++;
+            }
+            // duration
+            long tFirst = cRLocations.get(0).getTimestamp();
+            long tLast = cRLocations.get(cRLocations.size()-1).getTimestamp();
+            duration = tLast - tFirst;
+        }
+
+        String nbsyncText = c.getString(R.string.logjob_info_nbsync, logjob.getNbSync());
+        String nbnotsyncText = c.getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationNotSyncedCount(logjob.getId()));
+        String lastLocText = "";
+        String lastSyncText = "";
+        String lastSyncErrText = "";
+
+
+        TextView tv = iView.findViewById(R.id.infoNbsyncText);
+        tv.setText(nbsyncText);
+        TextView tv2 = iView.findViewById(R.id.infoNbnotsyncText);
+        tv2.setText(nbnotsyncText);
+
+        if (cRLocations.size() > 0) {
+            String nbPointsText = c.getString(R.string.logjob_info_nbpoints, cRLocations.size());
+
+            TextView tv3 = iView.findViewById(R.id.infoNbPointsText);
+            tv3.setText(nbPointsText);
+        }
+        else {
+            iView.findViewById(R.id.infoNbPointsLayout).setVisibility(View.GONE);
+        }
+        if (totDistance != 0.0) {
+            String formattedDistance = formatDistance(totDistance, c);
+            String totDistanceText = c.getString(R.string.logjob_info_distance, formattedDistance);
+
+            TextView tv3 = iView.findViewById(R.id.infoDistanceText);
+            tv3.setText(totDistanceText);
+        }
+        else {
+            iView.findViewById(R.id.infoDistanceLayout).setVisibility(View.GONE);
+        }
+        if (duration != 0) {
+            String formattedDuration = SupportUtil.formatDuration(duration, c);
+            String durationText = c.getString(R.string.logjob_info_duration, formattedDuration);
+
+            TextView tv3 = iView.findViewById(R.id.infoDurationText);
+            tv3.setText(durationText);
+        }
+        else {
+            iView.findViewById(R.id.infoDurationLayout).setVisibility(View.GONE);
+        }
+        if (tsLastLoc != 0) {
+            Date d = new Date(tsLastLoc*1000);
+            String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, c);
+            lastLocText = c.getString(R.string.logjob_info_lastloc, diffLastLocString, sdf.format(d));
+
+            TextView tv3 = iView.findViewById(R.id.infoLastLocText);
+            tv3.setText(lastLocText);
+        }
+        else {
+            iView.findViewById(R.id.infoLastLocLayout).setVisibility(View.GONE);
+        }
+        if (tsLastSync != 0) {
+            Date d = new Date(tsLastSync*1000);
+            String diffLastSyncString = SupportUtil.formatDuration(diffLastSync, c);
+            lastSyncText = c.getString(R.string.logjob_info_lastsync, diffLastSyncString, sdf.format(d));
+
+            TextView tv4 = iView.findViewById(R.id.infoLastSyncText);
+            tv4.setText(lastSyncText);
+        }
+        else {
+            iView.findViewById(R.id.infoLastSyncLayout).setVisibility(View.GONE);
+        }
+
+        if (lastSyncErr.getTimestamp() != 0) {
+            Date d = new Date(lastSyncErr.getTimestamp()*1000);
+            String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, c);
+            lastSyncErrText = c.getString(
+                    R.string.logjob_info_lastsync_error,
+                    diffLastLocString,
+                    sdf.format(d),
+                    lastSyncErr.getMessage());
+
+            TextView tv5 = iView.findViewById(R.id.infoLastSyncErrText);
+            tv5.setText(lastSyncErrText);
+        }
+        else {
+            iView.findViewById(R.id.infoLastSyncErrLayout).setVisibility(View.GONE);
         }
     }
 
@@ -1380,11 +1403,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     else {
                         swipeRefreshLayout.setRefreshing(false);
                     }
+                    updateCurrentInfoDialog();
                     break;
                 case (WebTrackService.BROADCAST_SYNC_FAILED): {
                     long ljId3 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
                     showToast(getString(R.string.uploading_failed) + "\n" + errorMessage, Toast.LENGTH_LONG);
+                    updateCurrentInfoDialog();
                     break;
                 }
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED:
