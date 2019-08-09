@@ -57,7 +57,9 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 
 import static android.location.LocationProvider.AVAILABLE;
 import static android.location.LocationProvider.OUT_OF_SERVICE;
@@ -1006,17 +1008,24 @@ public class LoggerService extends Service {
                     mCachedNetworkResult = null;
                 }
 
-                // Accept, store and sync location
-                acceptAndSyncLocation(mJobId, loc);
+                // respect minimum distance setting
+                if (isMinDistanceOk(loc)) {
+                    // Accept, store and sync location
+                    acceptAndSyncLocation(mJobId, loc);
 
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    mLastUpdateRealtime = SystemClock.elapsedRealtime();
-                } else {
-                    mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        mLastUpdateRealtime = SystemClock.elapsedRealtime();
+                    } else {
+                        mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
+                    }
+                }
+                else {
+                    Log.d(TAG, "Not enough DISTANCE (min "+mLogJob.getMinDistance()+"), we skip this location");
                 }
 
                 // Clear significant motion flag for next interval
                 mMotionDetected = false;
+
 
                 // Request significant motion notification
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -1030,6 +1039,25 @@ public class LoggerService extends Service {
                 Log.d(TAG, "Network location returned first, caching");
                 // Cache lower quality network result
                 mCachedNetworkResult = loc;
+            }
+        }
+
+        private boolean isMinDistanceOk(Location loc) {
+            int minDistance = mLogJob.getMinDistance();
+            if (minDistance == 0) {
+                return true;
+            }
+            else {
+                List<DBLogjobLocation> locs = db.getLocationsOfLogjob(mLogJob.getId());
+                DBLogjobLocation prevLoc = locs.get(locs.size() - 1);
+                double distance = SupportUtil.distance(
+                        prevLoc.getLat(), loc.getLatitude(),
+                        prevLoc.getLon(), loc.getLongitude(),
+                        prevLoc.getAltitude(), loc.getAltitude()
+                );
+                Log.d(TAG, "Distance with last point: "+distance);
+                Log.d(TAG, "Logjob minimum distance: "+minDistance);
+                return (distance >= minDistance);
             }
         }
 
