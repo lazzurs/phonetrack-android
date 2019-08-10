@@ -108,6 +108,7 @@ public class LoggerService extends Service {
     private NotificationCompat.Builder mNotificationBuilder;
     private boolean useGps = true;
     private boolean useNet = true;
+    private boolean usePassive = true;
     public static boolean DEBUG = true;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -324,9 +325,23 @@ public class LoggerService extends Service {
         else {
             providersPref = value;
         }
-        useGps = (!providersPref.equals("2") && providerExists(LocationManager.GPS_PROVIDER));
-        useNet = (!providersPref.equals("1") && providerExists(LocationManager.NETWORK_PROVIDER));
-        if (DEBUG) { Log.d(TAG, "[update prefs "+providersPref+", gps : "+useGps+", net : "+useNet+"]"); }
+        useGps = ((providersPref.equals("1")
+                   || providersPref.equals("3")
+                   || providersPref.equals("5")
+                   || providersPref.equals("7")
+                 ) && providerExists(LocationManager.GPS_PROVIDER));
+        useNet = ((providersPref.equals("2")
+                   || providersPref.equals("3")
+                   || providersPref.equals("6")
+                   || providersPref.equals("7")
+                 ) && providerExists(LocationManager.NETWORK_PROVIDER));
+        usePassive = ((providersPref.equals("4")
+                || providersPref.equals("5")
+                || providersPref.equals("6")
+                || providersPref.equals("7")
+        ) && providerExists(LocationManager.PASSIVE_PROVIDER));
+        if (DEBUG) { Log.d(TAG, "[update prefs "+providersPref+", gps : "+useGps+
+                                     ", net : "+useNet+", passive : "+usePassive+"]"); }
     }
 
     /**
@@ -430,6 +445,19 @@ public class LoggerService extends Service {
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
                     if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using net provider, freq "+lj.getMinTime()+"]"); }
+                }
+            }
+            if (usePassive) {
+                //noinspection MissingPermission
+                if (lj.useSignificantMotion()) {
+                    // Significant motion based sampling, request single update (for now?)
+                    locManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, locListener, looper);
+                } else {
+                    locManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, minTimeMillis, minDistance, locListener, looper);
+                }
+                if (locManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+                    hasLocationUpdates = true;
+                    if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using passive provider, freq "+lj.getMinTime()+"]"); }
                 }
             }
             if (useGps) {
@@ -928,17 +956,17 @@ public class LoggerService extends Service {
 
                     if (mCachedNetworkResult != null) {
                         // Cancel location request
-                        if (useGps) {
+                        if (useGps || usePassive) {
                             locManager.removeUpdates(mLocationListener);
                         }
 
-                        Log.d(TAG, "Reached timeout before GPS sample, using network sample");
+                        Log.d(TAG, "Reached timeout before GPS or passive sample, using network sample");
                         acceptAndSyncLocation(mJobId, mCachedNetworkResult);
 
                         mCachedNetworkResult = null;
                     } else {
                         // Cancel location request
-                        if (useGps || useNet) {
+                        if (useGps || useNet || usePassive) {
                             locManager.removeUpdates(mLocationListener);
                         }
                     }
@@ -998,7 +1026,10 @@ public class LoggerService extends Service {
         }
 
         private void handleLocationChange(Location loc) {
-            if (loc.getProvider().equals(LocationManager.GPS_PROVIDER) || !useGps) {
+            if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
+                    || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER)
+                    || (!useGps && !usePassive)
+            ) {
                 // Got GPS result, accept
                 Log.d(TAG, "Got position result, immediately accepting");
 
@@ -1010,8 +1041,12 @@ public class LoggerService extends Service {
 
                 // Remove any cached network result or disable update
                 if (mCachedNetworkResult == null) {
-                    if (useNet && loc.getProvider().equals(LocationManager.GPS_PROVIDER))
+                    if (useNet
+                            && (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
+                                || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER))
+                    ) {
                         locManager.removeUpdates(mLocationListener);
+                    }
                 } else {
                     mCachedNetworkResult = null;
                 }

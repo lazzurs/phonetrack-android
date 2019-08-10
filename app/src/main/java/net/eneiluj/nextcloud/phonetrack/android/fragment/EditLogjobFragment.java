@@ -558,7 +558,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval) {
         editMinaccuracy.setVisible(!sigMotionEnabled);
         editMintime.setVisible(useInterval);
-        editUseSignificantMotionMixed.setVisible(useInterval);
+        editUseSignificantMotionMixed.setVisible(sigMotionEnabled && useInterval);
         editKeepGpsOn.setVisible(!sigMotionEnabled);
         editLocationRequestTimeout.setVisible(sigMotionEnabled);
         editUseSignificantMotionInterval.setVisible(sigMotionEnabled);

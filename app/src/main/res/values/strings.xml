@@ -145,6 +145,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Network</string>
     <string name="providers_gps_network">Network and GPS</string>
+    <string name="providers_passive">Passive</string>
+    <string name="providers_passive_gps">Passive and GPS</string>
+    <string name="providers_passive_network">Passive and Network</string>
+    <string name="providers_passive_gps_network">Passive and GPS and Network</string>
     <string name="settings_color_title">App main color</string>
     <string name="settings_color_summary">Color for action bars, map buttons etc...</string>
     <string name="settings_colorpicker_title">Choose color</string>

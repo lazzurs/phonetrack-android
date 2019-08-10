@@ -236,6 +236,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         providersList.add(getString(R.string.providers_gps));
         providersList.add(getString(R.string.providers_network));
         providersList.add(getString(R.string.providers_gps_network));
+        providersList.add(getString(R.string.providers_passive));
+        providersList.add(getString(R.string.providers_passive_gps));
+        providersList.add(getString(R.string.providers_passive_network));
+        providersList.add(getString(R.string.providers_passive_gps_network));
         CharSequence[] providerEntries = providersList.toArray(new CharSequence[providersList.size()]);
         providersListPref.setEntries(providerEntries);
 
