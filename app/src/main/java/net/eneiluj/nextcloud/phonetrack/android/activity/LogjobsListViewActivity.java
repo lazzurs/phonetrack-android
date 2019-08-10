@@ -258,6 +258,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         updateCurrentInfoDialog();
 
+        updateUsernameInDrawer();
+
         if (LoggerService.DEBUG) { Log.d(TAG, "[onResume END]"); }
     }
 
@@ -1318,6 +1320,15 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         toast.show();
     }
 
+    private void updateAllLogjobItems() {
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            adapter.notifyItemChanged(i);
+            if (LoggerService.DEBUG) {
+                Log.d(TAG, "[notifyItemChanged " + i + "]");
+            }
+        }
+    }
+
     /**
      * Register broadcast receiver for synchronization
      * and tracking status updates
@@ -1415,6 +1426,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED:
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
                     showToast(errorMessage, Toast.LENGTH_LONG);
+                    // this would be necessary if it wasn't done by logjob sync broadcast
+                    //updateAllLogjobItems();
                     break;
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED:
                     showToast(getString(R.string.sessions_sync_success));
@@ -1422,6 +1435,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         ssoSnackbar.dismiss();
                         ssoSnackbar = null;
                     }
+                    // this would be necessary if it wasn't done by logjob sync broadcast
+                    //updateAllLogjobItems();
                     break;
                 case SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH:
                     ssoSnackbar = Snackbar.make(swipeRefreshLayout, R.string.error_token_mismatch, Snackbar.LENGTH_INDEFINITE);
