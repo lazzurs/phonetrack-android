@@ -1426,8 +1426,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED:
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
                     showToast(errorMessage, Toast.LENGTH_LONG);
-                    // this would be necessary if it wasn't done by logjob sync broadcast
-                    //updateAllLogjobItems();
+                    updateAllLogjobItems();
                     break;
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED:
                     showToast(getString(R.string.sessions_sync_success));
@@ -1435,8 +1434,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         ssoSnackbar.dismiss();
                         ssoSnackbar = null;
                     }
-                    // this would be necessary if it wasn't done by logjob sync broadcast
-                    //updateAllLogjobItems();
+                    updateAllLogjobItems();
                     break;
                 case SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH:
                     ssoSnackbar = Snackbar.make(swipeRefreshLayout, R.string.error_token_mismatch, Snackbar.LENGTH_INDEFINITE);

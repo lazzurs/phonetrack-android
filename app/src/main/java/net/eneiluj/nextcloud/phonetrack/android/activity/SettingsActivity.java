@@ -218,6 +218,10 @@ public class SettingsActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean(SETTINGS_USE_SSO, false);
                     editor.apply();
+
+                    // empty session list
+                    PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
+                    db.clearSessions();
                 }
             }
 

@@ -362,6 +362,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return db.insert(table_sessions, null, values);
     }
 
+    public void clearSessions() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(table_sessions, null, null);
+    }
+
     /**
      * Get a single logjob by ID
      *
