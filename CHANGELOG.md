@@ -5,6 +5,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- notification when SMS position is sent
+- signed release apk production when pushing to release branch
+- significant motion mixed mode to record on every motion and also with an interval
+[#109](https://gitlab.com/eneiluj/phonetrack-android/issues/109) @MarkLi
+- passive location provider setting
+[#112](https://gitlab.com/eneiluj/phonetrack-android/issues/112) @helium314
+
+### Changed
+- improve CI script
+- use minimum distance in significant motion mode
+[#109](https://gitlab.com/eneiluj/phonetrack-android/issues/109) @MarkLi
+- refresh info dialog on resume and when new point is logged
+[#113](https://gitlab.com/eneiluj/phonetrack-android/issues/113) @markussvn
+
+### Fixed
+- LoggerService crash on Android <= 4.3 because of unsafe signMotion disabling
+[#111](https://gitlab.com/eneiluj/phonetrack-android/issues/111) @florom
+- update username in drawer when resuming
+- clear sessions just after disabling SSO, update logjob items to make map icon appear/disappear
+[#87](https://gitlab.com/eneiluj/phonetrack-android/issues/87) @Valdnet
+- bad device name encoding (crash with spaces) on Android <= 6
+[#83](https://gitlab.com/eneiluj/phonetrack-android/issues/83) @GURKE
+
 ## 0.0.12 – 2019-07-25
 ### Added
 - new logjob mode: only log if there was a significant move
