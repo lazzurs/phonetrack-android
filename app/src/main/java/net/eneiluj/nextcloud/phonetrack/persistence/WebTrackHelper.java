@@ -433,9 +433,16 @@ public class WebTrackHelper {
     }
 
     public URL getUrlFromPhoneTrackLogjob(DBLogjob lj) throws MalformedURLException {
+        String cleanDeviceName = lj.getDeviceName().replaceAll("/", "-");
+        String encodedDeviceName = cleanDeviceName;
+        try {
+            encodedDeviceName = URLEncoder.encode(cleanDeviceName, "UTF-8").replaceAll("\\+", "%20");
+        }
+        catch (Exception e) {
+        }
         return new URL(
                 lj.getUrl().replaceAll("/+$", "") +
-                        "/index.php/apps/phonetrack/logPost/" + lj.getToken() + "/" + lj.getDeviceName().replaceAll("/", "-")
+                        "/index.php/apps/phonetrack/logPost/" + lj.getToken() + "/" + encodedDeviceName
         );
     }
 
