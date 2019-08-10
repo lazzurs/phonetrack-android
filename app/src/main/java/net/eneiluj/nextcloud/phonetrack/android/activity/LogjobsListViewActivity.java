@@ -375,7 +375,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         fabCreateMaps.setVisibility(View.GONE);
                     }
                     // remove this when Maps is released
-                    fabCreateMaps.setVisibility(View.GONE);
+                    //fabCreateMaps.setVisibility(View.GONE);
                 } else {
 
                 }
@@ -457,18 +457,21 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             fabCreateCustom.setColorNormal(Color.DKGRAY);
             fabCreateSession.setColorNormal(Color.DKGRAY);
             fabCreatePhoneTrack.setColorNormal(Color.DKGRAY);
+            fabCreateMaps.setColorNormal(Color.DKGRAY);
         }
         else {
             fabMenu.setMenuButtonColorNormal(ThemeUtils.primaryColor(this));
-                fabCreateCustom.setColorNormal(ThemeUtils.primaryColor(this));
+            fabCreateCustom.setColorNormal(ThemeUtils.primaryColor(this));
             fabCreateSession.setColorNormal(ThemeUtils.primaryColor(this));
             fabCreatePhoneTrack.setColorNormal(ThemeUtils.primaryColor(this));
+            fabCreateMaps.setColorNormal(ThemeUtils.primaryColor(this));
         }
         fabMenu.setMenuButtonColorPressed(ThemeUtils.primaryColor(this));
 
         fabCreateCustom.setColorPressed(ThemeUtils.primaryColor(this));
         fabCreateSession.setColorPressed(ThemeUtils.primaryColor(this));
         fabCreatePhoneTrack.setColorPressed(ThemeUtils.primaryColor(this));
+        fabCreateMaps.setColorPressed(ThemeUtils.primaryColor(this));
     }
 
     private void setupNavigationList(final String selectedItem) {
