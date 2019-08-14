@@ -282,7 +282,18 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), (Boolean) newValue);
+                updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), (Boolean) newValue, getUseSignificantMotionMixed());
+                return true;
+            }
+        });
+
+        Preference significantMotionMixedPref = findPreference("usesignificantmotionmixed");
+        significantMotionMixedPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), getUseSignificantMotionInterval(), (Boolean) newValue);
                 return true;
             }
         });
@@ -555,7 +566,7 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
         toast.show();
     }
 
-    private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval) {
+    private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval, Boolean mixedMode) {
         editMinaccuracy.setVisible(!sigMotionEnabled);
         editMintime.setVisible(useInterval);
         editUseSignificantMotionMixed.setVisible(sigMotionEnabled && useInterval);
@@ -569,10 +580,21 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
             editMintime.setText(newValue);
             editMintime.setSummary(newValue);
         }
+
+        if (sigMotionEnabled && useInterval && mixedMode) {
+            editMintime.setDialogMessage(R.string.setting_min_time_mixed_long);
+            editMintime.setDialogTitle(R.string.setting_min_time_mixed);
+            editMintime.setTitle(R.string.setting_min_time_mixed);
+        }
+        else {
+            editMintime.setDialogMessage(R.string.setting_min_time_long);
+            editMintime.setDialogTitle(R.string.setting_min_time);
+            editMintime.setTitle(R.string.setting_min_time);
+        }
     }
 
     private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled) {
-        updateVisiblePreferencesForSignificantMotion(sigMotionEnabled, getUseSignificantMotionInterval());
+        updateVisiblePreferencesForSignificantMotion(sigMotionEnabled, getUseSignificantMotionInterval(), getUseSignificantMotionMixed());
     }
 
     /**
