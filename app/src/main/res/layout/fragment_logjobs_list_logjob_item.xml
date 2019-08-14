@@ -145,6 +145,25 @@
                         android:tint="#990000" />
 
                     <TextView
+                        android:id="@+id/nbRun"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|left"
+                        android:text="1" />
+
+                    <ImageView
+                        android:id="@+id/nbRunIcon"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="bottom|left"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="1dp"
+                        android:adjustViewBounds="false"
+                        android:src="@drawable/ic_notify_grey_24dp"
+                        android:tint="#F8F246" />
+
+                    <TextView
                         android:id="@+id/nbSync"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

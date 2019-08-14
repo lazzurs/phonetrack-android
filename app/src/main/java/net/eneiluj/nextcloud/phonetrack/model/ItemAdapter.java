@@ -189,11 +189,19 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             }
 
+            // nb not synced (pending)
             int nb = db.getLogjobLocationNotSyncedCount(logjob.getId());
             String nbTxt = (nb == 0) ? "" : String.valueOf(nb);
             nvHolder.nbNotSync.setText(nbTxt);
             int visible = (nb == 0) ? View.INVISIBLE : View.VISIBLE;
             nvHolder.nosyncIcon.setVisibility(visible);
+
+            // nb position obtained in current run (since last logjob activation, or since last stats reset)
+            int nbRun = db.getLogjobLocationCurrentRunCount(logjob.getId());
+            String nbRunTxt = (nbRun == 0) ? "" : String.valueOf(nbRun);
+            nvHolder.nbRun.setText(nbRunTxt);
+            int nbRunVisible = (nbRun == 0) ? View.INVISIBLE : View.VISIBLE;
+            nvHolder.nbRunIcon.setVisibility(nbRunVisible);
 
             if (prefs.getBoolean(db.getContext().getString(R.string.pref_key_shownbsynced), false)) {
                 int nbSent = db.getNbSync(logjob.getId());
@@ -288,21 +296,15 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView logjobTextToggleLeft;
         ImageView logjobDeleteRight;
         TextView logjobTitle;
-        //@BindView(R.id.logjobExcerpt)
         TextView logjobSubtitle;
-        //@BindView(R.id.nosyncIcon)
         ImageView nosyncIcon;
-        //@BindView(R.id.syncIcon)
+        ImageView nbRunIcon;
         ImageView syncIcon;
-        //@BindView(R.id.logjobEnabled)
         SwitchCompat logjobEnabled;
-        //@BindView(R.id.nbNotSync)
         TextView nbNotSync;
-        //@BindView(R.id.nbSync)
+        TextView nbRun;
         TextView nbSync;
-        //@BindView(R.id.syncSpacer)
         Space syncSpacer;
-        //@BindView(R.id.infoButton)
         ImageButton infoButton;
         ImageButton mapButton;
 
@@ -315,9 +317,11 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.logjobTitle = v.findViewById(R.id.logjobTitle);
             this.logjobSubtitle = v.findViewById(R.id.logjobExcerpt);
             this.nosyncIcon = v.findViewById(R.id.nosyncIcon);
+            this.nbRunIcon = v.findViewById(R.id.nbRunIcon);
             this.syncIcon = v.findViewById(R.id.syncIcon);
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
+            this.nbRun = v.findViewById(R.id.nbRun);
             this.nbSync = v.findViewById(R.id.nbSync);
             this.syncSpacer = v.findViewById(R.id.syncSpacer);
             this.infoButton = v.findViewById(R.id.infoButton);

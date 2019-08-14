@@ -872,6 +872,27 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @NonNull
     @WorkerThread
+    public int getLogjobLocationCurrentRunCount(long ljId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(
+                table_locations,
+                new String[]{"COUNT(*)"},
+                key_logjobid +" = ? AND " + key_currentRun + " = 1",
+                new String[]{String.valueOf(ljId)},
+                null,
+                null,
+                null);
+        int result = 0;
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+            break;
+        }
+        cursor.close();
+        return result;
+    }
+
+    @NonNull
+    @WorkerThread
     public int getLogjobLocationNotSyncedCount(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(
