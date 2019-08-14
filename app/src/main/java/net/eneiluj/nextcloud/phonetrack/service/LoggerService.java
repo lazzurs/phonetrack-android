@@ -904,6 +904,7 @@ public class LoggerService extends Service {
         private mLocationListener mLocationListener;
         private DBLogjob mLogJob;
         private long mJobId;
+        private Location lastLocation;
 
         private Long mLastUpdateRealtime;
 
@@ -933,6 +934,7 @@ public class LoggerService extends Service {
         private void populate(DBLogjob logjob) {
             mLogJob = logjob;
             mJobId = logjob.getId();
+            lastLocation = null;
 
             mLastUpdateRealtime = Long.valueOf(0);
 
@@ -961,6 +963,7 @@ public class LoggerService extends Service {
                         }
 
                         Log.d(TAG, "Reached timeout before GPS or passive sample, using network sample");
+                        lastLocation = mCachedNetworkResult;
                         acceptAndSyncLocation(mJobId, mCachedNetworkResult);
 
                         mCachedNetworkResult = null;
@@ -1054,6 +1057,7 @@ public class LoggerService extends Service {
                 // respect minimum distance setting
                 if (isMinDistanceOk(loc)) {
                     // Accept, store and sync location
+                    lastLocation = loc;
                     acceptAndSyncLocation(mJobId, loc);
 
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -1087,16 +1091,14 @@ public class LoggerService extends Service {
 
         private boolean isMinDistanceOk(Location loc) {
             int minDistance = mLogJob.getMinDistance();
-            if (minDistance == 0) {
+            if (minDistance == 0 || lastLocation == null) {
                 return true;
             }
             else {
-                List<DBLogjobLocation> locs = db.getLocationsOfLogjob(mLogJob.getId());
-                DBLogjobLocation prevLoc = locs.get(locs.size() - 1);
                 double distance = SupportUtil.distance(
-                        prevLoc.getLat(), loc.getLatitude(),
-                        prevLoc.getLon(), loc.getLongitude(),
-                        prevLoc.getAltitude(), loc.getAltitude()
+                        lastLocation.getLatitude(), loc.getLatitude(),
+                        lastLocation.getLongitude(), loc.getLongitude(),
+                        lastLocation.getAltitude(), loc.getAltitude()
                 );
                 Log.d(TAG, "Distance with last point: "+distance);
                 Log.d(TAG, "Logjob minimum distance: "+minDistance);
