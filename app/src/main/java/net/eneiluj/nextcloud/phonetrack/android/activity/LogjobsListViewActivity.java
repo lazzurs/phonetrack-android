@@ -2,6 +2,7 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -375,7 +376,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         fabCreateMaps.setVisibility(View.GONE);
                     }
                     // remove this when Maps is released
-                    //fabCreateMaps.setVisibility(View.GONE);
+                    fabCreateMaps.setVisibility(View.GONE);
                 } else {
 
                 }
@@ -742,6 +743,51 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         listNavigationMenu.setAdapter(adapterMenu);
     }
 
+    private void cancelableLogjobDeletion(DBLogjob dbLogjob) {
+        // get locations
+        final List<DBLogjobLocation> locations = db.getLocationsOfLogjob(dbLogjob.getId());
+        db.deleteLogjob(dbLogjob.getId());
+        adapter.remove(dbLogjob);
+        refreshLists();
+
+        Log.v(TAG, "Item deleted through swipe ----------------------------------------------");
+        Snackbar.make(swipeRefreshLayout, R.string.action_logjob_deleted, Snackbar.LENGTH_LONG)
+                .setAction(R.string.action_undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        db.addLogjob(dbLogjob);
+                        for (DBLogjobLocation dbloc : locations) {
+                            db.addLocation(dbloc);
+                        }
+                        refreshLists();
+                        Snackbar.make(swipeRefreshLayout, R.string.action_logjob_restored, Snackbar.LENGTH_SHORT)
+                                .show();
+                        notifyLoggerService(dbLogjob.getId());
+                    }
+                })
+                .show();
+        notifyLoggerService(dbLogjob.getId());
+    }
+
+    private void confirmLogjobDeletion(DBLogjob dbLogjob) {
+        AlertDialog.Builder confirmDeleteAlertBuilder = new AlertDialog.Builder(new ContextThemeWrapper(listView.getContext(), R.style.AppThemeDialog));
+        confirmDeleteAlertBuilder.setMessage(getString(R.string.confirm_delete_logjob_dialog_title))
+                .setPositiveButton(getString(R.string.simple_yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cancelableLogjobDeletion(dbLogjob);
+                    }
+                })
+                .setNegativeButton(getString(R.string.simple_no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        refreshLists();
+                    }
+                });
+        Dialog confirmDeleteAlertDialog = confirmDeleteAlertBuilder.create();
+        confirmDeleteAlertDialog.show();
+    }
+
     public void initList() {
         adapter = new ItemAdapter(this, db);
         listView.setAdapter(adapter);
@@ -776,28 +822,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 switch(direction) {
                     case ItemTouchHelper.LEFT: {
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
-                        // get locations
-                        final List<DBLogjobLocation> locations = db.getLocationsOfLogjob(dbLogjob.getId());
-                        db.deleteLogjob(dbLogjob.getId());
-                        adapter.remove(dbLogjob);
-                        refreshLists();
-                        Log.v(TAG, "Item deleted through swipe ----------------------------------------------");
-                        Snackbar.make(swipeRefreshLayout, R.string.action_logjob_deleted, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.action_undo, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        db.addLogjob(dbLogjob);
-                                        for (DBLogjobLocation dbloc : locations) {
-                                            db.addLocation(dbloc);
-                                        }
-                                        refreshLists();
-                                        Snackbar.make(swipeRefreshLayout, R.string.action_logjob_restored, Snackbar.LENGTH_SHORT)
-                                                .show();
-                                        notifyLoggerService(dbLogjob.getId());
-                                    }
-                                })
-                                .show();
-                        notifyLoggerService(dbLogjob.getId());
+                        DBLogjob upToDateLogjob = db.getLogjob(dbLogjob.getId());
+                        if (upToDateLogjob.isEnabled()) {
+                            confirmLogjobDeletion(dbLogjob);
+                        }
+                        else {
+                            cancelableLogjobDeletion(dbLogjob);
+                        }
                         break;
                     }
                     case ItemTouchHelper.RIGHT: {
