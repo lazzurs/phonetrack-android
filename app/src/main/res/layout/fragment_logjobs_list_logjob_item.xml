@@ -7,6 +7,8 @@
     android:layout_height="wrap_content"
     android:background="@color/bg_attention">
 
+
+
     <TextView
         android:id="@+id/logjobTextToggleLeft"
         android:layout_width="wrap_content"
@@ -118,74 +120,7 @@
                 android:background="#00000000"
                 android:textColor="#000000" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="bottom|center_horizontal"
-                    android:minWidth="48dp"
-                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/nbNotSync"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|left"
-                        android:text="1" />
-
-                    <ImageView
-                        android:id="@+id/nosyncIcon"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="bottom|left"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_marginBottom="1dp"
-                        android:adjustViewBounds="false"
-                        android:src="@drawable/ic_notify_grey_24dp"
-                        android:tint="#990000" />
-
-                    <TextView
-                        android:id="@+id/nbRun"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|left"
-                        android:text="1" />
-
-                    <ImageView
-                        android:id="@+id/nbRunIcon"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="bottom|left"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_marginBottom="1dp"
-                        android:adjustViewBounds="false"
-                        android:src="@drawable/ic_notify_grey_24dp"
-                        android:tint="#F8F246" />
-
-                    <TextView
-                        android:id="@+id/nbSync"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|right"
-                        android:text="2" />
-
-                    <ImageView
-                        android:id="@+id/syncIcon"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="bottom|right"
-                        android:layout_marginBottom="1dp"
-                        android:adjustViewBounds="false"
-                        android:src="@drawable/ic_notify_grey_24dp"
-                        android:tint="#009900" />
-
-                    <Space
-                        android:id="@+id/syncSpacer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-                </LinearLayout>
                 </FrameLayout>
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -209,6 +144,73 @@
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|right"
+        android:gravity="bottom|center_horizontal"
+        android:layout_marginRight="48dp"
+        android:layout_marginEnd="48dp"
+        android:minWidth="48dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/nbNotSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="1" />
+
+        <ImageView
+            android:id="@+id/nosyncIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginEnd="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="1dp"
+            android:adjustViewBounds="false"
+            android:src="@drawable/ic_notify_grey_24dp"
+            android:tint="#990000" />
+
+        <TextView
+            android:id="@+id/nbRun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="1" />
+
+        <ImageView
+            android:id="@+id/nbRunIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginEnd="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="1dp"
+            android:adjustViewBounds="false"
+            android:src="@drawable/ic_notify_grey_24dp"
+            android:tint="#F8F246" />
+
+        <TextView
+            android:id="@+id/nbSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="2" />
+
+        <ImageView
+            android:id="@+id/syncIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="1dp"
+            android:adjustViewBounds="false"
+            android:src="@drawable/ic_notify_grey_24dp"
+            android:tint="#009900" />
+
+    </LinearLayout>
 
     <ImageView
         android:layout_width="match_parent"

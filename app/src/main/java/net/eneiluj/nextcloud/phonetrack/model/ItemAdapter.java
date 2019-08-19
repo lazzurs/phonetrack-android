@@ -213,12 +213,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 visible = (nbSent == 0) ? View.INVISIBLE : View.VISIBLE;
                 nvHolder.syncIcon.setVisibility(visible);
                 nvHolder.nbSync.setVisibility(visible);
-                //nvHolder.syncSpacer.setVisibility(View.VISIBLE);
             }
             else {
                 nvHolder.syncIcon.setVisibility(View.GONE);
                 nvHolder.nbSync.setVisibility(View.GONE);
-                //nvHolder.syncSpacer.setVisibility(View.GONE);
             }
         }
     }
@@ -304,7 +302,6 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView nbNotSync;
         TextView nbRun;
         TextView nbSync;
-        Space syncSpacer;
         ImageButton infoButton;
         ImageButton mapButton;
 
@@ -323,7 +320,6 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
             this.nbRun = v.findViewById(R.id.nbRun);
             this.nbSync = v.findViewById(R.id.nbSync);
-            this.syncSpacer = v.findViewById(R.id.syncSpacer);
             this.infoButton = v.findViewById(R.id.infoButton);
             this.mapButton = v.findViewById(R.id.mapButton);
             v.setOnClickListener(this);
