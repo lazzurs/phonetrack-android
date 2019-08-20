@@ -703,11 +703,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                     ListView lw = ((AlertDialog)dialog).getListView();
                                     int w = lw.getCheckedItemPosition();
 
-                                    long sid = sessionIdList.get(w);
-                                    Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
-                                    mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
-                                    startActivityForResult(mapIntent, map);
-                                    dialog.dismiss();
+                                    if (w >= 0) {
+                                        long sid = sessionIdList.get(w);
+                                        Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                                        mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
+                                        startActivityForResult(mapIntent, map);
+                                        dialog.dismiss();
+                                    }
                                 }
                             });
 
