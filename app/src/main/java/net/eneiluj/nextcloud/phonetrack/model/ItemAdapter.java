@@ -196,13 +196,6 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             int visible = (nb == 0) ? View.INVISIBLE : View.VISIBLE;
             nvHolder.nosyncIcon.setVisibility(visible);
 
-            // nb position obtained in current run (since last logjob activation, or since last stats reset)
-            int nbRun = db.getLogjobLocationCurrentRunCount(logjob.getId());
-            String nbRunTxt = (nbRun == 0) ? "" : String.valueOf(nbRun);
-            nvHolder.nbRun.setText(nbRunTxt);
-            int nbRunVisible = (nbRun == 0) ? View.INVISIBLE : View.VISIBLE;
-            nvHolder.nbRunIcon.setVisibility(nbRunVisible);
-
             if (prefs.getBoolean(db.getContext().getString(R.string.pref_key_shownbsynced), false)) {
                 int nbSent = db.getNbSync(logjob.getId());
                 nbTxt = (nbSent == 0) ? "" : String.valueOf(nbSent);
@@ -217,6 +210,21 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             else {
                 nvHolder.syncIcon.setVisibility(View.GONE);
                 nvHolder.nbSync.setVisibility(View.GONE);
+            }
+
+            // icon to show if there was a location fix since last activation
+            if (!logjob.isEnabled()) {
+                nvHolder.locSuccessIcon.setVisibility(View.GONE);
+            }
+            else {
+                nvHolder.locSuccessIcon.setVisibility(View.VISIBLE);
+                // select the icon
+                if (db.getLastLocTimestamp(logjob.getId()) >= db.getLastActivationGpsTimestamp(logjob.getId())) {
+                    nvHolder.locSuccessIcon.setImageResource(R.drawable.ic_location_found_grey_24dp);
+                }
+                else {
+                    nvHolder.locSuccessIcon.setImageResource(R.drawable.ic_location_searching_grey_24dp);
+                }
             }
         }
     }
@@ -296,11 +304,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView logjobTitle;
         TextView logjobSubtitle;
         ImageView nosyncIcon;
-        ImageView nbRunIcon;
         ImageView syncIcon;
+        ImageView locSuccessIcon;
         SwitchCompat logjobEnabled;
         TextView nbNotSync;
-        TextView nbRun;
         TextView nbSync;
         ImageButton infoButton;
         ImageButton mapButton;
@@ -314,11 +321,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.logjobTitle = v.findViewById(R.id.logjobTitle);
             this.logjobSubtitle = v.findViewById(R.id.logjobExcerpt);
             this.nosyncIcon = v.findViewById(R.id.nosyncIcon);
-            this.nbRunIcon = v.findViewById(R.id.nbRunIcon);
             this.syncIcon = v.findViewById(R.id.syncIcon);
+            this.locSuccessIcon = v.findViewById(R.id.locSuccessIcon);
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
-            this.nbRun = v.findViewById(R.id.nbRun);
             this.nbSync = v.findViewById(R.id.nbSync);
             this.infoButton = v.findViewById(R.id.infoButton);
             this.mapButton = v.findViewById(R.id.mapButton);

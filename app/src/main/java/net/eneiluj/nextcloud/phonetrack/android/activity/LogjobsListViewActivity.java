@@ -1135,6 +1135,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(c);
         DBLogjob logjob = db.getLogjob(ljId);
         long tsNow = new Date().getTime() / 1000;
+        long tsLastActivationSystem = db.getLastActivationSystemTimestamp(ljId);
+        long diffLastActivation = tsNow - tsLastActivationSystem;
         long tsLastLoc = db.getLastLocTimestamp(ljId);
         long diffLastLoc = tsNow - tsLastLoc;
         long tsLastSync = db.getLastSyncTimestamp(ljId);
@@ -1254,6 +1256,18 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
         else {
             iView.findViewById(R.id.infoLastSyncErrLayout).setVisibility(View.GONE);
+        }
+        if (logjob.isEnabled()) {
+            Date d = new Date(tsLastActivationSystem*1000);
+            String diffLastActivationString = SupportUtil.formatDuration(diffLastActivation, c);
+            String lastActivationText = c.getString(R.string.logjob_info_last_activation, diffLastActivationString, sdf.format(d));
+
+            TextView tv3 = iView.findViewById(R.id.infoLastActivationText);
+            tv3.setText(lastActivationText);
+            iView.findViewById(R.id.infoLastActivationLayout).setVisibility(View.VISIBLE);
+        }
+        else {
+            iView.findViewById(R.id.infoLastActivationLayout).setVisibility(View.GONE);
         }
     }
 

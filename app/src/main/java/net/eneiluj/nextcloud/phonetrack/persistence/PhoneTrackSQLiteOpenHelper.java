@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -35,7 +36,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 15;
+    private static final int database_version = 16;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -61,6 +62,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_post = "POST";
     private static final String key_enabled = "ENABLED";
     private static final String key_lastLocTimestamp = "LASTLOC";
+    private static final String key_lastActivationSystemTimestamp = "LASTACTIVATIONSYSTEM";
+    private static final String key_lastActivationGpsTimestamp = "LASTACTIVATIONGPS";
     private static final String key_nbsync = "NBSYNC";
     private static final String key_lastSyncTimestamp = "LASTSYNC";
     private static final String key_lastSyncErrorTimestamp = "LASTSYNCERRTIME";
@@ -91,7 +94,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             key_keepGpsOn, key_post, key_enabled,
             key_nbsync, key_lastSyncTimestamp, key_lastLocTimestamp,
             key_lastSyncErrorTimestamp, key_lastSyncErrorText, key_useSignificantMotion,
-            key_useSignificantMotionMixed, key_locationTimeout};
+            key_useSignificantMotionMixed, key_locationTimeout,
+            key_lastActivationSystemTimestamp, key_lastActivationGpsTimestamp};
     private static final String[] columnsLocations = {
             key_id, key_logjobid, key_lat, key_lon, key_time,
             key_bearing, key_altitude, key_speed, key_accuracy,
@@ -167,6 +171,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_nbsync + " INTEGER DEFAULT 0, " +
                 key_lastSyncTimestamp + " INTEGER DEFAULT 0, " +
                 key_lastLocTimestamp + " INTEGER DEFAULT 0, " +
+                key_lastActivationSystemTimestamp + " INTEGER DEFAULT 0, " +
+                key_lastActivationGpsTimestamp + " INTEGER DEFAULT 0, " +
                 key_lastSyncErrorTimestamp + " INTEGER DEFAULT 0, " +
                 key_lastSyncErrorText + " TEXT, " +
                 key_token + " TEXT, " +
@@ -219,6 +225,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         }
         if (oldVersion < 15) {
             db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_useSignificantMotionMixed + " INTEGER DEFAULT 0");
+        }
+        if (oldVersion < 16) {
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_lastActivationSystemTimestamp + " INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_lastActivationGpsTimestamp + " INTEGER DEFAULT 0");
         }
     }
 
@@ -613,6 +623,13 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         if (resetStats && logjob.isEnabled()) {
             resetLogjobCurrentRun(logjob.getId());
         }
+        if (logjob.isEnabled()) {
+            long ts = System.currentTimeMillis() / 1000;
+            setLastActivationSystemTimestamp(logjob.getId(), ts);
+            // this way we're sure the comparison between last activation and last location will be correct
+            long tss = getLastLocTimestamp(logjob.getId()) + 1;
+            setLastActivationGpsTimestamp(logjob.getId(), ts);
+        }
     }
 
     public DBLogjob updateLogjobAndSync(@NonNull DBLogjob oldLogjob, @Nullable String newTitle, @Nullable String newToken,
@@ -999,6 +1016,42 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     public long getLastLocTimestamp(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(table_logjobs, new String[]{key_lastLocTimestamp}, key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null);
+        long res = 0;
+        while (cursor.moveToNext()) {
+            res = cursor.getLong(0);
+            break;
+        }
+        cursor.close();
+        return res;
+    }
+    public void setLastActivationSystemTimestamp(long ljId, long ts) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(key_lastActivationSystemTimestamp, ts);
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
+    }
+
+    public long getLastActivationSystemTimestamp(long ljId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(table_logjobs, new String[]{key_lastActivationSystemTimestamp}, key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null);
+        long res = 0;
+        while (cursor.moveToNext()) {
+            res = cursor.getLong(0);
+            break;
+        }
+        cursor.close();
+        return res;
+    }
+    public void setLastActivationGpsTimestamp(long ljId, long ts) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(key_lastActivationGpsTimestamp, ts);
+        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
+    }
+
+    public long getLastActivationGpsTimestamp(long ljId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(table_logjobs, new String[]{key_lastActivationGpsTimestamp}, key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null);
         long res = 0;
         while (cursor.moveToNext()) {
             res = cursor.getLong(0);
