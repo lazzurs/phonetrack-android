@@ -646,13 +646,20 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void setFrequency(String f) {
-        int freq = Integer.valueOf(f);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putInt("map_freq", freq).apply();
-        stopRefresh();
-        startRefresh();
-        // to update freq displayed value
-        setupNavigationMenu();
+        try {
+            int freq = Integer.valueOf(f);
+            if (freq > 0) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                prefs.edit().putInt("map_freq", freq).apply();
+                stopRefresh();
+                startRefresh();
+                // to update freq displayed value
+                setupNavigationMenu();
+            }
+        }
+        catch (Exception e) {
+
+        }
     }
 
     private void bringMarkerToFront(Marker m) {
@@ -763,6 +770,10 @@ public class MapActivity extends AppCompatActivity {
             }
         };
         int currentFreq = prefs.getInt("map_freq", 15);
+        if (currentFreq == 0) {
+            currentFreq = 15;
+            prefs.edit().putInt("map_freq", 15).apply();
+        }
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, currentFreq*1000);
     }
