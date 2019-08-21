@@ -20,6 +20,7 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -134,7 +135,7 @@ public class SupportUtil {
         long absSeconds = Math.abs(seconds);
         String positive;
         if (absSeconds >= (3600 * 24)) {
-            positive = String.format(
+            positive = String.format(Locale.ENGLISH,
                     "%d %s, %02d:%02d:%02d",
                     absSeconds / (3600 * 24),
                     context.getString(R.string.duration_days),
@@ -143,7 +144,7 @@ public class SupportUtil {
                     absSeconds % 60);
         }
         else {
-            positive = String.format(
+            positive = String.format(Locale.ENGLISH,
                     "%02d:%02d:%02d",
                     absSeconds / 3600,
                     (absSeconds % 3600) / 60,
