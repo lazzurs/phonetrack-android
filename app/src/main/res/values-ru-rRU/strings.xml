@@ -66,7 +66,7 @@
     <string name="setting_significantmotion_summary">Экспериментальный: Ожидание значительного перемещения перед тем, как получить следующую позицию. В некоторых случаях экономит заряд батареи. Несовместимо с некоторыми другими опциями.</string>
     <string name="setting_significantmotion_min_time_applied">Применить минимальное время</string>
     <string name="setting_significantmotion_min_time_applied_summary">Не записывать позицию каждый раз, когда происходит движение, подождите \"минимальное время\" между двумя точками. Это экономит батарею.</string>
-    <string name="setting_significantmotion_mixed">Смешанный режим</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Таймаут определения местоположения</string>
     <string name="setting_significantmotion_timeout_summary">Время ожидания одного определения местоположения (в секундах). Сохраняет заряд батареи в районах со слабым сигналом. Если использовать GPS и сеть, то это также определяет, как долго будет использоваться более низкое качество сети. Установите ноль, чтобы отключить таймаут.</string>

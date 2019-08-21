@@ -66,7 +66,7 @@
     <string name="setting_significantmotion_summary">Eksperymentalnie: Czeka na znaczący ruch przed uzyskaniem następnej pozycji. W niektórych przypadkach oszczędza dużo baterii. Niezgodny z niektórymi innymi opcjami.</string>
     <string name="setting_significantmotion_min_time_applied">Zastosuj minimalny czas</string>
     <string name="setting_significantmotion_min_time_applied_summary">Nie zapisuje pozycji przy każdym wykryciu ruchu, czeka na „minimalny czas” między dwoma punktami. Oszczędza to baterię.</string>
-    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Limit czasu lokalizacji</string>
     <string name="setting_significantmotion_timeout_summary">Czas, na który będzie czekać na ustalenie pojedynczej lokalizacji (sekundy). Oszczędza baterię w obszarach słabego zasięgu. Jeśli używasz jednocześnie GPS i sieci, określa to również, jak długo będzie używana pozycja sieci przy niższej jej jakości. Ustaw na zero, aby wyłączyć limit czasu.</string>

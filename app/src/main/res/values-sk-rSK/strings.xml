@@ -66,7 +66,7 @@
     <string name="setting_significantmotion_summary">Experiment: Čakať na väčší pohyb pred získaním ďalšej polohy. V niektorých prípadoch veľmi šetri batériu.</string>
     <string name="setting_significantmotion_min_time_applied">Použiť min. čas</string>
     <string name="setting_significantmotion_min_time_applied_summary">Neukladať polohu každý krát, keď je zistený pohyb, čakať \"min. čas\" medzi dvoma bodmi. Toto šetrí batériu.</string>
-    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Časový limit polohy</string>
     <string name="setting_significantmotion_timeout_summary">Čakanie na získanie polohy (fix) sekúnd. Šetrí batériu na miestach bez dobrého pokrytia. Ak používate spolu GPS a sieť, toto nastavenie tiež určuje po akom dlhom čase bude použitá menej presná poloha zo siete. Nastavte na nula na vypnutie časovača.</string>

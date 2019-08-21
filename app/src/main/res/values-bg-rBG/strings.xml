@@ -66,7 +66,7 @@
     <string name="setting_significantmotion_summary">Експериментална: Изчакайте значително движение, преди да заемете следващата позиция. В някои случаи спестява много батерия. Несъвместимо с някои други опции.</string>
     <string name="setting_significantmotion_min_time_applied">Приложете минимално време</string>
     <string name="setting_significantmotion_min_time_applied_summary">Не записвайте позиция всеки път, когато е открито движение, изчакайте \"минимално време\" между две точки. Това спестява батерията.</string>
-    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Местоположението не е намерено</string>
     <string name="setting_significantmotion_timeout_summary">Време е да изчакате еднократно определяне на местоположението (секунди). Спестява батерията в райони без добро покритие. Ако използвате както GPS, така и мрежа, това също определя след колко дълго ще се използва по-ниското качество на мрежата. Задайте нула, за да забраните изчакването.</string>

@@ -66,7 +66,7 @@
     <string name="setting_significantmotion_summary">Experimentell: Warten auf eine deutliche Bewegung, bevor die nächste Position ermittelt wird. Spart in einigen Fällen viel Batterie. Nicht kompatibel mit einigen anderen Optionen.</string>
     <string name="setting_significantmotion_min_time_applied">Mindestzeit übernehmen</string>
     <string name="setting_significantmotion_min_time_applied_summary">Nicht bei jeder erkannten Bewegung die Position bestimmen, sondern eine „Mindestzeit” zwischen zwei Positionsbestimmungen warten. Dies schont die Batterie.</string>
-    <string name="setting_significantmotion_mixed">Gemischter Modus</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode</string>
     <string name="setting_significantmotion_mixed_summary">Bei jeder Bewegungserkennung eine Position erfassen. Wenn keine Bewegung erkannt wird, entsprechend der \"Höchstdauer\" eine Position erfassen. Dadurch wird die Batterie etwas geschont.</string>
     <string name="setting_significantmotion_timeout">Zeitüberschreitung bei Positionsbestimmung</string>
     <string name="setting_significantmotion_timeout_summary">Zeit (in Sekunden), um auf eine einzelne Standortbestimmung zu warten. Spart Batterie in Bereichen mit schlechter Abdeckung. Wenn sowohl GPS als auch Netzwerk verwendet werden, bestimmt dies auch, nach welcher Zeit die qualitativ schlechtere Netzwerkposition verwendet wird. Auf Null setzen, um die Zeitüberschreitung zu deaktivieren.</string>

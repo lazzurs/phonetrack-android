@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#109](https://gitlab.com/eneiluj/phonetrack-android/issues/109) @MarkLi
 - passive location provider setting
 [#112](https://gitlab.com/eneiluj/phonetrack-android/issues/112) @helium314
+- crosshair under logjob switch, helps to know if at least a point was logged since last activation
+[#108](https://gitlab.com/eneiluj/phonetrack-android/issues/108) @markussvn
 
 ### Changed
 - improve CI script
@@ -19,6 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#109](https://gitlab.com/eneiluj/phonetrack-android/issues/109) @MarkLi
 - refresh info dialog on resume and when new point is logged
 [#113](https://gitlab.com/eneiluj/phonetrack-android/issues/113) @markussvn
+- ask deletion confirmation when trying to delete active logjob
+[#114](https://gitlab.com/eneiluj/phonetrack-android/issues/114) @markussvn
+- change duration format to hh:mm:ss
+[#108](https://gitlab.com/eneiluj/phonetrack-android/issues/108) @markussvn
 
 ### Fixed
 - LoggerService crash on Android <= 4.3 because of unsafe signMotion disabling
@@ -28,6 +34,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#87](https://gitlab.com/eneiluj/phonetrack-android/issues/87) @Valdnet
 - bad device name encoding (crash with spaces) on Android <= 6
 [#83](https://gitlab.com/eneiluj/phonetrack-android/issues/83) @GURKE
+- logjob item buttons alignment
+[#115](https://gitlab.com/eneiluj/phonetrack-android/issues/115) @Valdnet
+- bug when going to the map without selecting a session
+[#116](https://gitlab.com/eneiluj/phonetrack-android/issues/116) @Valdnet
+- bug when setting invalid frequency value in map
+[#117](https://gitlab.com/eneiluj/phonetrack-android/issues/117) @Valdnet
 
 ## 0.0.12 – 2019-07-25
 ### Added

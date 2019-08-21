@@ -68,7 +68,7 @@
     <string name="setting_significantmotion_min_time_applied_summary">Αποφυγή καταγραφής θέσης με κάθε κίνηση. Αναμονή \"ελάχιστου χρόνου\" μεταξύ δύο σημείων. Προσφέρει εξοικονόμηση ενέργειας.
 
 Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
-    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Λήξη χρονικού ορίου θέσης</string>
     <string name="setting_significantmotion_timeout_summary">Ώρα αναμονής για τη διόρθωση θέσης (δευτερόλεπτα). Εξοικονόμηση μπαταρίας σε περιοχές χωρίς καλή κάλυψη. Αν χρησιμοποιείται το GPS και το δίκτυο ταυτόχρονα, αυτό καθορίζει επίσης μετά από πόσο χρόνο θα χρησιμοποιηθεί η θέση δικτύου χαμηλότερης ποιότητας. Για απενεργοποίηση του χρονικού ορίου, σημειώστε με \"μηδέν\" (0).</string>
