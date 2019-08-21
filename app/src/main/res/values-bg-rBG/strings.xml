@@ -54,7 +54,9 @@
     <string name="setting_min_distance">Минимална дистанция</string>
     <string name="setting_min_distance_long">Минимална дистанция между 2 записа точки (метри)</string>
     <string name="setting_min_time">Минимално време</string>
+    <string name="setting_min_time_mixed">Maximum time</string>
     <string name="setting_min_time_long">Минимално време между 2 записани точки (секунди)</string>
+    <string name="setting_min_time_mixed_long">Maximum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Минимална точност</string>
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Поддържайте GPS между поправките</string>
@@ -64,6 +66,8 @@
     <string name="setting_significantmotion_summary">Експериментална: Изчакайте значително движение, преди да заемете следващата позиция. В някои случаи спестява много батерия. Несъвместимо с някои други опции.</string>
     <string name="setting_significantmotion_min_time_applied">Приложете минимално време</string>
     <string name="setting_significantmotion_min_time_applied_summary">Не записвайте позиция всеки път, когато е открито движение, изчакайте \"минимално време\" между две точки. Това спестява батерията.</string>
+    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Местоположението не е намерено</string>
     <string name="setting_significantmotion_timeout_summary">Време е да изчакате еднократно определяне на местоположението (секунди). Спестява батерията в райони без добро покритие. Ако използвате както GPS, така и мрежа, това също определя след колко дълго ще се използва по-ниското качество на мрежата. Задайте нула, за да забраните изчакването.</string>
     <string name="logjob_title_log_to">Запис в %s</string>
@@ -73,6 +77,7 @@
     <string name="logjob_info_dialog_title">Около %s</string>
     <string name="logjob_info_nbsync">%d пратена локация</string>
     <string name="logjob_info_nbnotsync">%d изчакване за локация</string>
+    <string name="logjob_info_last_activation">Last activation\n%s ago at\n%s</string>
     <string name="logjob_info_lastloc">Последно местоположение преди \n%s на \n%s</string>
     <string name="logjob_info_lastsync">Последно успешно синхронизиране преди \n%s в \n%s</string>
     <string name="logjob_info_lastsync_error">Последна грешка при синхронизиране преди \n%s в \n%s\n\n%st</string>
@@ -138,6 +143,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Network</string>
     <string name="providers_gps_network">Network and GPS</string>
+    <string name="providers_passive">Passive</string>
+    <string name="providers_passive_gps">Passive and GPS</string>
+    <string name="providers_passive_network">Passive and Network</string>
+    <string name="providers_passive_gps_network">Passive and GPS and Network</string>
     <string name="settings_color_title">App main color</string>
     <string name="settings_color_summary">Color for action bars, map buttons etc...</string>
     <string name="settings_colorpicker_title">Choose color</string>

@@ -54,7 +54,9 @@
     <string name="setting_min_distance">Mindestentfernung</string>
     <string name="setting_min_distance_long">Mindestentfernung (in Meter) zwischen zwei erfassten Datenpunkte</string>
     <string name="setting_min_time">Mindestdauer</string>
+    <string name="setting_min_time_mixed">Höchstdauer</string>
     <string name="setting_min_time_long">Mindestdauer (in Sekunden) zwischen zwei erfassten Datenpunkten</string>
+    <string name="setting_min_time_mixed_long">Höchstdauer (in Sekunden) zwischen zwei erfassten Messpunkten</string>
     <string name="setting_min_accuracy">Minimale Genauigkeit</string>
     <string name="setting_min_accuracy_long">Mindestgenauigkeit der erfassten Datenpunkte (Meter). Werte nur dann erfassen, wenn die Abweichung kleiner ist als:</string>
     <string name="setting_keepgps_title">GPS zwischen den Positionsbestimmungen eingeschaltet lassen</string>
@@ -64,6 +66,8 @@
     <string name="setting_significantmotion_summary">Experimentell: Warten auf eine deutliche Bewegung, bevor die nächste Position ermittelt wird. Spart in einigen Fällen viel Batterie. Nicht kompatibel mit einigen anderen Optionen.</string>
     <string name="setting_significantmotion_min_time_applied">Mindestzeit übernehmen</string>
     <string name="setting_significantmotion_min_time_applied_summary">Nicht bei jeder erkannten Bewegung die Position bestimmen, sondern eine „Mindestzeit” zwischen zwei Positionsbestimmungen warten. Dies schont die Batterie.</string>
+    <string name="setting_significantmotion_mixed">Gemischter Modus</string>
+    <string name="setting_significantmotion_mixed_summary">Bei jeder Bewegungserkennung eine Position erfassen. Wenn keine Bewegung erkannt wird, entsprechend der \"Höchstdauer\" eine Position erfassen. Dadurch wird die Batterie etwas geschont.</string>
     <string name="setting_significantmotion_timeout">Zeitüberschreitung bei Positionsbestimmung</string>
     <string name="setting_significantmotion_timeout_summary">Zeit (in Sekunden), um auf eine einzelne Standortbestimmung zu warten. Spart Batterie in Bereichen mit schlechter Abdeckung. Wenn sowohl GPS als auch Netzwerk verwendet werden, bestimmt dies auch, nach welcher Zeit die qualitativ schlechtere Netzwerkposition verwendet wird. Auf Null setzen, um die Zeitüberschreitung zu deaktivieren.</string>
     <string name="logjob_title_log_to">In %s protokollieren</string>
@@ -73,6 +77,7 @@
     <string name="logjob_info_dialog_title">Über %s</string>
     <string name="logjob_info_nbsync">%d Standorte gesendet</string>
     <string name="logjob_info_nbnotsync">%d Standorte ausstehend</string>
+    <string name="logjob_info_last_activation">Letzte Aktivierung\n%s her um\n%s</string>
     <string name="logjob_info_lastloc">Letzter Standort erfasst vor \n%s bei\n%s</string>
     <string name="logjob_info_lastsync">Letzte erfolgreiche Synchronisation vor \n%s bei \n%s</string>
     <string name="logjob_info_lastsync_error">Letzter Synchronisierungsfehler vor \n%s bei\n%s\n\n%s</string>
@@ -138,6 +143,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Netzwerk</string>
     <string name="providers_gps_network">Netzwerk und GPS</string>
+    <string name="providers_passive">Passiv</string>
+    <string name="providers_passive_gps">Passiv und GPS</string>
+    <string name="providers_passive_network">Passiv und Netzwerk</string>
+    <string name="providers_passive_gps_network">Passiv, GPS und Netzwerk</string>
     <string name="settings_color_title">Hauptfarbe der App</string>
     <string name="settings_color_summary">Farbe für Aktionsleisten, Kartenschaltflächen usw. …</string>
     <string name="settings_colorpicker_title">Farbe wählen</string>

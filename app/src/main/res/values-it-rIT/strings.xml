@@ -54,7 +54,9 @@
     <string name="setting_min_distance">Distanza minima</string>
     <string name="setting_min_distance_long">Distanza minima tra due punti registrati (metri)</string>
     <string name="setting_min_time">Intervallo di tempo minimo</string>
+    <string name="setting_min_time_mixed">Tempo massimo</string>
     <string name="setting_min_time_long">Intervallo di tempo minimo tra due punti registrati (secondi)</string>
+    <string name="setting_min_time_mixed_long">Tempo massimo tra due punti registrati (secondi)</string>
     <string name="setting_min_accuracy">Precisione minima</string>
     <string name="setting_min_accuracy_long">Precisione minima per i punti registrati (metri). Non registrare se il valore di precisione è maggiore di:</string>
     <string name="setting_keepgps_title">Tieni il GPS acceso tra le correzioni</string>
@@ -64,6 +66,8 @@
     <string name="setting_significantmotion_summary">Sperimentale: Aspetta una mozione significativa prima di ottenere la posizione successiva. Risparmia una quantità di batteria in alcuni casi. incompatibile con alcune altre opzioni.</string>
     <string name="setting_significantmotion_min_time_applied">Applica tempo minimo</string>
     <string name="setting_significantmotion_min_time_applied_summary">Non registrare una posizione ogni volta che viene rilevato un movimento, attendere \"tempo minimo\" tra due punti. Questo risparmia batteria.</string>
+    <string name="setting_significantmotion_mixed">Modalità mista</string>
+    <string name="setting_significantmotion_mixed_summary">Registra una posizione ogni volta che viene rilevato un movimento. Se non viene rilevata nessuna mozione, Registra una posizione ogni \"tempo massimo\". Questo risparmia un po\' meno batteria.</string>
     <string name="setting_significantmotion_timeout">Timeout posizione</string>
     <string name="setting_significantmotion_timeout_summary">Tempo di attesa per un singolo aggiustamento posizione (secondi). Risparmia batteria in aree senza una buona copertura. Se si utilizza sia GPS che rete, questo determina anche dopo il tempo che verrà utilizzato la posizione di rete di bassa qualità. Imposta a zero per disabilitare il timeout.</string>
     <string name="logjob_title_log_to">Accedi a %s</string>
@@ -73,6 +77,7 @@
     <string name="logjob_info_dialog_title">Circa %s</string>
     <string name="logjob_info_nbsync">%d posizioni inviate</string>
     <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
+    <string name="logjob_info_last_activation">Ultima attivazione\n%s fa alle\n%s</string>
     <string name="logjob_info_lastloc">Ultima posizione acquisita\n%s fa alle\n%s</string>
     <string name="logjob_info_lastsync">Ultima sincronizzazione riuscita\n%s fa alle\n%s</string>
     <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione\n%s fa alle\n%s\n\n%s</string>
@@ -138,6 +143,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Rete</string>
     <string name="providers_gps_network">Rete e GPS</string>
+    <string name="providers_passive">Passivo</string>
+    <string name="providers_passive_gps">Passivo e GPS</string>
+    <string name="providers_passive_network">Passivo e rete</string>
+    <string name="providers_passive_gps_network">Passive e GPS e Rete</string>
     <string name="settings_color_title">Colore principale app</string>
     <string name="settings_color_summary">Colore per barre d\'azione, pulsanti mappa ecc...</string>
     <string name="settings_colorpicker_title">Scegli colore</string>

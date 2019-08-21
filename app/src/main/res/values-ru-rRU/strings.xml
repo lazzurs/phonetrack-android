@@ -54,7 +54,9 @@
     <string name="setting_min_distance">Минимальная дистанция</string>
     <string name="setting_min_distance_long">Минимальная дистанция между двумя сохранёнными точками (метров)</string>
     <string name="setting_min_time">Минимальное время</string>
+    <string name="setting_min_time_mixed">Максимальное время</string>
     <string name="setting_min_time_long">Минимальное время между двумя сохранёнными точками (секунд)</string>
+    <string name="setting_min_time_mixed_long">Maximum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Минимальная точность</string>
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Сохранять GPS до фиксации</string>
@@ -64,6 +66,8 @@
     <string name="setting_significantmotion_summary">Экспериментальный: Ожидание значительного перемещения перед тем, как получить следующую позицию. В некоторых случаях экономит заряд батареи. Несовместимо с некоторыми другими опциями.</string>
     <string name="setting_significantmotion_min_time_applied">Применить минимальное время</string>
     <string name="setting_significantmotion_min_time_applied_summary">Не записывать позицию каждый раз, когда происходит движение, подождите \"минимальное время\" между двумя точками. Это экономит батарею.</string>
+    <string name="setting_significantmotion_mixed">Смешанный режим</string>
+    <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Таймаут определения местоположения</string>
     <string name="setting_significantmotion_timeout_summary">Время ожидания одного определения местоположения (в секундах). Сохраняет заряд батареи в районах со слабым сигналом. Если использовать GPS и сеть, то это также определяет, как долго будет использоваться более низкое качество сети. Установите ноль, чтобы отключить таймаут.</string>
     <string name="logjob_title_log_to">Запись в %s</string>
@@ -73,6 +77,7 @@
     <string name="logjob_info_dialog_title">О %s</string>
     <string name="logjob_info_nbsync">%d положений передано</string>
     <string name="logjob_info_nbnotsync">%d положений ожидает</string>
+    <string name="logjob_info_last_activation">Last activation\n%s ago at\n%s</string>
     <string name="logjob_info_lastloc">Последнее местоположение получено\n%s назад в\n%s</string>
     <string name="logjob_info_lastsync">Последняя успешная синхронизация \n%s тому назад в\n%s</string>
     <string name="logjob_info_lastsync_error">Ошибка при синхронизации\n%s тому назад в\n%s\n\n%s</string>
@@ -138,6 +143,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Сеть</string>
     <string name="providers_gps_network">Сеть и GPS</string>
+    <string name="providers_passive">Пассивный</string>
+    <string name="providers_passive_gps">Пассивный и GPS</string>
+    <string name="providers_passive_network">Пассивный и cеть</string>
+    <string name="providers_passive_gps_network">Пассивный, GPS и сеть</string>
     <string name="settings_color_title">Основной цвет приложения</string>
     <string name="settings_color_summary">Цвет панели управления, кнопок на карте, и тд...</string>
     <string name="settings_colorpicker_title">Выберите цвет</string>

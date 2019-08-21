@@ -54,7 +54,9 @@
     <string name="setting_min_distance">Minimum distance</string>
     <string name="setting_min_distance_long">Minimum distance between two logged points (meters)</string>
     <string name="setting_min_time">Minimum time</string>
+    <string name="setting_min_time_mixed">Maximum time</string>
     <string name="setting_min_time_long">Minimum time between two logged points (seconds)</string>
+    <string name="setting_min_time_mixed_long">Maximum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Minimum accuracy</string>
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Keep GPS on between fixes</string>
@@ -64,6 +66,8 @@
     <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before getting next position. Saves a lot of battery in some cases. Incompatible with some other options.</string>
     <string name="setting_significantmotion_min_time_applied">Apply minimum time</string>
     <string name="setting_significantmotion_min_time_applied_summary">Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
+    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Location timeout</string>
     <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout.</string>
     <string name="logjob_title_log_to">Log to %s</string>
@@ -73,6 +77,7 @@
     <string name="logjob_info_dialog_title">About %s</string>
     <string name="logjob_info_nbsync">%d locations sent</string>
     <string name="logjob_info_nbnotsync">%d locations pending</string>
+    <string name="logjob_info_last_activation">Last activation\n%s ago at\n%s</string>
     <string name="logjob_info_lastloc">Last location acquired\n%s ago at\n%s</string>
     <string name="logjob_info_lastsync">Last successful sync\n%s ago at\n%s</string>
     <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
@@ -138,6 +143,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Network</string>
     <string name="providers_gps_network">Network and GPS</string>
+    <string name="providers_passive">Passive</string>
+    <string name="providers_passive_gps">Passive and GPS</string>
+    <string name="providers_passive_network">Passive and Network</string>
+    <string name="providers_passive_gps_network">Passive and GPS and Network</string>
     <string name="settings_color_title">App main color</string>
     <string name="settings_color_summary">Color for action bars, map buttons etc...</string>
     <string name="settings_colorpicker_title">Choose color</string>

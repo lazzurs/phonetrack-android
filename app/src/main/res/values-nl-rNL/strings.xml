@@ -54,7 +54,9 @@
     <string name="setting_min_distance">Minimumafstand</string>
     <string name="setting_min_distance_long">Minimale afstand tussen twee gelogde punten (meters)</string>
     <string name="setting_min_time">Minimum tijdstip</string>
+    <string name="setting_min_time_mixed">Maximale tijd</string>
     <string name="setting_min_time_long">Minimale tijd tussen twee gelogde punten (seconden)</string>
+    <string name="setting_min_time_mixed_long">Maximale tijd tussen twee gelogde punten (seconden)</string>
     <string name="setting_min_accuracy">Minimum nauwkeurigheid</string>
     <string name="setting_min_accuracy_long">Minimale nauwkeurigheid voor gelogde punten (meters). Log niet als de nauwkeurigheid waarde groter is dan:</string>
     <string name="setting_keepgps_title">GPS ingeschakeld houden tussen fixes</string>
@@ -64,6 +66,8 @@
     <string name="setting_significantmotion_summary">Experimenteel: Wacht op significante beweging voordat de volgende positie wordt bepaald. Bespaart veel batterij in sommige gevallen. Niet compatibel met enkele andere opties.</string>
     <string name="setting_significantmotion_min_time_applied">Pas minimum tijd toe</string>
     <string name="setting_significantmotion_min_time_applied_summary">Geen positie opnemen elke keer dat beweging wordt gedetecteerd, wacht op \"minimum tijd\" tussen twee punten. Dit bespaart batterij.</string>
+    <string name="setting_significantmotion_mixed">Gemengde modus</string>
+    <string name="setting_significantmotion_mixed_summary">Neem een positie op elke keer dat beweging wordt gedetecteerd. Als er geen beweging is gedetecteerd, neem een positie op elke volgens \"maximale tijd\". Dit bespaart een beetje minder batterij.</string>
     <string name="setting_significantmotion_timeout">Locatie timeout</string>
     <string name="setting_significantmotion_timeout_summary">Tijd om te wachten op een enkele locatie-fix (seconden). Bespaart batterij in gebieden zonder goede dekking. Als je zowel GPS als netwerk gebruikt, bepaalt dit ook na hoe lang de lagere kwaliteit netwerkpositie zal worden gebruikt. Zet op nul om timeout uit te schakelen.</string>
     <string name="logjob_title_log_to">Log naar %s</string>
@@ -73,6 +77,7 @@
     <string name="logjob_info_dialog_title">Over %s</string>
     <string name="logjob_info_nbsync">%d posities verzonden</string>
     <string name="logjob_info_nbnotsync">%d uitstaande posities</string>
+    <string name="logjob_info_last_activation">Laatste activerings\n%s geleden op\n%s</string>
     <string name="logjob_info_lastloc">Laatste locatie verworven\n%s geleden op\n%s</string>
     <string name="logjob_info_lastsync">Laatste succesvolle synchronisatie\n%s geleden op\n%s</string>
     <string name="logjob_info_lastsync_error">Laatste synchronisatie fout\n%s geleden op\n%s\n\n%s</string>
@@ -138,6 +143,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Netwerk</string>
     <string name="providers_gps_network">Netwerk en GPS</string>
+    <string name="providers_passive">Passief</string>
+    <string name="providers_passive_gps">Passief en GPS</string>
+    <string name="providers_passive_network">Passief en netwerk</string>
+    <string name="providers_passive_gps_network">Passief, GPS en netwerk</string>
     <string name="settings_color_title">Hoofdkleur applicatie</string>
     <string name="settings_color_summary">Kleur voor actie bars, knoppen van de kaart etc...</string>
     <string name="settings_colorpicker_title">Kies een kleur</string>

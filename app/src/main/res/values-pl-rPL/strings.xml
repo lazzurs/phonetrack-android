@@ -54,7 +54,9 @@
     <string name="setting_min_distance">Minimalna odległość</string>
     <string name="setting_min_distance_long">Minimalna odległość między dwoma zarejestrowanymi punktami (metry)</string>
     <string name="setting_min_time">Minimalny czas</string>
+    <string name="setting_min_time_mixed">Maximum time</string>
     <string name="setting_min_time_long">Minimalny czas między dwoma zarejestrowanymi punktami (sekundy)</string>
+    <string name="setting_min_time_mixed_long">Maximum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Minimalna dokładność</string>
     <string name="setting_min_accuracy_long">Minimalna dokładność dla zarejestrowanych punktów (metry). Nie loguj się, jeśli wartość dokładności jest większa niż:</string>
     <string name="setting_keepgps_title">Zachowaj GPS pomiędzy poprawkami</string>
@@ -64,6 +66,8 @@
     <string name="setting_significantmotion_summary">Eksperymentalnie: Czeka na znaczący ruch przed uzyskaniem następnej pozycji. W niektórych przypadkach oszczędza dużo baterii. Niezgodny z niektórymi innymi opcjami.</string>
     <string name="setting_significantmotion_min_time_applied">Zastosuj minimalny czas</string>
     <string name="setting_significantmotion_min_time_applied_summary">Nie zapisuje pozycji przy każdym wykryciu ruchu, czeka na „minimalny czas” między dwoma punktami. Oszczędza to baterię.</string>
+    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Limit czasu lokalizacji</string>
     <string name="setting_significantmotion_timeout_summary">Czas, na który będzie czekać na ustalenie pojedynczej lokalizacji (sekundy). Oszczędza baterię w obszarach słabego zasięgu. Jeśli używasz jednocześnie GPS i sieci, określa to również, jak długo będzie używana pozycja sieci przy niższej jej jakości. Ustaw na zero, aby wyłączyć limit czasu.</string>
     <string name="logjob_title_log_to">Zaloguj się do %s</string>
@@ -73,6 +77,7 @@
     <string name="logjob_info_dialog_title">O %s</string>
     <string name="logjob_info_nbsync">%d wysłane lokalizacje</string>
     <string name="logjob_info_nbnotsync">%d lokalizacje oczekujące</string>
+    <string name="logjob_info_last_activation">Last activation\n%s ago at\n%s</string>
     <string name="logjob_info_lastloc">Ostatnia lokalizacja nabyta\n%s temu w\n%s</string>
     <string name="logjob_info_lastsync">Ostatnia pomyślna synchronizacja\n%s temu w\n%s</string>
     <string name="logjob_info_lastsync_error">Ostatni błąd synchronizacji\n%s temu w\n%s\n\n%s</string>
@@ -138,6 +143,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Sieć</string>
     <string name="providers_gps_network">Sieć i GPS</string>
+    <string name="providers_passive">Passive</string>
+    <string name="providers_passive_gps">Passive and GPS</string>
+    <string name="providers_passive_network">Passive and Network</string>
+    <string name="providers_passive_gps_network">Passive and GPS and Network</string>
     <string name="settings_color_title">Główny kolor aplikacji</string>
     <string name="settings_color_summary">Kolor pasków akcji, przycisków mapy itp...</string>
     <string name="settings_colorpicker_title">Wybierz kolor</string>

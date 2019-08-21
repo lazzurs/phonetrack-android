@@ -54,7 +54,9 @@
     <string name="setting_min_distance">Minimálna vzdialenosť</string>
     <string name="setting_min_distance_long">Min. vzdialenosť medzi dvoma zaznamenanými bodmi (metre)</string>
     <string name="setting_min_time">Minimálny čas</string>
+    <string name="setting_min_time_mixed">Maximum time</string>
     <string name="setting_min_time_long">Min. čas medzi dvoma zaznamenanými bodmi (sekundy)</string>
+    <string name="setting_min_time_mixed_long">Maximum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Minimálna presnosť</string>
     <string name="setting_min_accuracy_long">Min. presnosť pre zaznamenanie bodov (metre). Neukladať ak je presnosť väčšia ako:</string>
     <string name="setting_keepgps_title">Nechať GPS zapnuté medzi fixami</string>
@@ -64,6 +66,8 @@
     <string name="setting_significantmotion_summary">Experiment: Čakať na väčší pohyb pred získaním ďalšej polohy. V niektorých prípadoch veľmi šetri batériu.</string>
     <string name="setting_significantmotion_min_time_applied">Použiť min. čas</string>
     <string name="setting_significantmotion_min_time_applied_summary">Neukladať polohu každý krát, keď je zistený pohyb, čakať \"min. čas\" medzi dvoma bodmi. Toto šetrí batériu.</string>
+    <string name="setting_significantmotion_mixed">Mixed mode</string>
+    <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Časový limit polohy</string>
     <string name="setting_significantmotion_timeout_summary">Čakanie na získanie polohy (fix) sekúnd. Šetrí batériu na miestach bez dobrého pokrytia. Ak používate spolu GPS a sieť, toto nastavenie tiež určuje po akom dlhom čase bude použitá menej presná poloha zo siete. Nastavte na nula na vypnutie časovača.</string>
     <string name="logjob_title_log_to">Zaznamenávať do %s</string>
@@ -73,6 +77,7 @@
     <string name="logjob_info_dialog_title">O programe %s</string>
     <string name="logjob_info_nbsync">%d odoslaných polôh</string>
     <string name="logjob_info_nbnotsync">%d čakajúcich polôh</string>
+    <string name="logjob_info_last_activation">Last activation\n%s ago at\n%s</string>
     <string name="logjob_info_lastloc">Posledná poloha získaná\n%s pred v\n%s</string>
     <string name="logjob_info_lastsync">Posledná úspešná synchronizácia\n%s pred v\n%s</string>
     <string name="logjob_info_lastsync_error">Posledná chyba synchronizácie\n%s pred v\n%s\n\n%s</string>
@@ -138,6 +143,10 @@
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Sieť</string>
     <string name="providers_gps_network">Sieť a GPS</string>
+    <string name="providers_passive">Passive</string>
+    <string name="providers_passive_gps">Passive and GPS</string>
+    <string name="providers_passive_network">Passive and Network</string>
+    <string name="providers_passive_gps_network">Passive and GPS and Network</string>
     <string name="settings_color_title">Hlavná farba aplikácie</string>
     <string name="settings_color_summary">Farba pre lištu akcií, tlačidlá v mape atď...</string>
     <string name="settings_colorpicker_title">Vybrať farbu</string>
