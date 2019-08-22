@@ -25,6 +25,7 @@
     <string name="setting_post_title">Utilizar el método POST</string>
     <string name="setting_post_summary">alternativa al método GET. Los parámetros GET se convertirán a POST.</string>
     <string name="action_search">Buscar</string>
+    <string name="example_hostname">yourserver</string>
     <string name="simple_cancel">Cancelar</string>
     <string name="simple_yes">Sí</string>
     <string name="simple_no">No</string>

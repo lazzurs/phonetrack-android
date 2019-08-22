@@ -25,6 +25,7 @@
     <string name="setting_post_title">Gebruik POST methode</string>
     <string name="setting_post_summary">in plaats van GET-methode. GET parameters worden geconverteerd naar POST.</string>
     <string name="action_search">Zoeken</string>
+    <string name="example_hostname">yourserver</string>
     <string name="simple_cancel">Annuleer</string>
     <string name="simple_yes">Ja</string>
     <string name="simple_no">Nee</string>

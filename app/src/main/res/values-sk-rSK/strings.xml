@@ -25,6 +25,7 @@
     <string name="setting_post_title">Použiť metódu POST</string>
     <string name="setting_post_summary">namiesto metódy GET. Parametre GET budú konvertované na POST.</string>
     <string name="action_search">Hľadať</string>
+    <string name="example_hostname">yourserver</string>
     <string name="simple_cancel">Ukončiť</string>
     <string name="simple_yes">Áno</string>
     <string name="simple_no">Nie</string>

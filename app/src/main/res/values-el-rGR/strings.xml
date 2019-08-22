@@ -25,6 +25,7 @@
     <string name="setting_post_title">Χρήση μεθόδου POST</string>
     <string name="setting_post_summary">αντί για τη μέθοδο GET. Οι παράμετροι GET θα μετατραπούν σε POST.</string>
     <string name="action_search">Αναζήτηση</string>
+    <string name="example_hostname">yourserver</string>
     <string name="simple_cancel">Ακύρωση</string>
     <string name="simple_yes">Ναι</string>
     <string name="simple_no">Όχι</string>

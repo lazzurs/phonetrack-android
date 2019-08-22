@@ -25,6 +25,7 @@
     <string name="setting_post_title">Use POST method</string>
     <string name="setting_post_summary">instead of GET method. GET parameters will be converted to POST.</string>
     <string name="action_search">搜索</string>
+    <string name="example_hostname">yourserver</string>
     <string name="simple_cancel">取消</string>
     <string name="simple_yes">是</string>
     <string name="simple_no">否</string>

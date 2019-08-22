@@ -25,6 +25,7 @@
     <string name="setting_post_title">Использовать метод POST</string>
     <string name="setting_post_summary">вместо метода GET. Параметры GET будут преобразованы в POST.</string>
     <string name="action_search">Поиск</string>
+    <string name="example_hostname">yourserver</string>
     <string name="simple_cancel">Отмена</string>
     <string name="simple_yes">Да</string>
     <string name="simple_no">Нет</string>
