@@ -40,7 +40,9 @@ public class EditCustomLogjobActivity extends EditLogjobActivity {
     protected void launchNewLogjob() {
         Intent intent = getIntent();
 
-        DBLogjob newLogjob = new DBLogjob(0, "",  "https://yourserver.org/page.php?lat=%LAT",
+        String exampleHost = getString(R.string.example_hostname);
+
+        DBLogjob newLogjob = new DBLogjob(0, "",  "https://"+exampleHost+".org/page.php?lat=%LAT",
                 "", "", 60, 5, 50,
                 false, false, false,60, false, false, 0);
 

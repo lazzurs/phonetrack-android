@@ -54,7 +54,7 @@
     <string name="setting_min_distance">Минимална дистанция</string>
     <string name="setting_min_distance_long">Минимална дистанция между 2 записа точки (метри)</string>
     <string name="setting_min_time">Минимално време</string>
-    <string name="setting_min_time_mixed">Maximum time</string>
+    <string name="setting_min_time_mixed">Максимално време</string>
     <string name="setting_min_time_long">Минимално време между 2 записани точки (секунди)</string>
     <string name="setting_min_time_mixed_long">Maximum time between two logged points (seconds)</string>
     <string name="setting_min_accuracy">Минимална точност</string>
@@ -108,13 +108,13 @@
     <string name="sms_geo_link">Гео връзка</string>
     <string name="sms_osm_link">OSM връзка</string>
     <string name="sms_alarm_started">Алармата ще звъни през %d секунди</string>
-    <string name="sms_alarm_stopped">Alarm has been stopped</string>
+    <string name="sms_alarm_stopped">Алармата е спряна</string>
     <string name="sms_logjobs_started">%d logjobs have been started</string>
     <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
     <string name="sms_logjob_created">A logjob with %d seconds frequency has been created in session %s</string>
     <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
-    <string name="drawer_connect_hint">Tap here to connect</string>
+    <string name="drawer_connect_hint">Докоснете тук, за да се свържете</string>
     <string name="homescreen_map_shortcut_long_title">Map for %s</string>
     <string name="is_running">running (%s pending, %s sent)</string>
     <!-- Settings -->

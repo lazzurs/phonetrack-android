@@ -66,7 +66,7 @@
     <string name="setting_significantmotion_summary">Sperimentale: Aspetta una mozione significativa prima di ottenere la posizione successiva. Risparmia una quantità di batteria in alcuni casi. incompatibile con alcune altre opzioni.</string>
     <string name="setting_significantmotion_min_time_applied">Applica tempo minimo</string>
     <string name="setting_significantmotion_min_time_applied_summary">Non registrare una posizione ogni volta che viene rilevato un movimento, attendere \"tempo minimo\" tra due punti. Questo risparmia batteria.</string>
-    <string name="setting_significantmotion_mixed">Hybrid mode</string>
+    <string name="setting_significantmotion_mixed">Modalità ibrida</string>
     <string name="setting_significantmotion_mixed_summary">Registra una posizione ogni volta che viene rilevato un movimento. Se non viene rilevata nessuna mozione, Registra una posizione ogni \"tempo massimo\". Questo risparmia un po\' meno batteria.</string>
     <string name="setting_significantmotion_timeout">Timeout posizione</string>
     <string name="setting_significantmotion_timeout_summary">Tempo di attesa per un singolo aggiustamento posizione (secondi). Risparmia batteria in aree senza una buona copertura. Se si utilizza sia GPS che rete, questo determina anche dopo il tempo che verrà utilizzato la posizione di rete di bassa qualità. Imposta a zero per disabilitare il timeout.</string>
