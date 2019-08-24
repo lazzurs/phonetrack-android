@@ -1216,7 +1216,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         else {
             iView.findViewById(R.id.infoDurationLayout).setVisibility(View.GONE);
         }
-        if (tsLastLoc != 0) {
+        if (tsLastLoc != 0 && cRLocations.size() > 0) {
             Date d = new Date(tsLastLoc*1000);
             String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, c);
             lastLocText = c.getString(R.string.logjob_info_lastloc, diffLastLocString, sdf.format(d));
@@ -1228,7 +1228,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         else {
             iView.findViewById(R.id.infoLastLocLayout).setVisibility(View.GONE);
         }
-        if (tsLastSync != 0) {
+        if (tsLastSync != 0 && logjob.getNbSync() > 0) {
             Date d = new Date(tsLastSync*1000);
             String diffLastSyncString = SupportUtil.formatDuration(diffLastSync, c);
             lastSyncText = c.getString(R.string.logjob_info_lastsync, diffLastSyncString, sdf.format(d));
