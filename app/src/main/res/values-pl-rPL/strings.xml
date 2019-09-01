@@ -25,7 +25,7 @@
     <string name="setting_post_title">Użyj metody POST</string>
     <string name="setting_post_summary">Parametry GET zostaną przekonwertowane na POST.</string>
     <string name="action_search">Szukaj</string>
-    <string name="example_hostname">yourserver</string>
+    <string name="example_hostname">twójSerwer</string>
     <string name="simple_cancel">Anuluj</string>
     <string name="simple_yes">Tak</string>
     <string name="simple_no">Nie</string>
@@ -156,7 +156,7 @@
     <string name="settings_cert_trust_system_on">Systemowe i dodane przez użytkownika certyfikaty będą zaufane (zalecane)</string>
     <string name="settings_cert_trust_system_off">Systemowe i dodane przez użytkownika certyfikaty nie będą zaufane</string>
     <string name="settings_cert_reset">Zresetuj (nie)zaufane certyfikaty</string>
-    <string name="settings_cert_reset_summary">Resetuje wszystkie zaufane niestandardowe certyfikaty</string>
+    <string name="settings_cert_reset_summary">Resetuje wszystkie zaufane certyfikaty niestandardowe</string>
     <string name="settings_cert_reset_toast">Wszystkie certyfikaty niestandardowe zostały wyczyszczone</string>
     <string name="settings_network_category">Sieć</string>
     <string name="settings_logging_category">Rejestrowanie</string>
