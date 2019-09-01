@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 //import android.preference.EditTextPreference;
+import androidx.annotation.NonNull;
 import androidx.preference.CheckBoxPreference;
 //import android.preference.ListPreference;
 //import android.preference.Preference;
@@ -13,9 +14,13 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -28,24 +33,25 @@ import static android.webkit.URLUtil.isValidUrl;
 
 public class EditMapsLogjobFragment extends EditLogjobFragment {
 
-    @Override
-    public void onCreatePreferencesFix(Bundle savedInstanceState, String rootkey) {
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.activity_custom_edit);
-
-        endOnCreate();
-
         System.out.println("MAPS logjob on create : "+logjob);
+    }
 
-        Preference urlPref = findPreference("URL");
-        urlPref.setVisible(false);
-        Preference postPref = findPreference("post");
-        postPref.setVisible(false);
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_custom_edit_form, container, false);
+        super.onCreateView(view);
+
+        editUrlLayout.setVisibility(View.GONE);
+        editPostLayout.setVisibility(View.GONE);
+
+        showHideValidationButtons();
+
+        return view;
     }
 
     @Override
@@ -130,24 +136,37 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_save:
-                if (getTitle() == null || getTitle().equals("")) {
-                    showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
-                }
-                else if (getMindistance() < 0) {
-                    showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
-                }
-                else if (getMinaccuracy() < 1) {
-                    showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
-                }
-                else {
-                    saveLogjob(null);
-                    listener.close();
-                }
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected boolean isFormValid() {
+        if (getTitle() == null || getTitle().equals("")) {
+            //showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMindistance() < 0) {
+            //showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMintime() < 1) {
+            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMinaccuracy() < 1) {
+            //showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getUseSignificantMotion() && getMintime() < 30) {
+            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (!getUseSignificantMotion() && getMintime() < 1) {
+            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        return true;
     }
 
     @Override

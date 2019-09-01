@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
@@ -11,6 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 //import android.preference.EditTextPreference;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 //import com.takisoft.fix.support.v7.preference.EditTextPreference;
@@ -19,6 +23,8 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 //import android.preference.PreferenceFragment;
 //import android.support.v7.preference.PreferenceFragmentCompat;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuItemCompat;
@@ -27,14 +33,22 @@ import androidx.preference.SwitchPreferenceCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.ShareActionProvider;
+
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //import butterknife.ButterKnife;
@@ -44,12 +58,16 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
+import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
+
+import org.mapsforge.map.rendertheme.renderinstruction.Line;
 
 import static android.webkit.URLUtil.isValidUrl;
 
 //public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
 //public class EditLogjobFragment extends PreferencesFragment {
-public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
+public abstract class EditLogjobFragment extends Fragment {
 
     public interface LogjobFragmentListener {
         void close();
@@ -68,47 +86,41 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     public static final int MINIMUM_TIME_DEFAULT_SIG_MOTION = 300;
 
     protected DBLogjob logjob;
-    //@Nullable
-    //protected DBLogjob originalLogjob;
+
     protected PhoneTrackSQLiteOpenHelper db;
     protected LogjobFragmentListener listener;
 
     private static final String LOG_TAG_AUTOSAVE = "AutoSave";
 
-    private static final long DELAY = 2000; // Wait for this time after typing before saving
-    private static final long DELAY_AFTER_SYNC = 5000; // Wait for this time after saving before checking for next save
-
     private Handler handler;
-    private boolean saveActive, unsavedEdit;
 
-    protected EditTextPreference editTitle;
-    protected EditTextPreference editURL;
-    protected EditTextPreference editToken;
-    protected EditTextPreference editDevicename;
-    protected EditTextPreference editMintime;
-    protected EditTextPreference editMindistance;
-    protected EditTextPreference editMinaccuracy;
-    protected CheckBoxPreference editKeepGpsOn;
-    protected SwitchPreferenceCompat editUseSignificantMotion;
-    protected SwitchPreferenceCompat editUseSignificantMotionInterval;
-    protected SwitchPreferenceCompat editUseSignificantMotionMixed;
-    protected androidx.preference.EditTextPreference editLocationRequestTimeout;
+    protected EditText editTitle;
+    protected EditText editURL;
+    protected EditText editMintime;
+    protected EditText editMindistance;
+    protected EditText editMinaccuracy;
+    protected CheckBox editKeepGpsOn;
+    protected CheckBox editUseSignificantMotion;
+    protected CheckBox editUseSignificantMotionInterval;
+    protected CheckBox editUseSignificantMotionMixed;
+    protected EditText editLocationRequestTimeout;
+
+    protected LinearLayout editUseSignificantMotionLayout;
+    protected LinearLayout editUseSignificantMotionIntervalLayout;
+    protected LinearLayout editUseSignificantMotionMixedLayout;
+    protected LinearLayout editLocationRequestTimeoutLayout;
+    protected LinearLayout editMintimeLayout;
+    protected LinearLayout editMinaccuracyLayout;
+    protected LinearLayout editKeepGpsOnLayout;
+    protected LinearLayout editUrlLayout;
+    protected LinearLayout editPostLayout;
+
+    protected FloatingActionButton fabOk;
+
+    protected TextInputLayout minTimeTextInputLayout;
 
     private DialogInterface.OnClickListener deleteDialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
-
-    @Override
-    public void onCreatePreferencesFix(Bundle savedInstanceState, String rootkey) {
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerView = getListView();
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                DividerItemDecoration.VERTICAL);
-        recyclerView.addItemDecoration(dividerItemDecoration);
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,166 +149,194 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
 
     }
 
-    public void endOnCreate() {
 
-        Preference.OnPreferenceClickListener clickListener =  new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                EditText input = ((com.takisoft.fix.support.v7.preference.EditTextPreference) preference).getEditText();
-                input.setSelectAllOnFocus(true);
-                input.requestFocus();
-                input.setSelected(true);
-                // show keyboard
-                InputMethodManager inputMethodManager = (InputMethodManager) preference.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                return true;
-            }
-        };
-        Preference titlePref = findPreference("title");
-        titlePref.setOnPreferenceClickListener(clickListener);
-        titlePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+    public void onCreateView(View view) {
+        fabOk = view.findViewById(R.id.fab_edit_ok);
 
+        boolean darkTheme = PhoneTrack.getAppTheme(getContext());
+        // if dark theme and main color is black, make fab button lighter/gray
+        if (darkTheme && ThemeUtils.primaryColor(getContext()) == Color.BLACK) {
+            fabOk.setBackgroundTintList(ColorStateList.valueOf(Color.DKGRAY));
+        } else {
+            fabOk.setBackgroundTintList(ColorStateList.valueOf(ThemeUtils.primaryColor(getContext())));
+        }
+        fabOk.setRippleColor(ThemeUtils.primaryDarkColor(getContext()));
+
+        editTitle = view.findViewById(R.id.editTitle);
+        editTitle.setText(logjob.getTitle());
+        editURL = view.findViewById(R.id.editUrl);
+        editURL.setText(logjob.getUrl());
+
+
+        editMintime = view.findViewById(R.id.editMinTime);
+        editMintime.setText(String.valueOf(logjob.getMinTime()));
+
+
+        editMindistance = view.findViewById(R.id.editMinDistance);
+        editMindistance.setText(String.valueOf(logjob.getMinDistance()));
+
+        editMinaccuracy = view.findViewById(R.id.editMinAccuracy);
+        editMinaccuracy.setText(String.valueOf(logjob.getMinAccuracy()));
+
+        editKeepGpsOn = view.findViewById(R.id.keepgpson);
+        editKeepGpsOn.setChecked(logjob.keepGpsOnBetweenFixes());
+
+        editUseSignificantMotion = view.findViewById(R.id.editSignMotionMode);
+        editUseSignificantMotionInterval = view.findViewById(R.id.significantmotioninterval);
+        editUseSignificantMotionMixed = view.findViewById(R.id.usesignificantmotionmixed);
+        editLocationRequestTimeout = view.findViewById(R.id.editSigMotionTimeout);
+
+        editUseSignificantMotionLayout = view.findViewById(R.id.editSignMotionModeLayout);
+        editUseSignificantMotionIntervalLayout = view.findViewById(R.id.editApplyMinTimeLayout);
+        editUseSignificantMotionMixedLayout = view.findViewById(R.id.editMixedModeLayout);
+        editLocationRequestTimeoutLayout = view.findViewById(R.id.editSigMotionTimeoutLayout);
+        editMintimeLayout = view.findViewById(R.id.editMinTimeLayout);
+        editMinaccuracyLayout = view.findViewById(R.id.editMinAccuracyLayout);
+        editKeepGpsOnLayout = view.findViewById(R.id.keepGpsOnLayout);
+        editPostLayout = view.findViewById(R.id.usePostLayout);
+        editUrlLayout = view.findViewById(R.id.editUrlLayout);
+
+        minTimeTextInputLayout = view.findViewById(R.id.input_layout_min_time);
+
+        // Setup significant motion option, only show if device supports it
+        if (deviceSupportsSignificantMotion()) {
+            editUseSignificantMotion.setChecked(logjob.useSignificantMotion());
+            editUseSignificantMotionInterval.setChecked(logjob.getMinTime() > 0);
+
+            editUseSignificantMotionMixed.setChecked(logjob.useSignificantMotionMixed());
+
+            String timeoutVal = String.valueOf(logjob.getLocationRequestTimeout());
+            editLocationRequestTimeout.setText(timeoutVal);
+
+            updateVisiblePreferencesForSignificantMotion(logjob.useSignificantMotion());
+        } else {
+            Log.i(TAG, "Device doesn't support significant motion");
+            editUseSignificantMotionLayout.setVisibility(View.GONE);
+            editUseSignificantMotionIntervalLayout.setVisibility(View.GONE);
+            editUseSignificantMotionMixedLayout.setVisibility(View.GONE);
+            editLocationRequestTimeoutLayout.setVisibility(View.GONE);
+        }
+
+        // EVENTS
+
+        fabOk.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("title");
-                String newValueString = (String) newValue;
-                if (newValueString == null || newValueString.equals("")) {
-                    showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
-                    return false;
-                }
-                else {
-                    // trick to make change effective before saving
-                    // otherwise edittext is not up to date when saving...
-                    pref.setText((String) newValue);
-                    pref.setSummary((CharSequence) newValue);
-                    //saveLogjob(null);
-                    return true;
-                }
-            }
-
-        });
-        Preference URLPref = findPreference("URL");
-        URLPref.setOnPreferenceClickListener(clickListener);
-        URLPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("URL");
-                String newValueString = (String) newValue;
-                if (newValueString == null
-                        || newValueString.equals("")
-                        || !isValidUrl(newValueString)) {
-                    showToast(getString(R.string.error_invalid_url), Toast.LENGTH_LONG);
-                    return false;
-                }
-                else {
-                    pref.setSummary((CharSequence) newValue);
-                    pref.setText((String) newValue);
-                    //saveLogjob(null);
-                    return true;
-                }
-            }
-
-        });
-        Preference minTimePref = findPreference("mintime");
-        minTimePref.setOnPreferenceClickListener(clickListener);
-        minTimePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("mintime");
-                try {
-                    int newMinTime = Integer.valueOf((String)newValue);
-                    pref.setSummary(String.valueOf(newMinTime));
-                    pref.setText(String.valueOf(newMinTime));
-                    //saveLogjob(null);
-                    return true;
-                }
-                catch (Exception e) {
-                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-                    return false;
-                }
-            }
-
-        });
-        Preference minDistancePref = findPreference("mindistance");
-        minDistancePref.setOnPreferenceClickListener(clickListener);
-        minDistancePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) preference;
-                try {
-                    int newMinDistance = Integer.valueOf((String)newValue);
-                    pref.setSummary(String.valueOf(newMinDistance));
-                    pref.setText(String.valueOf(newMinDistance));
-                    //saveLogjob(null);
-                    return true;
-                }
-                catch (Exception e) {
-                    showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
-                    return false;
-                }
-            }
-
-        });
-        Preference minAccuracyPref = findPreference("minaccuracy");
-        minAccuracyPref.setOnPreferenceClickListener(clickListener);
-        minAccuracyPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("minaccuracy");
-                try {
-                    int newMinAccuracy = Integer.valueOf((String)newValue);
-                    pref.setSummary(String.valueOf(newMinAccuracy));
-                    pref.setText(String.valueOf(newMinAccuracy));
-                    //saveLogjob(null);
-                    return true;
-                }
-                catch (Exception e) {
-                    showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
-                    return false;
-                }
+            public void onClick(View view) {
+                saveLogjob(null);
+                listener.close();
             }
         });
 
-        Preference significantMotionPref = findPreference("usesignificantmotion");
-        significantMotionPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        editTitle.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "title change");
+                showHideValidationButtons();
+            }
 
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                updateVisiblePreferencesForSignificantMotion((Boolean) newValue);
-                return true;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
 
-        Preference significantMotionUseIntervalPref = findPreference("significantmotioninterval");
-        significantMotionUseIntervalPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        editURL.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "url change");
+                showHideValidationButtons();
+            }
 
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), (Boolean) newValue, getUseSignificantMotionMixed());
-                return true;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
 
-        Preference significantMotionMixedPref = findPreference("usesignificantmotionmixed");
-        significantMotionMixedPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        editMintime.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "min time change");
+                showHideValidationButtons();
+            }
 
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), getUseSignificantMotionInterval(), (Boolean) newValue);
-                return true;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
+
+        editMindistance.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "min distance change");
+                showHideValidationButtons();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+
+        editMinaccuracy.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "min accuracy change");
+                showHideValidationButtons();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+
+        editLocationRequestTimeout.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "sign motion timeout change");
+                showHideValidationButtons();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+
+        editUseSignificantMotion.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Log.d(TAG, "sign motion mode change");
+                        showHideValidationButtons();
+                        updateVisiblePreferencesForSignificantMotion(isChecked);
+                    }
+                }
+        );
+
+        editUseSignificantMotionInterval.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Log.d(TAG, "sign motion mode change");
+                        showHideValidationButtons();
+                        updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), isChecked, getUseSignificantMotionMixed());
+                    }
+                }
+        );
+
+        editUseSignificantMotionMixed.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Log.d(TAG, "sign motion mode change");
+                        showHideValidationButtons();
+                        updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), getUseSignificantMotionInterval(), isChecked);
+                    }
+                }
+        );
 
         // delete confirmation
         deleteDialogClickListener = new DialogInterface.OnClickListener() {
@@ -385,33 +425,6 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_save:
-                if (getTitle() == null || getTitle().equals("")) {
-                    showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
-                }
-                else if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
-                    showToast(getString(R.string.error_invalid_url), Toast.LENGTH_LONG);
-                }
-                else if (getMindistance() < 0) {
-                    showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
-                }
-                else if (getMintime() < 1) {
-                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-                }
-                else if (getMinaccuracy() < 1) {
-                    showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
-                }
-                else if (getUseSignificantMotion() && getMintime() < 30) {
-                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-                }
-                else if (!getUseSignificantMotion() && getMintime() < 1) {
-                    showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-                }
-                else {
-                    saveLogjob(null);
-                    listener.close();
-                }
-                return true;
             case R.id.menu_delete:
                 if (logjob.getId() != 0) {
                     confirmDeleteAlertBuilder.show();
@@ -453,91 +466,52 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
      */
     protected abstract void saveLogjob(@Nullable ICallback callback);
 
+    protected void showHideValidationButtons() {
+        if (isFormValid()) {
+            fabOk.show();
+        }
+        else {
+            fabOk.hide();
+        }
+    }
+
+    protected abstract boolean isFormValid();
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG,"ACT CREATEDDDDDDD");
-        //ButterKnife.bind(this, getView());
 
         // hide the keyboard when this window gets the focus
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        editTitle = (EditTextPreference) this.findPreference("title");
-        editTitle.setText(logjob.getTitle());
-        if (logjob.getTitle().isEmpty()) {
-            editTitle.setSummary(getString(R.string.mandatory));
-        }
-        else {
-            editTitle.setSummary(logjob.getTitle());
-        }
-        editURL = (EditTextPreference) this.findPreference("URL");
-        editURL.setText(logjob.getUrl());
-        editURL.setSummary(logjob.getUrl());
 
-        editMintime = (EditTextPreference) this.findPreference("mintime");
-        editMintime.setText(String.valueOf(logjob.getMinTime()));
-        editMintime.setSummary(String.valueOf(logjob.getMinTime()));
 
-        editMindistance = (EditTextPreference) this.findPreference("mindistance");
-        editMindistance.setText(String.valueOf(logjob.getMinDistance()));
-        editMindistance.setSummary(String.valueOf(logjob.getMinDistance()));
-
-        editMinaccuracy = (EditTextPreference) this.findPreference("minaccuracy");
-        editMinaccuracy.setText(String.valueOf(logjob.getMinAccuracy()));
-        editMinaccuracy.setSummary(String.valueOf(logjob.getMinAccuracy()));
-
-        editKeepGpsOn = (CheckBoxPreference) this.findPreference("keepgpson");
-        editKeepGpsOn.setChecked(logjob.keepGpsOnBetweenFixes());
-
-        editUseSignificantMotion = (SwitchPreferenceCompat) this.findPreference("usesignificantmotion");
-        editUseSignificantMotionInterval = (SwitchPreferenceCompat) this.findPreference("significantmotioninterval");
-        editUseSignificantMotionMixed = (SwitchPreferenceCompat) this.findPreference("usesignificantmotionmixed");
-        editLocationRequestTimeout = (androidx.preference.EditTextPreference) this.findPreference("significantmotiontimeout");
-
-        // Setup significant motion option, only show if device supports it
-        if (deviceSupportsSignificantMotion()) {
-            editUseSignificantMotion.setChecked(logjob.useSignificantMotion());
-            editUseSignificantMotionInterval.setChecked(logjob.getMinTime() > 0);
-
-            editUseSignificantMotionMixed.setChecked(logjob.useSignificantMotionMixed());
-
-            String timeoutVal = String.valueOf(logjob.getLocationRequestTimeout());
-            editLocationRequestTimeout.setText(timeoutVal);
-            editLocationRequestTimeout.setSummary(timeoutVal);
-
-            updateVisiblePreferencesForSignificantMotion(logjob.useSignificantMotion());
-        } else {
-            Log.i(TAG, "Device doesn't support significant motion");
-            editUseSignificantMotion.setVisible(false);
-            editUseSignificantMotionInterval.setVisible(false);
-            editUseSignificantMotionMixed.setVisible(false);
-            editLocationRequestTimeout.setVisible(false);
-        }
     }
 
     protected String getTitle() {
-        return editTitle.getText();
+        return editTitle.getText().toString();
     }
     protected String getURL() {
-        return editURL.getText();
+        return editURL.getText().toString();
     }
     protected int getMintime() {
-        if (editMintime.getText() == null || editMintime.getText().equals("")) {
+        if (editMintime.getText() == null || editMintime.getText().toString().equals("")) {
             return -1;
         }
-        return Integer.valueOf(editMintime.getText());
+        return Integer.valueOf(editMintime.getText().toString());
     }
     protected int getMindistance() {
-        if (editMindistance.getText() == null || editMindistance.getText().equals("")) {
+        if (editMindistance.getText() == null || editMindistance.getText().toString().equals("")) {
             return -1;
         }
-        return Integer.valueOf(editMindistance.getText());
+        return Integer.valueOf(editMindistance.getText().toString());
     }
     protected int getMinaccuracy() {
-        if (editMinaccuracy.getText() == null || editMinaccuracy.getText().equals("")) {
+        if (editMinaccuracy.getText() == null || editMinaccuracy.getText().toString().equals("")) {
             return -1;
         }
-        return Integer.valueOf(editMinaccuracy.getText());
+        return Integer.valueOf(editMinaccuracy.getText().toString());
     }
 
     protected boolean getKeepGpsOn() {
@@ -557,7 +531,12 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     }
 
     protected int getLocationRequestTimeout() {
-        return Integer.parseInt(editLocationRequestTimeout.getText());
+        try {
+            return Integer.parseInt(editLocationRequestTimeout.getText().toString());
+        }
+        catch (Exception e) {
+            return 60;
+        }
     }
 
     protected void showToast(CharSequence text, int duration) {
@@ -567,29 +546,30 @@ public abstract class EditLogjobFragment extends PreferenceFragmentCompat {
     }
 
     private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval, Boolean mixedMode) {
-        editMinaccuracy.setVisible(!sigMotionEnabled);
-        editMintime.setVisible(useInterval);
-        editUseSignificantMotionMixed.setVisible(sigMotionEnabled && useInterval);
-        editKeepGpsOn.setVisible(!sigMotionEnabled);
-        editLocationRequestTimeout.setVisible(sigMotionEnabled);
-        editUseSignificantMotionInterval.setVisible(sigMotionEnabled);
+        editMinaccuracyLayout.setVisibility(!sigMotionEnabled ? View.VISIBLE : View.GONE);
+        editMintimeLayout.setVisibility(useInterval ? View.VISIBLE : View.GONE);
+        editUseSignificantMotionMixedLayout.setVisibility((sigMotionEnabled && useInterval) ? View.VISIBLE : View.GONE);
+        editKeepGpsOnLayout.setVisibility(!sigMotionEnabled ? View.VISIBLE : View.GONE);
+        editLocationRequestTimeoutLayout.setVisibility(sigMotionEnabled ? View.VISIBLE : View.GONE);
+        editUseSignificantMotionIntervalLayout.setVisibility(sigMotionEnabled ? View.VISIBLE : View.GONE);
 
         // If changing significant motion setting update default value for minimum time
         if (sigMotionEnabled != getUseSignificantMotion()) {
             String newValue = Integer.toString(sigMotionEnabled ? MINIMUM_TIME_DEFAULT_SIG_MOTION : MINIMUM_TIME_DEFAULT_STANDARD);
             editMintime.setText(newValue);
-            editMintime.setSummary(newValue);
         }
 
         if (sigMotionEnabled && useInterval && mixedMode) {
-            editMintime.setDialogMessage(R.string.setting_min_time_mixed_long);
-            editMintime.setDialogTitle(R.string.setting_min_time_mixed);
-            editMintime.setTitle(R.string.setting_min_time_mixed);
+            minTimeTextInputLayout.setHint(getString(R.string.setting_min_time_mixed));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                editMintime.setTooltipText(getString(R.string.setting_min_time_mixed));
+            }
         }
         else {
-            editMintime.setDialogMessage(R.string.setting_min_time_long);
-            editMintime.setDialogTitle(R.string.setting_min_time);
-            editMintime.setTitle(R.string.setting_min_time);
+            minTimeTextInputLayout.setHint(getString(R.string.setting_min_time));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                editMintime.setTooltipText(getString(R.string.setting_min_time_long));
+            }
         }
     }
 

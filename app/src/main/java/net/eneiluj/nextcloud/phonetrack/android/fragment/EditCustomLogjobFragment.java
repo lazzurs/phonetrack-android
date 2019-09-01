@@ -2,9 +2,16 @@ package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
@@ -13,43 +20,40 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
-//import android.preference.EditTextPreference;
-//import android.preference.ListPreference;
-//import android.preference.Preference;
-//import android.preference.PreferenceFragment;
+import static android.webkit.URLUtil.isValidUrl;
 
 public class EditCustomLogjobFragment extends EditLogjobFragment {
     private static final String TAG = EditCustomLogjobFragment.class.getSimpleName();
 
-    private CheckBoxPreference editPost;
-
-    @Override
-    public void onCreatePreferencesFix(Bundle savedInstanceState, String rootkey) {
-    }
+    private CheckBox editPost;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.activity_custom_edit);
-
-        endOnCreate();
-
         Log.i(TAG, "CUSTOM on create : "+logjob);
+    }
 
-        Preference postPref = findPreference("post");
-        postPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_custom_edit_form, container, false);
+        super.onCreateView(view);
 
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                CheckBoxPreference pref = (CheckBoxPreference) findPreference("post");
-                pref.setChecked((Boolean) newValue);
-                //saveLogjob(null);
-                return true;
-            }
+        editPost = view.findViewById(R.id.post);
+        editPost.setChecked(logjob.getPost());
 
-        });
+        editPost.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Log.d(TAG, "use POST change");
+                    }
+                }
+        );
+
+        showHideValidationButtons();
+
+        return view;
     }
 
     @Override
@@ -136,13 +140,42 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         return f;
     }
 
+    protected boolean isFormValid() {
+        if (getTitle() == null || getTitle().equals("")) {
+            //showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
+            //showToast(getString(R.string.error_invalid_url), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMindistance() < 0) {
+            //showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMintime() < 1) {
+            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMinaccuracy() < 1) {
+            //showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getUseSignificantMotion() && getMintime() < 30) {
+            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (!getUseSignificantMotion() && getMintime() < 1) {
+            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG,"CUSTOM ACT CREATEDDDDDDD");
-
-        editPost = (CheckBoxPreference) this.findPreference("post");
-        editPost.setChecked(logjob.getPost());
     }
 
     private boolean getPost() {

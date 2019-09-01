@@ -6,13 +6,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.preference.EditTextPreference;
@@ -42,8 +48,8 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
     private static final String TAG = EditPhoneTrackLogjobFragment.class.getSimpleName();
 
-    private EditTextPreference editToken;
-    private EditTextPreference editDevicename;
+    private EditText editToken;
+    private EditText editDevicename;
 
     private AlertDialog.Builder selectBuilder;
     private AlertDialog selectDialog;
@@ -57,99 +63,147 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     private List<String> sessionIdList;
 
     @Override
-    public void onCreatePreferencesFix(Bundle savedInstanceState, String rootkey) {
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.activity_edit);
-
-        endOnCreate();
-
         Log.i(TAG, "PHONEFRAG on create : "+logjob);
 
-        Preference.OnPreferenceClickListener clickListener =  new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                EditText input = ((com.takisoft.fix.support.v7.preference.EditTextPreference) preference).getEditText();
-                input.setSelectAllOnFocus(true);
-                input.requestFocus();
-                input.setSelected(true);
-                // show keyboard
-                InputMethodManager inputMethodManager = (InputMethodManager) preference.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                return true;
-            }
-        };
 
-        Preference tokenPref = findPreference("token");
-        tokenPref.setOnPreferenceClickListener(clickListener);
-        tokenPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+    }
 
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("token");
-                String newValueString = (String) newValue;
-                if (newValueString == null || newValueString.equals("")) {
-                    showToast(getString(R.string.error_invalid_token), Toast.LENGTH_LONG);
-                    return false;
-                }
-                else {
-                    pref.setText((String) newValue);
-                    pref.setSummary((CharSequence) newValue);
-                    //saveLogjob(null);
-                    return true;
-                }
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_edit_form, container, false);
+        super.onCreateView(view);
+
+        editToken = view.findViewById(R.id.editToken);
+        editToken.setText(logjob.getToken());
+        editDevicename = view.findViewById(R.id.editDeviceName);
+        editDevicename.setText(logjob.getDeviceName());
+
+        editToken.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "token change");
+                showHideValidationButtons();
             }
 
-        });
-        Preference devicenamePref = findPreference("devicename");
-        devicenamePref.setOnPreferenceClickListener(clickListener);
-        devicenamePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("devicename");
-                String newValueString = (String) newValue;
-                if (newValueString == null || newValueString.equals("")) {
-                    showToast(getString(R.string.error_invalid_devname), Toast.LENGTH_LONG);
-                    return false;
-                }
-                else {
-                    pref.setText((String) newValue);
-                    pref.setSummary((CharSequence) newValue);
-                    //saveLogjob(null);
-                    return true;
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
-        Preference locationTimeoutPref = findPreference("significantmotiontimeout");
-        locationTimeoutPref.setOnPreferenceClickListener(clickListener);
-        locationTimeoutPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                                              Object newValue) {
-                EditTextPreference pref = (EditTextPreference) findPreference("significantmotiontimeout");
-                String newValueString = (String) newValue;
-                if (newValueString == null || newValueString.equals("")) {
-                    showToast(getString(R.string.error_invalid_timeout), Toast.LENGTH_LONG);
-                    return false;
-                }
-                else {
-                    pref.setText((String) newValue);
-                    pref.setSummary((CharSequence) newValue);
-                    //saveLogjob(null);
-                    return true;
-                }
+        editDevicename.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "device name change");
+                showHideValidationButtons();
             }
 
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
+
+        // manage session list
+        sessionList = db.getSessionsNotShared();
+        sessionNameList = new ArrayList<>();
+        sessionIdList = new ArrayList<>();
+        for (DBSession session : sessionList) {
+            sessionNameList.add(session.getName());
+            sessionIdList.add(String.valueOf(session.getId()));
+        }
+
+        // manage session list DIALOG
+        selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.AppThemeDialog));
+        selectBuilder.setTitle(getString(R.string.edit_logjob_choose_session_dialog_title));
+
+        if (sessionNameList.size() > 0) {
+            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
+            selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // user checked an item
+                    setFieldsFromSession(sessionList.get(which));
+                    dialog.dismiss();
+                }
+            });
+            selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
+            selectDialog = selectBuilder.create();
+        }
+
+        // manage from URL DIALOG
+        fromUrlEdit = new EditText(getContext());
+        fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.AppThemeDialog));
+        fromUrlBuilder.setMessage(getString(R.string.dialog_msg_import_pt_url));
+        fromUrlBuilder.setTitle(getString(R.string.dialog_title_import_pt_url));
+
+        fromUrlBuilder.setView(fromUrlEdit);
+
+        fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString());
+                // restore keyboard auto hide behaviour
+                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            }
+        });
+        fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // restore keyboard auto hide behaviour
+                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            }
+        });
+        fromUrlDialog = fromUrlBuilder.create();
+
+        // show select session dialog if there are sessions
+        if (sessionNameList.size() > 0 && logjob.getTitle().equals("")) {
+            if (sessionNameList.size() == 1) {
+                setFieldsFromSession(sessionList.get(0));
+            }
+            else {
+                selectDialog.show();
+            }
+        }
+
+        showHideValidationButtons();
+
+        return view;
+    }
+
+    protected boolean isFormValid() {
+        if (getTitle() == null || getTitle().equals("")) {
+            //showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
+            //showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getToken() == null || getToken().equals("")) {
+            //showToast(getString(R.string.error_invalid_token), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getDevicename() == null || getDevicename().equals("")) {
+            //showToast(getString(R.string.error_invalid_devname), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMintime() < 1) {
+            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMindistance() < 0) {
+            //showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getMinaccuracy() < 1) {
+            //showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -267,30 +321,6 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_save:
-                if (getTitle() == null || getTitle().equals("")) {
-                    showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
-                }
-                else if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
-                    showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
-                }
-                else if (getToken() == null || getToken().equals("")) {
-                    showToast(getString(R.string.error_invalid_token), Toast.LENGTH_LONG);
-                }
-                else if (getDevicename() == null || getDevicename().equals("")) {
-                    showToast(getString(R.string.error_invalid_devname), Toast.LENGTH_LONG);
-                }
-                else if (getMindistance() < 0) {
-                    showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
-                }
-                else if (getMinaccuracy() < 1) {
-                    showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
-                }
-                else {
-                    saveLogjob(null);
-                    listener.close();
-                }
-                return true;
             case R.id.menu_fromLogUrl:
                 fromUrlDialog.show();
                 fromUrlEdit.setSelectAllOnFocus(true);
@@ -343,90 +373,20 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "PHONETRACK ACT CREATEDDDDDDD");
 
-        editToken = (EditTextPreference) this.findPreference("token");
-        editToken.setText(logjob.getToken());
-        editToken.setSummary(logjob.getToken());
-        editDevicename = (EditTextPreference) this.findPreference("devicename");
-        editDevicename.setText(logjob.getDeviceName());
-        editDevicename.setSummary(logjob.getDeviceName());
 
-        // manage session list
-        sessionList = db.getSessionsNotShared();
-        sessionNameList = new ArrayList<>();
-        sessionIdList = new ArrayList<>();
-        for (DBSession session : sessionList) {
-            sessionNameList.add(session.getName());
-            sessionIdList.add(String.valueOf(session.getId()));
-        }
-
-        // manage session list DIALOG
-        selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.AppThemeDialog));
-        selectBuilder.setTitle(getString(R.string.edit_logjob_choose_session_dialog_title));
-
-        if (sessionNameList.size() > 0) {
-            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
-            selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // user checked an item
-                    setFieldsFromSession(sessionList.get(which));
-                    dialog.dismiss();
-                }
-            });
-            selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
-            selectDialog = selectBuilder.create();
-        }
-
-        // manage from URL DIALOG
-        fromUrlEdit = new EditText(getContext());
-        fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.AppThemeDialog));
-        fromUrlBuilder.setMessage(getString(R.string.dialog_msg_import_pt_url));
-        fromUrlBuilder.setTitle(getString(R.string.dialog_title_import_pt_url));
-
-        fromUrlBuilder.setView(fromUrlEdit);
-
-        fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString());
-                // restore keyboard auto hide behaviour
-                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            }
-        });
-        fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // restore keyboard auto hide behaviour
-                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            }
-        });
-        fromUrlDialog = fromUrlBuilder.create();
-
-        // show select session dialog if there are sessions
-        if (sessionNameList.size() > 0 && logjob.getTitle().equals("")) {
-            if (sessionNameList.size() == 1) {
-                setFieldsFromSession(sessionList.get(0));
-            }
-            else {
-                selectDialog.show();
-            }
-        }
     }
 
     private String getToken() {
-        return editToken.getText();
+        return editToken.getText().toString();
     }
     private String getDevicename() {
-        return editDevicename.getText();
+        return editDevicename.getText().toString();
     }
 
     private void setFieldsFromSession(DBSession s) {
         editTitle.setText(getString(R.string.logjob_title_log_to, s.getName()));
-        editTitle.setSummary(getString(R.string.logjob_title_log_to, s.getName()));
         editURL.setText(s.getNextURL());
-        editURL.setSummary(s.getNextURL());
         editToken.setText(s.getToken());
-        editToken.setSummary(s.getToken());
     }
 
     private void setFieldsFromPhoneTrackLoggingUrl(String url) {
@@ -454,13 +414,9 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 }
                 String devname = splEnd[0];
                 editTitle.setText("From PhoneTrack logging URL");
-                editTitle.setSummary("From PhoneTrack logging URL");
                 editDevicename.setText(devname);
-                editDevicename.setSummary(devname);
                 editToken.setText(token);
-                editToken.setSummary(token);
                 editURL.setText(nextURL);
-                editURL.setSummary(nextURL);
             }
         }
     }

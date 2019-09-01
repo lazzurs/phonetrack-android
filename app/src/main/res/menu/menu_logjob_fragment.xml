@@ -27,11 +27,6 @@
         android:orderInCategory="87"
         android:title="@string/menu_delete"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/menu_save"
-        android:icon="@drawable/ic_save_white_24dp"
-        android:orderInCategory="88"
-        android:title="@string/menu_save"
-        app:showAsAction="always" />
+
 
 </menu>
