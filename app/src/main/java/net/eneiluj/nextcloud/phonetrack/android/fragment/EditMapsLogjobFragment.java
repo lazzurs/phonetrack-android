@@ -142,30 +142,53 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
     }
 
     protected boolean isFormValid() {
+        boolean valid = true;
         if (getTitle() == null || getTitle().equals("")) {
-            //showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
-            return false;
+            editTitleHint.setBackgroundColor(0x55FF0000);
+            valid = false;
         }
-        else if (getMindistance() < 0) {
-            //showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
-            return false;
+        else {
+            editTitleHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
-        else if (getMinaccuracy() < 1) {
-            //showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
-            return false;
+        if (getMinaccuracy() < 1) {
+            editMinaccuracyHint.setBackgroundColor(0x55FF0000);
+            valid = false;
         }
-        else if (getUseSignificantMotion() && getMintime() < 30) {
-            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-            return false;
+        else {
+            editMinaccuracyHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
-        else if (!getUseSignificantMotion() && getMintime() < 1) {
-            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-            return false;
+        if (getMindistance() < 0) {
+            editMindistanceHint.setBackgroundColor(0x55FF0000);
+            valid = false;
         }
-        else if (getUseSignificantMotion() && getLocationRequestTimeout() < 1) {
-            return false;
+        else {
+            editMindistanceHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
-        return true;
+        if (getUseSignificantMotion()) {
+            if (getMintime() < 30) {
+                editMintimeHint.setBackgroundColor(0x55FF0000);
+                valid = false;
+            } else {
+                editMintimeHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+            }
+        }
+        else {
+            if (getMintime() < 1) {
+                editMintimeHint.setBackgroundColor(0x55FF0000);
+                valid = false;
+            } else {
+                editMintimeHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+            }
+        }
+        if (getUseSignificantMotion() && getLocationRequestTimeout() < 1) {
+            editLocationTimeoutHint.setBackgroundColor(0x55FF0000);
+            valid = false;
+        }
+        else {
+            editLocationTimeoutHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+        }
+
+        return valid;
     }
 
     @Override

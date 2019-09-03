@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,8 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
@@ -58,6 +61,9 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     private AlertDialog fromUrlDialog;
     private EditText fromUrlEdit;
 
+    private TextInputLayout editDeviceNameHint;
+    private TextInputLayout editTokenHint;
+
     private List<DBSession> sessionList;
     private List<String> sessionNameList;
     private List<String> sessionIdList;
@@ -80,6 +86,10 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         editToken.setText(logjob.getToken());
         editDevicename = view.findViewById(R.id.editDeviceName);
         editDevicename.setText(logjob.getDeviceName());
+
+        editDeviceNameHint = view.findViewById(R.id.input_layout_device_name);
+        editTokenHint = view.findViewById(R.id.input_layout_token);
+
 
         editToken.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
@@ -175,42 +185,74 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
     }
 
     protected boolean isFormValid() {
+        boolean valid = true;
         if (getTitle() == null || getTitle().equals("")) {
-            //showToast(getString(R.string.error_invalid_title), Toast.LENGTH_LONG);
-            return false;
+            editTitleHint.setBackgroundColor(0x55FF0000);
+            valid = false;
         }
-        else if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
-            //showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
-            return false;
+        else {
+            editTitleHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
-        else if (getToken() == null || getToken().equals("")) {
-            //showToast(getString(R.string.error_invalid_token), Toast.LENGTH_LONG);
-            return false;
+        if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
+            editUrlHint.setBackgroundColor(0x55FF0000);
+            valid = false;
         }
-        else if (getDevicename() == null || getDevicename().equals("")) {
-            //showToast(getString(R.string.error_invalid_devname), Toast.LENGTH_LONG);
-            return false;
+        else {
+            editUrlHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
-        else if (getUseSignificantMotion() && getMintime() < 30) {
-            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-            return false;
+        if (getToken() == null || getToken().equals("")) {
+            editTokenHint.setBackgroundColor(0x55FF0000);
+            valid = false;
         }
-        else if (!getUseSignificantMotion() && getMintime() < 1) {
-            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-            return false;
+        else {
+            editTokenHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
-        else if (getMindistance() < 0) {
-            //showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
-            return false;
+        if (getDevicename() == null || getDevicename().equals("")) {
+            editDeviceNameHint.setBackgroundColor(0x55FF0000);
+            valid = false;
         }
-        else if (getMinaccuracy() < 1) {
-            //showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
-            return false;
+        else {
+            editDeviceNameHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
-        else if (getUseSignificantMotion() && getLocationRequestTimeout() < 1) {
-            return false;
+        if (getUseSignificantMotion()) {
+            if (getMintime() < 30) {
+                editMintimeHint.setBackgroundColor(0x55FF0000);
+                valid = false;
+            } else {
+                editMintimeHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+            }
         }
-        return true;
+        else {
+            if (getMintime() < 1) {
+                editMintimeHint.setBackgroundColor(0x55FF0000);
+                valid = false;
+            } else {
+                editMintimeHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+            }
+        }
+        if (getMindistance() < 0) {
+            editMindistanceHint.setBackgroundColor(0x55FF0000);
+            valid = false;
+        }
+        else {
+            editMindistanceHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+        }
+        if (getMinaccuracy() < 1) {
+            editMinaccuracyHint.setBackgroundColor(0x55FF0000);
+            valid = false;
+        }
+        else {
+            editMinaccuracyHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+        }
+        if (getUseSignificantMotion() && getLocationRequestTimeout() < 1) {
+            editLocationTimeoutHint.setBackgroundColor(0x55FF0000);
+            valid = false;
+        }
+        else {
+            editLocationTimeoutHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+        }
+
+        return valid;
     }
 
     @Override

@@ -114,6 +114,13 @@ public abstract class EditLogjobFragment extends Fragment {
     protected LinearLayout editKeepGpsOnLayout;
     protected LinearLayout editUrlLayout;
     protected LinearLayout editPostLayout;
+    protected LinearLayout editTitleLayout;
+    protected TextInputLayout editTitleHint;
+    protected TextInputLayout editUrlHint;
+    protected TextInputLayout editMintimeHint;
+    protected TextInputLayout editMindistanceHint;
+    protected TextInputLayout editMinaccuracyHint;
+    protected TextInputLayout editLocationTimeoutHint;
 
     protected FloatingActionButton fabOk;
 
@@ -195,6 +202,14 @@ public abstract class EditLogjobFragment extends Fragment {
         editKeepGpsOnLayout = view.findViewById(R.id.keepGpsOnLayout);
         editPostLayout = view.findViewById(R.id.usePostLayout);
         editUrlLayout = view.findViewById(R.id.editUrlLayout);
+        editTitleLayout = view.findViewById(R.id.editTitleLayout);
+        editTitleHint = view.findViewById(R.id.input_layout_title);
+        editUrlHint = view.findViewById(R.id.input_layout_url);
+        editMintimeHint = view.findViewById(R.id.input_layout_min_time);
+        editMindistanceHint = view.findViewById(R.id.input_layout_min_distance);
+        editMinaccuracyHint = view.findViewById(R.id.input_layout_min_accuracy);
+        editMinaccuracyHint = view.findViewById(R.id.input_layout_min_accuracy);
+        editLocationTimeoutHint = view.findViewById(R.id.input_layout_sign_motion_timeout);
 
         minTimeTextInputLayout = view.findViewById(R.id.input_layout_min_time);
 
