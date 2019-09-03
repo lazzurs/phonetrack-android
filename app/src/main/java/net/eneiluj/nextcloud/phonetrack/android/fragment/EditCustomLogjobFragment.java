@@ -153,10 +153,6 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
             //showToast(getString(R.string.error_invalid_mindistance), Toast.LENGTH_LONG);
             return false;
         }
-        else if (getMintime() < 1) {
-            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
-            return false;
-        }
         else if (getMinaccuracy() < 1) {
             //showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
             return false;
@@ -167,6 +163,9 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         }
         else if (!getUseSignificantMotion() && getMintime() < 1) {
             //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getUseSignificantMotion() && getLocationRequestTimeout() < 1) {
             return false;
         }
         return true;

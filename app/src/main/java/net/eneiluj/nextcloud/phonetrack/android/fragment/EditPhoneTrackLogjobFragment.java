@@ -191,7 +191,11 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             //showToast(getString(R.string.error_invalid_devname), Toast.LENGTH_LONG);
             return false;
         }
-        else if (getMintime() < 1) {
+        else if (getUseSignificantMotion() && getMintime() < 30) {
+            //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (!getUseSignificantMotion() && getMintime() < 1) {
             //showToast(getString(R.string.error_invalid_mintime), Toast.LENGTH_LONG);
             return false;
         }
@@ -201,6 +205,9 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         }
         else if (getMinaccuracy() < 1) {
             //showToast(getString(R.string.error_invalid_minaccuracy), Toast.LENGTH_LONG);
+            return false;
+        }
+        else if (getUseSignificantMotion() && getLocationRequestTimeout() < 1) {
             return false;
         }
         return true;
