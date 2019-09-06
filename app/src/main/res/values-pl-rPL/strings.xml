@@ -25,7 +25,7 @@
     <string name="setting_post_title">Użyj metody POST</string>
     <string name="setting_post_summary">Parametry GET zostaną przekonwertowane na POST.</string>
     <string name="action_search">Szukaj</string>
-    <string name="example_hostname">twójSerwer</string>
+    <string name="example_hostname">twójserwer</string>
     <string name="simple_cancel">Anuluj</string>
     <string name="simple_yes">Tak</string>
     <string name="simple_no">Nie</string>
@@ -98,7 +98,7 @@
     <string name="map_choose_frequency_dialog_title">Wybierz częstotliwość odświeżania mapy (s)</string>
     <string name="map_choose_frequency_dialog_message">Ile sekund między odświeżeniem mapy?</string>
     <string name="item_all_devices_label">Wszystkie urządzenia</string>
-    <string name="popup_battery_value">Poziom baterii : %.2f%%</string>
+    <string name="popup_battery_value">Poziom baterii: %.2f%%</string>
     <string name="popup_altitude_value">Wysokość: %.2fm</string>
     <string name="popup_accuracy_value">Dokładność: %.2fm</string>
     <string name="popup_satellites">Satelity: %d</string>
