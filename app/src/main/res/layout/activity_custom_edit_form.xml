@@ -136,13 +136,27 @@
                     android:tooltipText="@string/setting_significantmotion_summary"
                     android:src="@drawable/ic_walk_grey_24dp" />
 
-                <CheckBox
-                    android:id="@+id/editSignMotionMode"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setting_significantmotion_enabled"
-                    android:tooltipText="@string/setting_significantmotion_summary"
-                />
+                    android:orientation="vertical">
+
+                    <CheckBox
+                        android:id="@+id/editSignMotionMode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_significantmotion_enabled"
+                        android:tooltipText="@string/setting_significantmotion_summary"
+                        />
+
+                    <TextView
+                        android:id="@+id/signMotionSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_significantmotion_summary" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -200,13 +214,27 @@
                     android:tooltipText="@string/setting_significantmotion_min_time_applied_summary"
                     android:src="@drawable/ic_timer_grey_24dp" />
 
-                <CheckBox
-                    android:id="@+id/significantmotioninterval"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setting_significantmotion_min_time_applied"
-                    android:tooltipText="@string/setting_significantmotion_min_time_applied_summary"
-                    />
+                    android:orientation="vertical">
+
+                    <CheckBox
+                        android:id="@+id/significantmotioninterval"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_significantmotion_min_time_applied"
+                        android:tooltipText="@string/setting_significantmotion_min_time_applied_summary"
+                        />
+
+                    <TextView
+                        android:id="@+id/significantmotionintervalSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_significantmotion_min_time_applied_summary" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -228,13 +256,29 @@
                     android:tooltipText="@string/setting_significantmotion_mixed_summary"
                     android:src="@drawable/ic_merge_grey_24dp" />
 
-                <CheckBox
-                    android:id="@+id/usesignificantmotionmixed"
+
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setting_significantmotion_mixed"
-                    android:tooltipText="@string/setting_significantmotion_mixed_summary"
-                    />
+                    android:orientation="vertical">
+
+                    <CheckBox
+                        android:id="@+id/usesignificantmotionmixed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_significantmotion_mixed"
+                        android:tooltipText="@string/setting_significantmotion_mixed_summary"
+                        />
+
+                    <TextView
+                        android:id="@+id/usesignificantmotionmixedSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_significantmotion_mixed_summary" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -331,13 +375,29 @@
                     android:tooltipText="@string/setting_keepgps_summary"
                     android:src="@drawable/ic_crosshairs_gps_grey_24dp" />
 
-                <CheckBox
-                    android:id="@+id/keepgpson"
+
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setting_keepgps_title"
-                    android:tooltipText="@string/setting_keepgps_summary"
-                    />
+                    android:orientation="vertical">
+
+                    <CheckBox
+                        android:id="@+id/keepgpson"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_keepgps_title"
+                        android:tooltipText="@string/setting_keepgps_summary"
+                        />
+
+                    <TextView
+                        android:id="@+id/keepgpsonSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_keepgps_summary" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -356,7 +416,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="32dp"
                     android:paddingTop="8dp"
-                    android:tooltipText="@string/setting_min_accuracy_long"
+                    android:tooltipText="@string/setting_significantmotion_timeout_summary"
                     android:src="@drawable/ic_av_timer_grey_24dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
