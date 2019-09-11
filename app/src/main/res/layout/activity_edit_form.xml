@@ -48,9 +48,21 @@
                         android:inputType="text"
                         android:selectAllOnFocus="true"
                         android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editTitleSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/setting_title_long" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
 
             <LinearLayout
                 android:id="@+id/editUrlLayout"
@@ -84,9 +96,21 @@
                         android:inputType="textUri"
                         android:selectAllOnFocus="true"
                         android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editUrlSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/setting_lj_url_long" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
 
             <LinearLayout
                 android:id="@+id/editTokenLayout"
@@ -120,9 +144,21 @@
                         android:inputType="text"
                         android:selectAllOnFocus="true"
                         android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editTokenSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/setting_token_long" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
 
             <LinearLayout
                 android:id="@+id/editDeviceNameLayout"
@@ -146,7 +182,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/setting_devicename_long">
+                    android:hint="@string/setting_devicename">
 
                     <EditText
                         android:id="@+id/editDeviceName"
@@ -156,9 +192,21 @@
                         android:inputType="text"
                         android:selectAllOnFocus="true"
                         android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editDeviceNameSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/setting_devicename_long" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
 
             <LinearLayout
                 android:id="@+id/editSignMotionModeLayout"
@@ -203,6 +251,11 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
+
             <LinearLayout
                 android:id="@+id/editMinDistanceLayout"
                 android:layout_width="match_parent"
@@ -235,9 +288,21 @@
                         android:inputType="number"
                         android:selectAllOnFocus="true"
                         android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editMinDistanceSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/setting_min_distance_long" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
 
             <LinearLayout
                 android:id="@+id/editApplyMinTimeLayout"
@@ -283,6 +348,11 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
+
             <LinearLayout
                 android:id="@+id/editMixedModeLayout"
                 android:layout_width="match_parent"
@@ -327,6 +397,11 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
+
             <LinearLayout
                 android:id="@+id/editMinTimeLayout"
                 android:layout_width="match_parent"
@@ -361,15 +436,20 @@
                         android:selectAllOnFocus="true"
                         android:importantForAutofill="no"/>
 
-                    <!--TextView
+                    <TextView
                         android:id="@+id/editMinTimeSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/setting_min_time_long" /-->
+                        android:text="@string/setting_min_time_long" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
 
             <LinearLayout
                 android:id="@+id/editMinAccuracyLayout"
@@ -404,9 +484,21 @@
                         android:inputType="number"
                         android:selectAllOnFocus="true"
                         android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editMinAccuracySummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/setting_min_accuracy_long" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
 
             <LinearLayout
                 android:id="@+id/keepGpsOnLayout"
@@ -453,6 +545,11 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:src="@color/separator" />
+
             <LinearLayout
                 android:id="@+id/editSigMotionTimeoutLayout"
                 android:layout_width="match_parent"
@@ -486,6 +583,13 @@
                         android:inputType="number"
                         android:selectAllOnFocus="true"
                         android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editSigMotionTImeoutSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/setting_significantmotion_timeout_summary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
