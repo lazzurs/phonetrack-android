@@ -216,6 +216,7 @@
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -312,6 +313,7 @@
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -361,6 +363,7 @@
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -508,6 +511,7 @@
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -585,7 +589,7 @@
                         android:importantForAutofill="no"/>
 
                     <TextView
-                        android:id="@+id/editSigMotionTImeoutSummary"
+                        android:id="@+id/editSigMotionTimeoutSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

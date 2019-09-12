@@ -216,18 +216,18 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         }
         if (getUseSignificantMotion()) {
             if (getMintime() < 30) {
-                editMintimeHint.setBackgroundColor(0x55FF0000);
+                minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
                 valid = false;
             } else {
-                editMintimeHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+                minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
             }
         }
         else {
             if (getMintime() < 1) {
-                editMintimeHint.setBackgroundColor(0x55FF0000);
+                minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
                 valid = false;
             } else {
-                editMintimeHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
+                minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
             }
         }
         if (getMindistance() < 0) {

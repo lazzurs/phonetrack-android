@@ -49,6 +49,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 //import butterknife.ButterKnife;
@@ -117,10 +118,10 @@ public abstract class EditLogjobFragment extends Fragment {
     protected LinearLayout editTitleLayout;
     protected TextInputLayout editTitleHint;
     protected TextInputLayout editUrlHint;
-    protected TextInputLayout editMintimeHint;
     protected TextInputLayout editMindistanceHint;
     protected TextInputLayout editMinaccuracyHint;
     protected TextInputLayout editLocationTimeoutHint;
+    protected TextView editMinTimeSummary;
 
     protected FloatingActionButton fabOk;
 
@@ -205,11 +206,12 @@ public abstract class EditLogjobFragment extends Fragment {
         editTitleLayout = view.findViewById(R.id.editTitleLayout);
         editTitleHint = view.findViewById(R.id.input_layout_title);
         editUrlHint = view.findViewById(R.id.input_layout_url);
-        editMintimeHint = view.findViewById(R.id.input_layout_min_time);
         editMindistanceHint = view.findViewById(R.id.input_layout_min_distance);
         editMinaccuracyHint = view.findViewById(R.id.input_layout_min_accuracy);
         editMinaccuracyHint = view.findViewById(R.id.input_layout_min_accuracy);
         editLocationTimeoutHint = view.findViewById(R.id.input_layout_sign_motion_timeout);
+
+        editMinTimeSummary = view.findViewById(R.id.editMinTimeSummary);
 
         minTimeTextInputLayout = view.findViewById(R.id.input_layout_min_time);
 
@@ -577,13 +579,15 @@ public abstract class EditLogjobFragment extends Fragment {
         if (sigMotionEnabled && useInterval && mixedMode) {
             minTimeTextInputLayout.setHint(getString(R.string.setting_min_time_mixed));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                editMintime.setTooltipText(getString(R.string.setting_min_time_mixed));
+                editMintime.setTooltipText(getString(R.string.setting_min_time_mixed_long));
+                editMinTimeSummary.setText(getString(R.string.setting_min_time_mixed_long));
             }
         }
         else {
             minTimeTextInputLayout.setHint(getString(R.string.setting_min_time));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 editMintime.setTooltipText(getString(R.string.setting_min_time_long));
+                editMinTimeSummary.setText(getString(R.string.setting_min_time_long));
             }
         }
     }
@@ -596,10 +600,13 @@ public abstract class EditLogjobFragment extends Fragment {
      * Verify if the device supports the significant motion sensor
      */
     private boolean deviceSupportsSignificantMotion() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
+        return true;
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
             return false;
 
         SensorManager sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         return sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION) != null;
+
+         */
     }
 }
