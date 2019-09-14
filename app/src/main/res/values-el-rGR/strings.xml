@@ -86,7 +86,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="logjob_info_lastsync_error">Τελευταίο σφάλμα συγχρονισμού πριν\n%s στις\n%s\n\n%s</string>
     <string name="logjob_info_distance">Συνολική απόσταση\n%sμ</string>
     <string name="logjob_info_duration">Συνολική διάρκεια\n%s</string>
-    <string name="logjob_info_nbpoints">Αριθμός σημείων\n%d</string>
+    <string name="logjob_info_nbpoints">%d points</string>
     <string name="reset_current_run">Επαναφορά στατιστικών</string>
     <string name="duration_days">μέρες</string>
     <string name="dialog_title_import_pt_url">Εισαγωγή συνδέσμου καταγραφής PhoneTrack</string>

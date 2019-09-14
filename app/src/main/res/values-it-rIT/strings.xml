@@ -84,7 +84,7 @@
     <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione\n%s fa alle\n%s\n\n%s</string>
     <string name="logjob_info_distance">Distanza totale\n%s</string>
     <string name="logjob_info_duration">Durata totale\n%s</string>
-    <string name="logjob_info_nbpoints">Numero di punti\n%d</string>
+    <string name="logjob_info_nbpoints">%d points</string>
     <string name="reset_current_run">Ripristina le statistiche</string>
     <string name="duration_days">giorni</string>
     <string name="dialog_title_import_pt_url">Importa l\'URL di registrazione di PhoneTrack</string>

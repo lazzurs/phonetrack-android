@@ -84,7 +84,7 @@
     <string name="logjob_info_lastsync_error">Last synchronization error\n%s ago at\n%s\n\n%s</string>
     <string name="logjob_info_distance">总里程\n%s</string>
     <string name="logjob_info_duration">总时长\n%s</string>
-    <string name="logjob_info_nbpoints">已记录点的数量\n%d</string>
+    <string name="logjob_info_nbpoints">%d points</string>
     <string name="reset_current_run">重置统计数据</string>
     <string name="duration_days">天</string>
     <string name="dialog_title_import_pt_url">导入 PhoneTrack 日志链接</string>

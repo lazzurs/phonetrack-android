@@ -84,7 +84,7 @@
     <string name="logjob_info_lastsync_error">Laatste synchronisatie fout\n%s geleden op\n%s\n\n%s</string>
     <string name="logjob_info_distance">Totale afstand\n%s</string>
     <string name="logjob_info_duration">Totale duur\n%s</string>
-    <string name="logjob_info_nbpoints">Aantal punten\n%d</string>
+    <string name="logjob_info_nbpoints">%d points</string>
     <string name="reset_current_run">Reset statistieken</string>
     <string name="duration_days">dagen</string>
     <string name="dialog_title_import_pt_url">Importeer een PhoneTrack logging link</string>

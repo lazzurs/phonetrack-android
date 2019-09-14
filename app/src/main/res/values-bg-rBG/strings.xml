@@ -84,7 +84,7 @@
     <string name="logjob_info_lastsync_error">Последна грешка при синхронизиране преди \n%s в \n%s\n\n%st</string>
     <string name="logjob_info_distance">Общо разстояние \n%s</string>
     <string name="logjob_info_duration">Обща продължителност \n%s</string>
-    <string name="logjob_info_nbpoints">Брой точки \n%d</string>
+    <string name="logjob_info_nbpoints">%d points</string>
     <string name="reset_current_run">Нулиране на статистиката</string>
     <string name="duration_days">дни</string>
     <string name="dialog_title_import_pt_url">Използвайте връзката за регистриране на PhoneTrack</string>

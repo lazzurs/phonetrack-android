@@ -84,7 +84,7 @@
     <string name="logjob_info_lastsync_error">Ошибка при синхронизации\n%s тому назад в\n%s\n\n%s</string>
     <string name="logjob_info_distance">Общее расстояние\n%sm</string>
     <string name="logjob_info_duration">Общее время\n%s</string>
-    <string name="logjob_info_nbpoints">Количество точек\n%d</string>
+    <string name="logjob_info_nbpoints">%d points</string>
     <string name="reset_current_run">Сброс статистики</string>
     <string name="duration_days">дней</string>
     <string name="dialog_title_import_pt_url">Импорт ссылки для журнала PhoneTrack</string>
