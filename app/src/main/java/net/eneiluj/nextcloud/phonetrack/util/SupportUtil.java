@@ -158,10 +158,10 @@ public class SupportUtil {
         DecimalFormat df2 = new DecimalFormat( "#,###,###,##0.00" );
 
         if (meters < 1000) {
-            result = df2.format(meters) + "m";
+            result = df2.format(meters) + " m";
         }
         else {
-            result = df2.format(meters/1000) + "km";
+            result = df2.format(meters/1000) + " km";
         }
         return result;
     }
