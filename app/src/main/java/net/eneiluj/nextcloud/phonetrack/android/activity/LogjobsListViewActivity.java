@@ -375,8 +375,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         fabCreateSession.setVisibility(View.GONE);
                         fabCreateMaps.setVisibility(View.GONE);
                     }
-                    // TODO remove this when Maps is released
-                    fabCreateMaps.setVisibility(View.GONE);
                 } else {
 
                 }
