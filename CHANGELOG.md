@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## 0.0.13 – 2019-09-17
 ### Added
 - notification when SMS position is sent
 - signed release apk production when pushing to release branch
@@ -14,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#112](https://gitlab.com/eneiluj/phonetrack-android/issues/112) @helium314
 - crosshair under logjob switch, helps to know if at least a point was logged since last activation
 [#108](https://gitlab.com/eneiluj/phonetrack-android/issues/108) @markussvn
+- new logjob type to log to Nextcloud Maps!
 
 ### Changed
 - improve CI script
@@ -25,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#114](https://gitlab.com/eneiluj/phonetrack-android/issues/114) @markussvn
 - change duration format to hh:mm:ss
 [#108](https://gitlab.com/eneiluj/phonetrack-android/issues/108) @markussvn
+- logjob edition is now a form
 
 ### Fixed
 - LoggerService crash on Android <= 4.3 because of unsafe signMotion disabling

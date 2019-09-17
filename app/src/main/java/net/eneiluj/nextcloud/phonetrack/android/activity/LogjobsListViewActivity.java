@@ -364,8 +364,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         fabMenu.setOnMenuToggleListener(new com.github.clans.fab.FloatingActionMenu.OnMenuToggleListener() {
             @Override
             public void onMenuToggle(boolean opened) {
-
-                int drawableId;
                 if (opened) {
                     if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
                         fabCreateSession.setVisibility(View.VISIBLE);
@@ -378,7 +376,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 } else {
 
                 }
-
             }
         });
 
