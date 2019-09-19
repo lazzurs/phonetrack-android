@@ -1051,7 +1051,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         } else {
             DBLogjob logjob = (DBLogjob) adapter.getItem(position);
             Intent intent;
-            if (logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty()) {
+            if (logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty() && logjob.getUrl().isEmpty()) {
+                intent = new Intent(getApplicationContext(), EditMapsLogjobActivity.class);
+            }
+            else if (logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty()) {
                 intent = new Intent(getApplicationContext(), EditCustomLogjobActivity.class);
             }
             else {
