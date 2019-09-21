@@ -578,6 +578,7 @@ public abstract class EditLogjobFragment extends Fragment {
 
         if (sigMotionEnabled && useInterval && mixedMode) {
             minTimeTextInputLayout.setHint(getString(R.string.setting_min_time_mixed));
+            editUseSignificantMotionIntervalLayout.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 editMintime.setTooltipText(getString(R.string.setting_min_time_mixed_long));
                 editMinTimeSummary.setText(getString(R.string.setting_min_time_mixed_long));
@@ -585,6 +586,7 @@ public abstract class EditLogjobFragment extends Fragment {
         }
         else {
             minTimeTextInputLayout.setHint(getString(R.string.setting_min_time));
+            editUseSignificantMotionIntervalLayout.setVisibility(View.VISIBLE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 editMintime.setTooltipText(getString(R.string.setting_min_time_long));
                 editMinTimeSummary.setText(getString(R.string.setting_min_time_long));
