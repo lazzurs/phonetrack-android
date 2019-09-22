@@ -564,7 +564,7 @@ public abstract class EditLogjobFragment extends Fragment {
 
     private void updateVisiblePreferencesForSignificantMotion(boolean sigMotionEnabled, Boolean useInterval, Boolean mixedMode) {
         editMinaccuracyLayout.setVisibility(!sigMotionEnabled ? View.VISIBLE : View.GONE);
-        editMintimeLayout.setVisibility(useInterval ? View.VISIBLE : View.GONE);
+        editMintimeLayout.setVisibility((!sigMotionEnabled || useInterval) ? View.VISIBLE : View.GONE);
         editUseSignificantMotionMixedLayout.setVisibility((sigMotionEnabled && useInterval) ? View.VISIBLE : View.GONE);
         editKeepGpsOnLayout.setVisibility(!sigMotionEnabled ? View.VISIBLE : View.GONE);
         editLocationRequestTimeoutLayout.setVisibility(sigMotionEnabled ? View.VISIBLE : View.GONE);
@@ -576,8 +576,13 @@ public abstract class EditLogjobFragment extends Fragment {
             editMintime.setText(newValue);
         }
 
+        String minTimeValidInterval = " [1, ∞]";
+        if (sigMotionEnabled) {
+            minTimeValidInterval = " [30, ∞]";
+        }
+
         if (sigMotionEnabled && useInterval && mixedMode) {
-            minTimeTextInputLayout.setHint(getString(R.string.setting_min_time_mixed));
+            minTimeTextInputLayout.setHint(getString(R.string.setting_min_time_mixed) + minTimeValidInterval);
             editUseSignificantMotionIntervalLayout.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 editMintime.setTooltipText(getString(R.string.setting_min_time_mixed_long));
@@ -585,8 +590,7 @@ public abstract class EditLogjobFragment extends Fragment {
             }
         }
         else {
-            minTimeTextInputLayout.setHint(getString(R.string.setting_min_time));
-            editUseSignificantMotionIntervalLayout.setVisibility(View.VISIBLE);
+            minTimeTextInputLayout.setHint(getString(R.string.setting_min_time) + minTimeValidInterval);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 editMintime.setTooltipText(getString(R.string.setting_min_time_long));
                 editMinTimeSummary.setText(getString(R.string.setting_min_time_long));
