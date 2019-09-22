@@ -244,7 +244,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         else {
             editMinaccuracyHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
-        if (getUseSignificantMotion() && getLocationRequestTimeout() < 1) {
+        if (getUseSignificantMotion() && getLocationRequestTimeout() < 0) {
             editLocationTimeoutHint.setBackgroundColor(0x55FF0000);
             valid = false;
         }
