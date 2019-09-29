@@ -2,7 +2,7 @@ PhoneTrack - это приложение для непрерывной запи�
 Приложение работает в фоновом режиме. Points are saved at chosen frequency and
 uploaded to a server in real time. This logger works with
 [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
-custom server (GET or POST HTTP requests). PhoneTrack app can also be remotely
+пользовательский сервер (GET или POST HTTP запросы). PhoneTrack app can also be remotely
 controlled by SMS commands.
 
 

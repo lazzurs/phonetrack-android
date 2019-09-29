@@ -3,7 +3,7 @@ De toepassing werkt op de achtergrond. Punten worden opgeslagen op gekozen frequ
 geüpload naar een server in real time. Deze logger werkt met
 [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] of andere
 aangepaste server (GET of POST HTTP-verzoeken). PhoneTrack app kan ook op afstand worden
-aangestuurd door SMS-commando's.
+aangestuurd door SMS-opdrachten.
 
 
 # Functies
