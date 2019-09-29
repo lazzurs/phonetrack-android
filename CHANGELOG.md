@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## 0.0.13 – 2019-09-17
+## 0.0.13 – 2019-09-29
 ### Added
 - notification when SMS position is sent
 - signed release apk production when pushing to release branch
