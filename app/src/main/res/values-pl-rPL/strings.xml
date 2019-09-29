@@ -61,7 +61,7 @@
     <string name="setting_min_accuracy">Minimalna dokładność</string>
     <string name="setting_min_accuracy_long">Minimalna dokładność dla zarejestrowanych punktów (metry). Nie rejestruj, jeśli wartość dokładności jest większa niż:</string>
     <string name="setting_keepgps_title">Utrzymuj GPS pomiędzy poprawkami</string>
-    <string name="setting_keepgps_summary">Pozwoli to uzyskać dokładniejsze pozycje, ale będzie miało większy wpływ na zużycie baterii. Użyj tego, gdy minimalny czas ustawiony jest poniżej 60 sekund.</string>
+    <string name="setting_keepgps_summary">Pozwoli uzyskać dokładniejsze pozycje, ale będzie miało większy wpływ na zużycie baterii. Użyj tego, gdy minimalny czas ustawiony jest poniżej 60 sekund.</string>
     <string name="setting_significantmotion_enabled">Znaczący tryb ruchu</string>
     <string name="setting_significantmotion_title">Zdobądź pozycję tylko po znaczącym ruchu</string>
     <string name="setting_significantmotion_summary">Eksperymentalnie: Czeka na znaczący ruch przed uzyskaniem następnej pozycji. W niektórych przypadkach oszczędza dużo baterii. Niezgodny z niektórymi innymi opcjami.</string>

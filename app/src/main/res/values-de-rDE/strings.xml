@@ -25,7 +25,7 @@
     <string name="setting_post_title">POST-Methode verwenden</string>
     <string name="setting_post_summary">anstelle der GET-Methode. GET-Parameter werden in POST umgewandelt.</string>
     <string name="action_search">Suchen</string>
-    <string name="example_hostname">dein server</string>
+    <string name="example_hostname">deinserver</string>
     <string name="simple_cancel">Abbrechen</string>
     <string name="simple_yes">Ja</string>
     <string name="simple_no">Nein</string>
@@ -61,7 +61,7 @@
     <string name="setting_min_accuracy">Minimale Genauigkeit</string>
     <string name="setting_min_accuracy_long">Mindestgenauigkeit der erfassten Datenpunkte (Meter). Werte nur dann erfassen, wenn die Abweichung kleiner ist als:</string>
     <string name="setting_keepgps_title">GPS zwischen den Positionsbestimmungen eingeschaltet lassen</string>
-    <string name="setting_keepgps_summary">Dies führt zu genaueren Positionsangaben, hat aber einen größeren Einfluss auf die Akkulaufzeit. Verwenden, wenn die minimale Zeitdauer unter 60 Sekunden liegt.</string>
+    <string name="setting_keepgps_summary">Dies führt zu genaueren Positionsangaben, beeinflusst aber die Akkulaufzeit. Empfohlene Verwendung bei einer Mindestdauer unter 60 Sekunden.</string>
     <string name="setting_significantmotion_enabled">Modus bei deutlicher Bewegung</string>
     <string name="setting_significantmotion_title">Position erst nach deutlicher Bewegung ermitteln</string>
     <string name="setting_significantmotion_summary">Experimentell: Warten auf eine deutliche Bewegung, bevor die nächste Position ermittelt wird. Spart in einigen Fällen viel Batterie. Nicht kompatibel mit einigen anderen Optionen.</string>
@@ -78,10 +78,10 @@
     <string name="logjob_info_dialog_title">Über %s</string>
     <string name="logjob_info_nbsync">%d Standorte gesendet</string>
     <string name="logjob_info_nbnotsync">%d Standorte ausstehend</string>
-    <string name="logjob_info_last_activation">Letzte Aktivierung\n%s her um\n%s</string>
+    <string name="logjob_info_last_activation">Letzte Aktivierung vor\n%s um\n%s</string>
     <string name="logjob_info_lastloc">Letzter Standort erfasst vor \n%s bei\n%s</string>
     <string name="logjob_info_lastsync">Letzte erfolgreiche Synchronisation vor \n%s bei \n%s</string>
-    <string name="logjob_info_lastsync_error">Letzter Synchronisierungsfehler vor \n%s bei\n%s\n\n%s</string>
+    <string name="logjob_info_lastsync_error">Letzter Synchronisationsfehler vor\n%s um\n%s\n\n%s</string>
     <string name="logjob_info_distance">Gesamtstrecke\n%s</string>
     <string name="logjob_info_duration">Gesamtdauer\n%s</string>
     <string name="logjob_info_nbpoints">%d Datenpunkte</string>
@@ -184,7 +184,7 @@
     <string name="error_share_dev_helper">Fehler bei der Freigabe des Geräts : %s</string>
     <string name="error_create_session_helper">Fehler beim Erstellen der Sitzung : %s</string>
     <string name="error_create_session_exists">Die Sitzung existiert bereits</string>
-    <string name="error_no_account_maps">Es ist kein Konto konfiguriert, es ist daher nicht möglich, Standortdaten an Nextcloud Maps zu senden</string>
+    <string name="error_no_account_maps">Es ist kein Konto konfiguriert, Standortdaten werden deshalb nicht an Nextcloud Maps gesendet</string>
     <string name="error_token_mismatch">Bitte bestätigen Sie Ihr SSO-Konto in den Einstellungen erneut</string>
     <!-- Web errors -->
     <!-- Certificates -->
