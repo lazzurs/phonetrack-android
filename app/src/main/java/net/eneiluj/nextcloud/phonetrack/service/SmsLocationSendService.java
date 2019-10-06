@@ -228,7 +228,7 @@ public class SmsLocationSendService extends IntentService {
                 .setContentText(getString(R.string.sms_position_notification, notificationFrom))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
-                .setContentIntent(PendingIntent.getActivity(this, 1, ptIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+                .setContentIntent(PendingIntent.getActivity(this, 1, ptIntent, PendingIntent.FLAG_CANCEL_CURRENT))
                 .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
