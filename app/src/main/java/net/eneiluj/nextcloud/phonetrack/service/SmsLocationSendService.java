@@ -53,6 +53,7 @@ import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
+import net.eneiluj.nextcloud.phonetrack.android.activity.MapActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
@@ -185,6 +186,7 @@ public class SmsLocationSendService extends IntentService {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(from, null, smsContent1, null, null);
             // delay second and third SMS sending
+            final String smsContent1f = smsContent1;
             final String smsContent2f = smsContent2;
             Handler handler2 = new Handler();
             handler2.postDelayed(new Runnable() {
@@ -192,7 +194,7 @@ public class SmsLocationSendService extends IntentService {
                 public void run() {
                     Log.d("Location2", "SMS content 2 '" + smsContent2f + "' length:" + smsContent2f.length());
                     smsManager.sendTextMessage(from, null, smsContent2f, null, null);
-                    notifySmsWasSent(from);
+                    notifySmsWasSent(from, smsContent1f + "\n" + smsContent2f);
                 }
             }, 1000);
         } else {
@@ -201,7 +203,7 @@ public class SmsLocationSendService extends IntentService {
 
     }
 
-    public void notifySmsWasSent(String from) {
+    public void notifySmsWasSent(String from, String smsContent) {
         String notificationFrom = from;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED
@@ -212,6 +214,11 @@ public class SmsLocationSendService extends IntentService {
             }
         }
 
+        // intent of notification
+        Intent ptIntent = new Intent(getApplicationContext(), LogjobsListViewActivity.class);
+        ptIntent.putExtra(LogjobsListViewActivity.PARAM_SMSINFO_CONTENT, smsContent);
+        ptIntent.putExtra(LogjobsListViewActivity.PARAM_SMSINFO_FROM, notificationFrom);
+
         createNotificationChannel();
 
         String chanId = String.valueOf(CHANNEL_ID);
@@ -219,10 +226,10 @@ public class SmsLocationSendService extends IntentService {
                 .setSmallIcon(R.drawable.ic_notify_24dp)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.sms_position_notification, notificationFrom))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
-                //.setContentIntent(pendingIntent)
-                //.setAutoCancel(true);
+                .setContentIntent(PendingIntent.getActivity(this, 1, ptIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+                .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 

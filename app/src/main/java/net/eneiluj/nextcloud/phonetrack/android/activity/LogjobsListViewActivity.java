@@ -91,6 +91,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
+    public final static String PARAM_SMSINFO_FROM = "net.eneiluj.nextcloud.phonetrack.smsinfoFrom";
+    public final static String PARAM_SMSINFO_CONTENT = "net.eneiluj.nextcloud.phonetrack.smsinfoContent";
+
     public final static String CREATED_LOGJOB = "net.eneiluj.nextcloud.phonetrack.created_logjob";
     public final static String CREDENTIALS_CHANGED = "net.eneiluj.nextcloud.phonetrack.CREDENTIALS_CHANGED";
     public static final String ADAPTER_KEY_ALL = "all";
@@ -236,6 +239,29 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             } else {
                 startForegroundService(intent);
             }
+        }
+
+        String smsInfoContent = getIntent().getStringExtra(PARAM_SMSINFO_CONTENT);
+        String smsInfoFrom = getIntent().getStringExtra(PARAM_SMSINFO_FROM);
+        if (smsInfoContent != null) {
+            View dView = LayoutInflater.from(this).inflate(R.layout.items_sms_infodialog, null);
+            TextView tv = dView.findViewById(R.id.smsInfoDialogTextMessage);
+            tv.setText(smsInfoContent);
+            TextView tv2 = dView.findViewById(R.id.smsInfoDialogText1);
+            tv2.setText(getString(R.string.sms_notif_info_dialog_message1, smsInfoFrom));
+
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog));
+            builder.setTitle(this.getString(R.string.sms_notif_info_dialog_title))
+                    .setView(dView)
+                    //.setMessage(this.getString(R.string.sms_notif_info_dialog_message, smsInfoContent))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setIcon(R.drawable.ic_sms_grey_24dp)
+                    .show();
         }
     }
 

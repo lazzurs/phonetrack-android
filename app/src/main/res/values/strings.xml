@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Speed: %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">Your position was sent by SMS to %s</string>
+    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
+    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Geo link</string>
     <string name="sms_osm_link">OSM link</string>
     <string name="sms_alarm_started">Alarm will ring during %d seconds</string>
