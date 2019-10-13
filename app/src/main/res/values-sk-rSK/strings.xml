@@ -84,7 +84,7 @@
     <string name="logjob_info_lastsync_error">Posledná chyba synchronizácie\n%s pred v\n%s\n\n%s</string>
     <string name="logjob_info_distance">Celková vzdialenosť\n%s</string>
     <string name="logjob_info_duration">Celkové trvanie\n%s</string>
-    <string name="logjob_info_nbpoints">%d points</string>
+    <string name="logjob_info_nbpoints">%d bodov</string>
     <string name="reset_current_run">Obnoviť štatistiku</string>
     <string name="duration_days">dní</string>
     <string name="dialog_title_import_pt_url">Importovať PhoneTrack sledovací odkaz</string>
