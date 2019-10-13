@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Importeren van URL voor aangepaste logboekregistratie</string>
     <string name="action_settings">Instellingen</string>
     <string name="setting_title">Naam</string>
-    <string name="setting_title_long">Naam logboek</string>
+    <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(verplicht)</string>
     <string name="setting_devicename">Apparaatnaam</string>
     <string name="setting_devicename_long">Apparaatnaam of reservering token</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Experimenteel: Wacht op significante beweging voordat de volgende positie wordt bepaald. Bespaart veel batterij in sommige gevallen. Niet compatibel met enkele andere opties.</string>
     <string name="setting_significantmotion_min_time_applied">Pas minimum tijd toe</string>
     <string name="setting_significantmotion_min_time_applied_summary">Geen positie opnemen elke keer dat beweging wordt gedetecteerd, wacht op \"minimum tijd\" tussen twee punten. Dit bespaart batterij.</string>
-    <string name="setting_significantmotion_mixed">Hybride modus</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Neem een positie op elke keer dat beweging wordt gedetecteerd. Als er geen beweging is gedetecteerd, neem een positie op elke volgens \"maximale tijd\". Dit bespaart een beetje minder batterij.</string>
     <string name="setting_significantmotion_timeout">Locatie timeout</string>
     <string name="setting_significantmotion_timeout_summary">Tijd om te wachten op een enkele locatie-fix (seconden). Bespaart batterij in gebieden zonder goede dekking. Als je zowel GPS als netwerk gebruikt, bepaalt dit ook na hoe lang de lagere kwaliteit netwerkpositie zal worden gebruikt. Zet op nul om timeout uit te schakelen.</string>
@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Snelheid: %.2fkm/u</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">Je positie is via SMS verzonden naar %s</string>
+    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
+    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Geo link</string>
     <string name="sms_osm_link">OSM link</string>
     <string name="sms_alarm_started">Alarm zal overgaan gedurende %d seconden</string>

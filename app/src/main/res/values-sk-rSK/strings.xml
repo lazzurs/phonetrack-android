@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Importovať vlastnú URL</string>
     <string name="action_settings">Nastavenia</string>
     <string name="setting_title">Názov</string>
-    <string name="setting_title_long">Názov sledovania</string>
+    <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(povinné)</string>
     <string name="setting_devicename">Názov zariadenia</string>
     <string name="setting_devicename_long">Názov zariadenia alebo rezervačný token</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Experiment: Čakať na väčší pohyb pred získaním ďalšej polohy. V niektorých prípadoch veľmi šetri batériu.</string>
     <string name="setting_significantmotion_min_time_applied">Použiť min. čas</string>
     <string name="setting_significantmotion_min_time_applied_summary">Neukladať polohu každý krát, keď je zistený pohyb, čakať \"min. čas\" medzi dvoma bodmi. Toto šetrí batériu.</string>
-    <string name="setting_significantmotion_mixed">Hybridný režim</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Uloží pozíciu vždy, keď je zaznamenaný pohyb. Ak pohyb nie je zaznamenávaný, pozícia sa ukladá podľa hodnoty \"maximálny čas\". Šetrí sa tým trochu batéria.</string>
     <string name="setting_significantmotion_timeout">Časový limit polohy</string>
     <string name="setting_significantmotion_timeout_summary">Čakanie na získanie polohy (fix) sekúnd. Šetrí batériu na miestach bez dobrého pokrytia. Ak používate spolu GPS a sieť, toto nastavenie tiež určuje po akom dlhom čase bude použitá menej presná poloha zo siete. Nastavte na nula na vypnutie časovača.</string>
@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Rýchlosť: %.2fkm/h</string>
     <string name="popup_user_agent">Používateľský agent</string>
     <string name="sms_position_notification">Vaša poloha bola odoslaná SMS správou adresátovi %s</string>
+    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
+    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Geo odkaz</string>
     <string name="sms_osm_link">OSM odkaz</string>
     <string name="sms_alarm_started">Alarm bude zvoniť %d sekúnd</string>

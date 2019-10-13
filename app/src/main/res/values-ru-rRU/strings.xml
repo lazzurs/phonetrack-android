@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Импорт URL журнала пользователя</string>
     <string name="action_settings">Настройки</string>
     <string name="setting_title">Название</string>
-    <string name="setting_title_long">Название задания журнала</string>
+    <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(обязательное)</string>
     <string name="setting_devicename">Имя устройства</string>
     <string name="setting_devicename_long">Имя устройства или маркер резервирования</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Экспериментальный: Ожидание значительного перемещения перед тем, как получить следующую позицию. В некоторых случаях экономит заряд батареи. Несовместимо с некоторыми другими опциями.</string>
     <string name="setting_significantmotion_min_time_applied">Применить минимальное время</string>
     <string name="setting_significantmotion_min_time_applied_summary">Не записывать позицию каждый раз, когда происходит движение, подождите \"минимальное время\" между двумя точками. Это экономит батарею.</string>
-    <string name="setting_significantmotion_mixed">Hybrid mode</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Таймаут определения местоположения</string>
     <string name="setting_significantmotion_timeout_summary">Время ожидания одного определения местоположения (в секундах). Сохраняет заряд батареи в районах со слабым сигналом. Если использовать GPS и сеть, то это также определяет, как долго будет использоваться более низкое качество сети. Установите ноль, чтобы отключить таймаут.</string>
@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Скорость: %.2fкм/ч</string>
     <string name="popup_user_agent">Агент пользователя</string>
     <string name="sms_position_notification">Ваша позиция была отправлена по SMS на %s</string>
+    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
+    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Гео-ссылка</string>
     <string name="sms_osm_link">OSM ссылка</string>
     <string name="sms_alarm_started">Будильник будет звонить в течение %d секунд</string>

@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Ипортивай URL за лог</string>
     <string name="action_settings">Настройки</string>
     <string name="setting_title">Заглавие</string>
-    <string name="setting_title_long">Име на лог</string>
+    <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(задължително)</string>
     <string name="setting_devicename">Име на устройството</string>
     <string name="setting_devicename_long">Име на устройство или резервиран тоукън</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Експериментална: Изчакайте значително движение, преди да заемете следващата позиция. В някои случаи спестява много батерия. Несъвместимо с някои други опции.</string>
     <string name="setting_significantmotion_min_time_applied">Приложете минимално време</string>
     <string name="setting_significantmotion_min_time_applied_summary">Не записвайте позиция всеки път, когато е открито движение, изчакайте \"минимално време\" между две точки. Това спестява батерията.</string>
-    <string name="setting_significantmotion_mixed">Hybrid mode</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Местоположението не е намерено</string>
     <string name="setting_significantmotion_timeout_summary">Време е да изчакате еднократно определяне на местоположението (секунди). Спестява батерията в райони без добро покритие. Ако използвате както GPS, така и мрежа, това също определя след колко дълго ще се използва по-ниското качество на мрежата. Задайте нула, за да забраните изчакването.</string>
@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Скорост: %.2fкм/ч</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">Your position was sent by SMS to %s</string>
+    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
+    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Гео връзка</string>
     <string name="sms_osm_link">OSM връзка</string>
     <string name="sms_alarm_started">Алармата ще звъни през %d секунди</string>

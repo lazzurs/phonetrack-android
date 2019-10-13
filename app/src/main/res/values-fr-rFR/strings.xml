@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Importer URL personnalisée</string>
     <string name="action_settings">Paramètres</string>
     <string name="setting_title">Titre</string>
-    <string name="setting_title_long">Titre du log job</string>
+    <string name="setting_title_long">Nom du job log (uniquement visible dans l\'application)</string>
     <string name="mandatory">(obligatoire)</string>
     <string name="setting_devicename">Nom de l\'appareil</string>
     <string name="setting_devicename_long">Nom d\'appareil ou token de réservation</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Expérimental : Attendre un mouvement significatif avant d\'obtenir la prochaine position. Économise beaucoup de batterie dans certains cas. Incompatible avec d\'autres options.</string>
     <string name="setting_significantmotion_min_time_applied">Utiliser le temps minimum</string>
     <string name="setting_significantmotion_min_time_applied_summary">Ne pas enregistrer de position chaque fois que le mouvement est détecté, attendre le \"temps minimum\" entre deux points. Économise de la batterie.</string>
-    <string name="setting_significantmotion_mixed">Mode hybride</string>
+    <string name="setting_significantmotion_mixed">Mode hybride (utiliser le temps maximum)</string>
     <string name="setting_significantmotion_mixed_summary">Enregistrer une position chaque fois qu\'un mouvement est détecté. Si aucun mouvement n\'est détecté, enregistrer une position chaque \"temps maximum\". Cela économise un peu moins de batterie.</string>
     <string name="setting_significantmotion_timeout">Délai max de localisation</string>
     <string name="setting_significantmotion_timeout_summary">Temps d\'attente maximum pour obtenir une position (secondes). Économise de la batterie dans les zones où la réception est mauvaise. Si vous utilisez le GPS et le réseau, cela détermine aussi après combien de temps la position réseau (de qualité inférieure) sera utilisée. Une valeur de zéro désactive le délai.</string>
@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Vitesse: %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">Votre position a été envoyée par SMS à %s</string>
+    <string name="sms_notif_info_dialog_title">Information Sms</string>
+    <string name="sms_notif_info_dialog_message1">Ce SMS a été envoyé à %s:</string>
+    <string name="sms_notif_info_dialog_message2">Allez dans les paramètres de PhoneTrack pour désactiver cette fonctionnalité.</string>
     <string name="sms_geo_link">Lien geo</string>
     <string name="sms_osm_link">Lien OSM</string>
     <string name="sms_alarm_started">L\'alarme sonnera pendant %d secondes</string>

@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Importuj niestandardowy adres URL rejestrowania</string>
     <string name="action_settings">Ustawienia</string>
     <string name="setting_title">Tytuł</string>
-    <string name="setting_title_long">Tytuł zadania rejestratora</string>
+    <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(obowiązkowy)</string>
     <string name="setting_devicename">Nazwa urządzenia</string>
     <string name="setting_devicename_long">Nazwa urządzenia lub token rezerwacji</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Eksperymentalnie: Czeka na znaczący ruch przed uzyskaniem następnej pozycji. W niektórych przypadkach oszczędza dużo baterii. Niezgodny z niektórymi innymi opcjami.</string>
     <string name="setting_significantmotion_min_time_applied">Zastosuj minimalny czas</string>
     <string name="setting_significantmotion_min_time_applied_summary">Nie zapisuje pozycji przy każdym wykryciu ruchu, czeka na „minimalny czas” między dwoma punktami. Oszczędza zużycie baterii.</string>
-    <string name="setting_significantmotion_mixed">Tryb hybrydowy</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Zapisuje pozycję za każdym razem, gdy zostanie wykryty ruch. Jeśli nie zostanie wykryty ruch, zapisuje pozycję co „maksymalny czas”. Oszczędza nieco zużycie baterii.</string>
     <string name="setting_significantmotion_timeout">Limit czasu lokalizacji</string>
     <string name="setting_significantmotion_timeout_summary">Czas, na który będzie czekać na ustalenie pojedynczej lokalizacji (sekundy). Oszczędza zużycie baterii w obszarach słabego zasięgu. Jeśli używasz jednocześnie GPS i sieci, określa to również, jak długo będzie używana pozycja sieci przy niższej jej jakości. Ustaw na zero, aby wyłączyć limit czasu.</string>
@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Prędkość: %.2fkm/h</string>
     <string name="popup_user_agent">Aplikacja</string>
     <string name="sms_position_notification">Twoja pozycja została wysłana SMS-em na adres %s</string>
+    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
+    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Link Geo</string>
     <string name="sms_osm_link">Link OSM</string>
     <string name="sms_alarm_started">Alarm zadzwoni przez %d sekund</string>

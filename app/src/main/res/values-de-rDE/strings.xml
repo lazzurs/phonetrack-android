@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Benutzerdefinierte Protokollierungs-URL importieren</string>
     <string name="action_settings">Einstellungen</string>
     <string name="setting_title">Titel</string>
-    <string name="setting_title_long">Titel des Protokollierungsauftrags</string>
+    <string name="setting_title_long">Titel des Protokollierungsauftrags (nur in der App sichtbar)</string>
     <string name="mandatory">(erforderlich)</string>
     <string name="setting_devicename">Gerätename</string>
     <string name="setting_devicename_long">Gerätename oder Reservierungstoken</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Experimentell: Warten auf eine deutliche Bewegung, bevor die nächste Position ermittelt wird. Spart in einigen Fällen viel Batterie. Nicht kompatibel mit einigen anderen Optionen.</string>
     <string name="setting_significantmotion_min_time_applied">Mindestzeit übernehmen</string>
     <string name="setting_significantmotion_min_time_applied_summary">Nicht bei jeder erkannten Bewegung die Position bestimmen, sondern eine „Mindestzeit” zwischen zwei Positionsbestimmungen warten. Dies schont die Batterie.</string>
-    <string name="setting_significantmotion_mixed">Hybrid-Modus</string>
+    <string name="setting_significantmotion_mixed">Hybridmodus (maximale Zeit verwenden)</string>
     <string name="setting_significantmotion_mixed_summary">Bei jeder Bewegungserkennung eine Position erfassen. Wenn keine Bewegung erkannt wird, entsprechend der \"Höchstdauer\" eine Position erfassen. Dadurch wird die Batterie etwas geschont.</string>
     <string name="setting_significantmotion_timeout">Zeitüberschreitung bei Positionsbestimmung</string>
     <string name="setting_significantmotion_timeout_summary">Zeit (in Sekunden), um auf eine einzelne Standortbestimmung zu warten. Spart Batterie in Bereichen mit schlechter Abdeckung. Wenn sowohl GPS als auch Netzwerk verwendet werden, bestimmt dies auch, nach welcher Zeit die qualitativ schlechtere Netzwerkposition verwendet wird. Auf Null setzen, um die Zeitüberschreitung zu deaktivieren.</string>
@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Geschwindigkeit: %.2fkm/h</string>
     <string name="popup_user_agent">User-Agent</string>
     <string name="sms_position_notification">Ihre Position wurde per SMS an %s gesendet</string>
+    <string name="sms_notif_info_dialog_title">SMS-Information</string>
+    <string name="sms_notif_info_dialog_message1">Diese SMS wurde an %s gesendet:</string>
+    <string name="sms_notif_info_dialog_message2">Öffnen Sie PhoneTrack-Einstellungen, um diese Funktion zu deaktivieren.</string>
     <string name="sms_geo_link">Geo-Link</string>
     <string name="sms_osm_link">OSM-Link</string>
     <string name="sms_alarm_started">Der Wecker klingelt in %d Sekunden</string>

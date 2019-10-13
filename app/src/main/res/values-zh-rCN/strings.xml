@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Import custom logging URL</string>
     <string name="action_settings">设置</string>
     <string name="setting_title">名称</string>
-    <string name="setting_title_long">Log job title</string>
+    <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">（必填项）</string>
     <string name="setting_devicename">设备名称</string>
     <string name="setting_devicename_long">Device name or reservation token</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before getting next position. Saves a lot of battery in some cases. Incompatible with some other options.</string>
     <string name="setting_significantmotion_min_time_applied">Apply minimum time</string>
     <string name="setting_significantmotion_min_time_applied_summary">Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
-    <string name="setting_significantmotion_mixed">Hybrid mode</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Location timeout</string>
     <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout.</string>
@@ -106,6 +106,9 @@
     <string name="popup_speed_value">Speed: %.2fkm/h</string>
     <string name="popup_user_agent">浏览器标识</string>
     <string name="sms_position_notification">Your position was sent by SMS to %s</string>
+    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
+    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Geo link</string>
     <string name="sms_osm_link">OSM link</string>
     <string name="sms_alarm_started">Alarm will ring during %d seconds</string>

@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Εισαγωγή προσαρμοσμένου συνδέσμου καταγραφής</string>
     <string name="action_settings">Ρυθμίσεις</string>
     <string name="setting_title">Τίτλος</string>
-    <string name="setting_title_long">Τίτλος εργασίας καταγραφής</string>
+    <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(υποχρεωτικό)</string>
     <string name="setting_devicename">Όνομα συσκευής</string>
     <string name="setting_devicename_long">Όνομα συσκευής ή διακριτικό κράτησης</string>
@@ -69,7 +69,7 @@
     <string name="setting_significantmotion_min_time_applied_summary">Αποφυγή καταγραφής θέσης με κάθε κίνηση. Αναμονή \"ελάχιστου χρόνου\" μεταξύ δύο σημείων. Προσφέρει εξοικονόμηση ενέργειας.
 
 Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
-    <string name="setting_significantmotion_mixed">Υβριδική λειτουργία</string>
+    <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Καταγραφή μιας θέσης κάθε φορά που εντοπίζεται κίνηση. Αν δεν εντοπιστεί καμία κίνηση, καταγραφή μιας θέσης κάθε \"μέγιστο χρόνο\". Αυτό εξοικονομεί λιγότερη μπαταρία.</string>
     <string name="setting_significantmotion_timeout">Λήξη χρονικού ορίου θέσης</string>
     <string name="setting_significantmotion_timeout_summary">Ώρα αναμονής για τη διόρθωση θέσης (δευτερόλεπτα). Εξοικονόμηση μπαταρίας σε περιοχές χωρίς καλή κάλυψη. Αν χρησιμοποιείται το GPS και το δίκτυο ταυτόχρονα, αυτό καθορίζει επίσης μετά από πόσο χρόνο θα χρησιμοποιηθεί η θέση δικτύου χαμηλότερης ποιότητας. Για απενεργοποίηση του χρονικού ορίου, σημειώστε με \"μηδέν\" (0).</string>
@@ -108,6 +108,9 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="popup_speed_value">Ταχύτητα: %.2fχλμ/ω</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">Η θέση σου εστάλη με SMS στο %s</string>
+    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
+    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Γεωσύνδεσμος</string>
     <string name="sms_osm_link">Σύνδεσμος OSM</string>
     <string name="sms_alarm_started">Η ειδοποίηση θα ηχήσει για %d δευτερόλεπτα</string>
