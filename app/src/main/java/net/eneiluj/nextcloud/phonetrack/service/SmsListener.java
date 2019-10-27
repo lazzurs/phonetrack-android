@@ -16,6 +16,7 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 //import android.preference.PreferenceManager;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
@@ -25,6 +26,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static net.eneiluj.nextcloud.phonetrack.service.LoggerService.BROADCAST_LOCATION_UPDATED;
@@ -59,11 +61,12 @@ public class SmsListener extends BroadcastReceiver {
                     String msgBody = msgs[i].getMessageBody();
                     msgContent += msgBody;
                 }
-                msgContent = msgContent.trim().toLowerCase();
+
+                String word0 = msgContent.split("\\s+")[0].trim().toLowerCase();
                 Log.d(TAG, "Received message: '" + msgContent + "'");
                 Log.d(TAG, "current keyword: '" + keyword + "'");
                 Log.d(TAG, "Received from: " + msg_from);
-                if (msgContent.startsWith(keyword.trim().toLowerCase())) {
+                if (word0.equals(keyword.trim().toLowerCase())) {
                     Log.d(TAG, "We received the keyword: "+keyword);
                     keywordReceived(msgContent, msg_from, context);
                 }
@@ -76,8 +79,9 @@ public class SmsListener extends BroadcastReceiver {
     private void keywordReceived(String msgContent, String from, Context context) {
         String[] words = msgContent.split("\\s+");
         if (words.length > 1) {
+            String word1 = words[1].toLowerCase();
             // make some noise!
-            if (words[1].equals("alarm")) {
+            if (word1.equals("alarm")) {
                 int duration = 60;
                 if (words.length > 2) {
                     try {
@@ -88,13 +92,34 @@ public class SmsListener extends BroadcastReceiver {
                 }
                 startAlarm(context, from, duration);
             }
-            else if (words[1].equals("startlogjobs")) {
-                startOrStopLogjobs(context, true, from);
+            else if (word1.equals("startlogjobs")) {
+                String logjobName = null;
+                if (words.length > 2) {
+                    // too recent solution ;-)
+                    //logjobName = String.join(" ", Arrays.copyOfRange(words, 2, words.length));
+                    logjobName = "";
+                    for (int i=2; i < words.length; i++) {
+                        logjobName += words[i] + " ";
+                    }
+                    logjobName = logjobName.trim();
+                }
+                Log.v(TAG, "LOLO '"+logjobName+"'");
+                startOrStopLogjobs(context, true, from, logjobName);
             }
-            else if (words[1].equals("stoplogjobs")) {
-                startOrStopLogjobs(context, false, from);
+            else if (word1.equals("stoplogjobs")) {
+                String logjobName = null;
+                if (words.length > 2) {
+                    // too recent solution ;-)
+                    //logjobName = String.join(" ", Arrays.copyOfRange(words, 2, words.length));
+                    logjobName = "";
+                    for (int i=2; i < words.length; i++) {
+                        logjobName += words[i] + " ";
+                    }
+                    logjobName = logjobName.trim();
+                }
+                startOrStopLogjobs(context, false, from, logjobName);
             }
-            else if (words[1].equals("createlogjob")) {
+            else if (word1.equals("createlogjob")) {
                 int minTime = 10;
                 if (words.length > 2) {
                     try {
@@ -185,7 +210,7 @@ public class SmsListener extends BroadcastReceiver {
         }
     }
 
-    private void startOrStopLogjobs(Context context, boolean start, String from) {
+    private void startOrStopLogjobs(Context context, boolean start, String from, @Nullable String logjobName) {
         SmsManager smsManager = SmsManager.getDefault();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean resetOnToggle = prefs.getBoolean(context.getString(R.string.pref_key_reset_stats), false);
@@ -195,25 +220,27 @@ public class SmsListener extends BroadcastReceiver {
         int nbLogjobToggled = 0;
 
         for (DBLogjob lj: logjobs) {
-            // we toggle disabled logjobs if this is the start command
-            // we toggle enabled logjobs if this is NOT the start command
-            if ((start && !lj.isEnabled()) ||
-                (!start && lj.isEnabled())
-            ) {
-                db.toggleEnabled(lj, null, resetOnToggle);
+            if (logjobName == null || logjobName.equals(lj.getTitle())) {
+                // we toggle disabled logjobs if this is the start command
+                // we toggle enabled logjobs if this is NOT the start command
+                if ((start && !lj.isEnabled()) ||
+                        (!start && lj.isEnabled())
+                ) {
+                    db.toggleEnabled(lj, null, resetOnToggle);
 
-                // let LoggerService know
-                Intent intent = new Intent(context, LoggerService.class);
-                intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
-                intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
-                context.startService(intent);
+                    // let LoggerService know
+                    Intent intent = new Intent(context, LoggerService.class);
+                    intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
+                    intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
+                    context.startService(intent);
 
-                // update potential logjob list view
-                Intent broadcastIntent = new Intent(BROADCAST_LOCATION_UPDATED);
-                broadcastIntent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, lj.getId());
-                context.sendBroadcast(broadcastIntent);
+                    // update potential logjob list view
+                    Intent broadcastIntent = new Intent(BROADCAST_LOCATION_UPDATED);
+                    broadcastIntent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, lj.getId());
+                    context.sendBroadcast(broadcastIntent);
 
-                nbLogjobToggled++;
+                    nbLogjobToggled++;
+                }
             }
         }
         if (ActivityCompat.checkSelfPermission(
