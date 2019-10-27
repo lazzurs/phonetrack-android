@@ -535,7 +535,12 @@ public class SessionServerSyncHelper {
                 // update ETag and Last-Modified in order to reduce size of next response
                 SharedPreferences.Editor editor = preferences.edit();
 
-                if (color != null && !color.isEmpty()) {
+                if (color != null && !color.isEmpty() && color.startsWith("#")) {
+                    if (color.length() == 4) {
+                        color = "#" + color.charAt(1) + color.charAt(1)
+                                    + color.charAt(2) + color.charAt(2)
+                                    + color.charAt(3) + color.charAt(3);
+                    }
                     int intColor = Color.parseColor(color);
                     Log.d(getClass().getSimpleName(), "COLOR from server is "+color);
                     editor.putInt(appContext.getString(R.string.pref_key_color), intColor);
