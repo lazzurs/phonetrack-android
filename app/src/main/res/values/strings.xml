@@ -145,7 +145,7 @@
     <string name="settings_sms_keyword_title">SMS keyword</string>
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
-    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s\n- %s\n- %s MINTIME</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Use server color</string>
     <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
     <string name="settings_providers_title">Location providers</string>

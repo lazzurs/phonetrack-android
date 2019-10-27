@@ -12,7 +12,7 @@
     <string name="action_create_custom_share">Importa URL di registrazione personalizzato</string>
     <string name="action_settings">Impostazioni</string>
     <string name="setting_title">Titolo</string>
-    <string name="setting_title_long">Log job title (only visible in the app)</string>
+    <string name="setting_title_long">Registra titolo lavoro (visibile solo nell\'app)</string>
     <string name="mandatory">(obbligatorio)</string>
     <string name="setting_devicename">Nome del dispositivo</string>
     <string name="setting_devicename_long">Nome del dispositivo o token di prenotazione</string>
@@ -27,7 +27,7 @@
     <string name="action_search">Ricerca</string>
     <string name="example_hostname">il tuo server</string>
     <string name="simple_cancel">Annulla</string>
-    <string name="simple_yes">Sì</string>
+    <string name="simple_yes">Si</string>
     <string name="simple_no">No</string>
     <string name="simple_ok">Ok</string>
     <string name="simple_edit_pt">Modifica log di PhoneTrack</string>
@@ -67,7 +67,7 @@
     <string name="setting_significantmotion_summary">Sperimentale: Aspetta una mozione significativa prima di ottenere la posizione successiva. Risparmia una quantità di batteria in alcuni casi. incompatibile con alcune altre opzioni.</string>
     <string name="setting_significantmotion_min_time_applied">Applica tempo minimo</string>
     <string name="setting_significantmotion_min_time_applied_summary">Non registrare una posizione ogni volta che viene rilevato un movimento, attendere \"tempo minimo\" tra due punti. Questo risparmia batteria.</string>
-    <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
+    <string name="setting_significantmotion_mixed">Modalità ibrida (applica il tempo massimo)</string>
     <string name="setting_significantmotion_mixed_summary">Registra una posizione ogni volta che viene rilevato un movimento. Se non viene rilevata nessuna mozione, Registra una posizione ogni \"tempo massimo\". Questo risparmia un po\' meno batteria.</string>
     <string name="setting_significantmotion_timeout">Timeout posizione</string>
     <string name="setting_significantmotion_timeout_summary">Tempo di attesa per un singolo aggiustamento posizione (secondi). Risparmia batteria in aree senza una buona copertura. Se si utilizza sia GPS che rete, questo determina anche dopo il tempo che verrà utilizzato la posizione di rete di bassa qualità. Imposta a zero per disabilitare il timeout.</string>
@@ -106,15 +106,15 @@
     <string name="popup_speed_value">Velocità: %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">La tua posizione è stata inviata via SMS a %s</string>
-    <string name="sms_notif_info_dialog_title">Sms information</string>
-    <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
-    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
+    <string name="sms_notif_info_dialog_title">Dettagli Sms</string>
+    <string name="sms_notif_info_dialog_message1">Questo SMS è stato inviato a %s:</string>
+    <string name="sms_notif_info_dialog_message2">Vai alle impostazioni di PhoneTrack per disabilitare questa funzione.</string>
     <string name="sms_geo_link">Link Geo</string>
     <string name="sms_osm_link">Link OSM</string>
     <string name="sms_alarm_started">Allarme suonerà durante %d secondi</string>
     <string name="sms_alarm_stopped">Allarme interrotto</string>
-    <string name="sms_logjobs_started">%d i log job sono stati avviati</string>
-    <string name="sms_logjobs_stopped">%d i log job sono stati interrotti</string>
+    <string name="sms_logjobs_started">%d i logjob sono stati avviati</string>
+    <string name="sms_logjobs_stopped">%d i logjob sono stati interrotti</string>
     <string name="sms_logjob_created">Un logjob con %d secondi di frequenza è stato creato nella sessione %s</string>
     <string name="sms_logjob_creation_impossible">Impossibile creare un log, nessuna sessione trovata</string>
     <string name="map_choose_layer">Scegli un provider di mappe</string>
@@ -128,7 +128,7 @@
     <string name="settings_username">Nome utente</string>
     <string name="settings_password">Password</string>
     <string name="settings_password_unchanged">Password (non cambiata)</string>
-    <string name="settings_submit">Connessione</string>
+    <string name="settings_submit">Connetti</string>
     <string name="settings_submitting">Connessione&#8230;</string>
     <string name="settings_theme_title">Tema</string>
     <string name="settings_notification_importance_title">Bassa importanza di notifica</string>
@@ -140,7 +140,7 @@
     <string name="settings_sms_keyword_title">Parola chiave SMS</string>
     <string name="settings_sms_keyword_long">Se questo telefono riceve un SMS che contiene solo questa parola chiave, le informazioni sulla posizione verranno inviate di nuovo.</string>
     <string name="settings_sms_keyword_long2">Puoi anche inviare comandi con questa sintassi: COMANDO KEYWORD</string>
-    <string name="settings_sms_keyword_long3">Comandi disponibili:\n- %s [NBSECONDS(def=60)]\n- %s\n- %s\n- %s MINTIME</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Usa il colore del server</string>
     <string name="settings_use_server_color_subtitle">Ottieni il colore del server quando sincronizza e usalo come colore principale dell\'app</string>
     <string name="settings_providers_title">Fornitori di posizione</string>

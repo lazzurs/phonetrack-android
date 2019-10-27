@@ -14,7 +14,7 @@
     <string name="setting_title">Title</string>
     <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(mandatory)</string>
-    <string name="setting_devicename">Device name</string>
+    <string name="setting_devicename">Enhetsnavn</string>
     <string name="setting_devicename_long">Device name or reservation token</string>
     <string name="setting_token">Session token</string>
     <string name="setting_token_long">Session identification token</string>
@@ -104,7 +104,7 @@
     <string name="popup_satellites">Satellites: %d</string>
     <string name="popup_bearing_value">Bearing: %.2f°</string>
     <string name="popup_speed_value">Speed: %.2fkm/h</string>
-    <string name="popup_user_agent">User-agent</string>
+    <string name="popup_user_agent">Brukeragent</string>
     <string name="sms_position_notification">Your position was sent by SMS to %s</string>
     <string name="sms_notif_info_dialog_title">Sms information</string>
     <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
@@ -140,7 +140,7 @@
     <string name="settings_sms_keyword_title">SMS keyword</string>
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
-    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s\n- %s\n- %s MINTIME</string>
+    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Use server color</string>
     <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
     <string name="settings_providers_title">Location providers</string>

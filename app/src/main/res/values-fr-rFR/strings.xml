@@ -140,7 +140,7 @@
     <string name="settings_sms_keyword_title">Mot-clé SMS</string>
     <string name="settings_sms_keyword_long">Si ce téléphone reçoit un SMS qui contient juste ce mot-clé, les informations de localisation seront renvoyées.</string>
     <string name="settings_sms_keyword_long2">Vous pouvez aussi envoyer des commandes avec cette syntaxe : MOTCLE COMMANDE</string>
-    <string name="settings_sms_keyword_long3">Commandes disponibles :\n- %s [NBSECONDES(def=60)]\n- %s\n- %s\n- %s TEMPSMIN</string>
+    <string name="settings_sms_keyword_long3">Commandes disponibles :\n- %s [NBSECONDES(def=60)]\n- %s [NOMLOGJOB]\n- %s[NOMLOGJOB]\n- %s TEMPSMIN</string>
     <string name="settings_use_server_color_title">Utiliser la couleur du serveur</string>
     <string name="settings_use_server_color_subtitle">Récupérer la couleur du serveur pendant la synchronisation et l\'utiliser comme couleur principale de l\'appli</string>
     <string name="settings_providers_title">Fournisseurs de localisation</string>
