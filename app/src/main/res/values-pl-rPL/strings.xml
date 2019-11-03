@@ -140,7 +140,7 @@
     <string name="settings_sms_keyword_title">Słowo kluczowe SMS</string>
     <string name="settings_sms_keyword_long">Informacje o lokalizacji zostaną odesłane, gdy telefon otrzyma poniższe słowo kluczowe w wiadomości SMS.</string>
     <string name="settings_sms_keyword_long2">Możesz także wysyłać polecenia z taką składnią: POLECENIE KLUCZOWE</string>
-    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+    <string name="settings_sms_keyword_long3">Dostępne polecenia:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Użyj koloru serwera</string>
     <string name="settings_use_server_color_subtitle">Uzyskuje kolor serwera podczas synchronizacji i używa go jako głównego koloru aplikacji</string>
     <string name="settings_providers_title">Dostawcy lokalizacji</string>
