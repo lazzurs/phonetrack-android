@@ -41,10 +41,12 @@ public class EditMapsLogjobActivity extends EditLogjobActivity {
     protected void launchNewLogjob() {
         Intent intent = getIntent();
 
-        DBLogjob newLogjob = new DBLogjob(0, "",  "",
+        DBLogjob newLogjob = new DBLogjob(
+                0, "",  "",
                 "", "", 60, 5, 50,
                 false, false, false,
-                60, false, false, 0);
+                60, false, false, 0, null, null
+        );
 
         String url;
 

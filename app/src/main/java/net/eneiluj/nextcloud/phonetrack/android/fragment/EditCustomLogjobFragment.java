@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,9 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
     private static final String TAG = EditCustomLogjobFragment.class.getSimpleName();
 
     private CheckBox editPost;
+    protected EditText editLogin;
+    protected EditText editPassword;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +45,12 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
 
         editPost = view.findViewById(R.id.post);
         editPost.setChecked(logjob.getPost());
+
+        editLogin = view.findViewById(R.id.editLogin);
+        editLogin.setText((logjob.getLogin() == null) ? "" : logjob.getLogin());
+
+        editPassword = view.findViewById(R.id.editPassword);
+        editPassword.setText((logjob.getPassword() == null) ? "" : logjob.getPassword());
 
         editPost.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
@@ -76,6 +86,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         Log.d(getClass().getSimpleName(), "CUSTOM saveData()");
         String newTitle = getTitle();
         String newURL = getURL();
+        Log.v(getClass().getSimpleName(), "NEW URL "+newURL);
         boolean newPost = getPost();
         boolean newUseSignificantMotion = getUseSignificantMotion();
         boolean newUseSignificantMotionMixed = getUseSignificantMotionMixed();
@@ -90,6 +101,22 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         boolean newKeepGpsOn = newUseSignificantMotion ? false : getKeepGpsOn();
         int newTimeout = getLocationRequestTimeout();
 
+        String newLogin = getLogin();
+        String newPassword = getPassword();
+        String oldLogin = logjob.getLogin();
+        String oldPassword = logjob.getPassword();
+
+        boolean loginChanged = (
+                (oldLogin == null && newLogin != null) ||
+                (oldLogin != null && newLogin == null) ||
+                (oldLogin != null && newLogin != null && !oldLogin.equals(newLogin))
+        );
+        boolean passwordChanged = (
+                (oldPassword == null && newPassword != null) ||
+                        (oldPassword != null && newPassword == null) ||
+                        (oldPassword != null && newPassword != null && !oldPassword.equals(newPassword))
+        );
+
         // if this is an existing logjob
         if (logjob.getId() != 0) {
             if (logjob.getTitle().equals(newTitle) &&
@@ -101,14 +128,19 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                     logjob.getMinAccuracy() == newMinAccuracy &&
                     logjob.useSignificantMotion() == newUseSignificantMotion &&
                     logjob.useSignificantMotionMixed() == newUseSignificantMotionMixed &&
-                    logjob.getLocationRequestTimeout() == newTimeout
+                    logjob.getLocationRequestTimeout() == newTimeout &&
+                    !loginChanged &&
+                    !passwordChanged
                     ) {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
                 Log.i(TAG, "====== update logjob");
-                logjob = db.updateLogjobAndSync(logjob, newTitle, "", newURL, "",
+                logjob = db.updateLogjobAndSync(
+                        logjob, newTitle, "", newURL, "",
                         newPost, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
-                        newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout, callback);
+                        newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout,
+                        newLogin, newPassword, callback
+                );
                 notifyLoggerService(logjob.getId());
                 //Log.i(TAG, "AFFFFFFTTTTTTEEERRRRR : "+logjob);
                 //listener.onLogjobUpdated(logjob);
@@ -116,9 +148,12 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         }
         // this is a new logjob
         else {
-            DBLogjob newLogjob = new DBLogjob(0, newTitle, newURL, "", "",
+            DBLogjob newLogjob = new DBLogjob(
+                    0, newTitle, newURL, "", "",
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
-                    newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout, newPost, false, 0);
+                    newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout,
+                    newPost, false, 0, newLogin, newPassword
+            );
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
         }
@@ -205,6 +240,24 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
 
     private boolean getPost() {
         return editPost.isChecked();
+    }
+
+    protected String getLogin() {
+        if (editLogin.getText() == null || editLogin.getText().toString().equals("")) {
+            return null;
+        }
+        else {
+            return editLogin.getText().toString();
+        }
+    }
+
+    protected String getPassword() {
+        if (editPassword.getText() == null || editPassword.getText().toString().equals("")) {
+            return null;
+        }
+        else {
+            return editPassword.getText().toString();
+        }
     }
 
 }

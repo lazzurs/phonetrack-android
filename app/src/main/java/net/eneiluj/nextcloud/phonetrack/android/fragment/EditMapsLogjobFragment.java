@@ -48,6 +48,8 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
 
         editUrlLayout.setVisibility(View.GONE);
         editPostLayout.setVisibility(View.GONE);
+        editPasswordLayout.setVisibility(View.GONE);
+        editLoginLayout.setVisibility(View.GONE);
 
         showHideValidationButtons();
 
@@ -100,18 +102,23 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
                 System.out.println("====== update logjob");
-                logjob = db.updateLogjobAndSync(logjob, newTitle, "", "", "",
+                logjob = db.updateLogjobAndSync(
+                        logjob, newTitle, "", "", "",
                         false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
-                        newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout, callback);
+                        newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout,
+                        null, null, callback
+                );
                 notifyLoggerService(logjob.getId());
             }
         }
         // this is a new logjob
         else {
-            DBLogjob newLogjob = new DBLogjob(0, newTitle, "", "", "",
+            DBLogjob newLogjob = new DBLogjob(
+                    0, newTitle, "", "", "",
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                     newUseSignificantMotion, newUseSignificantMotionMixed,
-                    newTimeout, false, false, 0);
+                    newTimeout, false, false, 0, null, null
+            );
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
         }

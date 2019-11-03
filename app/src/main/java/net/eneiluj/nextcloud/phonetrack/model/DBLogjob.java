@@ -1,5 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.model;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -22,11 +24,14 @@ public class DBLogjob implements Item, Serializable {
     private boolean useSignificantMotion = true;
     private boolean useSignificantMotionMixed;
     private int locationRequestTimeout;
+    private String login;
+    private String password;
 
     public DBLogjob(long id, String title, String url, String token, String deviceName,
                     int minTime, int minDistance, int minAccuracy, boolean keepGpsOnBetweenFixes,
                     boolean useSignificantMotion, boolean useSignificantMotionMixed, int timeout,
-                    boolean post, boolean enabled, int nbSync) {
+                    boolean post, boolean enabled, int nbSync, @Nullable String login,
+                    @Nullable String password) {
         this.id = id;
         this.title = title;
         this.url = url;
@@ -42,6 +47,8 @@ public class DBLogjob implements Item, Serializable {
         this.useSignificantMotionMixed = useSignificantMotionMixed;
         this.locationRequestTimeout = timeout;
         this.nbSync = nbSync;
+        this.login = login;
+        this.password = password;
     }
 
     public long getId() {
@@ -54,6 +61,22 @@ public class DBLogjob implements Item, Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setNbSync(int nbSync) {

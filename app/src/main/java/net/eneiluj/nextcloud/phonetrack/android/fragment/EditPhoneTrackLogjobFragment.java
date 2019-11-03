@@ -307,18 +307,24 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 Log.v(getClass().getSimpleName(), "... not saving logjob, since nothing has changed");
             } else {
                 Log.i(TAG, "====== update logjob");
-                logjob = db.updateLogjobAndSync(logjob, newTitle, newToken, newUrl, newDevicename,
+                logjob = db.updateLogjobAndSync(
+                        logjob, newTitle, newToken, newUrl, newDevicename,
                         false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
-                        newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout, callback);
+                        newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout,
+                        null, null, callback
+                );
                 notifyLoggerService(logjob.getId());
                 //listener.onLogjobUpdated(logjob);
             }
         }
         // this is a new logjob
         else {
-            DBLogjob newLogjob = new DBLogjob(0, newTitle, newUrl, newToken, newDevicename,
+            DBLogjob newLogjob = new DBLogjob(
+                    0, newTitle, newUrl, newToken, newDevicename,
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, newUseSignificantMotion,
-                    newUseSignificantMotionMixed, newTimeout, false, false, 0);
+                    newUseSignificantMotionMixed, newTimeout, false, false, 0,
+                    null, null
+            );
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
         }

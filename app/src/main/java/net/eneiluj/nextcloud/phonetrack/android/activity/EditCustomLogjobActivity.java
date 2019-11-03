@@ -42,9 +42,12 @@ public class EditCustomLogjobActivity extends EditLogjobActivity {
 
         String exampleHost = getString(R.string.example_hostname);
 
-        DBLogjob newLogjob = new DBLogjob(0, "",  "https://"+exampleHost+".org/page.php?lat=%LAT",
+        DBLogjob newLogjob = new DBLogjob(
+                0, "",  "https://"+exampleHost+".org/page.php?lat=%LAT",
                 "", "", 60, 5, 50,
-                false, false, false,60, false, false, 0);
+                false, false, false,
+                60, false, false, 0, null, null
+        );
 
         String url;
         if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {

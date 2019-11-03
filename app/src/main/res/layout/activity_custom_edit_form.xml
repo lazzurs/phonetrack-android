@@ -149,6 +149,98 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/editLoginLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/loginIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="32dp"
+                    android:paddingTop="8dp"
+                    android:tooltipText="@string/setting_login_long"
+                    android:src="@drawable/ic_link_grey_24dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/input_layout_login"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tooltipText="@string/setting_login_long"
+                    android:hint="@string/setting_login">
+
+                    <EditText
+                        android:id="@+id/editLogin"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:selectAllOnFocus="true"
+                        android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editLoginSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
+                        android:layout_weight="1"
+                        android:text="@string/setting_login_long" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/editPasswordLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/passwordIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="32dp"
+                    android:paddingTop="8dp"
+                    android:tooltipText="@string/setting_password_long"
+                    android:src="@drawable/ic_link_grey_24dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/input_layout_password"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tooltipText="@string/setting_password_long"
+                    android:hint="@string/setting_password">
+
+                    <EditText
+                        android:id="@+id/editPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:ems="10"
+                        android:inputType="textPassword"
+                        android:selectAllOnFocus="true"
+                        android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:id="@+id/editPasswordSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
+                        android:layout_weight="1"
+                        android:text="@string/setting_password_long" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1px"

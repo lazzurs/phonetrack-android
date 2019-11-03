@@ -3,7 +3,10 @@ package net.eneiluj.nextcloud.phonetrack.persistence;
 import android.content.Context;
 import android.content.SharedPreferences;
 //import android.preference.PreferenceManager;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
+
+import android.util.Base64;
 import android.util.Log;
 
 import com.nextcloud.android.sso.exceptions.TokenMismatchException;
@@ -186,7 +189,7 @@ public class WebTrackHelper {
      * @throws IOException Connection error
      */
     @SuppressWarnings("StringConcatenationInLoop")
-    private String postWithParams(URL url, Map<String, String> params) throws IOException {
+    private String postWithParams(URL url, Map<String, String> params, @Nullable String login, @Nullable String password) throws IOException {
 
         if (LoggerService.DEBUG) { Log.d(TAG, "[postWithParams: " + url + " : " + params + "]"); }
         String response;
@@ -222,6 +225,12 @@ public class WebTrackHelper {
                 connection.setConnectTimeout(SOCKET_TIMEOUT);
                 connection.setReadTimeout(SOCKET_TIMEOUT);
                 connection.setUseCaches(true);
+                // basic auth if login/password given
+                if (login != null && password != null) {
+                    connection.setRequestProperty(
+                            "Authorization",
+                            "Basic " + Base64.encodeToString((login + ":" + password).getBytes(), Base64.NO_WRAP));
+                }
 
                 out = new BufferedOutputStream(connection.getOutputStream());
                 out.write(data);
@@ -317,7 +326,7 @@ public class WebTrackHelper {
      */
     public void postPositionToPhoneTrack(URL url, Map<String, String> params) throws IOException {
         if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToPhoneTrack]"); }
-        String response = postWithParams(url, params);
+        String response = postWithParams(url, params, null, null);
         int done = 0;
         try {
             JSONObject json = new JSONObject(response);
@@ -356,7 +365,7 @@ public class WebTrackHelper {
      * @param params Map of parameters (position properties)
      * @throws IOException Connection error
      */
-    public void sendGETPositionToCustom(String urlStr, Map<String, String> params) throws IOException {
+    public void sendGETPositionToCustom(String urlStr, Map<String, String> params, @Nullable String login, @Nullable String password) throws IOException {
         String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
                 .replace("%LON", params.get(PARAM_LON))
                 .replace("%TIMESTAMP", params.get(PARAM_TIME))
@@ -378,6 +387,12 @@ public class WebTrackHelper {
         conn.setConnectTimeout(SOCKET_TIMEOUT);
         conn.setReadTimeout(SOCKET_TIMEOUT);
         conn.setRequestMethod("GET");
+        // use basic auth if login/password are set
+        if (login != null && password != null) {
+            conn.setRequestProperty(
+                    "Authorization",
+                    "Basic " + Base64.encodeToString((login + ":" + password).getBytes(), Base64.NO_WRAP));
+        }
         BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line;
         while ((line = rd.readLine()) != null) {
@@ -387,7 +402,7 @@ public class WebTrackHelper {
         if (LoggerService.DEBUG) { Log.d(TAG, "[GET request response: " + result + "]"); }
     }
 
-    public void sendPOSTPositionToCustom(String urlStr, Map<String, String> params) throws IOException {
+    public void sendPOSTPositionToCustom(String urlStr, Map<String, String> params, @Nullable String login, @Nullable String password) throws IOException {
         if (LoggerService.DEBUG) { Log.d(TAG, "[SENDPOS  "+params+"]"); }
         String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
                 .replace("%LON", params.get(PARAM_LON))
@@ -417,7 +432,7 @@ public class WebTrackHelper {
                         }
                     }
                 }
-                postWithParams(new URL(baseUrl), paramsToSend);
+                postWithParams(new URL(baseUrl), paramsToSend, login, password);
             }
             else {
                 if (LoggerService.DEBUG) { Log.d(TAG, "[POST URL ERROR "+urlSplit+"]"); }

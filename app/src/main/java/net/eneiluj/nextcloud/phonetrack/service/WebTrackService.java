@@ -218,15 +218,18 @@ public class WebTrackService extends IntentService {
                 // custom logjob
                 else {
                     String destUrl = logjob.getUrl();
+                    // potential login/password for HTTP auth, those might be null
+                    String login = logjob.getLogin();
+                    String password = logjob.getPassword();
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
                     for (DBLogjobLocation loc : locations) {
                         long locId = loc.getId();
                         Map<String, String> params = dbLocationToMap(loc);
                         if (logjob.getPost()) {
-                            web.sendPOSTPositionToCustom(destUrl, params);
+                            web.sendPOSTPositionToCustom(destUrl, params, login, password);
                         }
                         else {
-                            web.sendGETPositionToCustom(destUrl, params);
+                            web.sendGETPositionToCustom(destUrl, params, login, password);
                         }
 
                         db.setLocationSynced(locId);
