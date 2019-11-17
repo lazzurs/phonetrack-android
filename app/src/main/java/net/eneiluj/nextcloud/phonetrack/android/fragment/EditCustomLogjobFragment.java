@@ -27,6 +27,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
     private static final String TAG = EditCustomLogjobFragment.class.getSimpleName();
 
     private CheckBox editPost;
+    private CheckBox editJson;
     protected EditText editLogin;
     protected EditText editPassword;
 
@@ -46,6 +47,9 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         editPost = view.findViewById(R.id.post);
         editPost.setChecked(logjob.getPost());
 
+        editJson = view.findViewById(R.id.json);
+        editJson.setChecked(logjob.getJson());
+
         editLogin = view.findViewById(R.id.editLogin);
         editLogin.setText((logjob.getLogin() == null) ? "" : logjob.getLogin());
 
@@ -57,10 +61,21 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         Log.d(TAG, "use POST change");
+                        showHideFields();
                     }
                 }
         );
 
+        editJson.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Log.d(TAG, "send JSON change");
+                    }
+                }
+        );
+
+        showHideFields();
         showHideValidationButtons();
 
         return view;
@@ -73,6 +88,15 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         itemSelectSession.setVisible(false);
         MenuItem itemFromLogUrl = menu.findItem(R.id.menu_fromLogUrl);
         itemFromLogUrl.setVisible(false);
+    }
+
+    private void showHideFields() {
+        if (getPost()) {
+            editJsonLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            editJsonLayout.setVisibility(View.GONE);
+        }
     }
 
 
@@ -88,6 +112,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         String newURL = getURL();
         Log.v(getClass().getSimpleName(), "NEW URL "+newURL);
         boolean newPost = getPost();
+        boolean newJson = getJson();
         boolean newUseSignificantMotion = getUseSignificantMotion();
         boolean newUseSignificantMotionMixed = getUseSignificantMotionMixed();
         int newMinTime = 0;
@@ -122,6 +147,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
             if (logjob.getTitle().equals(newTitle) &&
                     logjob.getUrl().equals(newURL) &&
                     logjob.getPost() == newPost &&
+                    logjob.getJson() == newJson &&
                     logjob.getMinTime() == newMinTime &&
                     logjob.keepGpsOnBetweenFixes() == newKeepGpsOn &&
                     logjob.getMinDistance() == newMinDistance &&
@@ -139,7 +165,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                         logjob, newTitle, "", newURL, "",
                         newPost, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                         newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout,
-                        newLogin, newPassword, callback
+                        newLogin, newPassword, newJson, callback
                 );
                 notifyLoggerService(logjob.getId());
                 //Log.i(TAG, "AFFFFFFTTTTTTEEERRRRR : "+logjob);
@@ -152,7 +178,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                     0, newTitle, newURL, "", "",
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                     newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout,
-                    newPost, false, 0, newLogin, newPassword
+                    newPost, false, 0, newLogin, newPassword, newJson
             );
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
@@ -240,6 +266,10 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
 
     private boolean getPost() {
         return editPost.isChecked();
+    }
+
+    private boolean getJson() {
+        return editJson.isChecked();
     }
 
     protected String getLogin() {

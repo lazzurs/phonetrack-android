@@ -117,6 +117,7 @@ public abstract class EditLogjobFragment extends Fragment {
     protected LinearLayout editLoginLayout;
     protected LinearLayout editPasswordLayout;
     protected LinearLayout editPostLayout;
+    protected LinearLayout editJsonLayout;
     protected LinearLayout editTitleLayout;
     protected TextInputLayout editTitleHint;
     protected TextInputLayout editUrlHint;
@@ -204,6 +205,7 @@ public abstract class EditLogjobFragment extends Fragment {
         editMinaccuracyLayout = view.findViewById(R.id.editMinAccuracyLayout);
         editKeepGpsOnLayout = view.findViewById(R.id.keepGpsOnLayout);
         editPostLayout = view.findViewById(R.id.usePostLayout);
+        editJsonLayout = view.findViewById(R.id.jsonLayout);
         editLoginLayout = view.findViewById(R.id.editLoginLayout);
         editPasswordLayout = view.findViewById(R.id.editPasswordLayout);
         editUrlLayout = view.findViewById(R.id.editUrlLayout);

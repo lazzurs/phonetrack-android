@@ -272,7 +272,7 @@ public class SmsListener extends BroadcastReceiver {
             DBLogjob lj = new DBLogjob(0, "sms", s.getNextURL(), s.getToken(),
                     "me", minTime, 0, 50,
                     false, false, false,
-                    0, false, true, 0, null, null);
+                    0, false, true, 0, null, null, false);
             long newLjId = db.addLogjob(lj);
 
             // let LoggerService know

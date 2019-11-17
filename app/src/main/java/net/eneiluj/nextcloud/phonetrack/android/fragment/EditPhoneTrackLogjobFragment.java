@@ -311,7 +311,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                         logjob, newTitle, newToken, newUrl, newDevicename,
                         false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                         newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout,
-                        null, null, callback
+                        null, null, false, callback
                 );
                 notifyLoggerService(logjob.getId());
                 //listener.onLogjobUpdated(logjob);
@@ -323,7 +323,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                     0, newTitle, newUrl, newToken, newDevicename,
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, newUseSignificantMotion,
                     newUseSignificantMotionMixed, newTimeout, false, false, 0,
-                    null, null
+                    null, null, false
             );
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);

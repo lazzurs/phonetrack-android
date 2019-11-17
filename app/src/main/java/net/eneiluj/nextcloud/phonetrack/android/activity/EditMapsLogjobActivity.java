@@ -45,7 +45,7 @@ public class EditMapsLogjobActivity extends EditLogjobActivity {
                 0, "",  "",
                 "", "", 60, 5, 50,
                 false, false, false,
-                60, false, false, 0, null, null
+                60, false, false, 0, null, null, false
         );
 
         String url;

@@ -36,7 +36,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 17;
+    private static final int database_version = 18;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -70,6 +70,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_lastSyncErrorText = "LASTSYNCERR";
     private static final String key_login = "LOGIN";
     private static final String key_password = "PASSWORD";
+    private static final String key_json = "JSON";
 
     private static final String table_locations = "LOCATIONS";
     private static final String key_logjobid = "LOGJOBID";
@@ -98,7 +99,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             key_lastSyncErrorTimestamp, key_lastSyncErrorText, key_useSignificantMotion,
             key_useSignificantMotionMixed, key_locationTimeout,
             key_lastActivationSystemTimestamp, key_lastActivationGpsTimestamp,
-            key_login, key_password
+            key_login, key_password, key_json
     };
     private static final String[] columnsLocations = {
             key_id, key_logjobid, key_lat, key_lon, key_time,
@@ -171,6 +172,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_minAccuracy + " INTEGER, " +
                 key_keepGpsOn + " INTEGER DEFAULT 0, " +
                 key_post + " INTEGER DEFAULT 0, " +
+                key_json + " INTEGER DEFAULT 0, " +
                 key_enabled + " INTEGER DEFAULT 0, " +
                 key_nbsync + " INTEGER DEFAULT 0, " +
                 key_lastSyncTimestamp + " INTEGER DEFAULT 0, " +
@@ -239,6 +241,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         if (oldVersion < 17) {
             db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_login + " TEXT DEFAULT NULL");
             db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_password + " TEXT DEFAULT NULL");
+        }
+        if (oldVersion < 18) {
+            db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_json + " INTEGER DEFAULT 0");
         }
     }
 
@@ -362,6 +367,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_keepGpsOn, logjob.keepGpsOnBetweenFixes() ? "1" : "0");
         values.put(key_enabled, logjob.isEnabled() ? "1" : "0");
         values.put(key_post, logjob.getPost() ? "1" : "0");
+        values.put(key_json, logjob.getJson() ? "1" : "0");
         values.put(key_url, logjob.getUrl());
         values.put(key_nbsync, logjob.getNbSync());
         values.put(key_useSignificantMotion, logjob.useSignificantMotion() ? "1" : "0");
@@ -448,7 +454,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 cursor.getInt(10) == 1,
                 cursor.getInt(11),
                 cursor.isNull(21) ? null : cursor.getString(21),
-                cursor.isNull(22) ? null : cursor.getString(22)
+                cursor.isNull(22) ? null : cursor.getString(22),
+                cursor.getInt(23) == 1
         );
     }
 
@@ -652,7 +659,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                                         boolean newKeepGpsOn, boolean newUseSignificantMotion,
                                         boolean newUseSignificantMotionMixed, int newLocationTimeout,
                                         @Nullable String newLogin, @Nullable String newPassword,
-                                        @Nullable ICallback callback) {
+                                        boolean newJson, @Nullable ICallback callback) {
 //        debugPrintFullDB();
         DBLogjob newLogjob;
         if (newTitle == null) {
@@ -664,7 +671,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                     oldLogjob.keepGpsOnBetweenFixes(), oldLogjob.useSignificantMotion(),
                     oldLogjob.useSignificantMotionMixed(), oldLogjob.getLocationRequestTimeout(),
                     oldLogjob.getPost(), oldLogjob.isEnabled(), oldLogjob.getNbSync(),
-                    oldLogjob.getLogin(), oldLogjob.getPassword()
+                    oldLogjob.getLogin(), oldLogjob.getPassword(), oldLogjob.getJson()
             );
         }
         else {
@@ -674,7 +681,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                     newUseSignificantMotion, newUseSignificantMotionMixed, newLocationTimeout,
                     newPost, oldLogjob.isEnabled(), oldLogjob.getNbSync(),
-                    newLogin, newPassword
+                    newLogin, newPassword, newJson
             );
         }
         SQLiteDatabase db = this.getWritableDatabase();
@@ -683,6 +690,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_url, newLogjob.getUrl());
         values.put(key_token, newLogjob.getToken());
         values.put(key_post, newLogjob.getPost() ? 1 : 0);
+        values.put(key_json, newLogjob.getJson() ? 1 : 0);
         values.put(key_keepGpsOn, newLogjob.keepGpsOnBetweenFixes() ? 1 : 0);
         values.put(key_minTime, newLogjob.getMinTime());
         values.put(key_minDistance, newLogjob.getMinDistance());

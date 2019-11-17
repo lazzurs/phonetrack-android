@@ -15,6 +15,7 @@ public class DBLogjob implements Item, Serializable {
     private String token;
     private String deviceName;
     private boolean post;
+    private boolean json;
     private int minTime;
     private int minDistance;
     private int minAccuracy;
@@ -31,13 +32,14 @@ public class DBLogjob implements Item, Serializable {
                     int minTime, int minDistance, int minAccuracy, boolean keepGpsOnBetweenFixes,
                     boolean useSignificantMotion, boolean useSignificantMotionMixed, int timeout,
                     boolean post, boolean enabled, int nbSync, @Nullable String login,
-                    @Nullable String password) {
+                    @Nullable String password, boolean json) {
         this.id = id;
         this.title = title;
         this.url = url;
         this.token = token;
         this.deviceName = deviceName;
         this.post = post;
+        this.json = json;
         this.minAccuracy = minAccuracy;
         this.minDistance = minDistance;
         this.minTime = minTime;
@@ -77,6 +79,14 @@ public class DBLogjob implements Item, Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean getJson() {
+        return json;
+    }
+
+    public void setJson(boolean json) {
+        this.json = json;
     }
 
     public void setNbSync(int nbSync) {

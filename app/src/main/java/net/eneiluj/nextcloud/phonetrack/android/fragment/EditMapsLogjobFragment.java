@@ -48,6 +48,7 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
 
         editUrlLayout.setVisibility(View.GONE);
         editPostLayout.setVisibility(View.GONE);
+        editJsonLayout.setVisibility(View.GONE);
         editPasswordLayout.setVisibility(View.GONE);
         editLoginLayout.setVisibility(View.GONE);
 
@@ -106,7 +107,7 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
                         logjob, newTitle, "", "", "",
                         false, newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                         newUseSignificantMotion, newUseSignificantMotionMixed, newTimeout,
-                        null, null, callback
+                        null, null, false, callback
                 );
                 notifyLoggerService(logjob.getId());
             }
@@ -117,7 +118,8 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
                     0, newTitle, "", "", "",
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn,
                     newUseSignificantMotion, newUseSignificantMotionMixed,
-                    newTimeout, false, false, 0, null, null
+                    newTimeout, false, false, 0, null, null,
+                    false
             );
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
