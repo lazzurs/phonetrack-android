@@ -52,6 +52,10 @@
     <string name="fab_create_phonetrack">O noua sarcina de log-uri PhoneTrack</string>
     <string name="fab_create_custom">Noua sarcina de log-uri customizate</string>
     <string name="fab_create_maps">Noua sarcina de log Harti Nextcloud</string>
+    <string name="setting_password">HTTP password</string>
+    <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
+    <string name="setting_login">HTTP login</string>
+    <string name="setting_login_long">Login for basic HTTP authentication (optional)</string>
     <string name="setting_min_distance">Distanta minima</string>
     <string name="setting_min_distance_long">Distanta minima intre doua puncte logate (metri)</string>
     <string name="setting_min_time">Timp minim</string>

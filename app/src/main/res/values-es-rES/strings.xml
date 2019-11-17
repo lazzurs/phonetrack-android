@@ -52,6 +52,10 @@
     <string name="fab_create_phonetrack">Nuevo trabajo de registro PhoneTrack</string>
     <string name="fab_create_custom">Nuevo trabajo de registro personalizado</string>
     <string name="fab_create_maps">New Nextcloud Maps log job</string>
+    <string name="setting_password">HTTP password</string>
+    <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
+    <string name="setting_login">HTTP login</string>
+    <string name="setting_login_long">Login for basic HTTP authentication (optional)</string>
     <string name="setting_min_distance">Distancia mínima</string>
     <string name="setting_min_distance_long">Distancia mínima entre dos puntos registrados (metros)</string>
     <string name="setting_min_time">Tiempo mínimo</string>

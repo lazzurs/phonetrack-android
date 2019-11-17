@@ -52,6 +52,10 @@
     <string name="fab_create_phonetrack">新增手機追蹤的追蹤記錄</string>
     <string name="fab_create_custom">新增自定的追蹤記錄</string>
     <string name="fab_create_maps">新增Nextcloud地圖的追蹤記錄</string>
+    <string name="setting_password">HTTP password</string>
+    <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
+    <string name="setting_login">HTTP login</string>
+    <string name="setting_login_long">Login for basic HTTP authentication (optional)</string>
     <string name="setting_min_distance">最短距離</string>
     <string name="setting_min_distance_long">2個記錄點之間的最小距離 (公尺)</string>
     <string name="setting_min_time">最短時間間隔</string>

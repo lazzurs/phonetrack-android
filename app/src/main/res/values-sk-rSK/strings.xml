@@ -52,6 +52,10 @@
     <string name="fab_create_phonetrack">Nové PhoneTrack sledovanie</string>
     <string name="fab_create_custom">Nové vlastné sledovanie</string>
     <string name="fab_create_maps">Nové sledovanie na Nextcloud Mape</string>
+    <string name="setting_password">HTTP password</string>
+    <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
+    <string name="setting_login">HTTP login</string>
+    <string name="setting_login_long">Login for basic HTTP authentication (optional)</string>
     <string name="setting_min_distance">Minimálna vzdialenosť</string>
     <string name="setting_min_distance_long">Min. vzdialenosť medzi dvoma zaznamenanými bodmi (metre)</string>
     <string name="setting_min_time">Minimálny čas</string>

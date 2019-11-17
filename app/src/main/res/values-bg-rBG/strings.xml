@@ -52,6 +52,10 @@
     <string name="fab_create_phonetrack">Нов PhoneTrack лог</string>
     <string name="fab_create_custom">Нов персонален лог</string>
     <string name="fab_create_maps">Нова задача в дневника на Nextcloud Maps</string>
+    <string name="setting_password">HTTP password</string>
+    <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
+    <string name="setting_login">HTTP login</string>
+    <string name="setting_login_long">Login for basic HTTP authentication (optional)</string>
     <string name="setting_min_distance">Минимална дистанция</string>
     <string name="setting_min_distance_long">Минимална дистанция между 2 записа точки (метри)</string>
     <string name="setting_min_time">Минимално време</string>

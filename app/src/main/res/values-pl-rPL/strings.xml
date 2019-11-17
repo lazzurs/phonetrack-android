@@ -52,6 +52,10 @@
     <string name="fab_create_phonetrack">Nowe zadanie rejestratora PhoneTrack</string>
     <string name="fab_create_custom">Nowe niestandardowe zadanie rejestratora</string>
     <string name="fab_create_maps">Nowe zadanie rejestratora Nextcloud Maps</string>
+    <string name="setting_password">Hasło HTTP</string>
+    <string name="setting_password_long">Hasło do podstawowego uwierzytelnienia HTTP (opcjonalnie)</string>
+    <string name="setting_login">Login HTTP</string>
+    <string name="setting_login_long">Login do podstawowego uwierzytelnienia HTTP (opcjonalnie)</string>
     <string name="setting_min_distance">Minimalna odległość</string>
     <string name="setting_min_distance_long">Minimalna odległość między dwoma zarejestrowanymi punktami (metry)</string>
     <string name="setting_min_time">Minimalny czas</string>

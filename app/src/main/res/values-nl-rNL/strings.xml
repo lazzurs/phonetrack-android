@@ -52,6 +52,10 @@
     <string name="fab_create_phonetrack">Nieuwe PhoneTrack logboek taak</string>
     <string name="fab_create_custom">Nieuwe aangepaste logboek taak</string>
     <string name="fab_create_maps">Nieuwe Nextcloud Maps log job</string>
+    <string name="setting_password">HTTP wachtwoord</string>
+    <string name="setting_password_long">Wachtwoord voor basis HTTP-authenticatie (optioneel)</string>
+    <string name="setting_login">HTTP login</string>
+    <string name="setting_login_long">Login voor basis HTTP-authenticatie (optioneel)</string>
     <string name="setting_min_distance">Minimumafstand</string>
     <string name="setting_min_distance_long">Minimale afstand tussen twee gelogde punten (meters)</string>
     <string name="setting_min_time">Minimum tijdstip</string>

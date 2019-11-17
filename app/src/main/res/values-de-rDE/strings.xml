@@ -52,6 +52,10 @@
     <string name="fab_create_phonetrack">Neuer PhoneTrack-Protokollierungsauftrag</string>
     <string name="fab_create_custom">Neuer benutzerdefinierter Protokollierungsauftrag</string>
     <string name="fab_create_maps">Neuer Nextcloud Maps Protokollierungsauftrag</string>
+    <string name="setting_password">HTTP-Passwort</string>
+    <string name="setting_password_long">Passwort für die einfache HTTP-Authentifizierung (optional)</string>
+    <string name="setting_login">HTTP-Anmeldung</string>
+    <string name="setting_login_long">Anmeldung für die einfache HTTP-Authentifizierung (optional)</string>
     <string name="setting_min_distance">Mindestentfernung</string>
     <string name="setting_min_distance_long">Mindestentfernung (in Meter) zwischen zwei erfassten Datenpunkte</string>
     <string name="setting_min_time">Mindestdauer</string>
