@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
+import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
@@ -299,6 +300,107 @@ public class WebTrackHelper {
         return response;
     }
 
+    private String postJSON(URL url, JSONObject jsonParams, @Nullable String login, @Nullable String password) throws IOException {
+
+        if (LoggerService.DEBUG) { Log.d(TAG, "[postJSON: " + url + " : " + jsonParams + "]"); }
+        String response;
+
+        byte[] jsonBytes = jsonParams.toString().getBytes("UTF-8");
+
+        HttpURLConnection connection = null;
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            boolean redirect;
+            int redirectTries = 5;
+            do {
+                redirect = false;
+                //connection = (HttpURLConnection) url.openConnection();
+                connection = SupportUtil.getHttpURLConnection(certManager, url.toString());
+                connection.setDoOutput(true);
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                //connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("Content-Length", Integer.toString(jsonBytes.length));
+                connection.setRequestProperty("User-Agent", webUserAgent);
+                connection.setInstanceFollowRedirects(false);
+                connection.setConnectTimeout(SOCKET_TIMEOUT);
+                connection.setReadTimeout(SOCKET_TIMEOUT);
+                connection.setUseCaches(true);
+                // basic auth if login/password given
+                if (login != null && password != null) {
+                    connection.setRequestProperty(
+                            "Authorization",
+                            "Basic " + Base64.encodeToString((login + ":" + password).getBytes(), Base64.NO_WRAP));
+                }
+
+                out = new BufferedOutputStream(connection.getOutputStream());
+                out.write(jsonBytes);
+                out.flush();
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_MOVED_PERM
+                        || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+                        || responseCode == HttpURLConnection.HTTP_SEE_OTHER
+                        || responseCode == 307) {
+                    URL base = connection.getURL();
+                    String location = connection.getHeaderField("Location");
+                    if (LoggerService.DEBUG) { Log.d(TAG, "[postWithParams redirect: " + location + "]"); }
+                    if (location == null || redirectTries == 0) {
+                        throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
+                    }
+                    redirect = true;
+                    redirectTries--;
+                    url = new URL(base, location);
+                    String h1 = base.getHost();
+                    String h2 = url.getHost();
+                    if (h1 != null && !h1.equalsIgnoreCase(h2)) {
+                        throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
+                    }
+                    try {
+                        out.close();
+                        connection.getInputStream().close();
+                        connection.disconnect();
+                    } catch (final IOException e) {
+                        if (LoggerService.DEBUG) { Log.d(TAG, "[connection cleanup failed (ignored)]"); }
+                    }
+                }
+                else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    throw new IOException(context.getString(R.string.e_auth_failure, responseCode));
+                }
+                else if (responseCode != HttpURLConnection.HTTP_OK) {
+                    throw new IOException(context.getString(R.string.e_http_code, responseCode));
+                }
+            } while (redirect);
+
+            in = new BufferedInputStream(connection.getInputStream());
+
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String inputLine;
+            while ((inputLine = br.readLine()) != null) {
+                sb.append(inputLine);
+            }
+            response = sb.toString();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            } catch (final IOException e) {
+                if (LoggerService.DEBUG) { Log.d(TAG, "[connection cleanup failed (ignored)]"); }
+            }
+        }
+        if (LoggerService.DEBUG) { Log.d(TAG, "[postWithParams response: " + response + "]"); }
+        return response;
+    }
+
     public void postPositionToMaps(PhoneTrackClient client, Map<String, String> params) throws IOException {
         if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps]"); }
         //String response = postWithParams(url, params);
@@ -402,48 +504,78 @@ public class WebTrackHelper {
         if (LoggerService.DEBUG) { Log.d(TAG, "[GET request response: " + result + "]"); }
     }
 
-    public void sendPOSTPositionToCustom(String urlStr, Map<String, String> params, @Nullable String login, @Nullable String password) throws IOException {
+    public void sendPOSTPositionToCustom(String urlStr, Map<String, String> params,
+                                         @Nullable String login, @Nullable String password,
+                                         boolean sendJsonPayload
+    ) throws IOException, JSONException {
         if (LoggerService.DEBUG) { Log.d(TAG, "[SENDPOS  "+params+"]"); }
-        String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
-                .replace("%LON", params.get(PARAM_LON))
-                .replace("%TIMESTAMP", params.get(PARAM_TIME))
-                .replace("%ALT", params.get(PARAM_ALT))
-                .replace("%ACC", params.get(PARAM_ACCURACY))
-                .replace("%SPD", params.get(PARAM_SPEED))
-                .replace("%DIR", params.get(PARAM_BEARING))
-                .replace("%SAT", params.get(PARAM_SATELLITES))
-                .replace("%BATT", params.get(PARAM_BATTERY))
-                .replace("%UA", params.get(PARAM_USERAGENT));
+        if (sendJsonPayload) {
+            // build JSON object
+            JSONObject jsonParams = new JSONObject();
+            jsonParams.put("_type", "location");
+            jsonParams.put("acc", params.get(PARAM_ACCURACY));
+            jsonParams.put("alt", params.get(PARAM_ALT));
+            jsonParams.put("batt", params.get(PARAM_BATTERY));
+            jsonParams.put("lat", params.get(PARAM_LAT));
+            jsonParams.put("lon", params.get(PARAM_LON));
+            jsonParams.put("tst", Integer.valueOf(params.get(PARAM_TIME)));
+            if (params.get(PARAM_SPEED) != null && !params.get(PARAM_SPEED).equals("") && !params.get(PARAM_SPEED).equals("0")) {
+                Double speed = Double.valueOf(params.get(PARAM_SPEED));
+                Double kphD = speed * 3.6;
+                int kph = kphD.intValue();
+                jsonParams.put("vel", kph);
+            }
+            String tid = Build.MODEL
+                    .replaceAll(" ", "")
+                    .replaceAll("/", "");
+            tid += " (PhoneTrack/Android)";
+            jsonParams.put("tid", tid);
+            // send it
+            postJSON(new URL(urlStr), jsonParams, login, password);
+        }
+        else {
+            String urlWithValues = urlStr.replace("%LAT", params.get(PARAM_LAT))
+                    .replace("%LON", params.get(PARAM_LON))
+                    .replace("%TIMESTAMP", params.get(PARAM_TIME))
+                    .replace("%ALT", params.get(PARAM_ALT))
+                    .replace("%ACC", params.get(PARAM_ACCURACY))
+                    .replace("%SPD", params.get(PARAM_SPEED))
+                    .replace("%DIR", params.get(PARAM_BEARING))
+                    .replace("%SAT", params.get(PARAM_SATELLITES))
+                    .replace("%BATT", params.get(PARAM_BATTERY))
+                    .replace("%UA", params.get(PARAM_USERAGENT));
 
-        String[] urlSplit;
-        String[] paramSplit;
-        String baseUrl;
-        Map<String, String> paramsToSend = new HashMap<>();
-        if (urlWithValues.contains("?")) {
-            urlSplit = urlWithValues.split("\\?");
-            if (urlSplit.length == 2) {
-                baseUrl = urlSplit[0];
-                paramSplit = urlSplit[1].split("\\&");
-                for (String aParamSplit : paramSplit) {
-                    if (aParamSplit.contains("=")) {
-                        String[] oneParamSplit = aParamSplit.split("=");
-                        if (oneParamSplit.length == 2) {
-                            paramsToSend.put(oneParamSplit[0], oneParamSplit[1]);
+            String[] urlSplit;
+            String[] paramSplit;
+            String baseUrl;
+            Map<String, String> paramsToSend = new HashMap<>();
+            if (urlWithValues.contains("?")) {
+                urlSplit = urlWithValues.split("\\?");
+                if (urlSplit.length == 2) {
+                    baseUrl = urlSplit[0];
+                    paramSplit = urlSplit[1].split("\\&");
+                    for (String aParamSplit : paramSplit) {
+                        if (aParamSplit.contains("=")) {
+                            String[] oneParamSplit = aParamSplit.split("=");
+                            if (oneParamSplit.length == 2) {
+                                paramsToSend.put(oneParamSplit[0], oneParamSplit[1]);
+                            }
                         }
                     }
+                    postWithParams(new URL(baseUrl), paramsToSend, login, password);
+                } else {
+                    if (LoggerService.DEBUG) {
+                        Log.d(TAG, "[POST URL ERROR " + urlSplit + "]");
+                    }
+                    throw new IOException(context.getString(R.string.malformed_post_url));
                 }
-                postWithParams(new URL(baseUrl), paramsToSend, login, password);
-            }
-            else {
-                if (LoggerService.DEBUG) { Log.d(TAG, "[POST URL ERROR "+urlSplit+"]"); }
+            } else {
+                if (LoggerService.DEBUG) {
+                    Log.d(TAG, "[POST URL ERROR]");
+                }
                 throw new IOException(context.getString(R.string.malformed_post_url));
             }
         }
-        else {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[POST URL ERROR]"); }
-            throw new IOException(context.getString(R.string.malformed_post_url));
-        }
-
 
     }
 
