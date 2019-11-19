@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -139,7 +140,7 @@ public class PhoneTrackClient {
     }
 
     public ServerResponse.CreateSessionResponse createSession(CustomCertManager ccm, String sessionName) throws JSONException, IOException, TokenMismatchException {
-        String target = "/index.php/apps/phonetrack/" + "api/createsession/" + sessionName;
+        String target = "/index.php/apps/phonetrack/" + "api/createsession/" + URLEncoder.encode(sessionName, "utf-8");
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to create session");
             return new ServerResponse.CreateSessionResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
