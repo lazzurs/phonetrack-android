@@ -129,7 +129,7 @@ public class PhoneTrackClient {
     }
 
     public ServerResponse.ShareDeviceResponse shareDevice(CustomCertManager ccm, String token, String deviceName) throws JSONException, IOException, TokenMismatchException {
-        String target = "/index.php/apps/phonetrack/" + "api/sharedevice/" + token + "/" + deviceName;
+        String target = "/index.php/apps/phonetrack/" + "api/sharedevice/" + URLEncoder.encode(token, "utf-8") + "/" + URLEncoder.encode(deviceName, "utf-8");
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to get share device");
             return new ServerResponse.ShareDeviceResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
@@ -151,7 +151,7 @@ public class PhoneTrackClient {
     }
 
     public ServerResponse.GetSessionLastPositionsResponse getSessionLastPositions(CustomCertManager ccm, DBSession session) throws JSONException, IOException, TokenMismatchException {
-        String target = "/index.php/apps/phonetrack/" + "api/getuserlastpositions/" + session.getToken();
+        String target = "/index.php/apps/phonetrack/" + "api/getuserlastpositions/" + URLEncoder.encode(session.getToken(), "utf-8");
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to get session last positions");
             return new ServerResponse.GetSessionLastPositionsResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
