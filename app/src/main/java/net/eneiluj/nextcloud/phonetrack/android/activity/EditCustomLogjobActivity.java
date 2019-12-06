@@ -43,7 +43,7 @@ public class EditCustomLogjobActivity extends EditLogjobActivity {
         String exampleHost = getString(R.string.example_hostname);
 
         DBLogjob newLogjob = new DBLogjob(
-                0, "",  "https://"+exampleHost+".org/page.php?lat=%LAT",
+                0, "",  "https://"+exampleHost+"/page?lat=%LAT&lon=%LON&timestamp=%TIMESTAMP",
                 "", "", 60, 5, 50,
                 false, false, false,
                 60, false, false, 0, null, null, false
