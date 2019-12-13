@@ -25,7 +25,6 @@
     <string name="setting_post_title">Gebruik POST methode</string>
     <string name="setting_post_summary">in plaats van GET-methode. GET parameters worden geconverteerd naar POST.</string>
     <string name="action_search">Zoeken</string>
-    <string name="example_hostname">jouwserver</string>
     <string name="simple_cancel">Annuleer</string>
     <string name="simple_yes">Ja</string>
     <string name="simple_no">Nee</string>
@@ -52,6 +51,8 @@
     <string name="fab_create_phonetrack">Nieuwe PhoneTrack logboek taak</string>
     <string name="fab_create_custom">Nieuwe aangepaste logboek taak</string>
     <string name="fab_create_maps">Nieuwe Nextcloud Maps log job</string>
+    <string name="setting_json_title">Stuur JSON payload in plaats van sleutel/waarde paren (OpenHab compatibel)</string>
+    <string name="setting_json_summary">Stuur JSON payload</string>
     <string name="setting_password">HTTP wachtwoord</string>
     <string name="setting_password_long">Wachtwoord voor basis HTTP-authenticatie (optioneel)</string>
     <string name="setting_login">HTTP login</string>

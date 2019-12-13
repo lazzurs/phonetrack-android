@@ -25,7 +25,6 @@
     <string name="setting_post_title">Χρήση μεθόδου POST</string>
     <string name="setting_post_summary">αντί για τη μέθοδο GET. Οι παράμετροι GET θα μετατραπούν σε POST.</string>
     <string name="action_search">Αναζήτηση</string>
-    <string name="example_hostname">oδιακομιστήςσου</string>
     <string name="simple_cancel">Ακύρωση</string>
     <string name="simple_yes">Ναι</string>
     <string name="simple_no">Όχι</string>
@@ -52,6 +51,8 @@
     <string name="fab_create_phonetrack">Νέα εργασία καταγραφής PhoneTrack</string>
     <string name="fab_create_custom">Νέα προσαρμοσμένη εργασία καταγραφής</string>
     <string name="fab_create_maps">Νέα εργασία καταγραφής στο Nextcloud Maps</string>
+    <string name="setting_json_title">Send JSON payload instead of key/value pairs (OpenHab compatible)</string>
+    <string name="setting_json_summary">Send JSON payload</string>
     <string name="setting_password">HTTP password</string>
     <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
     <string name="setting_login">HTTP login</string>

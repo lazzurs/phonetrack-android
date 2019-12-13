@@ -25,7 +25,6 @@
     <string name="setting_post_title">Utilizați metoda POST</string>
     <string name="setting_post_summary">in loc de metoda GET. Parametrii GET vor fi convertiti in POST.</string>
     <string name="action_search">Caută</string>
-    <string name="example_hostname">serverulTau</string>
     <string name="simple_cancel">Anulează</string>
     <string name="simple_yes">Da</string>
     <string name="simple_no">Nu</string>
@@ -52,6 +51,8 @@
     <string name="fab_create_phonetrack">O noua sarcina de log-uri PhoneTrack</string>
     <string name="fab_create_custom">Noua sarcina de log-uri customizate</string>
     <string name="fab_create_maps">Noua sarcina de log Harti Nextcloud</string>
+    <string name="setting_json_title">Send JSON payload instead of key/value pairs (OpenHab compatible)</string>
+    <string name="setting_json_summary">Send JSON payload</string>
     <string name="setting_password">HTTP password</string>
     <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
     <string name="setting_login">HTTP login</string>

@@ -25,7 +25,6 @@
     <string name="setting_post_title">Use POST method</string>
     <string name="setting_post_summary">instead of GET method. GET parameters will be converted to POST.</string>
     <string name="action_search">Search</string>
-    <string name="example_hostname">yourserver</string>
     <string name="simple_cancel">İptal</string>
     <string name="simple_yes">Yes</string>
     <string name="simple_no">No</string>
@@ -52,6 +51,8 @@
     <string name="fab_create_phonetrack">New PhoneTrack log job</string>
     <string name="fab_create_custom">New Custom log job</string>
     <string name="fab_create_maps">New Nextcloud Maps log job</string>
+    <string name="setting_json_title">Send JSON payload instead of key/value pairs (OpenHab compatible)</string>
+    <string name="setting_json_summary">Send JSON payload</string>
     <string name="setting_password">HTTP password</string>
     <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
     <string name="setting_login">HTTP login</string>

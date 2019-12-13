@@ -25,7 +25,6 @@
     <string name="setting_post_title">使用 POST 方法</string>
     <string name="setting_post_summary">取代GET方法。GET參數需轉換成POST。</string>
     <string name="action_search">搜尋</string>
-    <string name="example_hostname">我的伺服器</string>
     <string name="simple_cancel">取消</string>
     <string name="simple_yes">是</string>
     <string name="simple_no">否</string>
@@ -52,6 +51,8 @@
     <string name="fab_create_phonetrack">新增手機追蹤的追蹤記錄</string>
     <string name="fab_create_custom">新增自定的追蹤記錄</string>
     <string name="fab_create_maps">新增Nextcloud地圖的追蹤記錄</string>
+    <string name="setting_json_title">Send JSON payload instead of key/value pairs (OpenHab compatible)</string>
+    <string name="setting_json_summary">Send JSON payload</string>
     <string name="setting_password">HTTP password</string>
     <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
     <string name="setting_login">HTTP login</string>

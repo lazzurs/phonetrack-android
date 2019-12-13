@@ -25,7 +25,6 @@
     <string name="setting_post_title">Utiliser la méthode POST</string>
     <string name="setting_post_summary">au lieu de la méthode GET. Les paramètres GET seront convertis en POST.</string>
     <string name="action_search">Rechercher</string>
-    <string name="example_hostname">votreserveur</string>
     <string name="simple_cancel">Annuler</string>
     <string name="simple_yes">Oui</string>
     <string name="simple_no">Non</string>
@@ -52,6 +51,8 @@
     <string name="fab_create_phonetrack">Nouveau log job PhoneTrack</string>
     <string name="fab_create_custom">Nouveau log job personnalisé</string>
     <string name="fab_create_maps">Nouveau logjob Nextcloud Maps</string>
+    <string name="setting_json_title">Envoyer du JSON au lieu de paires clés/valeurs (compatible OpenHab)</string>
+    <string name="setting_json_summary">Envoyer du JSON</string>
     <string name="setting_password">Mot de passe HTTP</string>
     <string name="setting_password_long">Mot de passe pour l\'authentification basique HTTP (facultatif)</string>
     <string name="setting_login">Login HTTP</string>

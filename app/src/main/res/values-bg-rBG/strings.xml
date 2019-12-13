@@ -25,7 +25,6 @@
     <string name="setting_post_title">Използвай метода POST</string>
     <string name="setting_post_summary">вместо GET метод GET параметрите ще бъдат преобразувани в POST.</string>
     <string name="action_search">Търсене</string>
-    <string name="example_hostname">вашсървър</string>
     <string name="simple_cancel">Откажи</string>
     <string name="simple_yes">Да</string>
     <string name="simple_no">Не</string>
@@ -52,6 +51,8 @@
     <string name="fab_create_phonetrack">Нов PhoneTrack лог</string>
     <string name="fab_create_custom">Нов персонален лог</string>
     <string name="fab_create_maps">Нова задача в дневника на Nextcloud Maps</string>
+    <string name="setting_json_title">Send JSON payload instead of key/value pairs (OpenHab compatible)</string>
+    <string name="setting_json_summary">Send JSON payload</string>
     <string name="setting_password">HTTP password</string>
     <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
     <string name="setting_login">HTTP login</string>

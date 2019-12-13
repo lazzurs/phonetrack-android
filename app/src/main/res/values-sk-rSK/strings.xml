@@ -25,7 +25,6 @@
     <string name="setting_post_title">Použiť metódu POST</string>
     <string name="setting_post_summary">namiesto metódy GET. Parametre GET budú konvertované na POST.</string>
     <string name="action_search">Hľadať</string>
-    <string name="example_hostname">vášserver</string>
     <string name="simple_cancel">Ukončiť</string>
     <string name="simple_yes">Áno</string>
     <string name="simple_no">Nie</string>
@@ -52,6 +51,8 @@
     <string name="fab_create_phonetrack">Nové PhoneTrack sledovanie</string>
     <string name="fab_create_custom">Nové vlastné sledovanie</string>
     <string name="fab_create_maps">Nové sledovanie na Nextcloud Mape</string>
+    <string name="setting_json_title">Send JSON payload instead of key/value pairs (OpenHab compatible)</string>
+    <string name="setting_json_summary">Send JSON payload</string>
     <string name="setting_password">HTTP password</string>
     <string name="setting_password_long">Password for basic HTTP authentication (optional)</string>
     <string name="setting_login">HTTP login</string>
