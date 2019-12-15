@@ -347,7 +347,7 @@ public class LoggerService extends Service {
         // first we check is device is in power saving mode
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         boolean isPowerSaveMode = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && pm != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && pm != null) {
             isPowerSaveMode = pm.isPowerSaveMode();
         }
         if (DEBUG) { Log.d(TAG, "POWEEEEEEEEE "+ isPowerSaveMode); }
