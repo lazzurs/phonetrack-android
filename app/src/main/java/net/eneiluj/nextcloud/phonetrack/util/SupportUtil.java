@@ -7,6 +7,8 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.WorkerThread;
+
+import android.provider.Settings;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -164,5 +166,15 @@ public class SupportUtil {
             result = df2.format(meters/1000) + " km";
         }
         return result;
+    }
+
+    public static boolean isAirplaneModeOn(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.System.getInt(context.getContentResolver(),
+                    Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+        } else {
+            return Settings.Global.getInt(context.getContentResolver(),
+                    Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+        }
     }
 }

@@ -279,6 +279,29 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 return true;
             }
         });
+
+        // update enabled logjobs if we start/stop respecting airplane mode
+        final CheckBoxPreference airplaneModePref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_offline_mode_awareness));
+        airplaneModePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean respectAirplaneMode = (Boolean) newValue;
+
+                PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(getActivity());
+                List<DBLogjob> logjobs = db.getLogjobs();
+
+                for (DBLogjob lj: logjobs) {
+                    if (lj.isEnabled()) {
+                        Intent intent = new Intent(getActivity(), LoggerService.class);
+                        intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
+                        intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
+                        getActivity().startService(intent);
+                    }
+                }
+
+                return true;
+            }
+        });
     }
 
     private void setThemePreferenceSummary(SwitchPreferenceCompat themePref, Boolean darkTheme) {

@@ -117,6 +117,7 @@ public class LoggerService extends Service {
 
     private ConnectionStateMonitor connectionMonitor;
     private BroadcastReceiver powerSaverChangeReceiver;
+    private BroadcastReceiver airplaneModeChangeReceiver;
 
     /**
      * Basic initializations.
@@ -218,6 +219,23 @@ public class LoggerService extends Service {
             IntentFilter filter = new IntentFilter();
             filter.addAction("android.os.action.POWER_SAVE_MODE_CHANGED");
             registerReceiver(powerSaverChangeReceiver, filter);
+
+            // listen to offline (airplane) mode change
+            airplaneModeChangeReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.d(TAG, "[AIRPLANE MODE LISTENER] airplane mode state changed");
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    boolean respectAirplaneMode = prefs.getBoolean(getString(R.string.pref_key_offline_mode_awareness), false);
+                    if (respectAirplaneMode) {
+                        updateAllActiveLogjobs();
+                    }
+                }
+            };
+            IntentFilter filterAirplane = new IntentFilter();
+            //filterAirplane.addAction("android.intent.action.AIRPLANE_MODE_CHANGED");
+            filterAirplane.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            registerReceiver(airplaneModeChangeReceiver, filterAirplane);
         }
         else {
             final Notification notification = showNotification(NOTIFICATION_ID);
@@ -333,8 +351,12 @@ public class LoggerService extends Service {
             isPowerSaveMode = pm.isPowerSaveMode();
         }
         if (DEBUG) { Log.d(TAG, "POWEEEEEEEEE "+ isPowerSaveMode); }
+        if (DEBUG) { Log.d(TAG, "AIRPLANEEEEEEEEEEEEEEEEEEEEEEEE "+ SupportUtil.isAirplaneModeOn(this)); }
 
         boolean respectPowerSaveMode = prefs.getBoolean(getString(R.string.pref_key_power_saving_awareness), false);
+
+        // then we check airplane mode related stuff
+        boolean respectAirplaneMode = prefs.getBoolean(getString(R.string.pref_key_offline_mode_awareness), false);
 
         // then we check if we have location permissions
         boolean hasLocPermissions = (
@@ -346,7 +368,9 @@ public class LoggerService extends Service {
                 )
         );
 
-        return (!respectPowerSaveMode || !isPowerSaveMode) && hasLocPermissions;
+        return (!respectPowerSaveMode || !isPowerSaveMode)
+                && (!respectAirplaneMode || !SupportUtil.isAirplaneModeOn(this))
+                && hasLocPermissions;
     }
 
     /**
@@ -575,6 +599,7 @@ public class LoggerService extends Service {
         }
 
         unregisterReceiver(powerSaverChangeReceiver);
+        unregisterReceiver(airplaneModeChangeReceiver);
     }
 
     @Override
