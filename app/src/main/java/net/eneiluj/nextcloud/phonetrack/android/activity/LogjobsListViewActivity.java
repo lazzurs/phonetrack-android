@@ -203,17 +203,46 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-        || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
 
-            if (LoggerService.DEBUG) { Log.d(TAG, "[request location permission]"); }
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    PERMISSION_LOCATION
-            );
+                if (LoggerService.DEBUG) {
+                    Log.d(TAG, "[request location permission]");
+                }
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        },
+                        PERMISSION_LOCATION
+                );
+            }
+        }
+        else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (LoggerService.DEBUG) {
+                    Log.d(TAG, "[request location permission]");
+                }
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                        },
+                        PERMISSION_LOCATION
+                );
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -1543,7 +1572,27 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED:
                     showToast(getString(R.string.location_permission_denied), Toast.LENGTH_LONG);
-                    ActivityCompat.requestPermissions(LogjobsListViewActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        ActivityCompat.requestPermissions(
+                                LogjobsListViewActivity.this,
+                                new String[]{
+                                        Manifest.permission.ACCESS_FINE_LOCATION,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                                },
+                                PERMISSION_LOCATION
+                        );
+                    }
+                    else {
+                        ActivityCompat.requestPermissions(
+                                LogjobsListViewActivity.this,
+                                new String[]{
+                                        Manifest.permission.ACCESS_FINE_LOCATION,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION
+                                },
+                                PERMISSION_LOCATION
+                        );
+                    }
                     break;
                 case SessionServerSyncHelper.BROADCAST_NETWORK_AVAILABLE:
                     swipeRefreshLayout.setEnabled(true);

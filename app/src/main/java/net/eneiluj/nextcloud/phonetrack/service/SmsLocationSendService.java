@@ -122,11 +122,17 @@ public class SmsLocationSendService extends IntentService {
         isRunning.put(from, true);
 
         ll = new mLocationListener();
-        if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        boolean locAllowed;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            locAllowed = (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED);
+        }
+        else {
+            locAllowed = (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+        }
+        if (locAllowed) {
             if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
             }
@@ -146,11 +152,17 @@ public class SmsLocationSendService extends IntentService {
         if (location.hasAccuracy() && location.getAccuracy() > 50 && c < 60) {
             Log.d("Location", "bad accuracy: " + location.getAccuracy());
             locManager.removeUpdates(ll);
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            boolean locAllowed;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                locAllowed = (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED);
+            }
+            else {
+                locAllowed = (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+            }
+            if (locAllowed) {
                 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
             }
             return;
