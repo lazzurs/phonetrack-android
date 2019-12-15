@@ -208,7 +208,11 @@ public class LoggerService extends Service {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     Log.d(TAG, "[POWER LISTENER] power saving state changed");
-                    updateAllActiveLogjobs();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    boolean respectPowerSaveMode = prefs.getBoolean(getString(R.string.pref_key_power_saving_awareness), false);
+                    if (respectPowerSaveMode) {
+                        updateAllActiveLogjobs();
+                    }
                 }
             };
             IntentFilter filter = new IntentFilter();
@@ -320,6 +324,8 @@ public class LoggerService extends Service {
      * @return True if permission granted, false otherwise
      */
     private boolean canAccessLocation() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         // first we check is device is in power saving mode
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         boolean isPowerSaveMode = false;
@@ -327,6 +333,8 @@ public class LoggerService extends Service {
             isPowerSaveMode = pm.isPowerSaveMode();
         }
         if (DEBUG) { Log.d(TAG, "POWEEEEEEEEE "+ isPowerSaveMode); }
+
+        boolean respectPowerSaveMode = prefs.getBoolean(getString(R.string.pref_key_power_saving_awareness), false);
 
         // then we check if we have location permissions
         boolean hasLocPermissions = (
@@ -338,7 +346,7 @@ public class LoggerService extends Service {
                 )
         );
 
-        return !isPowerSaveMode && hasLocPermissions;
+        return (!respectPowerSaveMode || !isPowerSaveMode) && hasLocPermissions;
     }
 
     /**

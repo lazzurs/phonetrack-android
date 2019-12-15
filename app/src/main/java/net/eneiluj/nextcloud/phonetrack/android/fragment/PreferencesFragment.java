@@ -46,6 +46,8 @@ import at.bitfire.cert4android.CustomCertManager;
 import net.eneiluj.nextcloud.phonetrack.R;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
@@ -251,6 +253,29 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 showColorDialog(preference);
+                return true;
+            }
+        });
+
+        // update enabled logjobs if we start/stop respecting power saving mode
+        final CheckBoxPreference powerModePref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_power_saving_awareness));
+        powerModePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean respectPowerMode = (Boolean) newValue;
+
+                PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(getActivity());
+                List<DBLogjob> logjobs = db.getLogjobs();
+
+                for (DBLogjob lj: logjobs) {
+                    if (lj.isEnabled()) {
+                        Intent intent = new Intent(getActivity(), LoggerService.class);
+                        intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
+                        intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
+                        getActivity().startService(intent);
+                    }
+                }
+
                 return true;
             }
         });

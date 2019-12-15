@@ -127,4 +127,19 @@
         android:title="@string/settings_sms_keyword_title" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/settings_power_category"
+        android:key="settings_power_category">
+        <CheckBoxPreference
+            android:icon="@drawable/ic_power_plug_grey_24dp"
+            android:key="@string/pref_key_power_saving_awareness"
+            android:title="@string/settings_power_saving_awareness_title"
+            android:summary="@string/settings_power_saving_awareness_subtitle" />
+        <CheckBoxPreference
+            android:icon="@drawable/ic_airplanemode_inactive_grey_24dp"
+            android:key="@string/pref_key_offline_mode_awareness"
+            android:title="@string/settings_offline_mode_awareness_title"
+            android:summary="@string/settings_offline_mode_awareness_subtitle" />
+    </PreferenceCategory>
+
 </PreferenceScreen>
