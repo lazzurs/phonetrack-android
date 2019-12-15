@@ -40,6 +40,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.RequiresApi;
@@ -115,6 +116,7 @@ public class LoggerService extends Service {
     private Map<Long, SignificantMotionJobWorker> mSignificantMotionJobs;
 
     private ConnectionStateMonitor connectionMonitor;
+    private BroadcastReceiver powerSaverChangeReceiver;
 
     /**
      * Basic initializations.
@@ -200,6 +202,18 @@ public class LoggerService extends Service {
                 connectionMonitor = new ConnectionStateMonitor();
                 connectionMonitor.enable(getApplicationContext());
             }
+
+            // listen to power saving mode change
+            powerSaverChangeReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.d(TAG, "[POWER LISTENER] power saving state changed");
+                    updateAllActiveLogjobs();
+                }
+            };
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("android.os.action.POWER_SAVE_MODE_CHANGED");
+            registerReceiver(powerSaverChangeReceiver, filter);
         }
         else {
             final Notification notification = showNotification(NOTIFICATION_ID);
@@ -290,13 +304,32 @@ public class LoggerService extends Service {
         }
     }
 
+    private void updateAllActiveLogjobs() {
+        List<DBLogjob> logjobs = db.getLogjobs();
+        // we tell logger service to restart updates for enabled logjobs
+        for (DBLogjob lj: logjobs) {
+            if (lj.isEnabled()) {
+                handleLogjobUpdated(lj.getId());
+            }
+        }
+    }
+
     /**
      * Check if user granted permission to access location.
      *
      * @return True if permission granted, false otherwise
      */
     private boolean canAccessLocation() {
-        return (
+        // first we check is device is in power saving mode
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        boolean isPowerSaveMode = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && pm != null) {
+            isPowerSaveMode = pm.isPowerSaveMode();
+        }
+        if (DEBUG) { Log.d(TAG, "POWEEEEEEEEE "+ isPowerSaveMode); }
+
+        // then we check if we have location permissions
+        boolean hasLocPermissions = (
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && (
@@ -304,6 +337,8 @@ public class LoggerService extends Service {
                         || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
                 )
         );
+
+        return !isPowerSaveMode && hasLocPermissions;
     }
 
     /**
@@ -530,6 +565,8 @@ public class LoggerService extends Service {
                 connectionMonitor.disable(getApplicationContext());
             }
         }
+
+        unregisterReceiver(powerSaverChangeReceiver);
     }
 
     @Override
