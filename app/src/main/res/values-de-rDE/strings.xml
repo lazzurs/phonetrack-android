@@ -170,6 +170,11 @@
     <string name="settings_logging_category">Protokollierung</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_theming_category">Themeneinstellung</string>
+    <string name="settings_power_category">Energiesparen</string>
+    <string name="settings_power_saving_awareness_title">Status des Energiesparmodus beachten</string>
+    <string name="settings_power_saving_awareness_subtitle">Aktive Protokollierungsaufträge anhalten, während der Energiesparmodus aktiviert ist</string>
+    <string name="settings_offline_mode_awareness_title">Status des Offline-Modus beachten</string>
+    <string name="settings_offline_mode_awareness_subtitle">Aktive Protokollierungsaufträge anhalten, während der Offlinemodus aktiviert ist</string>
     <string name="tracking_started">Protokollierung gestartet</string>
     <string name="tracking_stopped">Protokollierung angehalten</string>
     <string name="gps_disabled_warning">Achtung: GPS deaktiviert</string>

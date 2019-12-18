@@ -170,6 +170,11 @@
     <string name="settings_logging_category">Logging</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_theming_category">Theming</string>
+    <string name="settings_power_category">Power saving</string>
+    <string name="settings_power_saving_awareness_title">Respect power saving mode state</string>
+    <string name="settings_power_saving_awareness_subtitle">Freeze active logjobs while power saving mode is enabled</string>
+    <string name="settings_offline_mode_awareness_title">Respect offline mode state</string>
+    <string name="settings_offline_mode_awareness_subtitle">Freeze active logjobs while offline mode is enabled</string>
     <string name="tracking_started">Журнал запущен</string>
     <string name="tracking_stopped">Журнал остановлен</string>
     <string name="gps_disabled_warning">Предупреждение: Gps отключена</string>

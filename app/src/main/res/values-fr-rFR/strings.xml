@@ -170,6 +170,11 @@
     <string name="settings_logging_category">Logging</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_theming_category">Apparence</string>
+    <string name="settings_power_category">Économie d\'énergie</string>
+    <string name="settings_power_saving_awareness_title">Respecter l\'état du mode d\'économie d\'énergie</string>
+    <string name="settings_power_saving_awareness_subtitle">Gèle les logjobs actifs quand le mode économie d\'énergie est activé</string>
+    <string name="settings_offline_mode_awareness_title">Respecter l\'état du mode hors-ligne</string>
+    <string name="settings_offline_mode_awareness_subtitle">Gèle les logjobs actifs quand le mode hors-ligne est activé</string>
     <string name="tracking_started">Logging lancé</string>
     <string name="tracking_stopped">Logging arrêté</string>
     <string name="gps_disabled_warning">Attention : Gps désactivé</string>

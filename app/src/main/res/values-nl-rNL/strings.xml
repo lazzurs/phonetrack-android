@@ -170,6 +170,11 @@
     <string name="settings_logging_category">Loggen</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_theming_category">Thema</string>
+    <string name="settings_power_category">Energiebesparing</string>
+    <string name="settings_power_saving_awareness_title">Respecteer energiebesparende modus status</string>
+    <string name="settings_power_saving_awareness_subtitle">Bevriezen van actieve log-taken tijdens energiebesparende modus is ingeschakeld</string>
+    <string name="settings_offline_mode_awareness_title">Respecteer offline modus status</string>
+    <string name="settings_offline_mode_awareness_subtitle">Bevriezen van actieve log-taken tijdens offline modus is ingeschakeld</string>
     <string name="tracking_started">Logboekregistratie begonnen</string>
     <string name="tracking_stopped">Logboekregistratie gestopt</string>
     <string name="gps_disabled_warning">Waarschuwing: Gps uitgeschakeld</string>

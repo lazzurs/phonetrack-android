@@ -170,6 +170,11 @@
     <string name="settings_logging_category">記錄</string>
     <string name="settings_sms_category">SMS簡訊</string>
     <string name="settings_theming_category">主題</string>
+    <string name="settings_power_category">省電模式</string>
+    <string name="settings_power_saving_awareness_title">遵循省電模式規則</string>
+    <string name="settings_power_saving_awareness_subtitle">省電模式啟動時暫停追蹤記錄</string>
+    <string name="settings_offline_mode_awareness_title">遵循離線模式規則</string>
+    <string name="settings_offline_mode_awareness_subtitle">離線模式啟動時暫停追蹤記錄</string>
     <string name="tracking_started">開始記錄</string>
     <string name="tracking_stopped">停止記錄</string>
     <string name="gps_disabled_warning">警告：GPS未開啟</string>
