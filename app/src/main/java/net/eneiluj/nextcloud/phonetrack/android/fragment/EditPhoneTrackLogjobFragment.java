@@ -328,6 +328,11 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
         }
+        saveLastValues(
+                newMinTime, newMinDistance, newMinAccuracy,
+                newKeepGpsOn, newUseSignificantMotion, newUseSignificantMotionMixed,
+                newTimeout
+        );
     }
 
     public static EditPhoneTrackLogjobFragment newInstance(long logjobId) {

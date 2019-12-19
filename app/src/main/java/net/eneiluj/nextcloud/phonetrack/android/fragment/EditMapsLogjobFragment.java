@@ -124,6 +124,11 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
         }
+        saveLastValues(
+                newMinTime, newMinDistance, newMinAccuracy,
+                newKeepGpsOn, newUseSignificantMotion, newUseSignificantMotionMixed,
+                newTimeout
+        );
     }
 
     public static EditMapsLogjobFragment newInstance(long logjobId) {

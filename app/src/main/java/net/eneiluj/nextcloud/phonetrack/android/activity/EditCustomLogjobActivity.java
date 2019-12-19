@@ -2,8 +2,11 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 //import android.support.v4.app.Fragment;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -40,13 +43,22 @@ public class EditCustomLogjobActivity extends EditLogjobActivity {
     protected void launchNewLogjob() {
         Intent intent = getIntent();
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int minTime = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_MINTIME, 60);
+        int minDistance = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_MINDISTANCE, 5);
+        int minAccuracy = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_MINACCURACY, 50);
+        boolean keepGpsOn = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_KEEPGPSON, false);
+        boolean sigMotion = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_SIGMOTION, false);
+        boolean sigMotionMixed = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_SIGMOTION_MIXED, false);
+        int timeout = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_TIMEOUT, 60);
+
         String exampleHost = getString(R.string.example_hostname);
 
         DBLogjob newLogjob = new DBLogjob(
                 0, "",  "https://"+exampleHost+"/page?lat=%LAT&lon=%LON&timestamp=%TIMESTAMP",
-                "", "", 60, 5, 50,
-                false, false, false,
-                60, false, false, 0, null, null, false
+                "", "", minTime, minDistance, minAccuracy,
+                keepGpsOn, sigMotion, sigMotionMixed,
+                timeout, false, false, 0, null, null, false
         );
 
         String url;

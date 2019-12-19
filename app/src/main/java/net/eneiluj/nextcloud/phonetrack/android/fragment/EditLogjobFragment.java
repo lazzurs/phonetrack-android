@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -29,6 +30,7 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
@@ -85,6 +87,14 @@ public abstract class EditLogjobFragment extends Fragment {
 
     public static final int MINIMUM_TIME_DEFAULT_STANDARD = 60;
     public static final int MINIMUM_TIME_DEFAULT_SIG_MOTION = 300;
+
+    public static final String SETTINGS_LAST_MINTIME = "settingsLastMintime";
+    public static final String SETTINGS_LAST_MINDISTANCE = "settingsLastMindist";
+    public static final String SETTINGS_LAST_MINACCURACY = "settingsLastMinacc";
+    public static final String SETTINGS_LAST_KEEPGPSON = "settingsLastKeepGpsOn";
+    public static final String SETTINGS_LAST_SIGMOTION = "settingsLastSigMotion";
+    public static final String SETTINGS_LAST_SIGMOTION_MIXED = "settingsLastSigMotionMixed";
+    public static final String SETTINGS_LAST_TIMEOUT = "settingsLastTimeout";
 
     protected DBLogjob logjob;
 
@@ -488,6 +498,21 @@ public abstract class EditLogjobFragment extends Fragment {
      * @param callback Observer which is called after save/synchronization
      */
     protected abstract void saveLogjob(@Nullable ICallback callback);
+
+    protected void saveLastValues(int minTime, int minDistance, int minAccuracy,
+                                  boolean keepGpsOn, boolean sigMotion, boolean sigMotionMixed,
+                                  int timeout) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(SETTINGS_LAST_MINTIME, minTime);
+        editor.putInt(SETTINGS_LAST_MINDISTANCE, minDistance);
+        editor.putInt(SETTINGS_LAST_MINACCURACY, minAccuracy);
+        editor.putBoolean(SETTINGS_LAST_KEEPGPSON, keepGpsOn);
+        editor.putBoolean(SETTINGS_LAST_SIGMOTION, sigMotion);
+        editor.putBoolean(SETTINGS_LAST_SIGMOTION_MIXED, sigMotionMixed);
+        editor.putInt(SETTINGS_LAST_TIMEOUT, timeout);
+        editor.apply();
+    }
 
     protected void showHideValidationButtons() {
         if (isFormValid()) {

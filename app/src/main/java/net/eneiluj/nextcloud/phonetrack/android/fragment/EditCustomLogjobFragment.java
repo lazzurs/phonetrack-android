@@ -183,6 +183,11 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
             long newId = db.addLogjob(newLogjob);
             notifyLoggerService(newId);
         }
+        saveLastValues(
+                newMinTime, newMinDistance, newMinAccuracy,
+                newKeepGpsOn, newUseSignificantMotion, newUseSignificantMotionMixed,
+                newTimeout
+        );
     }
 
     public static EditCustomLogjobFragment newInstance(long logjobId) {
