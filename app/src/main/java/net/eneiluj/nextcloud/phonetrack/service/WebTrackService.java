@@ -127,13 +127,16 @@ public class WebTrackService extends IntentService {
             sendBroadcast(intent);
         }
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        int groupSync = Integer.valueOf(prefs.getString(getString(R.string.pref_key_group_sync), "0"));
+
         for (DBLogjob logjob : logjobs) {
             long ljId = logjob.getId();
             try {
                 // Maps logjob
                 if (logjob.getDeviceName().isEmpty() && logjob.getToken().isEmpty() && logjob.getUrl().isEmpty()) {
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
-                    if (locations.size() > 0) {
+                    if (locations.size() > 0 && locations.size() >= groupSync) {
                         if (!db.getPhonetrackServerSyncHelper().isConfigured(getApplicationContext())) {
                             throw new Exception(getString(R.string.error_no_account_maps));
                         }
@@ -158,6 +161,9 @@ public class WebTrackService extends IntentService {
                 else if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
                     URL url = web.getUrlFromPhoneTrackLogjob(logjob);
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
+                    if (locations.size() < groupSync) {
+                        continue;
+                    }
                     // send one by one
                     if (locations.size() <= 5) {
                         for (DBLogjobLocation loc : locations) {
@@ -223,6 +229,9 @@ public class WebTrackService extends IntentService {
                     String password = logjob.getPassword();
                     boolean sendJsonPayload = logjob.getJson();
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
+                    if (locations.size() < groupSync) {
+                        continue;
+                    }
                     for (DBLogjobLocation loc : locations) {
                         long locId = loc.getId();
                         Map<String, String> params = dbLocationToMap(loc);

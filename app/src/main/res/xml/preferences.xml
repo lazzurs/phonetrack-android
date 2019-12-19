@@ -128,8 +128,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/settings_power_category"
-        android:key="settings_power_category">
+        android:title="@string/settings_saving_category"
+        android:key="settings_saving_category">
         <CheckBoxPreference
             android:icon="@drawable/ic_power_plug_grey_24dp"
             android:key="@string/pref_key_power_saving_awareness"
@@ -140,6 +140,20 @@
             android:key="@string/pref_key_offline_mode_awareness"
             android:title="@string/settings_offline_mode_awareness_title"
             android:summary="@string/settings_offline_mode_awareness_subtitle" />
+        <EditTextPreference
+            android:id="@+id/editGroupSync"
+            android:defaultValue="0"
+            android:icon="@drawable/ic_group_work_grey_24dp"
+            android:dialogMessage="@string/settings_group_sync_long"
+            android:dialogTitle="@string/settings_group_sync_title"
+            android:key="@string/pref_key_group_sync"
+            android:singleLine="true"
+            android:selectAllOnFocus="true"
+            android:persistent="true"
+            android:summary="0"
+            android:dialogLayout="@layout/preference_edit_text_integer"
+            android:title="@string/settings_group_sync_title" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -233,6 +233,28 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             smsKeywordPref.setVisible(false);
         }
 
+        final EditTextPreference groupSyncPref = (EditTextPreference) findPreference(getString(R.string.pref_key_group_sync));
+        String groupSyncVal = sp.getString(getString(R.string.pref_key_group_sync), "0");
+        groupSyncPref.setSummary(groupSyncVal);
+        groupSyncPref.setDialogMessage(getString(R.string.settings_group_sync_long));
+        groupSyncPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                String newValueString = (String) newValue;
+                if (newValueString == null || newValueString.equals("")) {
+                    showToast(getString(R.string.error_invalid_group_sync), Toast.LENGTH_LONG);
+                    return false;
+                }
+                else {
+                    preference.setSummary((CharSequence) newValue);
+                    return true;
+                }
+            }
+
+        });
+
         ListPreference providersListPref = (ListPreference) providersPref;
         providersList = new ArrayList<>();
         providersList.add(getString(R.string.providers_gps));
