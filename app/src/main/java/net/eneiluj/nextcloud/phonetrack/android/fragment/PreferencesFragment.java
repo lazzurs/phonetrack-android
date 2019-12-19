@@ -234,8 +234,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         }
 
         final EditTextPreference groupSyncPref = (EditTextPreference) findPreference(getString(R.string.pref_key_group_sync));
-        String groupSyncVal = sp.getString(getString(R.string.pref_key_group_sync), "0");
-        groupSyncPref.setSummary(groupSyncVal);
+        String groupSyncValStr = sp.getString(getString(R.string.pref_key_group_sync), "0");
+        int groupSyncVal = Integer.valueOf(groupSyncValStr);
+        groupSyncPref.setSummary(String.valueOf(groupSyncVal));
         groupSyncPref.setDialogMessage(getString(R.string.settings_group_sync_long));
         groupSyncPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
@@ -248,7 +249,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                     return false;
                 }
                 else {
-                    preference.setSummary((CharSequence) newValue);
+                    int valInt = Integer.valueOf(newValueString);
+                    //groupSyncPref.setText(String.valueOf(valInt));
+                    /*SharedPreferences.Editor editor = sp.edit();
+                    editor.putString(getString(R.string.pref_key_group_sync), String.valueOf(valInt));
+                    editor.apply();*/
+                    preference.setSummary(String.valueOf(valInt));
                     return true;
                 }
             }
