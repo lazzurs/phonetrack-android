@@ -130,6 +130,8 @@ public class LoggerService extends Service {
         firstRun = true;
 
         connectionMonitor = null;
+        powerSaverChangeReceiver = null;
+        airplaneModeChangeReceiver = null;
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext());
 
@@ -598,8 +600,12 @@ public class LoggerService extends Service {
             }
         }
 
-        unregisterReceiver(powerSaverChangeReceiver);
-        unregisterReceiver(airplaneModeChangeReceiver);
+        if (powerSaverChangeReceiver != null) {
+            unregisterReceiver(powerSaverChangeReceiver);
+        }
+        if (airplaneModeChangeReceiver != null) {
+            unregisterReceiver(airplaneModeChangeReceiver);
+        }
     }
 
     @Override
