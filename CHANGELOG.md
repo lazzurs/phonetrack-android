@@ -6,6 +6,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 0.0.14 – 2019-12-23
+### Added
+- start/stop SMS commands to toggle a specific logjob
+- add login/password fields to custom logjobs (basic HTTP auth)
+[#144](https://gitlab.com/eneiluj/phonetrack-android/issues/144) @TRS-80
+- custom logjobs now able to send JSON payload
+[#144](https://gitlab.com/eneiluj/phonetrack-android/issues/144) @TRS-80
+- compatibility with OpenHab
+[#144](https://gitlab.com/eneiluj/phonetrack-android/issues/144) @TRS-80
+- new options to respect power saving mode and offline/airplane mode
+[#153](https://gitlab.com/eneiluj/phonetrack-android/issues/153) @amo13
+- new option to group point sending to reduce data usage
+[#151](https://gitlab.com/eneiluj/phonetrack-android/issues/151) @jangop
+
+### Changed
+- bump SSO lib to 0.4.1, working with Nextcloud Files dev
+[#140](https://gitlab.com/eneiluj/phonetrack-android/issues/140) @jancborchardt
+- adapt background location permission to Android 10 (Q, sdk 29)
+- remember last used logjob settings for new ones
+[#152](https://gitlab.com/eneiluj/phonetrack-android/issues/152) @florom
+
+### Fixed
+- get color when it's compacted
+- session creation with special characters
+[#136](https://gitlab.com/eneiluj/phonetrack-android/issues/136) @florom
+- URLencode GET parameters
+
 ## 0.0.13 – 2019-09-29
 ### Added
 - notification when SMS position is sent
