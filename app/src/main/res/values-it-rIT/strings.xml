@@ -170,7 +170,9 @@
     <string name="settings_logging_category">Registro</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_theming_category">In tema</string>
-    <string name="settings_power_category">Risparmio Energetico</string>
+    <string name="settings_group_sync_title">Send points by bunch of at least</string>
+    <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
+    <string name="settings_saving_category">Power/data saving</string>
     <string name="settings_power_saving_awareness_title">Rispetta lo stato della modalità di risparmio energetico</string>
     <string name="settings_power_saving_awareness_subtitle">Blocca il registro degli eventi quando la modalità risparmio energetico è attiva</string>
     <string name="settings_offline_mode_awareness_title">Rispetta stato modalità non in linea</string>
@@ -222,6 +224,7 @@
     <string name="error_invalid_minaccuracy">Accuratezza minima non valida</string>
     <string name="error_invalid_timeout">Timeout non valido</string>
     <string name="error_invalid_sms_keyword">Parola chiave SMS non valida</string>
+    <string name="error_invalid_group_sync">Invalid number</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

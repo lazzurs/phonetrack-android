@@ -170,7 +170,9 @@
     <string name="settings_logging_category">Logging</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_theming_category">Apparence</string>
-    <string name="settings_power_category">Économie d\'énergie</string>
+    <string name="settings_group_sync_title">Envoyer les points par groupe d\'au moins</string>
+    <string name="settings_group_sync_long">Attendre qu\'il y ait au moins N points pour les envoyer au serveur. Cela permettra de fortement réduire l\'utilisation des données réseau mais les points ne seront pas toujours envoyés en temps réel.</string>
+    <string name="settings_saving_category">Économie de données/énergie</string>
     <string name="settings_power_saving_awareness_title">Respecter l\'état du mode d\'économie d\'énergie</string>
     <string name="settings_power_saving_awareness_subtitle">Gèle les logjobs actifs quand le mode économie d\'énergie est activé</string>
     <string name="settings_offline_mode_awareness_title">Respecter l\'état du mode hors-ligne</string>
@@ -222,6 +224,7 @@
     <string name="error_invalid_minaccuracy">Précision minimum invalide</string>
     <string name="error_invalid_timeout">Délai max invalide</string>
     <string name="error_invalid_sms_keyword">Mot-clé invalide</string>
+    <string name="error_invalid_group_sync">Nombre invalide</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

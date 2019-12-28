@@ -301,7 +301,7 @@
     <string name="pref_key_shownbsynced" translatable="false">shownbsynced</string>
     <string name="pref_value_theme_light">Light</string>
     <string name="pref_value_theme_dark">Dark</string>
-    <string name="pref_key_group_sync">groupSync</string>
+    <string name="pref_key_group_sync" translatable="false">groupSync</string>
     <string name="pref_key_providers" translatable="false">locationProviders</string>
     <string name="pref_key_notification_importance" translatable="false">notificationImportance</string>
     <string name="pref_key_reset_stats" translatable="false">resetStats</string>

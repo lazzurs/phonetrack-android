@@ -170,7 +170,9 @@
     <string name="settings_logging_category">記錄</string>
     <string name="settings_sms_category">SMS簡訊</string>
     <string name="settings_theming_category">主題</string>
-    <string name="settings_power_category">省電模式</string>
+    <string name="settings_group_sync_title">Send points by bunch of at least</string>
+    <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
+    <string name="settings_saving_category">Power/data saving</string>
     <string name="settings_power_saving_awareness_title">遵循省電模式規則</string>
     <string name="settings_power_saving_awareness_subtitle">省電模式啟動時暫停追蹤記錄</string>
     <string name="settings_offline_mode_awareness_title">遵循離線模式規則</string>
@@ -222,6 +224,7 @@
     <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
     <string name="error_invalid_timeout">Invalid timeout</string>
     <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
+    <string name="error_invalid_group_sync">Invalid number</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->
