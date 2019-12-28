@@ -172,9 +172,9 @@
     <string name="settings_theming_category">Wygląd</string>
     <string name="settings_power_category">Oszczędzanie energii</string>
     <string name="settings_power_saving_awareness_title">Zachowaj stan trybu oszczędzania energii</string>
-    <string name="settings_power_saving_awareness_subtitle">Zatrzymaj aktywne dzienniki, gdy włączony jest tryb oszczędzania energii</string>
+    <string name="settings_power_saving_awareness_subtitle">Zatrzymuje aktywne dzienniki, gdy włączony jest tryb oszczędzania energii</string>
     <string name="settings_offline_mode_awareness_title">Zachowaj stan trybu offline</string>
-    <string name="settings_offline_mode_awareness_subtitle">Zatrzymaj aktywne dzienniki zadań, gdy włączony jest tryb offline</string>
+    <string name="settings_offline_mode_awareness_subtitle">Zatrzymuje aktywne dzienniki zadań, gdy włączony jest tryb offline</string>
     <string name="tracking_started">Rejestrowanie rozpoczęte</string>
     <string name="tracking_stopped">Rejestrowanie zatrzymane</string>
     <string name="gps_disabled_warning">Ostrzeżenie: Gps wyłączony</string>
