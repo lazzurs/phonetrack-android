@@ -170,9 +170,9 @@
     <string name="settings_logging_category">Rejestrowanie</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_theming_category">Wygląd</string>
-    <string name="settings_group_sync_title">Send points by bunch of at least</string>
-    <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
-    <string name="settings_saving_category">Power/data saving</string>
+    <string name="settings_group_sync_title">Wysyłaj punkty grupowo w ilości</string>
+    <string name="settings_group_sync_long">Oczekuje, aż pojawi się co najmniej N punktów, aby wysłać je na serwer. To pozwoli zaoszczędzić wiele danych sieciowych, ale punkty nie zawsze będą wysyłane w czasie rzeczywistym.</string>
+    <string name="settings_saving_category">Oszczędzanie energii/danych</string>
     <string name="settings_power_saving_awareness_title">Zachowaj stan trybu oszczędzania energii</string>
     <string name="settings_power_saving_awareness_subtitle">Zatrzymuje aktywne dzienniki, gdy włączony jest tryb oszczędzania energii</string>
     <string name="settings_offline_mode_awareness_title">Zachowaj stan trybu offline</string>
@@ -224,7 +224,7 @@
     <string name="error_invalid_minaccuracy">Nieprawidłowa minimalna dokładność</string>
     <string name="error_invalid_timeout">Nieprawidłowy limit czasu</string>
     <string name="error_invalid_sms_keyword">Nieprawidłowe słowo kluczowe SMS</string>
-    <string name="error_invalid_group_sync">Invalid number</string>
+    <string name="error_invalid_group_sync">Nieprawidłowy numer</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

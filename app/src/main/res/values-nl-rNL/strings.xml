@@ -170,9 +170,9 @@
     <string name="settings_logging_category">Loggen</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_theming_category">Thema</string>
-    <string name="settings_group_sync_title">Send points by bunch of at least</string>
-    <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
-    <string name="settings_saving_category">Power/data saving</string>
+    <string name="settings_group_sync_title">Stuur punten per set van ten minste</string>
+    <string name="settings_group_sync_long">Wacht tot er ten minste N punten zijn om te verzenden naar de server. Dit bespaart veel netwerkgebruik, maar punten worden niet altijd in real-time verzonden.</string>
+    <string name="settings_saving_category">Energie/data-besparing</string>
     <string name="settings_power_saving_awareness_title">Respecteer energiebesparende modus status</string>
     <string name="settings_power_saving_awareness_subtitle">Bevriezen van actieve log-taken tijdens energiebesparende modus is ingeschakeld</string>
     <string name="settings_offline_mode_awareness_title">Respecteer offline modus status</string>
@@ -224,7 +224,7 @@
     <string name="error_invalid_minaccuracy">Ongeldige minimale nauwkeurigheid</string>
     <string name="error_invalid_timeout">Ongeldige timeout</string>
     <string name="error_invalid_sms_keyword">Ongeldig SMS-trefwoord</string>
-    <string name="error_invalid_group_sync">Invalid number</string>
+    <string name="error_invalid_group_sync">Ongeldig getal</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->
