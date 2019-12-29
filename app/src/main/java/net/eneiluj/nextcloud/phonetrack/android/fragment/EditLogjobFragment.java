@@ -64,12 +64,7 @@ import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
-import org.mapsforge.map.rendertheme.renderinstruction.Line;
 
-import static android.webkit.URLUtil.isValidUrl;
-
-//public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
-//public class EditLogjobFragment extends PreferencesFragment {
 public abstract class EditLogjobFragment extends Fragment {
 
     public interface LogjobFragmentListener {
@@ -637,13 +632,10 @@ public abstract class EditLogjobFragment extends Fragment {
      * Verify if the device supports the significant motion sensor
      */
     private boolean deviceSupportsSignificantMotion() {
-        return true;
-        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
             return false;
 
         SensorManager sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         return sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION) != null;
-
-         */
     }
 }
