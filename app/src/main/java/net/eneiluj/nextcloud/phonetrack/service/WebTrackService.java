@@ -128,7 +128,7 @@ public class WebTrackService extends IntentService {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        int groupSync = Integer.valueOf(prefs.getString(getString(R.string.pref_key_group_sync), "0"));
+        long groupSync = Long.valueOf(prefs.getString(getString(R.string.pref_key_group_sync), "0"));
 
         for (DBLogjob logjob : logjobs) {
             long ljId = logjob.getId();
