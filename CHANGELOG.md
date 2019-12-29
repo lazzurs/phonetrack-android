@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## 0.0.14 – 2019-12-23
+## 0.0.14 – 2019-12-29
 ### Added
 - start/stop SMS commands to toggle a specific logjob
 - add login/password fields to custom logjobs (basic HTTP auth)
