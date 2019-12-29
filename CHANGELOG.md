@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 0.0.15 – 2019-12-29
+### Fixed
+- significant motion sensor presence check
+- bug when using big numbers for point grouping
+[#155](https://gitlab.com/eneiluj/phonetrack-android/issues/155) @Valdnet
+
 ## 0.0.14 – 2019-12-29
 ### Added
 - start/stop SMS commands to toggle a specific logjob
