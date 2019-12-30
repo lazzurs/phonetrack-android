@@ -8,24 +8,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
-//import android.preference.Preference;
-//import android.support.v4.app.Fragment;
-import androidx.annotation.NonNull;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
-//import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
-//import android.preference.PreferenceFragment;
 import androidx.preference.PreferenceFragmentCompat;
 
-//import android.preference.PreferenceManager;
 import androidx.preference.PreferenceManager;
-//import android.preference.SwitchPreference;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
 import androidx.annotation.Nullable;
@@ -249,12 +243,20 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                     return false;
                 }
                 else {
-                    long valInt = Long.valueOf(newValueString);
+                    long valLong;
+                    if (newValueString.length() > 6) {
+                        showToast(getString(R.string.error_invalid_group_sync), Toast.LENGTH_LONG);
+                        return false;
+                    }
+                    else {
+                        valLong = Long.valueOf(newValueString);
+                    }
                     //groupSyncPref.setText(String.valueOf(valInt));
+                    // changing the value here does not have any effect
                     /*SharedPreferences.Editor editor = sp.edit();
-                    editor.putString(getString(R.string.pref_key_group_sync), String.valueOf(valInt));
+                    editor.putString(getString(R.string.pref_key_group_sync), String.valueOf(valLong));
                     editor.apply();*/
-                    preference.setSummary(String.valueOf(valInt));
+                    preference.setSummary(String.valueOf(valLong));
                     return true;
                 }
             }
