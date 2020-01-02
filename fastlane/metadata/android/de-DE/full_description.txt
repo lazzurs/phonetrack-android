@@ -8,7 +8,7 @@ SMS ferngesteuert werden.
 
 # Funktionen
 
-• Protokollierung an mehreren Zielen mit mehreren Einstellungen (Häufigkeit, min. Abstand, min. Genauigkeit, deutliche Bewegung)
+• Protokollierung an mehrere Ziele mit mehreren Einstellungen (Häufigkeit, min. Abstand, min. Genauigkeit, deutliche Bewegung)
 • Protokollierung in PhoneTrack-Nextcloud-App (PhoneTrack-Protokollierungsaufgabe)
 • Protokollierung zu jedem Server, der HTTP GET- oder POST-Anfragen empfangen kann (benutzerdefinierte Protokollierungsaufgabe)
 • Speichert auch dann Standorte, wenn Netzwerk nicht verfügbar ist
@@ -25,7 +25,7 @@ SMS ferngesteuert werden.
 
 # Voraussetzungen
 
-Wenn Sie sich bei Nextcloud PhoneTrack-App anmelden möchten:
+Wenn Sie an eine Nextcloud PhoneTrack-App protokollieren möchten:
 
 - Nextcloud-Instanz wird ausgeführt
 - Nextcloud PhoneTrack App aktiviert

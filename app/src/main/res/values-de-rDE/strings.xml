@@ -170,7 +170,7 @@
     <string name="settings_logging_category">Protokollierung</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_theming_category">Themeneinstellung</string>
-    <string name="settings_group_sync_title">Send points by bunch of at least</string>
+    <string name="settings_group_sync_title">Punkte in einem Paket von mindestens</string>
     <string name="settings_group_sync_long">Warten Sie, bis es mindestens N Punkte gibt, um sie an den Server zu senden. Dies spart eine Menge Netzwerkdatennutzung, aber Punkte werden nicht immer in Echtzeit verschickt.</string>
     <string name="settings_saving_category">Energiesparen/Daten</string>
     <string name="settings_power_saving_awareness_title">Status des Energiesparmodus beachten</string>

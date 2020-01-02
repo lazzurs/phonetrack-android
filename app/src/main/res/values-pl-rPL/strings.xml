@@ -81,8 +81,8 @@
     <string name="default_device_name">nazwaMojegoUrządzenia</string>
     <string name="default_session_token">tokenSesji</string>
     <string name="logjob_info_dialog_title">O %s</string>
-    <string name="logjob_info_nbsync">%d wysłane lokalizacje</string>
-    <string name="logjob_info_nbnotsync">%d lokalizacje oczekujące</string>
+    <string name="logjob_info_nbsync">%d wysłanych lokalizacji</string>
+    <string name="logjob_info_nbnotsync">%d oczekujących lokalizacji</string>
     <string name="logjob_info_last_activation">Ostatnia aktywacja\n%s temu w\n%s</string>
     <string name="logjob_info_lastloc">Ostatnia lokalizacja nabyta\n%s temu w\n%s</string>
     <string name="logjob_info_lastsync">Ostatnia pomyślna synchronizacja\n%s temu w\n%s</string>
@@ -171,12 +171,12 @@
     <string name="settings_sms_category">SMS</string>
     <string name="settings_theming_category">Wygląd</string>
     <string name="settings_group_sync_title">Wysyłaj punkty grupowo w ilości</string>
-    <string name="settings_group_sync_long">Oczekuje, aż pojawi się co najmniej N punktów, aby wysłać je na serwer. To pozwoli zaoszczędzić wiele danych sieciowych, ale punkty nie zawsze będą wysyłane w czasie rzeczywistym.</string>
+    <string name="settings_group_sync_long">Oczekuje, aż pojawi się ustalona ilość punktów, aby wysłać je na serwer. Pozwoli to zaoszczędzić wiele danych sieciowych, ale punkty nie zawsze będą wysyłane w czasie rzeczywistym.</string>
     <string name="settings_saving_category">Oszczędzanie energii/danych</string>
     <string name="settings_power_saving_awareness_title">Zachowaj stan trybu oszczędzania energii</string>
-    <string name="settings_power_saving_awareness_subtitle">Zatrzymuje aktywne dzienniki, gdy włączony jest tryb oszczędzania energii</string>
+    <string name="settings_power_saving_awareness_subtitle">Zatrzymuje aktywne zadania rejestratora, gdy włączony jest tryb oszczędzania energii</string>
     <string name="settings_offline_mode_awareness_title">Zachowaj stan trybu offline</string>
-    <string name="settings_offline_mode_awareness_subtitle">Zatrzymuje aktywne dzienniki zadań, gdy włączony jest tryb offline</string>
+    <string name="settings_offline_mode_awareness_subtitle">Zatrzymuje aktywne zadania rejestratora, gdy włączony jest tryb offline</string>
     <string name="tracking_started">Rejestrowanie rozpoczęte</string>
     <string name="tracking_stopped">Rejestrowanie zatrzymane</string>
     <string name="gps_disabled_warning">Ostrzeżenie: Gps wyłączony</string>
@@ -224,7 +224,7 @@
     <string name="error_invalid_minaccuracy">Nieprawidłowa minimalna dokładność</string>
     <string name="error_invalid_timeout">Nieprawidłowy limit czasu</string>
     <string name="error_invalid_sms_keyword">Nieprawidłowe słowo kluczowe SMS</string>
-    <string name="error_invalid_group_sync">Nieprawidłowy numer</string>
+    <string name="error_invalid_group_sync">Nieprawidłowa ilość</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->
@@ -233,14 +233,14 @@
     <string name="about_maintainer_title">Twórca</string>
     <string name="about_developers_title">Deweloperzy</string>
     <string name="about_translators_title">Tłumacze</string>
-    <string name="about_translators_crowdin">Społeczność PhoneTrack na &lt;a href=\"%1$s\"&gt;Crowdin&lt;/a&gt;</string>
+    <string name="about_translators_crowdin">Społeczność PhoneTrack na &lt;a href=\"%1$s\"&gt;Crowdinie&lt;/a&gt;</string>
     <string name="about_testers_title">Testerzy</string>
     <string name="about_source_title">Kod źródłowy</string>
-    <string name="about_source">Ten projekt jest hostowany na Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
+    <string name="about_source">Ten projekt jest hostowany na Gitlabie: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
     <string name="about_issues_title">Problemy</string>
     <string name="about_issues">Możesz zgłaszać błędy, propozycje ulepszeń i prośby o funkcje w liście problemów na Gitlabie: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
     <string name="about_translate_title">Tłumaczyć</string>
-    <string name="about_translate">Dołącz do zespołu PhoneTrack na Crowdin i pomóż nam przetłumaczyć tę aplikację: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
+    <string name="about_translate">Dołącz do zespołu PhoneTrack na Crowdinie i pomóż nam przetłumaczyć tę aplikację: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
     <string name="about_app_license_title">Licencja aplikacji</string>
     <string name="about_app_license">Ta aplikacja jest na licencji GNU GENERAL PUBLIC LICENSE v3 +.</string>
     <string name="about_app_license_button">Pokaż licencję</string>
