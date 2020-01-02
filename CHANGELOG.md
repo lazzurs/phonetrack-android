@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 0.0.16 – 2020-01-03
+### Changed
+- new launcher icon background
+[!8](https://gitlab.com/eneiluj/phonetrack-android/merge_requests/8) @stefan-niedermann
+
 ## 0.0.15 – 2019-12-29
 ### Fixed
 - significant motion sensor presence check
