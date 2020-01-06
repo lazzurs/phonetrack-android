@@ -58,7 +58,6 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
-import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 
@@ -113,7 +112,7 @@ public class LoggerService extends Service {
     public static boolean DEBUG = true;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private Map<Long, SignificantMotionJobWorker> mSignificantMotionJobs;
+    private Map<Long, LogjobWorker> mLogjobWorkers;
 
     private ConnectionStateMonitor connectionMonitor;
     private BroadcastReceiver powerSaverChangeReceiver;
@@ -153,7 +152,7 @@ public class LoggerService extends Service {
         locListeners = new HashMap<>();
         logjobs = new HashMap<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mSignificantMotionJobs = new HashMap<>();
+            mLogjobWorkers = new HashMap<>();
         }
 
         List<DBLogjob> ljs = db.getLogjobs();
@@ -166,8 +165,8 @@ public class LoggerService extends Service {
                 lastUpdateRealtime.put(ljob.getId(), Long.valueOf(0));
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    SignificantMotionJobWorker jw = new SignificantMotionJobWorker(ljob, ll);
-                    mSignificantMotionJobs.put(ljob.getId(), jw);
+                    LogjobWorker jw = new LogjobWorker(ljob, ll);
+                    mLogjobWorkers.put(ljob.getId(), jw);
                 }
             }
         }
@@ -436,16 +435,16 @@ public class LoggerService extends Service {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     // Assume motion exists when beginning logging
-                    SignificantMotionJobWorker jw = new SignificantMotionJobWorker(lj, ll);
-                    mSignificantMotionJobs.put(ljId, jw);
+                    LogjobWorker jw = new LogjobWorker(lj, ll);
+                    mLogjobWorkers.put(ljId, jw);
                 }
             } else {
                 // Update listener for changed parameters
                 locListeners.get(ljId).populateFromLogjob(lj);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mSignificantMotionJobs.get(ljId).stop();
-                    mSignificantMotionJobs.get(ljId).populate(lj);
+                    mLogjobWorkers.get(ljId).stop();
+                    mLogjobWorkers.get(ljId).populate(lj);
                 }
             }
         }
@@ -460,7 +459,7 @@ public class LoggerService extends Service {
                 lastUpdateRealtime.remove(ljId);
                 logjobs.remove(ljId);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mSignificantMotionJobs.remove(ljId);
+                    mLogjobWorkers.remove(ljId);
                 }
             }
         }
@@ -482,11 +481,11 @@ public class LoggerService extends Service {
     private void stopJob(long jobId) {
         locManager.removeUpdates(locListeners.get(jobId));
 
-        // If using significant motion stop any runnables waiting for an interval
+        // stop any runnables waiting for an interval
         DBLogjob lj = db.getLogjob(jobId);
-        if (lj != null && lj.useSignificantMotion()) {
+        if (lj != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                mSignificantMotionJobs.get(jobId).stop();
+                mLogjobWorkers.get(jobId).stop();
             }
         }
     }
@@ -506,53 +505,35 @@ public class LoggerService extends Service {
         boolean hasLocationUpdates = false;
         if (canAccessLocation()) {
             if (useNet) {
-                //noinspection MissingPermission
-                if (lj.useSignificantMotion()) {
-                    // Significant motion based sampling, request single update (for now?)
-                    locManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locListener, looper);
-                } else {
-                    locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTimeMillis, minDistance, locListener, looper);
-                }
+                // normal or significant motion based sampling, request single update
+                // the worker takes care of looping
+                locManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locListener, looper);
+
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
                     if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using net provider, freq "+lj.getMinTime()+"]"); }
                 }
             }
             if (usePassive) {
-                //noinspection MissingPermission
-                if (lj.useSignificantMotion()) {
-                    // Significant motion based sampling, request single update (for now?)
-                    locManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, locListener, looper);
-                } else {
-                    locManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, minTimeMillis, minDistance, locListener, looper);
-                }
+                locManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, locListener, looper);
+
                 if (locManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
                     hasLocationUpdates = true;
                     if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using passive provider, freq "+lj.getMinTime()+"]"); }
                 }
             }
             if (useGps) {
-                //noinspection MissingPermission
-                if (lj.useSignificantMotion()) {
-                    // Significant motion based sampling, request single update (for now?)
-                    locManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locListener, looper);
-                } else {
-                    if (keepGpsOn) {
-                        minTimeMillis = 1000;
-                    }
-                    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis, minDistance, locListener, looper);
-                }
+                locManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locListener, looper);
+
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
                     if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using gps provider, freq "+(minTimeMillis/1000)+"]"); }
                 }
             }
             if (hasLocationUpdates) {
-                if (lj.useSignificantMotion()) {
-                    // If we don't get a GPS result back after a timeout, use the network result (if we have one) or reschedule
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        mSignificantMotionJobs.get(ljId).startResultTimeout();
-                    }
+                // If we don't get a GPS result back after a timeout, use the network result (if we have one) or reschedule
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    mLogjobWorkers.get(ljId).startResultTimeout();
                 }
             } else {
                 // no location provider available
@@ -809,17 +790,15 @@ public class LoggerService extends Service {
 
         @Override
         public void onLocationChanged(Location loc) {
-
-            if (DEBUG) { Log.d(TAG, "[location changed: " + logjobId + "/"+ logjob.getTitle() +" : bat : "+ battery+", " + loc + "]"); }
-
-            if (useSignificantMotion) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mSignificantMotionJobs.get(logjobId).handleLocationChange(loc);
-                }
-            } else {
-                if (!skipLocation(logjob, loc))
-                    acceptAndSyncLocation(logjobId, loc);
+            if (DEBUG) {
+                Log.d(TAG, "[location changed: " + logjobId + "/" + logjob.getTitle() + " : bat : " + battery + ", " + loc + "]");
             }
+
+            // always pass to the worker (sig motion or not)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                mLogjobWorkers.get(logjobId).handleLocationChange(loc);
+            }
+
         }
 
         /**
@@ -977,8 +956,9 @@ public class LoggerService extends Service {
         startService(syncOneDev);
     }
 
+    // this worker can be used for normal logjobs and significant motion ones
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private class SignificantMotionJobWorker extends TriggerEventListener {
+    private class LogjobWorker extends TriggerEventListener {
         private mLocationListener mLocationListener;
         private DBLogjob mLogJob;
         private long mJobId;
@@ -998,15 +978,18 @@ public class LoggerService extends Service {
 
         private long mIntervalTimeMillis;
         private boolean mUseInterval;
+        private boolean mUseSignificantMotion;
         private boolean mUseMixedMode;
         private int mLocationTimeout;
 
-        SignificantMotionJobWorker(DBLogjob logjob, mLocationListener listener) {
+        LogjobWorker(DBLogjob logjob, mLocationListener listener) {
             populate(logjob);
             mLocationListener = listener;
 
-            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+            if (mUseSignificantMotion) {
+                mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+            }
         }
 
         private void populate(DBLogjob logjob) {
@@ -1024,6 +1007,7 @@ public class LoggerService extends Service {
 
             mIntervalTimeMillis = mLogJob.getMinTime() * 1000;
             mUseInterval = mIntervalTimeMillis > 0;
+            mUseSignificantMotion = logjob.useSignificantMotion();
             mUseMixedMode = logjob.useSignificantMotionMixed();
             mLocationTimeout = mLogJob.getLocationRequestTimeout();
         }
@@ -1052,12 +1036,14 @@ public class LoggerService extends Service {
                         }
                     }
 
-                    // Clear significant motion flag for next interval
-                    mMotionDetected  = false;
+                    if (mUseSignificantMotion) {
+                        // Clear significant motion flag for next interval
+                        mMotionDetected = false;
 
-                    // Request significant motion notification
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
+                        // Request significant motion notification
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                            mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
+                        }
                     }
 
                     // Schedule sample for X seconds from last sample
@@ -1078,12 +1064,15 @@ public class LoggerService extends Service {
 
             mIntervalRunnable = new Runnable() {
                 public void run() {
-                    if (mMotionDetected || mUseMixedMode) {
-                        if (mUseMixedMode) {
-                            Log.d(TAG, "End of delay in MIXED mode, recording point regardless of motion");
+                    if (!mUseSignificantMotion || mMotionDetected || mUseMixedMode) {
+                        if (!mUseSignificantMotion) {
+                            Log.d(TAG, "End of delay in NORMAL mode, recording point");
+                        }
+                        else if (mUseMixedMode) {
+                            Log.d(TAG, "End of delay in SIGMOTION MIXED mode, recording point regardless of motion");
                         }
                         else {
-                            Log.d(TAG, "Significant motion detected during delay, recording point");
+                            Log.d(TAG, "End of delay in SIGMOTION normal mode, significant motion detected during delay, recording point");
                         }
 
                         // Assists with ensuring we don't end up with two interval sequences running for one job
@@ -1098,9 +1087,12 @@ public class LoggerService extends Service {
                 }
             };
 
-            // Ensure significant motion notifications are enabled
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-                mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
+            if (mUseSignificantMotion) {
+                // Ensure significant motion notifications are enabled
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
+                }
+            }
 
             // Create and post
             mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
@@ -1133,7 +1125,7 @@ public class LoggerService extends Service {
                 }
 
                 // respect minimum distance setting
-                if (isMinDistanceOk(loc)) {
+                if (isMinDistanceOk(loc) && isMinAccuracyOk(loc)) {
                     // Accept, store and sync location
                     lastLocation = loc;
                     acceptAndSyncLocation(mJobId, loc);
@@ -1145,15 +1137,18 @@ public class LoggerService extends Service {
                     }
                 }
                 else {
-                    Log.d(TAG, "Not enough DISTANCE (min "+mLogJob.getMinDistance()+"), we skip this location");
+                    Log.d(TAG, "Not enough DISTANCE (min "+mLogJob.getMinDistance()+
+                            ") or ACCURACY (min "+mLogJob.getMinAccuracy()+"), we skip this location");
                 }
 
-                // Clear significant motion flag for next interval
-                mMotionDetected = false;
+                if (mUseSignificantMotion) {
+                    // Clear significant motion flag for next interval
+                    mMotionDetected = false;
 
-                // Request significant motion notification
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
+                    // Request significant motion notification
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
+                    }
                 }
 
                 // If using an interval, schedule sample for X seconds from last sample
@@ -1182,6 +1177,12 @@ public class LoggerService extends Service {
                 Log.d(TAG, "Logjob minimum distance: "+minDistance);
                 return (distance >= minDistance);
             }
+        }
+
+        private boolean isMinAccuracyOk(Location loc) {
+            int minAccuracy = mLogJob.getMinAccuracy();
+            Log.d(TAG, "Accuracy of current point: "+loc.getAccuracy());
+            return (loc.getAccuracy() <= minAccuracy);
         }
 
         private void startResultTimeout() {
@@ -1215,6 +1216,7 @@ public class LoggerService extends Service {
             }
         }
 
+        // this is triggered only when significant motion mode is enabled
         @Override
         public void onTrigger(TriggerEvent event) {
             Log.d(TAG, "Significant motion seen");
@@ -1271,7 +1273,7 @@ public class LoggerService extends Service {
 
             // Request notification for next significant motion
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                mSensorManager.requestTriggerSensor(SignificantMotionJobWorker.this, mSensor);
+                mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
             }
         }
     }

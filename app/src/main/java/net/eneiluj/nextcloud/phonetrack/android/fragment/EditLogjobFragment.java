@@ -226,6 +226,8 @@ public abstract class EditLogjobFragment extends Fragment {
 
         minTimeTextInputLayout = view.findViewById(R.id.input_layout_min_time);
 
+        String timeoutVal = String.valueOf(logjob.getLocationRequestTimeout());
+        editLocationRequestTimeout.setText(timeoutVal);
         // Setup significant motion option, only show if device supports it
         if (deviceSupportsSignificantMotion()) {
             editUseSignificantMotion.setChecked(logjob.useSignificantMotion());
@@ -233,16 +235,13 @@ public abstract class EditLogjobFragment extends Fragment {
 
             editUseSignificantMotionMixed.setChecked(logjob.useSignificantMotionMixed());
 
-            String timeoutVal = String.valueOf(logjob.getLocationRequestTimeout());
-            editLocationRequestTimeout.setText(timeoutVal);
-
             updateVisiblePreferencesForSignificantMotion(logjob.useSignificantMotion());
         } else {
             Log.i(TAG, "Device doesn't support significant motion");
             editUseSignificantMotionLayout.setVisibility(View.GONE);
             editUseSignificantMotionIntervalLayout.setVisibility(View.GONE);
             editUseSignificantMotionMixedLayout.setVisibility(View.GONE);
-            editLocationRequestTimeoutLayout.setVisibility(View.GONE);
+            //editLocationRequestTimeoutLayout.setVisibility(View.GONE);
         }
 
         // EVENTS
@@ -593,7 +592,7 @@ public abstract class EditLogjobFragment extends Fragment {
         editMintimeLayout.setVisibility((!sigMotionEnabled || useInterval) ? View.VISIBLE : View.GONE);
         editUseSignificantMotionMixedLayout.setVisibility((sigMotionEnabled && useInterval) ? View.VISIBLE : View.GONE);
         editKeepGpsOnLayout.setVisibility(!sigMotionEnabled ? View.VISIBLE : View.GONE);
-        editLocationRequestTimeoutLayout.setVisibility(sigMotionEnabled ? View.VISIBLE : View.GONE);
+        //editLocationRequestTimeoutLayout.setVisibility(sigMotionEnabled ? View.VISIBLE : View.GONE);
         editUseSignificantMotionIntervalLayout.setVisibility(sigMotionEnabled ? View.VISIBLE : View.GONE);
 
         // If changing significant motion setting update default value for minimum time
