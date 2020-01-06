@@ -111,7 +111,6 @@ public class LoggerService extends Service {
     private boolean usePassive = true;
     public static boolean DEBUG = true;
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private Map<Long, LogjobWorker> mLogjobWorkers;
 
     private ConnectionStateMonitor connectionMonitor;
@@ -151,9 +150,8 @@ public class LoggerService extends Service {
         lastUpdateRealtime = new HashMap<>();
         locListeners = new HashMap<>();
         logjobs = new HashMap<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mLogjobWorkers = new HashMap<>();
-        }
+        mLogjobWorkers = new HashMap<>();
+
 
         List<DBLogjob> ljs = db.getLogjobs();
         for (DBLogjob ljob : ljs) {
@@ -164,10 +162,9 @@ public class LoggerService extends Service {
                 lastLocations.put(ljob.getId(), null);
                 lastUpdateRealtime.put(ljob.getId(), Long.valueOf(0));
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    LogjobWorker jw = new LogjobWorker(ljob, ll);
-                    mLogjobWorkers.put(ljob.getId(), jw);
-                }
+                LogjobWorker jw = new LogjobWorker(ljob, ll);
+                mLogjobWorkers.put(ljob.getId(), jw);
+
             }
         }
 
@@ -433,19 +430,16 @@ public class LoggerService extends Service {
                 lastLocations.put(ljId, null);
                 lastUpdateRealtime.put(ljId, Long.valueOf(0));
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    // Assume motion exists when beginning logging
-                    LogjobWorker jw = new LogjobWorker(lj, ll);
-                    mLogjobWorkers.put(ljId, jw);
-                }
+                // Assume motion exists when beginning logging
+                LogjobWorker jw = new LogjobWorker(lj, ll);
+                mLogjobWorkers.put(ljId, jw);
+
             } else {
                 // Update listener for changed parameters
                 locListeners.get(ljId).populateFromLogjob(lj);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mLogjobWorkers.get(ljId).stop();
-                    mLogjobWorkers.get(ljId).populate(lj);
-                }
+                mLogjobWorkers.get(ljId).stop();
+                mLogjobWorkers.get(ljId).populate(lj);
             }
         }
         // it has been deleted or disabled
@@ -458,9 +452,7 @@ public class LoggerService extends Service {
                 lastLocations.remove(ljId);
                 lastUpdateRealtime.remove(ljId);
                 logjobs.remove(ljId);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mLogjobWorkers.remove(ljId);
-                }
+                mLogjobWorkers.remove(ljId);
             }
         }
     }
@@ -484,9 +476,7 @@ public class LoggerService extends Service {
         // stop any runnables waiting for an interval
         DBLogjob lj = db.getLogjob(jobId);
         if (lj != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                mLogjobWorkers.get(jobId).stop();
-            }
+            mLogjobWorkers.get(jobId).stop();
         }
     }
 
@@ -532,9 +522,7 @@ public class LoggerService extends Service {
             }
             if (hasLocationUpdates) {
                 // If we don't get a GPS result back after a timeout, use the network result (if we have one) or reschedule
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mLogjobWorkers.get(ljId).startResultTimeout();
-                }
+                mLogjobWorkers.get(ljId).startResultTimeout();
             } else {
                 // no location provider available
                 sendBroadcast(BROADCAST_LOCATION_DISABLED);
@@ -795,10 +783,7 @@ public class LoggerService extends Service {
             }
 
             // always pass to the worker (sig motion or not)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                mLogjobWorkers.get(logjobId).handleLocationChange(loc);
-            }
-
+            mLogjobWorkers.get(logjobId).handleLocationChange(loc);
         }
 
         /**
@@ -810,12 +795,8 @@ public class LoggerService extends Service {
             // if we keep gps on, we take care of the timing between points
             if (keepGpsOn) {
                 long elapsedMillisSinceLastUpdate;
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    elapsedMillisSinceLastUpdate = SystemClock.elapsedRealtime() - lastUpdateRealtime.get(logjobId);
-                }
-                else {
-                    elapsedMillisSinceLastUpdate = (loc.getElapsedRealtimeNanos() / 1000000) - lastUpdateRealtime.get(logjobId);
-                }
+                elapsedMillisSinceLastUpdate = (loc.getElapsedRealtimeNanos() / 1000000) - lastUpdateRealtime.get(logjobId);
+
                 if (elapsedMillisSinceLastUpdate < minTimeMillis) {
                     if (DEBUG) { Log.d(TAG,"skip because "+elapsedMillisSinceLastUpdate + " < "+ minTimeMillis); }
                     return true;
@@ -940,12 +921,8 @@ public class LoggerService extends Service {
 
     private void acceptAndSyncLocation(long logjobId, Location loc) {
         lastLocations.put(logjobId, loc);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            lastUpdateRealtime.put(logjobId, SystemClock.elapsedRealtime());
-        }
-        else {
-            lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
-        }
+        lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
+
         db.addLocation(logjobId, loc, battery);
 
         sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
@@ -957,7 +934,6 @@ public class LoggerService extends Service {
     }
 
     // this worker can be used for normal logjobs and significant motion ones
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private class LogjobWorker extends TriggerEventListener {
         private mLocationListener mLocationListener;
         private DBLogjob mLogJob;
@@ -1041,9 +1017,7 @@ public class LoggerService extends Service {
                         mMotionDetected = false;
 
                         // Request significant motion notification
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                            mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
-                        }
+                        mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
                     }
 
                     // Schedule sample for X seconds from last sample
@@ -1089,9 +1063,7 @@ public class LoggerService extends Service {
 
             if (mUseSignificantMotion) {
                 // Ensure significant motion notifications are enabled
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
-                }
+                mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
             }
 
             // Create and post
@@ -1130,11 +1102,7 @@ public class LoggerService extends Service {
                     lastLocation = loc;
                     acceptAndSyncLocation(mJobId, loc);
 
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        mLastUpdateRealtime = SystemClock.elapsedRealtime();
-                    } else {
-                        mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
-                    }
+                    mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
                 }
                 else {
                     Log.d(TAG, "Not enough DISTANCE (min "+mLogJob.getMinDistance()+
@@ -1146,9 +1114,7 @@ public class LoggerService extends Service {
                     mMotionDetected = false;
 
                     // Request significant motion notification
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
-                    }
+                    mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
                 }
 
                 // If using an interval, schedule sample for X seconds from last sample
@@ -1272,9 +1238,7 @@ public class LoggerService extends Service {
             }
 
             // Request notification for next significant motion
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
-            }
+            mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
         }
     }
 }

@@ -631,9 +631,6 @@ public abstract class EditLogjobFragment extends Fragment {
      * Verify if the device supports the significant motion sensor
      */
     private boolean deviceSupportsSignificantMotion() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
-            return false;
-
         SensorManager sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         return sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION) != null;
     }
