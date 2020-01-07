@@ -1020,9 +1020,11 @@ public class LoggerService extends Service {
                         mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
                     }
 
-                    // Schedule sample for X seconds from last sample
+                    // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
-                        scheduleSampleAfterInterval(mIntervalTimeMillis);
+                        long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000);
+                        Log.d(TAG, "Schedule next sample in "+(timeToWait / 1000)+"s");
+                        scheduleSampleAfterInterval(timeToWait);
                     }
                 }
             };
