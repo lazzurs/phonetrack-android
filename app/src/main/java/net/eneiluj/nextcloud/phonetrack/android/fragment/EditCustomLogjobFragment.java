@@ -252,7 +252,7 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                 minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
             }
         }
-        if (getUseSignificantMotion() && getLocationRequestTimeout() < 0) {
+        if (getLocationRequestTimeout() < 0 || getLocationRequestTimeout() >= getMintime()) {
             editLocationTimeoutHint.setBackgroundColor(0x55FF0000);
             valid = false;
         }
