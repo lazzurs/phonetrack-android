@@ -494,6 +494,7 @@ public class LoggerService extends Service {
         mLocationListener locListener = locListeners.get(ljId);
         boolean hasLocationUpdates = false;
         if (canAccessLocation()) {
+            mLogjobWorkers.get(ljId).updateLastAcquisitionStart();
             if (useNet) {
                 // normal or significant motion based sampling, request single update
                 // the worker takes care of looping
@@ -957,6 +958,7 @@ public class LoggerService extends Service {
         private boolean mUseSignificantMotion;
         private boolean mUseMixedMode;
         private int mLocationTimeout;
+        private long lastAcquisitionStartTimestamp;
 
         LogjobWorker(DBLogjob logjob, mLocationListener listener) {
             populate(logjob);
@@ -974,6 +976,7 @@ public class LoggerService extends Service {
             lastLocation = null;
 
             mLastUpdateRealtime = Long.valueOf(0);
+            lastAcquisitionStartTimestamp = System.currentTimeMillis()/1000;
 
             mIntervalHandler = null;
             mIntervalRunnable = null;
@@ -1121,7 +1124,16 @@ public class LoggerService extends Service {
 
                 // If using an interval, schedule sample for X seconds from last sample
                 if (mUseInterval) {
-                    scheduleSampleAfterInterval(mLogJob.getMinTime() * 1000);
+                    long timeToWaitSecond = mLogJob.getMinTime();
+                    if (!mUseSignificantMotion) {
+                        // how much time did it take to get current position?
+                        long cTs = System.currentTimeMillis()/1000;
+                        long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
+                        timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
+                        Log.d(TAG, "As we spent "+timeSpentSearching+"s to search position, "+
+                                "we now wait "+timeToWaitSecond+"s before getting a new one");
+                    }
+                    scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
             } else {
                 Log.d(TAG, "Network location returned first, caching");
@@ -1151,6 +1163,11 @@ public class LoggerService extends Service {
             int minAccuracy = mLogJob.getMinAccuracy();
             Log.d(TAG, "Accuracy of current point: "+loc.getAccuracy());
             return (loc.getAccuracy() <= minAccuracy);
+        }
+
+        public void updateLastAcquisitionStart() {
+            // store time when position acquisition was launched
+            lastAcquisitionStartTimestamp = System.currentTimeMillis()/1000;
         }
 
         private void startResultTimeout() {
