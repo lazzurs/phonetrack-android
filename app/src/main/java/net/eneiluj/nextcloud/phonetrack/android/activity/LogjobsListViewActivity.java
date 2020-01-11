@@ -39,10 +39,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -1535,14 +1537,51 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED:
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
                     showToast(errorMessage, Toast.LENGTH_LONG);
+
+                    // show sessions sync success toast
+                    LayoutInflater inflater1 = getLayoutInflater();
+                    View layout1 = inflater1.inflate(R.layout.sync_success_toast,
+                            (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                    LinearLayout ll1 = layout1.findViewById(R.id.custom_toast_container);
+                    ll1.setBackgroundColor(Color.TRANSPARENT);
+                    TextView text1 = (TextView) layout1.findViewById(R.id.text);
+                    text1.setText("");
+                    ImageView im1 = layout1.findViewById(R.id.toast_icon);
+                    im1.setImageResource(R.drawable.ic_error_white_24dp);
+
+                    Toast toast1 = new Toast(getApplicationContext());
+                    toast1.setGravity(Gravity.TOP | Gravity.LEFT, 75, 18);
+                    toast1.setDuration(Toast.LENGTH_SHORT);
+                    toast1.setView(layout1);
+                    toast1.show();
+
                     updateAllLogjobItems();
                     break;
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED:
-                    showToast(getString(R.string.sessions_sync_success));
+                    //showToast(getString(R.string.sessions_sync_success));
                     if (ssoSnackbar != null) {
                         ssoSnackbar.dismiss();
                         ssoSnackbar = null;
                     }
+                    // show sessions sync success toast
+                    LayoutInflater inflater2 = getLayoutInflater();
+                    View layout2 = inflater2.inflate(R.layout.sync_success_toast,
+                            (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                    LinearLayout ll2 = layout2.findViewById(R.id.custom_toast_container);
+                    ll2.setBackgroundColor(Color.TRANSPARENT);
+                    TextView text2 = (TextView) layout2.findViewById(R.id.text);
+                    text2.setText("");
+                    ImageView im2 = layout2.findViewById(R.id.toast_icon);
+                    im2.setImageResource(R.drawable.ic_nextcloud_logo_white);
+
+                    Toast toast2 = new Toast(getApplicationContext());
+                    toast2.setGravity(Gravity.TOP | Gravity.LEFT, 75, 28);
+                    toast2.setDuration(Toast.LENGTH_SHORT);
+                    toast2.setView(layout2);
+                    toast2.show();
+
                     updateAllLogjobItems();
                     break;
                 case SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH:
