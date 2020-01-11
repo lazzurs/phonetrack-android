@@ -81,7 +81,7 @@ public class PhoneTrackClientUtil {
      */
     public static LoginStatus isValidLogin(CustomCertManager ccm, String url, String username, String password) {
         try {
-            String targetURL = url + "index.php/apps/phonetrack/api/ping";
+            String targetURL = url + "index.php/apps/files/";
             HttpURLConnection con = SupportUtil.getHttpURLConnection(ccm, targetURL);
             con.setRequestMethod("GET");
             con.setRequestProperty(
@@ -102,7 +102,6 @@ public class PhoneTrackClientUtil {
                     result.append(line);
                 }
                 Log.v(PhoneTrackClientUtil.class.getSimpleName(), result.toString());
-                new JSONArray(result.toString());
                 return LoginStatus.OK;
             } else if (con.getResponseCode() >= 401 && con.getResponseCode() <= 403) {
                 return LoginStatus.AUTH_FAILED;
@@ -115,9 +114,6 @@ public class PhoneTrackClientUtil {
         } catch (IOException e) {
             Log.e(PhoneTrackClientUtil.class.getSimpleName(), "Exception", e);
             return LoginStatus.CONNECTION_FAILED;
-        } catch (JSONException e) {
-            Log.e(PhoneTrackClientUtil.class.getSimpleName(), "Exception", e);
-            return LoginStatus.JSON_FAILED;
         }
     }
 
