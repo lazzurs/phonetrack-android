@@ -123,7 +123,12 @@
     <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
     <string name="sms_logjob_created">A logjob with %d seconds frequency has been created in session %s</string>
     <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
-    <string name="sms_failure_sms">Failed to get position after %d seconds</string>
+    <string name="sms_failure_timeout_sms">Failed to get position after %d seconds</string>
+    <string name="sms_failure_timeout_notification">After a %1$d sec timeout, an error message has been sent by SMS to %2$s</string>
+    <string name="sms_failure_permission_sms">PhoneTrack failed to get location permission</string>
+    <string name="sms_failure_permission_notification">Because PhoneTrack didn\'t get location permission, an error message has been sent by SMS to %1$s</string>
+    <string name="sms_failure_provider_sms">Failed to get position because GPS service is disabled</string>
+    <string name="sms_failure_provider_notification">Because GPS service is disabled, an error message has been sent by SMS to %1$s</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
     <string name="homescreen_map_shortcut_long_title">Map for %s</string>

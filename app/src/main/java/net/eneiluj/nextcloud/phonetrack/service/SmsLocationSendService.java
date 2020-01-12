@@ -1,9 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.service;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.Application;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,11 +11,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -26,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.telephony.SmsManager;
@@ -35,37 +29,15 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.NoRouteToHostException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
-import net.eneiluj.nextcloud.phonetrack.android.activity.MapActivity;
-import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
-import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
-import net.eneiluj.nextcloud.phonetrack.persistence.WebTrackHelper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import at.bitfire.cert4android.CustomCertManager;
-
-import static android.app.PendingIntent.FLAG_ONE_SHOT;
 import static android.app.PendingIntent.getActivity;
 import static android.location.LocationProvider.AVAILABLE;
 import static android.location.LocationProvider.OUT_OF_SERVICE;
@@ -88,6 +60,7 @@ public class SmsLocationSendService extends IntentService {
     private int c = 0;
 
     private String from;
+    private String fromNotification;
 
     private static int CHANNEL_ID = 11111;
     private static int NOTIFICATION_ID = 1526756641;
@@ -122,6 +95,7 @@ public class SmsLocationSendService extends IntentService {
         }
 
         from = intent.getStringExtra("from");
+        fromNotification = getContactNameForNotification(from);
 
         isRunning.put(from, true);
 
@@ -144,9 +118,11 @@ public class SmsLocationSendService extends IntentService {
             }
             else {
                 Log.d("Location", "GPS is disabled, impossible to get position to send SMS");
+                sendSmsNoProviderFailure();
             }
         } else {
             Log.d("Location", "no permission to access GPS location");
+            sendSmsPermissionFailure();
         }
 
     }
@@ -156,17 +132,47 @@ public class SmsLocationSendService extends IntentService {
             public void run() {
                 Log.d(TAG, "SMS sampling timeout hit");
                 locManager.removeUpdates(ll);
-                sendFailure();
+                sendSmsTimeout();
             }
         };
+        if (LoggerService.DEBUG) { Log.d(TAG, "[sms] launch timeout"); }
+        if (mTimeoutHandler == null)
+            mTimeoutHandler = new Handler();
         mTimeoutHandler.postDelayed(mTimeoutRunnable, nbSec * 1000);
     }
 
-    private void sendFailure() {
+    private void sendSmsTimeout() {
         SmsManager smsManager = SmsManager.getDefault();
-        String smsFailureContent = getString(R.string.sms_failure_sms, TIMEOUT_SECONDS);
+        String smsFailureContent = getString(R.string.sms_failure_timeout_sms, TIMEOUT_SECONDS);
         smsManager.sendTextMessage(from, null, smsFailureContent, null, null);
-        notifySmsWasSent(from, smsFailureContent, true);
+        String notificationContent = getString(
+                R.string.sms_failure_timeout_notification,
+                TIMEOUT_SECONDS,
+                fromNotification
+        );
+        notifySmsWasSent(smsFailureContent, notificationContent);
+    }
+
+    private void sendSmsPermissionFailure() {
+        SmsManager smsManager = SmsManager.getDefault();
+        String smsFailureContent = getString(R.string.sms_failure_permission_sms);
+        smsManager.sendTextMessage(from, null, smsFailureContent, null, null);
+        String notificationContent = getString(
+                R.string.sms_failure_permission_notification,
+                fromNotification
+        );
+        notifySmsWasSent(smsFailureContent, notificationContent);
+    }
+
+    private void sendSmsNoProviderFailure() {
+        SmsManager smsManager = SmsManager.getDefault();
+        String smsFailureContent = getString(R.string.sms_failure_provider_sms);
+        smsManager.sendTextMessage(from, null, smsFailureContent, null, null);
+        String notificationContent = getString(
+                R.string.sms_failure_provider_notification,
+                fromNotification
+        );
+        notifySmsWasSent(smsFailureContent, notificationContent);
     }
 
     private void send(Location location) {
@@ -232,7 +238,8 @@ public class SmsLocationSendService extends IntentService {
                 public void run() {
                     Log.d("Location2", "SMS content 2 '" + smsContent2f + "' length:" + smsContent2f.length());
                     smsManager.sendTextMessage(from, null, smsContent2f, null, null);
-                    notifySmsWasSent(from, smsContent1f + "\n" + smsContent2f, false);
+                    String notificationContent = getString(R.string.sms_position_notification, fromNotification);
+                    notifySmsWasSent(smsContent1f + "\n" + smsContent2f, fromNotification);
                 }
             }, 1000);
         } else {
@@ -241,31 +248,13 @@ public class SmsLocationSendService extends IntentService {
 
     }
 
-    public void notifySmsWasSent(String from, String smsContent, boolean failed) {
-        String notificationFrom = from;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED
-        ) {
-            String contactName = getContactDisplayNameByNumber(from);
-            if (!contactName.equals("?")) {
-                notificationFrom = contactName;
-            }
-        }
-
+    public void notifySmsWasSent(String smsContent, String notificationContent) {
         // intent of notification
         Intent ptIntent = new Intent(getApplicationContext(), LogjobsListViewActivity.class);
         ptIntent.putExtra(LogjobsListViewActivity.PARAM_SMSINFO_CONTENT, smsContent);
-        ptIntent.putExtra(LogjobsListViewActivity.PARAM_SMSINFO_FROM, notificationFrom);
+        ptIntent.putExtra(LogjobsListViewActivity.PARAM_SMSINFO_FROM, fromNotification);
 
         createNotificationChannel();
-
-        String notificationContent;
-        if (failed) {
-            notificationContent = getString(R.string.sms_failure_sms, TIMEOUT_SECONDS);
-        }
-        else {
-            notificationContent = getString(R.string.sms_position_notification, notificationFrom);
-        }
 
         String chanId = String.valueOf(CHANNEL_ID);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanId)
@@ -299,6 +288,19 @@ public class SmsLocationSendService extends IntentService {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    public String getContactNameForNotification(String number) {
+        String result = number;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED
+        ) {
+            String contactName = getContactDisplayNameByNumber(from);
+            if (!contactName.equals("?")) {
+                result = contactName;
+            }
+        }
+        return result;
     }
 
     public String getContactDisplayNameByNumber(String number) {
