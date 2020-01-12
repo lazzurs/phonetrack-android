@@ -197,12 +197,18 @@ public class SmsLocationSendService extends IntentService {
             if (locAllowed) {
                 //locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
                 locManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, ll, looper);
-                launchTimeout(TIMEOUT_SECONDS);
             }
             return;
         }
 
+        // from here we accept the location
+        // so we clean location manager and timeout
         locManager.removeUpdates(ll);
+        // Cancel timeout runnable
+        if (mTimeoutHandler != null) {
+            mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
+            mTimeoutRunnable = null;
+        }
 
         Log.d("Location", "my location is " + location.toString());
         Log.d("Location", "send sms to " + from);
@@ -346,11 +352,6 @@ public class SmsLocationSendService extends IntentService {
 
         @Override
         public void onLocationChanged(Location loc) {
-            // Cancel timeout runnable
-            if (mTimeoutHandler != null) {
-                mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
-                mTimeoutRunnable = null;
-            }
             send(loc);
         }
 
