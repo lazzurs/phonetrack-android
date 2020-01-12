@@ -970,11 +970,11 @@ public class LoggerService extends Service {
         LogjobWorker(DBLogjob logjob, mLocationListener listener) {
             populate(logjob);
             mLocationListener = listener;
-
-            if (mUseSignificantMotion) {
-                mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
-            }
+            // get this sensor anyway
+            // it can be null but we're not gonna use it
+            // it's potentially useless now but a change in logjob settings might lead to using it
+            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
         }
 
         private void populate(DBLogjob logjob) {
