@@ -174,7 +174,7 @@ public class LoggerService extends Service {
         int nbEnabled = 0;
         for (DBLogjob lj : ljs) {
             if (lj.isEnabled()) {
-                requestLocationUpdates(lj.getId());
+                requestLocationUpdates(lj.getId(), true);
                 nbEnabled++;
             }
         }
@@ -280,7 +280,7 @@ public class LoggerService extends Service {
                 String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
                 updatePreferences(providersValue);
                 for (long ljId : logjobs.keySet()) {
-                    requestLocationUpdates(ljId);
+                    restartUpdates(ljId);
                 }
             } else if (updateNotif && isRunning) {
                 updateNotificationContent();
@@ -312,7 +312,7 @@ public class LoggerService extends Service {
                 }
                 // it was created
                 else {
-                    requestLocationUpdates(ljId);
+                    requestLocationUpdates(ljId, true);
                 }
             }
         }
@@ -467,7 +467,7 @@ public class LoggerService extends Service {
 
         stopJob(jobId);
 
-        return requestLocationUpdates(jobId);
+        return requestLocationUpdates(jobId, true);
     }
 
     private void stopJob(long jobId) {
@@ -485,7 +485,7 @@ public class LoggerService extends Service {
      * @return True if succeeded from at least one provider
      */
     @SuppressWarnings({"MissingPermission"})
-    private boolean requestLocationUpdates(long ljId) {
+    private boolean requestLocationUpdates(long ljId, boolean startTimeout) {
         // here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
         int minTimeMillis = lj.getMinTime() * 1000;
@@ -494,7 +494,12 @@ public class LoggerService extends Service {
         mLocationListener locListener = locListeners.get(ljId);
         boolean hasLocationUpdates = false;
         if (canAccessLocation()) {
-            mLogjobWorkers.get(ljId).updateLastAcquisitionStart();
+            // update last acquisition start time only if we know
+            // we are not in an "accuracy improvement" loop
+            // in other words: if we start a timeout
+            if (startTimeout) {
+                mLogjobWorkers.get(ljId).updateLastAcquisitionStart();
+            }
             if (useNet) {
                 // normal or significant motion based sampling, request single update
                 // the worker takes care of looping
@@ -522,8 +527,10 @@ public class LoggerService extends Service {
                 }
             }
             if (hasLocationUpdates) {
-                // If we don't get a GPS result back after a timeout, use the network result (if we have one) or reschedule
-                mLogjobWorkers.get(ljId).startResultTimeout();
+                // start timeout only if we're not in an "accuracy improvement" loop
+                if (startTimeout) {
+                    mLogjobWorkers.get(ljId).startResultTimeout();
+                }
             } else {
                 // no location provider available
                 sendBroadcast(BROADCAST_LOCATION_DISABLED);
@@ -1057,7 +1064,7 @@ public class LoggerService extends Service {
                         // Assists with ensuring we don't end up with two interval sequences running for one job
                         mIntervalRunnable = null;
 
-                        requestLocationUpdates(mJobId);
+                        requestLocationUpdates(mJobId, true);
                     } else {
                         Log.d(TAG, "No significant motion, not recording point");
 
@@ -1083,12 +1090,6 @@ public class LoggerService extends Service {
                 // Got GPS result, accept
                 Log.d(TAG, "Got position result, immediately accepting");
 
-                // Cancel timeout runnable
-                if (mTimeoutHandler != null) {
-                    mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
-                    mTimeoutRunnable = null;
-                }
-
                 // Remove any cached network result or disable update
                 if (mCachedNetworkResult == null) {
                     if (useNet
@@ -1101,8 +1102,10 @@ public class LoggerService extends Service {
                     mCachedNetworkResult = null;
                 }
 
-                // respect minimum distance setting
-                if (isMinDistanceOk(loc) && isMinAccuracyOk(loc)) {
+                // respect minimum distance/accuracy settings
+                boolean minDistanceOk = isMinDistanceOk(loc);
+                boolean minAccuracyOk = isMinAccuracyOk(loc);
+                if (minDistanceOk && minAccuracyOk) {
                     // Accept, store and sync location
                     lastLocation = loc;
                     acceptAndSyncLocation(mJobId, loc);
@@ -1114,6 +1117,17 @@ public class LoggerService extends Service {
                             ") or ACCURACY (min "+mLogJob.getMinAccuracy()+"), we skip this location");
                 }
 
+                // we stop the timeout only if there was no accuracy problem
+                // if there was an accuracy problem, we will launch a position request again,
+                // staying in same timeout
+                if (minAccuracyOk) {
+                    // Cancel timeout runnable
+                    if (mTimeoutHandler != null) {
+                        mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
+                        mTimeoutRunnable = null;
+                    }
+                }
+
                 if (mUseSignificantMotion) {
                     // Clear significant motion flag for next interval
                     mMotionDetected = false;
@@ -1122,18 +1136,26 @@ public class LoggerService extends Service {
                     mSensorManager.requestTriggerSensor(LogjobWorker.this, mSensor);
                 }
 
-                // If using an interval, schedule sample for X seconds from last sample
+                // If using an interval and NO accuracy problem, schedule sample for X seconds from last sample
                 if (mUseInterval) {
-                    long timeToWaitSecond = mLogJob.getMinTime();
-                    if (!mUseSignificantMotion) {
-                        // how much time did it take to get current position?
-                        long cTs = System.currentTimeMillis()/1000;
-                        long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
-                        timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
-                        Log.d(TAG, "As we spent "+timeSpentSearching+"s to search position, "+
-                                "we now wait "+timeToWaitSecond+"s before getting a new one");
+                    if (minAccuracyOk) {
+                        long timeToWaitSecond = mLogJob.getMinTime();
+                        if (!mUseSignificantMotion) {
+                            // how much time did it take to get current position?
+                            long cTs = System.currentTimeMillis() / 1000;
+                            long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
+                            timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
+                            Log.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
+                                    "we now wait " + timeToWaitSecond + "s before getting a new one");
+                        }
+                        scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                     }
-                    scheduleSampleAfterInterval(timeToWaitSecond * 1000);
+                    // if there was an accuracy problem, just request position again, staying in same timeout
+                    else {
+                        Log.d(TAG, "ACCURACY is not good enough, launch location REQUEST again, staying in same timeout");
+                        // except this request does not start a timeout
+                        requestLocationUpdates(mJobId, false);
+                    }
                 }
             } else {
                 Log.d(TAG, "Network location returned first, caching");
@@ -1233,7 +1255,7 @@ public class LoggerService extends Service {
                     }
 
                     if (requestUpdates) {
-                        requestLocationUpdates(mJobId);
+                        requestLocationUpdates(mJobId, true);
                     }
                 }
             }
@@ -1253,7 +1275,7 @@ public class LoggerService extends Service {
                     mIntervalRunnable = null;
                 }
 
-                requestLocationUpdates(mJobId);
+                requestLocationUpdates(mJobId, true);
             }
 
             // Request notification for next significant motion
