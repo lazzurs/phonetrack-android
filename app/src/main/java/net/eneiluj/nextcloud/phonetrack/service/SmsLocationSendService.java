@@ -64,7 +64,7 @@ public class SmsLocationSendService extends IntentService {
 
     private static int CHANNEL_ID = 11111;
     private static int NOTIFICATION_ID = 1526756641;
-    private static int TIMEOUT_SECONDS = 120;
+    private static int TIMEOUT_SECONDS = 20;
 
     private Runnable mTimeoutRunnable;
     private Handler mTimeoutHandler;
@@ -83,6 +83,7 @@ public class SmsLocationSendService extends IntentService {
         thread = new SmsLocationSendService.LocationThread();
         thread.start();
         looper = thread.getLooper();
+        mTimeoutHandler = new Handler(looper);
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
@@ -136,8 +137,6 @@ public class SmsLocationSendService extends IntentService {
             }
         };
         if (LoggerService.DEBUG) { Log.d(TAG, "[sms] launch timeout"); }
-        if (mTimeoutHandler == null)
-            mTimeoutHandler = new Handler();
         mTimeoutHandler.postDelayed(mTimeoutRunnable, nbSec * 1000);
     }
 
@@ -239,7 +238,7 @@ public class SmsLocationSendService extends IntentService {
                     Log.d("Location2", "SMS content 2 '" + smsContent2f + "' length:" + smsContent2f.length());
                     smsManager.sendTextMessage(from, null, smsContent2f, null, null);
                     String notificationContent = getString(R.string.sms_position_notification, fromNotification);
-                    notifySmsWasSent(smsContent1f + "\n" + smsContent2f, fromNotification);
+                    notifySmsWasSent(smsContent1f + "\n" + smsContent2f, notificationContent);
                 }
             }, 1000);
         } else {
