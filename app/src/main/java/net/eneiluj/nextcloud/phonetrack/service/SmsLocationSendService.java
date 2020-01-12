@@ -91,6 +91,10 @@ public class SmsLocationSendService extends IntentService {
 
     private static int CHANNEL_ID = 11111;
     private static int NOTIFICATION_ID = 1526756641;
+    private static int TIMEOUT_SECONDS = 120;
+
+    private Runnable mTimeoutRunnable;
+    private Handler mTimeoutHandler;
 
     public SmsLocationSendService() {
         super("SmsLocationSendService");
@@ -134,7 +138,9 @@ public class SmsLocationSendService extends IntentService {
         }
         if (locAllowed) {
             if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
+                //locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
+                locManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, ll, looper);
+                launchTimeout(TIMEOUT_SECONDS);
             }
             else {
                 Log.d("Location", "GPS is disabled, impossible to get position to send SMS");
@@ -143,6 +149,24 @@ public class SmsLocationSendService extends IntentService {
             Log.d("Location", "no permission to access GPS location");
         }
 
+    }
+
+    private void launchTimeout(long nbSec) {
+        mTimeoutRunnable = new Runnable() {
+            public void run() {
+                Log.d(TAG, "SMS sampling timeout hit");
+                locManager.removeUpdates(ll);
+                sendFailure();
+            }
+        };
+        mTimeoutHandler.postDelayed(mTimeoutRunnable, nbSec * 1000);
+    }
+
+    private void sendFailure() {
+        SmsManager smsManager = SmsManager.getDefault();
+        String smsFailureContent = getString(R.string.sms_failure_sms, TIMEOUT_SECONDS);
+        smsManager.sendTextMessage(from, null, smsFailureContent, null, null);
+        notifySmsWasSent(from, smsFailureContent, true);
     }
 
     private void send(Location location) {
@@ -163,7 +187,9 @@ public class SmsLocationSendService extends IntentService {
                         && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
             }
             if (locAllowed) {
-                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
+                //locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, ll, looper);
+                locManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, ll, looper);
+                launchTimeout(TIMEOUT_SECONDS);
             }
             return;
         }
@@ -197,7 +223,7 @@ public class SmsLocationSendService extends IntentService {
         ) {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(from, null, smsContent1, null, null);
-            // delay second and third SMS sending
+            // delay second SMS sending
             final String smsContent1f = smsContent1;
             final String smsContent2f = smsContent2;
             Handler handler2 = new Handler();
@@ -206,7 +232,7 @@ public class SmsLocationSendService extends IntentService {
                 public void run() {
                     Log.d("Location2", "SMS content 2 '" + smsContent2f + "' length:" + smsContent2f.length());
                     smsManager.sendTextMessage(from, null, smsContent2f, null, null);
-                    notifySmsWasSent(from, smsContent1f + "\n" + smsContent2f);
+                    notifySmsWasSent(from, smsContent1f + "\n" + smsContent2f, false);
                 }
             }, 1000);
         } else {
@@ -215,7 +241,7 @@ public class SmsLocationSendService extends IntentService {
 
     }
 
-    public void notifySmsWasSent(String from, String smsContent) {
+    public void notifySmsWasSent(String from, String smsContent, boolean failed) {
         String notificationFrom = from;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED
@@ -233,11 +259,19 @@ public class SmsLocationSendService extends IntentService {
 
         createNotificationChannel();
 
+        String notificationContent;
+        if (failed) {
+            notificationContent = getString(R.string.sms_failure_sms, TIMEOUT_SECONDS);
+        }
+        else {
+            notificationContent = getString(R.string.sms_position_notification, notificationFrom);
+        }
+
         String chanId = String.valueOf(CHANNEL_ID);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanId)
                 .setSmallIcon(R.drawable.ic_notify_24dp)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.sms_position_notification, notificationFrom))
+                .setContentText(notificationContent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
                 .setContentIntent(PendingIntent.getActivity(this, 1, ptIntent, PendingIntent.FLAG_CANCEL_CURRENT))
@@ -308,6 +342,11 @@ public class SmsLocationSendService extends IntentService {
 
         @Override
         public void onLocationChanged(Location loc) {
+            // Cancel timeout runnable
+            if (mTimeoutHandler != null) {
+                mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
+                mTimeoutRunnable = null;
+            }
             send(loc);
         }
 
