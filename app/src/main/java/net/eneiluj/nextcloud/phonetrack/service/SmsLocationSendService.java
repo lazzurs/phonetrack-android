@@ -64,7 +64,7 @@ public class SmsLocationSendService extends IntentService {
 
     private static int CHANNEL_ID = 11111;
     private static int NOTIFICATION_ID = 1526756641;
-    private static int TIMEOUT_SECONDS = 20;
+    private static int TIMEOUT_SECONDS = 120;
 
     private Runnable mTimeoutRunnable;
     private Handler mTimeoutHandler;
@@ -120,10 +120,12 @@ public class SmsLocationSendService extends IntentService {
             else {
                 Log.d("Location", "GPS is disabled, impossible to get position to send SMS");
                 sendSmsNoProviderFailure();
+                isRunning.put(from, false);
             }
         } else {
             Log.d("Location", "no permission to access GPS location");
             sendSmsPermissionFailure();
+            isRunning.put(from, false);
         }
 
     }
@@ -134,6 +136,7 @@ public class SmsLocationSendService extends IntentService {
                 Log.d(TAG, "SMS sampling timeout hit");
                 locManager.removeUpdates(ll);
                 sendSmsTimeout();
+                isRunning.put(from, false);
             }
         };
         if (LoggerService.DEBUG) { Log.d(TAG, "[sms] launch timeout"); }
@@ -239,6 +242,7 @@ public class SmsLocationSendService extends IntentService {
                     smsManager.sendTextMessage(from, null, smsContent2f, null, null);
                     String notificationContent = getString(R.string.sms_position_notification, fromNotification);
                     notifySmsWasSent(smsContent1f + "\n" + smsContent2f, notificationContent);
+                    isRunning.put(from, false);
                 }
             }, 1000);
         } else {
@@ -331,8 +335,7 @@ public class SmsLocationSendService extends IntentService {
      */
     @Override
     public void onDestroy() {
-        if (LoggerService.DEBUG) { Log.d(TAG, "[send sms stop]"); }
-        isRunning.put(from, false);
+        if (LoggerService.DEBUG) { Log.d(TAG, "[send sms service stop]"); }
         super.onDestroy();
     }
 
