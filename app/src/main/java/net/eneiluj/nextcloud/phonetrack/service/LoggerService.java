@@ -1145,7 +1145,11 @@ public class LoggerService extends Service {
                             long cTs = System.currentTimeMillis() / 1000;
                             long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
                             timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
+                            if (timeToWaitSecond < 0) {
+                                timeToWaitSecond = 0;
+                            }
                             Log.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
+                                    "with interval="+mLogJob.getMinTime()+", "+
                                     "we now wait " + timeToWaitSecond + "s before getting a new one");
                         }
                         scheduleSampleAfterInterval(timeToWaitSecond * 1000);
