@@ -118,7 +118,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         });
 
         // manage session list
-        sessionList = db.getSessionsNotShared();
+        sessionList = db.getSessions();
         sessionNameList = new ArrayList<>();
         sessionIdList = new ArrayList<>();
         for (DBSession session : sessionList) {
