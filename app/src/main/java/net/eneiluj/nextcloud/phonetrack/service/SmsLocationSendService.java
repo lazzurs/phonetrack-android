@@ -158,6 +158,8 @@ public class SmsLocationSendService extends IntentService {
     private void sendSmsPermissionFailure() {
         SmsManager smsManager = SmsManager.getDefault();
         String smsFailureContent = getString(R.string.sms_failure_permission_sms);
+        double battery = getBatteryLevelOnce();
+        smsFailureContent += "\n\n* "+getString(R.string.popup_battery_value, battery);
         smsManager.sendTextMessage(from, null, smsFailureContent, null, null);
         String notificationContent = getString(
                 R.string.sms_failure_permission_notification,
@@ -169,6 +171,8 @@ public class SmsLocationSendService extends IntentService {
     private void sendSmsNoProviderFailure() {
         SmsManager smsManager = SmsManager.getDefault();
         String smsFailureContent = getString(R.string.sms_failure_provider_sms);
+        double battery = getBatteryLevelOnce();
+        smsFailureContent += "\n\n* "+getString(R.string.popup_battery_value, battery);
         smsManager.sendTextMessage(from, null, smsFailureContent, null, null);
         String notificationContent = getString(
                 R.string.sms_failure_provider_notification,
