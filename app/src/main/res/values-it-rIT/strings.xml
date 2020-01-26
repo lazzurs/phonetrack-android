@@ -171,7 +171,7 @@
     <string name="settings_sms_category">Sms</string>
     <string name="settings_theming_category">In tema</string>
     <string name="settings_group_sync_title">Invia punti per gruppo di almeno</string>
-    <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
+    <string name="settings_group_sync_long">Attendi fino a quando non ci saranno almeno N punti per inviarli al server. Questo ti farà utilizzare meno dati di rete, ma i punti non saranno inviati sempre in tempo reale.</string>
     <string name="settings_saving_category">Risparmio batteria/dati</string>
     <string name="settings_power_saving_awareness_title">Rispetta lo stato della modalità di risparmio energetico</string>
     <string name="settings_power_saving_awareness_subtitle">Blocca il registro degli eventi quando la modalità risparmio energetico è attiva</string>
