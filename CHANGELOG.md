@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.0.17 – 2020-01-26
+### Added
+
+### Changed
+- rewrote logger service to radically improve battery life by making it possible to add timeouts
+[#132](https://gitlab.com/eneiluj/phonetrack-android/issues/132) @sserkez @Simon\_Garfunkel @Shamp0o @larsfp
+- min Android version 4.1 => 4.3
+- big improvements around SMSs (timeouts, error responses)
+- allow to use and log to session shared with 'me'
+[#103](https://gitlab.com/eneiluj/phonetrack-android/issues/103) @markussvn
+
+### Fixed
+- now possible to log in if PhoneTrack is not installed on Nextcloud instance
+[#160](https://gitlab.com/eneiluj/phonetrack-android/issues/160) @ghost1
+- multiple sms listeners running for same sender
+- URL validator in settings
+[#166](https://gitlab.com/eneiluj/phonetrack-android/issues/166) @huste
 
 ## 0.0.16 – 2020-01-03
 ### Changed
