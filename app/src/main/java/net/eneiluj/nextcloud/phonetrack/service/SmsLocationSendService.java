@@ -146,6 +146,8 @@ public class SmsLocationSendService extends IntentService {
     private void sendSmsTimeout() {
         SmsManager smsManager = SmsManager.getDefault();
         String smsFailureContent = getString(R.string.sms_failure_timeout_sms, TIMEOUT_SECONDS);
+        double battery = getBatteryLevelOnce();
+        smsFailureContent += "\n\n* "+getString(R.string.popup_battery_value, battery);
         smsManager.sendTextMessage(from, null, smsFailureContent, null, null);
         String notificationContent = getString(
                 R.string.sms_failure_timeout_notification,
