@@ -458,6 +458,9 @@ public class SessionServerSyncHelper {
                 if (status != LoginStatus.JSON_FAILED) {
                     intent.putExtra(LoggerService.BROADCAST_ERROR_MESSAGE, errorString);
                 }
+                else {
+                    Log.e(TAG, "Error while retrieving sessions: "+errorString);
+                }
                 appContext.sendBroadcast(intent);
                 if (status == LoginStatus.SSO_TOKEN_MISMATCH) {
                     Intent intent2 = new Intent(BROADCAST_SSO_TOKEN_MISMATCH);
