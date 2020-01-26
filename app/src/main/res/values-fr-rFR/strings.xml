@@ -122,6 +122,12 @@
     <string name="sms_logjobs_stopped">%d logjobs ont été stoppés</string>
     <string name="sms_logjob_created">Un logjob d\'une fréquence de %d secondes a été créé dans la session %s</string>
     <string name="sms_logjob_creation_impossible">Impossible de créer un logjob, aucune session trouvée</string>
+    <string name="sms_failure_timeout_sms">PhoneTrack n\'a pas pu obtenir de position après %d secondes</string>
+    <string name="sms_failure_timeout_notification">Délai d\'attente de %1$d sec atteint, un SMS d\'erreur a été envoyé à %2$s</string>
+    <string name="sms_failure_permission_sms">PhoneTrack n\'a pas réussi à obtenir l\'autorisation pour localiser</string>
+    <string name="sms_failure_permission_notification">Impossible d\'obtenir l\'autorisation pour localiser, un SMS d\'erreur a été envoyé à %1$s</string>
+    <string name="sms_failure_provider_sms">PhoneTrack n\'a pas pu obtenir la position car le service GPS est désactivé</string>
+    <string name="sms_failure_provider_notification">Le service GPS est désactivé, un SMS d\'erreur a été envoyé à %1$s</string>
     <string name="map_choose_layer">Choisissez un fournisseur de tuiles</string>
     <string name="drawer_connect_hint">Appuyez ici pour vous connecter</string>
     <string name="homescreen_map_shortcut_long_title">Carte pour %s</string>

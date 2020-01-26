@@ -122,6 +122,12 @@
     <string name="sms_logjobs_stopped">%d logjobs zijn gestopt</string>
     <string name="sms_logjob_created">Een logjob met %d seconden frequentie is gemaakt in sessie %s</string>
     <string name="sms_logjob_creation_impossible">Niet mogelijk om een logjob te maken, geen sessie gevonden</string>
+    <string name="sms_failure_timeout_sms">PhoneTrack kon geen positie verkrijgen na %d seconden</string>
+    <string name="sms_failure_timeout_notification">%1$d sec time-out bereikt, een foutmelding is per SMS verstuurd naar %2$s</string>
+    <string name="sms_failure_permission_sms">PhoneTrack kon geen locatietoestemming krijgen</string>
+    <string name="sms_failure_permission_notification">Fout bij verkrijgen van locatie toestemming, er is een foutmelding per SMS verzonden naar %1$s</string>
+    <string name="sms_failure_provider_sms">PhoneTrack kon geen positie verkrijgen omdat de GPS-service is uitgeschakeld</string>
+    <string name="sms_failure_provider_notification">GPS-service is uitgeschakeld, een foutmelding is per SMS verstuurd naar %1$s</string>
     <string name="map_choose_layer">Kies een kaart tegel provider</string>
     <string name="drawer_connect_hint">Tik hier om te verbinden</string>
     <string name="homescreen_map_shortcut_long_title">Kaart voor %s</string>

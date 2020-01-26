@@ -122,6 +122,12 @@
     <string name="sms_logjobs_stopped">%d Protokollierungsaufträge wurden angehalten</string>
     <string name="sms_logjob_created">Ein Protokollierungsauftrag aller %d Sekunden wurde in der Sitzung %s erstellt</string>
     <string name="sms_logjob_creation_impossible">Erstellen des Protolierungsauftrags fehlgeschlagen. Es wurde keine Sitzung gefunden</string>
+    <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
+    <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>
+    <string name="sms_failure_permission_sms">PhoneTrack failed to get location permission</string>
+    <string name="sms_failure_permission_notification">Failed to get location permission, an error SMS has been sent to %1$s</string>
+    <string name="sms_failure_provider_sms">PhoneTrack failed to get position because GPS service is disabled</string>
+    <string name="sms_failure_provider_notification">GPS service is disabled, an error SMS has been sent to %1$s</string>
     <string name="map_choose_layer">Map Tile Provider wählen</string>
     <string name="drawer_connect_hint">Antippen, um Verbindung herzustellen</string>
     <string name="homescreen_map_shortcut_long_title">Karte für %s</string>
