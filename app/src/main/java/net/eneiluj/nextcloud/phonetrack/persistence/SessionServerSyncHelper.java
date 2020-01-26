@@ -455,7 +455,9 @@ public class SessionServerSyncHelper {
                 // broadcast the error
                 // if the log job list is not visible, no toast
                 Intent intent = new Intent(BROADCAST_SESSIONS_SYNC_FAILED);
-                intent.putExtra(LoggerService.BROADCAST_ERROR_MESSAGE, errorString);
+                if (status != LoginStatus.JSON_FAILED) {
+                    intent.putExtra(LoggerService.BROADCAST_ERROR_MESSAGE, errorString);
+                }
                 appContext.sendBroadcast(intent);
                 if (status == LoginStatus.SSO_TOKEN_MISMATCH) {
                     Intent intent2 = new Intent(BROADCAST_SSO_TOKEN_MISMATCH);

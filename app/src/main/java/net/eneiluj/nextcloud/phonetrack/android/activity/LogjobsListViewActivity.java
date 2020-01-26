@@ -1538,9 +1538,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 }
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED:
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
-                    showToast(errorMessage, Toast.LENGTH_LONG);
+                    if (errorMessage != null) {
+                        showToast(errorMessage, Toast.LENGTH_LONG);
+                    }
 
-                    // show sessions sync success toast
+                    // show sessions sync error toast
                     LayoutInflater inflater1 = getLayoutInflater();
                     View layout1 = inflater1.inflate(R.layout.sync_success_toast,
                             (ViewGroup) findViewById(R.id.custom_toast_container));
@@ -1550,10 +1552,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     TextView text1 = (TextView) layout1.findViewById(R.id.text);
                     text1.setText("");
                     ImageView im1 = layout1.findViewById(R.id.toast_icon);
-                    im1.setImageResource(R.drawable.ic_error_white_24dp);
+                    im1.setImageResource(R.drawable.ic_pt_error);
 
                     Toast toast1 = new Toast(getApplicationContext());
-                    toast1.setGravity(Gravity.TOP | Gravity.LEFT, 75, 18);
+                    toast1.setGravity(Gravity.TOP | Gravity.LEFT, 80, 18);
                     toast1.setDuration(Toast.LENGTH_SHORT);
                     toast1.setView(layout1);
                     toast1.show();
