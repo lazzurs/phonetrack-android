@@ -1,0 +1,38 @@
+PhoneTrack je aplikácia na nepretržité zaznamenávanie súradníc polohy.
+Aplikácia pracuje na pozadí. Body sú ukladané v zvolenej frekvencii a
+nahrávané na server v reálnom čase. Záznam pracuje s
+[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] alebo akýmkoľvek
+vlastným serverom (požiadavky GET a POST HTTP). Aplikácia PhoneTrack tiež môže byť
+na diaľku ovládaná SMS príkazmi.
+
+
+# Funkcie
+
+- Zaznamenáva na rôzne umiestnenia s rôznymi nastaveniami (frekvencia, min. vzdialenosť, min. presnosť, významný pohyb)
+- Zaznamenáva do aplikácie Nextcloud PhoneTrack (PhoneTrack sledovanie)
+- Zaznamenáva na akýkoľvek server, ktorý môže prijať HTTP GET alebo POST požiadavky (vlastné sledovanie)
+- Ukladá pozície v prípade nedostupnosti siete
+- Vzdialené ovládanie cez SMS:
+    - získať pozíciu
+    - aktivovať výstrahu
+    - spustiť všetky zaznamenávania
+    - zastaviť všetky záznamy
+    - vytvoriť nový záznam
+- Automatický štart
+- Zobrazuje zariadenia z relácie Nextcloud PhoneTrack na mape
+Tmavý motív
+- Viacjazyčné prostredie aplikácie (prekladané na https://crowdin.com/project/phonetrack )
+
+# Požiadavky
+
+Ak chcete zaznamenávať do aplikácie PhoneTrack na Nextcloud:
+
+- spustený Nextcloud server
+- zapnutá aplikácia Nextcloud PhoneTrack
+
+Inak nie sú žiadne zvláštne požiadavky! (Okrem Android>=4.1)
+
+Alternatívy
+
+Ak sa vám táto aplikácia nepáči a hľadáte iné možností: Pozrite sa na metódy záznamu/aplikácie
+v PhoneTrack wiki: https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .

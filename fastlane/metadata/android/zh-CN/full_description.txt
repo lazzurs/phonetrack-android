@@ -1,0 +1,38 @@
+PhoneTrack 是一个用于持续记录您的位置的软件。
+它工作在后台。 Points are saved at chosen frequency and
+uploaded to a server in real time. This logger works with
+[https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
+custom server (GET or POST HTTP requests). PhoneTrack app can also be remotely
+controlled by SMS commands.
+
+
+# Features
+
+- Log to multiple destinations with multiple settings (frequency, min distance, min accuracy, significant move)
+- Log to PhoneTrack Nextcloud app (PhoneTrack log job)
+- Log to any server which can receive HTTP GET or POST requests (custom log job)
+- Store positions when network is not available
+- Remote control by SMS:
+    - get position
+    - activate alarm
+    - start all logjobs
+    - stop all logjobs
+    - create a logjob
+- Start on system boot
+- Display devices of a Nextcloud PhoneTrack session on a map
+- Dark theme
+- Multi-Lingual User-Interface (translated on https://crowdin.com/project/phonetrack )
+
+# Requirements
+
+If you want to log to Nextcloud PhoneTrack app :
+
+- Nextcloud instance running
+- Nextcloud PhoneTrack app enabled
+
+Otherwise, no requirements ! (Except Android>=4.1)
+
+# Alternatives
+
+If you don't like this app and you are looking for alternatives: Have a look at the logging methods/apps
+in PhoneTrack wiki : https://gitlab.com/eneiluj/phonetrack-oc/wikis/userdoc#logging-methods .

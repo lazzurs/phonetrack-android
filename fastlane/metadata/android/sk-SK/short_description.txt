@@ -1,0 +1,1 @@
+Zaznamenávajte polohu do aplikácie PhoneTrack vo Vašom Nextcloud alebo iného vlastného servera
