@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -217,6 +218,7 @@ public class SettingsActivity extends AppCompatActivity {
                     // update preferences
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean(SETTINGS_USE_SSO, false);
+                    editor.putString(SETTINGS_URL, DEFAULT_SETTINGS);
                     editor.apply();
 
                     // empty session list
@@ -305,6 +307,10 @@ public class SettingsActivity extends AppCompatActivity {
         //if (!first_run) {
             super.onBackPressed();
         //}
+    }
+
+    protected boolean isValidUrl(String url) {
+        return Patterns.WEB_URL.matcher(url).matches();
     }
 
     private void legacyLogin() {
@@ -542,7 +548,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     /**
      * Checks if the given URL returns a valid status code and sets the Check next to the URL-Input Field to visible.
-     * Created by stefan on 23.09.15.
      */
     private class URLValidatorAsyncTask extends AsyncTask<String, Void, Boolean> {
 
@@ -554,8 +559,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... params) {
-            CustomCertManager ccm = SessionServerSyncHelper.getInstance(PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext())).getCustomCertManager();
-            return PhoneTrackClientUtil.isValidURL(ccm, params[0]);
+            //CustomCertManager ccm = SessionServerSyncHelper.getInstance(PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext())).getCustomCertManager();
+            //return PhoneTrackClientUtil.isValidURL(ccm, params[0]);
+            Log.v("PLOP", "URL is "+params[0]);
+            return (params[0] != null && !params[0].equals("") && isValidUrl(params[0]));
         }
 
         @Override

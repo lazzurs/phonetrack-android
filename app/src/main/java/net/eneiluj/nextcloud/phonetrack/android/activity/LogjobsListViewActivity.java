@@ -1067,7 +1067,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
             if (!SettingsActivity.DEFAULT_SETTINGS.equals(username)) {
                 url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS).replace("https://", "").replace("http://", "");
-                content = username + "@" + url.substring(0, url.length() - 1);
+                if (!url.equals(SettingsActivity.DEFAULT_SETTINGS)) {
+                    content = username + "@" + url.substring(0, url.length() - 1);
+                }
             }
         }
         if (!SettingsActivity.DEFAULT_SETTINGS.equals(username) && !SettingsActivity.DEFAULT_SETTINGS.equals(url)) {
