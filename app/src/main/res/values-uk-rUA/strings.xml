@@ -14,9 +14,9 @@
     <string name="setting_title">Title</string>
     <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(mandatory)</string>
-    <string name="setting_devicename">Device name</string>
+    <string name="setting_devicename">Назва пристрою</string>
     <string name="setting_devicename_long">Device name or reservation token</string>
-    <string name="setting_token">Session token</string>
+    <string name="setting_token">Токен сесії</string>
     <string name="setting_token_long">Session identification token</string>
     <string name="setting_lj_url">Nextcloud address</string>
     <string name="setting_lj_url_long">Nextcloud address of target PhoneTrack instance hosting the session</string>
