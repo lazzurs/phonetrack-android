@@ -116,7 +116,7 @@
     <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Geo link</string>
     <string name="sms_osm_link">OSM link</string>
-    <string name="sms_alarm_started">Alarm will ring during %d seconds</string>
+    <string name="sms_alarm_started">Alarm will ring for %d seconds</string>
     <string name="sms_alarm_stopped">Alarma a fost oprita</string>
     <string name="sms_logjobs_started">%d jurnale au fost pornite</string>
     <string name="sms_logjobs_stopped">%d jurnale au fost oprite</string>

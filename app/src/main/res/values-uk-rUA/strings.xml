@@ -116,7 +116,7 @@
     <string name="sms_notif_info_dialog_message2">Перейдіть до налаштувань PhoneTrack, щоб вимкнути цю функцію.</string>
     <string name="sms_geo_link">Посилання на Geo</string>
     <string name="sms_osm_link">Посилання на OSM</string>
-    <string name="sms_alarm_started">Сигнал буде подаватися протягом %d секунд</string>
+    <string name="sms_alarm_started">Alarm will ring for %d seconds</string>
     <string name="sms_alarm_stopped">Сигнал зупинено</string>
     <string name="sms_logjobs_started">%d завдань журналювання запущено</string>
     <string name="sms_logjobs_stopped">%d завдань журналювання зупинено</string>

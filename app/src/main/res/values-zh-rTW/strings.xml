@@ -116,7 +116,7 @@
     <string name="sms_notif_info_dialog_message2">於手機追蹤的設定中取消此項功能</string>
     <string name="sms_geo_link">Geo link</string>
     <string name="sms_osm_link">OSM link</string>
-    <string name="sms_alarm_started">Alarm will ring during %d seconds</string>
+    <string name="sms_alarm_started">Alarm will ring for %d seconds</string>
     <string name="sms_alarm_stopped">Alarm has been stopped</string>
     <string name="sms_logjobs_started">%d 追蹤記錄已經開始</string>
     <string name="sms_logjobs_stopped">%d 追蹤記錄已經停止</string>
