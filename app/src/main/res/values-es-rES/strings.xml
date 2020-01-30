@@ -51,8 +51,8 @@
     <string name="fab_create_phonetrack">Nuevo trabajo de registro PhoneTrack</string>
     <string name="fab_create_custom">Nuevo trabajo de registro personalizado</string>
     <string name="fab_create_maps">Nuevo trabajo de registro de Nextcloud Maps</string>
-    <string name="setting_json_title">Send JSON payload instead of key/value pairs (OpenHab compatible)</string>
-    <string name="setting_json_summary">Send JSON payload</string>
+    <string name="setting_json_title">Enviar carga útil JSON en lugar de pares clave/valor (compatible con OpenHab)</string>
+    <string name="setting_json_summary">Enviar carga útil JSON</string>
     <string name="setting_password">Contraseña HTTP</string>
     <string name="setting_password_long">Contraseña para autenticación básica HTTP (opcional)</string>
     <string name="setting_login">Login HTTP</string>
@@ -113,7 +113,7 @@
     <string name="sms_position_notification">Tu posición se ha enviado por SMS a %s</string>
     <string name="sms_notif_info_dialog_title">Información de SMS</string>
     <string name="sms_notif_info_dialog_message1">Se ha enviado este SMS a %s:</string>
-    <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
+    <string name="sms_notif_info_dialog_message2">Vaya a la configuración de PhoneTrack para desactivar esta función.</string>
     <string name="sms_geo_link">Enlace Geo</string>
     <string name="sms_osm_link">Enlace OSM</string>
     <string name="sms_alarm_started">La alarma sonará durante %d segundos</string>
@@ -122,11 +122,11 @@
     <string name="sms_logjobs_stopped">Se han detenido %d trabajos de registro</string>
     <string name="sms_logjob_created">Se ha creado un trabajo de registro con %d segundos de frecuencia en la sesión %s</string>
     <string name="sms_logjob_creation_impossible">Imposible crear un trabajo de registro, no se ha encontrado ninguna sesión</string>
-    <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
+    <string name="sms_failure_timeout_sms">PhoneTrack no pudo obtener la posición después de %d segundos</string>
     <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>
-    <string name="sms_failure_permission_sms">PhoneTrack failed to get location permission</string>
+    <string name="sms_failure_permission_sms">PhoneTrack no obtuvo el permiso de localización</string>
     <string name="sms_failure_permission_notification">Failed to get location permission, an error SMS has been sent to %1$s</string>
-    <string name="sms_failure_provider_sms">PhoneTrack failed to get position because GPS service is disabled</string>
+    <string name="sms_failure_provider_sms">PhoneTrack no pudo obtener la posición porque el servicio de GPS está desactivado</string>
     <string name="sms_failure_provider_notification">GPS service is disabled, an error SMS has been sent to %1$s</string>
     <string name="map_choose_layer">Elige un proveedor de teselas de mapa</string>
     <string name="drawer_connect_hint">Toca aquí para conectar</string>
@@ -145,9 +145,9 @@
     <string name="settings_notification_importance_title">Notificación de importancia baja</string>
     <string name="settings_notification_importance_subtitle">Reducir registro de importancia de notificaciones</string>
     <string name="settings_reset_stats">Resetear estadísticas de activación del trabajo de registro</string>
-    <string name="settings_reset_stats_subtitle">Reset statistics in logjob information dialog when logjob is activated</string>
-    <string name="settings_sms">Listen to SMS</string>
-    <string name="settings_sms_subtitle">Listen to incoming SMS and answer location information if following keyword is received</string>
+    <string name="settings_reset_stats_subtitle">Restablecer las estadísticas en el diálogo de información del trabajo de registro cuando el trabajo de registro está activado</string>
+    <string name="settings_sms">Escuchar SMS</string>
+    <string name="settings_sms_subtitle">Escuche el SMS entrante y responda a la información de la ubicación si se recibe la siguiente palabra clave</string>
     <string name="settings_sms_keyword_title">Palabra clave SMS</string>
     <string name="settings_sms_keyword_long">Si este móvil recibe un SMS que solo contiene esta palabra clave, se enviará de vuelta la información de localización.</string>
     <string name="settings_sms_keyword_long2">También puedes enviar comandos con esta sintaxis: PALABRACLAVE COMANDO</string>
@@ -220,17 +220,17 @@
     <string name="error_no_network">sin conexión de red</string>
     <string name="error_server">error del servidor</string>
     <string name="error_username_password_invalid">nombre de usuario o contraseña incorrectos</string>
-    <string name="error_invalid_pt_url">Invalid PhoneTrack logging link</string>
-    <string name="error_invalid_url">Invalid link</string>
+    <string name="error_invalid_pt_url">Enlace de registro PhoneTrack no válido</string>
+    <string name="error_invalid_url">Enlace inválido</string>
     <string name="error_invalid_token">Petición no válida</string>
     <string name="error_invalid_title">Título incorrecto</string>
     <string name="error_invalid_devname">Nombre de dispositivo no válido</string>
     <string name="error_invalid_mintime">Tiempo mínimo no válido</string>
     <string name="error_invalid_mindistance">Distancia mínima no válida</string>
     <string name="error_invalid_minaccuracy">Precisión mínima no válida</string>
-    <string name="error_invalid_timeout">Invalid timeout</string>
-    <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
-    <string name="error_invalid_group_sync">Invalid number</string>
+    <string name="error_invalid_timeout">Tiempo de espera inválido</string>
+    <string name="error_invalid_sms_keyword">Palabra clave no válida</string>
+    <string name="error_invalid_group_sync">Número inválido</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->
@@ -260,12 +260,12 @@
     <!-- Key / Values for preferences -->
     <string name="pref_value_theme_light">Claro</string>
     <string name="pref_value_theme_dark">Oscuro</string>
-    <string name="fallback_weblogin_text">Revert to old login method</string>
-    <string name="fallback_weblogin_back">Back</string>
+    <string name="fallback_weblogin_text">Volver al antiguo método de inicio de sesión</string>
+    <string name="fallback_weblogin_back">Volver</string>
     <string name="use_sso_toggle">Usar cuenta de la aplicación Nextcloud Files</string>
-    <string name="center_map">Center map</string>
-    <string name="follow_me">Follow me</string>
-    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="center_map">Mapa del centro</string>
+    <string name="follow_me">Sígueme</string>
+    <string name="zoom_all_markers">Acercar todos los marcadores</string>
     <string name="auto_zoom">Zoom automático</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
