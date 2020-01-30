@@ -60,6 +60,7 @@ import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
+import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
 
 import static android.location.LocationProvider.AVAILABLE;
 import static android.location.LocationProvider.OUT_OF_SERVICE;
@@ -100,7 +101,7 @@ public class LoggerService extends Service {
     private Map<Long, DBLogjob> logjobs;
     private PhoneTrackSQLiteOpenHelper db;
 
-    private Map<Long, Location> lastLocations;
+    private Map<Long, CorrectingLocation> lastLocations;
     private static volatile Map<Long, Long> lastUpdateRealtime;
 
     private final int NOTIFICATION_ID = 1526756640;
@@ -806,7 +807,8 @@ public class LoggerService extends Service {
         }
 
         @Override
-        public void onLocationChanged(Location loc) {
+        public void onLocationChanged(Location location) {
+            CorrectingLocation loc = new CorrectingLocation(location);
             if (DEBUG) {
                 Log.d(TAG, "[location changed: " + logjobId + "/" + logjob.getTitle() + " : bat : " + battery + ", " + loc + "]");
             }
@@ -820,7 +822,7 @@ public class LoggerService extends Service {
          * @param loc Location
          * @return True if skipped
          */
-        private boolean skipLocation(DBLogjob logjob, Location loc) {
+        private boolean skipLocation(DBLogjob logjob, CorrectingLocation loc) {
             // if we keep gps on, we take care of the timing between points
             if (keepGpsOn) {
                 long elapsedMillisSinceLastUpdate;
@@ -948,7 +950,7 @@ public class LoggerService extends Service {
         }
     }
 
-    private void acceptAndSyncLocation(long logjobId, Location loc) {
+    private void acceptAndSyncLocation(long logjobId, CorrectingLocation loc) {
         lastLocations.put(logjobId, loc);
         lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
 
@@ -967,7 +969,7 @@ public class LoggerService extends Service {
         protected mLocationListener mLocationListener;
         protected DBLogjob mLogJob;
         protected long mJobId;
-        protected Location lastLocation;
+        protected CorrectingLocation lastLocation;
 
         protected Long mLastUpdateRealtime;
 
@@ -976,7 +978,7 @@ public class LoggerService extends Service {
         protected Handler mTimeoutHandler;
         protected Runnable mTimeoutRunnable;
         protected Boolean mMotionDetected;
-        protected Location mCachedNetworkResult;
+        protected CorrectingLocation mCachedNetworkResult;
 
         protected boolean mUseSignificantMotion;
         protected boolean mUseMixedMode;
@@ -1012,7 +1014,7 @@ public class LoggerService extends Service {
             mLocationTimeout = mLogJob.getLocationRequestTimeout();
         }
 
-        protected boolean isMinDistanceOk(Location loc) {
+        protected boolean isMinDistanceOk(CorrectingLocation loc) {
             int minDistance = mLogJob.getMinDistance();
             if (minDistance == 0 || lastLocation == null) {
                 return true;
@@ -1029,7 +1031,7 @@ public class LoggerService extends Service {
             }
         }
 
-        protected boolean isMinAccuracyOk(Location loc) {
+        protected boolean isMinAccuracyOk(CorrectingLocation loc) {
             int minAccuracy = mLogJob.getMinAccuracy();
             Log.d(TAG, "Accuracy of current point: "+loc.getAccuracy());
             return (loc.getAccuracy() <= minAccuracy);
@@ -1073,7 +1075,7 @@ public class LoggerService extends Service {
 
         protected abstract Runnable createSampleTimeoutDelayRunnable();
 
-        public abstract void handleLocationChange(Location loc);
+        public abstract void handleLocationChange(Location location);
     }
 
     private class LogjobClassicWorker extends LogjobWorker {
@@ -1139,7 +1141,8 @@ public class LoggerService extends Service {
             mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
         }
 
-        public void handleLocationChange(Location loc) {
+        public void handleLocationChange(Location location) {
+            CorrectingLocation loc = new CorrectingLocation(location);
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
                     || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER)
                     || (!useGps && !usePassive)
@@ -1255,7 +1258,8 @@ public class LoggerService extends Service {
             mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
         }
 
-        public void handleLocationChange(Location loc) {
+        public void handleLocationChange(Location location) {
+            CorrectingLocation loc = new CorrectingLocation(location);
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
                     || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER)
                     || (!useGps && !usePassive)
@@ -1309,7 +1313,7 @@ public class LoggerService extends Service {
             }
         }
 
-        protected boolean isMinTimeOk(Location loc) {
+        protected boolean isMinTimeOk(CorrectingLocation loc) {
             long timeSinceLastAccepted = (loc.getElapsedRealtimeNanos() / 1000000000) - (mLastUpdateRealtime / 1000);
             int minTime = mLogJob.getMinTime();
             Log.d(TAG, "is "+timeSinceLastAccepted+" >= "+minTime+" ?");
@@ -1409,7 +1413,8 @@ public class LoggerService extends Service {
             mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
         }
 
-        public void handleLocationChange(Location loc) {
+        public void handleLocationChange(Location location) {
+            CorrectingLocation loc = new CorrectingLocation(location);
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
                     || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER)
                     || (!useGps && !usePassive)

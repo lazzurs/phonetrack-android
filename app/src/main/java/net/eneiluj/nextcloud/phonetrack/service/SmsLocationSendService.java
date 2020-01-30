@@ -37,6 +37,7 @@ import java.util.Map;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
 
 import static android.app.PendingIntent.getActivity;
 import static android.location.LocationProvider.AVAILABLE;
@@ -183,12 +184,12 @@ public class SmsLocationSendService extends IntentService {
         notifySmsWasSent(smsFailureContent, notificationContent);
     }
 
-    private void send(Location location) {
+    private void send(CorrectingLocation loc) {
         c++;
         // retry if accuracy is not good enough
         // send anyway if we tried more than 60 times
-        if (location.hasAccuracy() && location.getAccuracy() > 50 && c < 60) {
-            Log.d("Location", "bad accuracy: " + location.getAccuracy());
+        if (loc.hasAccuracy() && loc.getAccuracy() > 50 && c < 60) {
+            Log.d("Location", "bad accuracy: " + loc.getAccuracy());
             locManager.removeUpdates(ll);
             boolean locAllowed;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -216,20 +217,20 @@ public class SmsLocationSendService extends IntentService {
             mTimeoutRunnable = null;
         }
 
-        Log.d("Location", "my location is " + location.toString());
+        Log.d("Location", "my location is " + loc.toString());
         Log.d("Location", "send sms to " + from);
 
         double battery = getBatteryLevelOnce();
 
-        String latStr = String.format(Locale.ENGLISH,"%.7f", location.getLatitude());
-        String lonStr = String.format(Locale.ENGLISH,"%.7f", location.getLongitude());
+        String latStr = String.format(Locale.ENGLISH,"%.7f", loc.getLatitude());
+        String lonStr = String.format(Locale.ENGLISH,"%.7f", loc.getLongitude());
 
         String smsContent1 = "* "+getString(R.string.popup_battery_value, battery);
-        if (location.hasAltitude()) {
-            smsContent1 += "\n* "+getString(R.string.popup_altitude_value, location.getAltitude());
+        if (loc.hasAltitude()) {
+            smsContent1 += "\n* "+getString(R.string.popup_altitude_value, loc.getAltitude());
         }
-        if (location.hasAccuracy()) {
-            smsContent1 += "\n* "+getString(R.string.popup_accuracy_value, location.getAccuracy());
+        if (loc.hasAccuracy()) {
+            smsContent1 += "\n* "+getString(R.string.popup_accuracy_value, loc.getAccuracy());
         }
         smsContent1 += "\n* "+getString(R.string.sms_geo_link)+":\ngeo:"+latStr+","+lonStr+"?z=14\n";
         String smsContent2 = "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+latStr+"&mlon="+lonStr;
@@ -357,7 +358,8 @@ public class SmsLocationSendService extends IntentService {
         }
 
         @Override
-        public void onLocationChanged(Location loc) {
+        public void onLocationChanged(Location location) {
+            CorrectingLocation loc = new CorrectingLocation(location);
             send(loc);
         }
 

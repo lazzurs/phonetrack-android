@@ -5,13 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -28,6 +26,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.SyncError;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
+import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
 
 /**
  * Helps to add, get, update and delete log jobs, sessions, locations with the option to trigger a session Resync with the Server.
@@ -771,7 +770,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @param ljId
      * @param loc
      */
-    public void addLocation(long ljId, Location loc, double battery) {
+    public void addLocation(long ljId, CorrectingLocation loc, double battery) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation from ljid, loc, battery]"); }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
