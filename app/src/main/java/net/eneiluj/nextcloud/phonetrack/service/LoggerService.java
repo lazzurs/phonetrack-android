@@ -1438,10 +1438,9 @@ public class LoggerService extends Service {
                     acceptAndSyncLocation(mJobId, loc);
 
                     mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
-                }
-                else {
-                    Log.d(TAG, "Not enough DISTANCE (min "+mLogJob.getMinDistance()+
-                            ") or ACCURACY (min "+mLogJob.getMinAccuracy()+"), we skip this location");
+                } else {
+                    Log.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance() +
+                            ") or ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
                 }
 
                 // we stop the timeout only if there was no accuracy problem
@@ -1455,11 +1454,11 @@ public class LoggerService extends Service {
                     }
                 }
 
-                    // Clear significant motion flag for next interval
-                    mMotionDetected = false;
+                // Clear significant motion flag for next interval
+                mMotionDetected = false;
 
-                    // Request significant motion notification
-                    mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+                // Request significant motion notification
+                mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
 
                 // If using an interval and NO accuracy problem, schedule sample for X seconds from last sample
                 if (mUseInterval) {
