@@ -11,12 +11,10 @@ public class CorrectingLocation extends Location {
 
     public CorrectingLocation(Location location) {
         super(location);
-        long now = System.currentTimeMillis();
-        // use current time if time of the fix is more than a week behind
-        if (location.getTime() < (now - 7*24*3600*1000)) {
-            this.time = now;
-        } else {
-            this.time = location.getTime();
+        this.time = location.getTime();
+        // Add 1024 weeks of seconds if timestamp is off
+        if (this.time < 1_000_000_000) {
+            this.time += 1024*7*24*60*60;
         }
     }
 
