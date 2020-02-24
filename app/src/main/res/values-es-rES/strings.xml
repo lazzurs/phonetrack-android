@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">Distancia mínima entre dos puntos registrados (metros)</string>
     <string name="setting_min_time">Tiempo mínimo</string>
     <string name="setting_min_time_mixed">Tiempo máximo</string>
-    <string name="setting_min_time_long">Tiempo mínimo entre dos puntos registrados (segundos)</string>
+    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
     <string name="setting_min_time_mixed_long">Tiempo máximo entre dos puntos registrados (segundos)</string>
     <string name="setting_min_accuracy">Precisión mínima</string>
     <string name="setting_min_accuracy_long">Precisión mínima para los puntos registrados (metros). No registrar si el valor de precisión es mayor que:</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Modo híbrido (aplica el tiempo máximo)</string>
     <string name="setting_significantmotion_mixed_summary">Guarda una posición cada vez que se detecta movimiento. Si no es así, guarda una posición cada \"tiempo máximo\". Esto ahorra algo menos de batería.</string>
     <string name="setting_significantmotion_timeout">Tiempo de espera de localización</string>
-    <string name="setting_significantmotion_timeout_summary">Tiempo de espera para una solución de ubicación única (segundos). Ahorra batería en áreas sin buena cobertura. Si se usan tanto GPS como red, esto también determina después de cuánto tiempo se usará la posición de menor calidad. Establécela cero para desactivar el tiempo de espera.</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
     <string name="logjob_title_log_to">Registrarse en %s</string>
     <string name="default_nextcloud_url">https://tunextcloud.org</string>
     <string name="default_device_name">myDeviceName</string>

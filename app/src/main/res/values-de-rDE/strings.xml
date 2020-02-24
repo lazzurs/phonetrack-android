@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">Mindestentfernung (in Meter) zwischen zwei erfassten Datenpunkte</string>
     <string name="setting_min_time">Mindestdauer</string>
     <string name="setting_min_time_mixed">Höchstdauer</string>
-    <string name="setting_min_time_long">Mindestdauer (in Sekunden) zwischen zwei erfassten Datenpunkten</string>
+    <string name="setting_min_time_long">Mindestzeit zwischen zwei aufgezeichneten Datenpunkten (in Sekunden). Muss größer sein als die Zeitüberschreitung des Ortes.</string>
     <string name="setting_min_time_mixed_long">Höchstdauer (in Sekunden) zwischen zwei erfassten Messpunkten</string>
     <string name="setting_min_accuracy">Minimale Genauigkeit</string>
     <string name="setting_min_accuracy_long">Mindestgenauigkeit der erfassten Datenpunkte (Meter). Werte nur dann erfassen, wenn die Abweichung kleiner ist als:</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Hybridmodus (maximale Zeit verwenden)</string>
     <string name="setting_significantmotion_mixed_summary">Bei jeder Bewegungserkennung eine Position erfassen. Wenn keine Bewegung erkannt wird, entsprechend der \"Höchstdauer\" eine Position erfassen. Dadurch wird die Batterie etwas geschont.</string>
     <string name="setting_significantmotion_timeout">Zeitüberschreitung bei Positionsbestimmung</string>
-    <string name="setting_significantmotion_timeout_summary">Zeit (in Sekunden), um auf eine einzelne Standortbestimmung zu warten. Spart Batterie in Bereichen mit schlechter Abdeckung. Wenn sowohl GPS als auch Netzwerk verwendet werden, bestimmt dies auch, nach welcher Zeit die qualitativ schlechtere Netzwerkposition verwendet wird. Auf Null setzen, um die Zeitüberschreitung zu deaktivieren.</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
     <string name="logjob_title_log_to">In %s protokollieren</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">Mein Gerätename</string>

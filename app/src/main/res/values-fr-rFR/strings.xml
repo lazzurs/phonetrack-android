@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">Distance minimum entre deux points logués (mètres)</string>
     <string name="setting_min_time">Temps minimum</string>
     <string name="setting_min_time_mixed">Temps maximum</string>
-    <string name="setting_min_time_long">Temps minimum entre deux points logués (secondes)</string>
+    <string name="setting_min_time_long">Temps minimum entre deux points logués (secondes). Doit être supérieur au délai max de localisation.</string>
     <string name="setting_min_time_mixed_long">Temps maximum entre deux points (secondes)</string>
     <string name="setting_min_accuracy">Précision minimum</string>
     <string name="setting_min_accuracy_long">Précision minimum pour les points logués (mètres). Ne pas loguer si la valeur de précision est supérieure à :</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Mode hybride (utiliser le temps maximum)</string>
     <string name="setting_significantmotion_mixed_summary">Enregistrer une position chaque fois qu\'un mouvement est détecté. Si aucun mouvement n\'est détecté, enregistrer une position chaque \"temps maximum\". Cela économise un peu moins de batterie.</string>
     <string name="setting_significantmotion_timeout">Délai max de localisation</string>
-    <string name="setting_significantmotion_timeout_summary">Temps d\'attente maximum pour obtenir une position (secondes). Économise de la batterie dans les zones où la réception est mauvaise. Si vous utilisez le GPS et le réseau, cela détermine aussi après combien de temps la position réseau (de qualité inférieure) sera utilisée. Une valeur de zéro désactive le délai.</string>
+    <string name="setting_significantmotion_timeout_summary">Temps d\'attente maximum pour obtenir une position (secondes). Économise de la batterie dans les zones où la réception est mauvaise. Si vous utilisez le GPS et le réseau, cela détermine aussi après combien de temps la position réseau (de qualité inférieure) sera utilisée. Une valeur de zéro désactive le délai. Doit être inférieur au temps minimum.</string>
     <string name="logjob_title_log_to">Loguer dans %s</string>
     <string name="default_nextcloud_url">https://votre-nextcloud.org</string>
     <string name="default_device_name">monAppareil</string>

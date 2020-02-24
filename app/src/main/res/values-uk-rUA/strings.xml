@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">Мінімальна відстань між двома записаними точками (метри)</string>
     <string name="setting_min_time">Мінімальний час</string>
     <string name="setting_min_time_mixed">Максимальний час</string>
-    <string name="setting_min_time_long">Мінімальний час між двома записаними точками (секунди)</string>
+    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
     <string name="setting_min_time_mixed_long">Максимальний час між двома записаними точками (секунди)</string>
     <string name="setting_min_accuracy">Minimum accuracy</string>
     <string name="setting_min_accuracy_long">Мінімальна точність для записаних точок (метри). Не записувати, якщо значення точності більше ніж:</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Гібридний режим (застосувати максимальний час)</string>
     <string name="setting_significantmotion_mixed_summary">Запис позиції щоразу при виявленні руху. Якщо рух не виявлено, записувати позицію кожний раз при досягненні \"максимального часу\". Це заощаджує використання батареї трохи менше.</string>
     <string name="setting_significantmotion_timeout">Таймаут отримання позиції</string>
-    <string name="setting_significantmotion_timeout_summary">Час очікування фіксації місцезнаходження (секунди). Заощаджує використання батареї у районах без гарного покриття. У режимі \"GPS + Мережа\" також визначає після часу почнеться використання мережі нижчої якості. Встановіть нуль, щоб вимкнути тайм-аут.</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
     <string name="logjob_title_log_to">Журналювання до %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">myDeviceName</string>

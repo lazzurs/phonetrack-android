@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">Minimalna odległość między dwoma zarejestrowanymi punktami (metry)</string>
     <string name="setting_min_time">Minimalny czas</string>
     <string name="setting_min_time_mixed">Maksymalny czas</string>
-    <string name="setting_min_time_long">Minimalny czas między dwoma zarejestrowanymi punktami (sekundy)</string>
+    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
     <string name="setting_min_time_mixed_long">Maksymalny czas między dwoma zarejestrowanymi punktami (sekundy)</string>
     <string name="setting_min_accuracy">Minimalna dokładność</string>
     <string name="setting_min_accuracy_long">Minimalna dokładność dla zarejestrowanych punktów (metry). Nie rejestruj, jeśli wartość dokładności jest większa niż:</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Tryb hybrydowy (zastosuj maksymalny czas)</string>
     <string name="setting_significantmotion_mixed_summary">Zapisuje pozycję za każdym razem, gdy zostanie wykryty ruch. Jeśli nie zostanie wykryty ruch, zapisuje pozycję co „maksymalny czas”. Oszczędza nieco zużycie baterii.</string>
     <string name="setting_significantmotion_timeout">Limit czasu lokalizacji</string>
-    <string name="setting_significantmotion_timeout_summary">Czas, na który będzie czekać na ustalenie pojedynczej lokalizacji (sekundy). Oszczędza zużycie baterii w obszarach słabego zasięgu. Jeśli używasz jednocześnie GPS i sieci, określa to również, jak długo będzie używana pozycja sieci przy niższej jej jakości. Ustaw na zero, aby wyłączyć limit czasu.</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
     <string name="logjob_title_log_to">Logowanie do %s</string>
     <string name="default_nextcloud_url">https://twojnextcloud.pl</string>
     <string name="default_device_name">nazwaMojegoUrządzenia</string>

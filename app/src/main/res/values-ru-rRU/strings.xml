@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">Минимальная дистанция между двумя сохранёнными точками (метров)</string>
     <string name="setting_min_time">Минимальное время</string>
     <string name="setting_min_time_mixed">Максимальное время</string>
-    <string name="setting_min_time_long">Минимальное время между двумя сохранёнными точками (секунд)</string>
+    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
     <string name="setting_min_time_mixed_long">Максимальное время между двумя сохраняемыми точками (в секундах)</string>
     <string name="setting_min_accuracy">Минимальная точность</string>
     <string name="setting_min_accuracy_long">Минимальная точность для сохраняемых точек (в метрах). Не сохранять, если значение точности больше:</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Гибридный режим (применять максимум времени)</string>
     <string name="setting_significantmotion_mixed_summary">Запись позиции каждый раз, когда обнаружено движение. Если движение не обнаружено, запись позиции каждые \"максимальное время\". Это немного экономит батарею.</string>
     <string name="setting_significantmotion_timeout">Таймаут определения местоположения</string>
-    <string name="setting_significantmotion_timeout_summary">Время ожидания одного определения местоположения (в секундах). Сохраняет заряд батареи в районах со слабым сигналом. Если использовать GPS и сеть, то это также определяет, как долго будет использоваться более низкое качество сети. Установите ноль, чтобы отключить таймаут.</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
     <string name="logjob_title_log_to">Запись в %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">имяУстройства</string>

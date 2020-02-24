@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">2個記錄點之間的最小距離 (公尺)</string>
     <string name="setting_min_time">最短時間間隔</string>
     <string name="setting_min_time_mixed">最長時間間隔</string>
-    <string name="setting_min_time_long">2個記錄點之間的最短時間 (秒)</string>
+    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
     <string name="setting_min_time_mixed_long">2個記錄點之間的最長時間 (秒)</string>
     <string name="setting_min_accuracy">最小準確度</string>
     <string name="setting_min_accuracy_long">2個記錄點之間的最小精確度 (公尺)。如果2點間距離大於此數字，則第2點不會被記錄。</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Location timeout</string>
-    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout.</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
     <string name="logjob_title_log_to">記錄至 %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">裝置名稱</string>
