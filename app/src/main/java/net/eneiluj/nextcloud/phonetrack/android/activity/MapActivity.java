@@ -745,7 +745,7 @@ public class MapActivity extends AppCompatActivity {
                 }
             }
             //map.postInvalidate();
-            map.zoomToBoundingBox(bb, true, 40);
+            map.zoomToBoundingBox(bb, true, 120);
             //map.getController().setCenter(new GeoPoint(bb.getCenterLatitude(), bb.getCenterLongitude()));
             //map.postInvalidate();
             Log.i(TAG, "[zoomToBounds] "+bb+" map center "+map.getMapCenter());
