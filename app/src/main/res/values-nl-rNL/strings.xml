@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Hybride modus (maximale tijd toepassen)</string>
     <string name="setting_significantmotion_mixed_summary">Neem een positie op elke keer dat beweging wordt gedetecteerd. Als er geen beweging is gedetecteerd, neem een positie op elke volgens \"maximale tijd\". Dit bespaart een beetje minder batterij.</string>
     <string name="setting_significantmotion_timeout">Locatie timeout</string>
-    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
+    <string name="setting_significantmotion_timeout_summary">Tijd om te wachten op een enkele locatie-fix (seconden). Bespaart batterij in gebieden zonder goede dekking. Bij gebruik van zowel GPS als netwerk bepaalt dit ook na hoe lang de lagere kwaliteit netwerkpositie zal worden gebruikt. Stel in op nul om time-out uit te schakelen. Moet minder dan minimale tijd zijn.</string>
     <string name="logjob_title_log_to">Log naar %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">mijnApparaatNaam</string>

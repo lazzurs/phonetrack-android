@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">Min. vzdialenosť medzi dvoma zaznamenanými bodmi (metre)</string>
     <string name="setting_min_time">Minimálny čas</string>
     <string name="setting_min_time_mixed">Minimálny čas</string>
-    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
+    <string name="setting_min_time_long">Minimálny čas medzi dvomi zaznamenanými bodmi (v sekundách). Musí byť vyšší, ako časový limit polohy.</string>
     <string name="setting_min_time_mixed_long">Min. čas medzi dvoma zaznamenanými bodmi (sekundy)</string>
     <string name="setting_min_accuracy">Minimálna presnosť</string>
     <string name="setting_min_accuracy_long">Min. presnosť pre zaznamenanie bodov (metre). Neukladať ak je presnosť väčšia ako:</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Hybridný režim (použiť maximálny čas)</string>
     <string name="setting_significantmotion_mixed_summary">Uloží pozíciu vždy, keď je zaznamenaný pohyb. Ak pohyb nie je zaznamenávaný, pozícia sa ukladá podľa hodnoty \"maximálny čas\". Šetrí sa tým trochu batéria.</string>
     <string name="setting_significantmotion_timeout">Časový limit polohy</string>
-    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
+    <string name="setting_significantmotion_timeout_summary">Čakanie na získanie polohy (fix) sekúnd. Šetrí batériu na miestach bez dobrého pokrytia. Ak používate spolu GPS a sieť, toto nastavenie tiež určuje po akom dlhom čase bude použitá menej presná poloha zo siete. Nastavte na nulu pre vypnutie časového limitu. Hodnota musí byť menšia ako minimálny čas.</string>
     <string name="logjob_title_log_to">Zaznamenávať do %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">názovMôjhoZariadenia</string>

@@ -60,7 +60,7 @@
     <string name="setting_min_distance_long">Distanza minima tra due punti registrati (metri)</string>
     <string name="setting_min_time">Intervallo di tempo minimo</string>
     <string name="setting_min_time_mixed">Tempo massimo</string>
-    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
+    <string name="setting_min_time_long">Tempo minimo tra due punti loggati (secondi). Deve essere superiore al timeout della posizione.</string>
     <string name="setting_min_time_mixed_long">Tempo massimo tra due punti registrati (secondi)</string>
     <string name="setting_min_accuracy">Precisione minima</string>
     <string name="setting_min_accuracy_long">Precisione minima per i punti registrati (metri). Non registrare se il valore di precisione è maggiore di:</string>
@@ -74,7 +74,7 @@
     <string name="setting_significantmotion_mixed">Modalità ibrida (applica il tempo massimo)</string>
     <string name="setting_significantmotion_mixed_summary">Registra una posizione ogni volta che viene rilevato un movimento. Se non viene rilevata nessun movimento, Registra una posizione ogni \"tempo massimo\". Questo risparmia un po\' meno batteria.</string>
     <string name="setting_significantmotion_timeout">Timeout posizione</string>
-    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
+    <string name="setting_significantmotion_timeout_summary">Tempo di attesa per un singolo aggiustamento posizione (secondi). Risparmia batteria in aree senza una buona copertura. Se si utilizza sia GPS che rete, questo determina anche dopo il tempo che verrà utilizzato la posizione di rete di bassa qualità. Imposta a zero per disabilitare il timeout. Deve essere inferiore al tempo minimo.</string>
     <string name="logjob_title_log_to">Accedi a %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">mioDispositivoNome</string>
