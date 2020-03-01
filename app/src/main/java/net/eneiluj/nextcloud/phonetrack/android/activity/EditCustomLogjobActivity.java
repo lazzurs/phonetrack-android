@@ -50,7 +50,7 @@ public class EditCustomLogjobActivity extends EditLogjobActivity {
         boolean keepGpsOn = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_KEEPGPSON, false);
         boolean sigMotion = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_SIGMOTION, false);
         boolean sigMotionMixed = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_SIGMOTION_MIXED, false);
-        int timeout = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_TIMEOUT, 60);
+        int timeout = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_TIMEOUT, 59);
 
         String exampleHost = getString(R.string.example_hostname);
 

@@ -49,7 +49,7 @@ public class EditPhoneTrackLogjobActivity extends EditLogjobActivity {
         boolean keepGpsOn = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_KEEPGPSON, false);
         boolean sigMotion = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_SIGMOTION, false);
         boolean sigMotionMixed = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_SIGMOTION_MIXED, false);
-        int timeout = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_TIMEOUT, 60);
+        int timeout = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_TIMEOUT, 59);
 
         DBLogjob newLogjob = new DBLogjob(
                 0, "",  getString(R.string.default_nextcloud_url), getString(R.string.default_session_token),
