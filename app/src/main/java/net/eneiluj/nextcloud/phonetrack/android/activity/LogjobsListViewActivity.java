@@ -173,6 +173,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, server_settings);
         }*/
+        fixProviders();
         ssoSnackbar = null;
 
         String categoryAdapterSelectedItem = ADAPTER_KEY_ALL;
@@ -293,6 +294,26 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     })
                     .setIcon(R.drawable.ic_sms_grey_24dp)
                     .show();
+        }
+    }
+
+    private void fixProviders() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean fixed = preferences.getBoolean("fixProvidersV18Done", false);
+        if (!fixed) {
+            String currentValue = preferences.getString(getString(R.string.pref_key_providers), "1");
+            String fixedValue = currentValue;
+            if ("4".equals(currentValue) || "5".equals(currentValue)) {
+                fixedValue = "1";
+            } else if ("6".equals(currentValue)) {
+                fixedValue = "2";
+            } else if ("7".equals(currentValue)) {
+                fixedValue = "3";
+            }
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(getString(R.string.pref_key_providers), fixedValue);
+            editor.putBoolean("fixProvidersV18Done", true);
+            editor.apply();
         }
     }
 

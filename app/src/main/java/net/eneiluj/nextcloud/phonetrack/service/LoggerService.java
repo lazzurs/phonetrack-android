@@ -1045,6 +1045,8 @@ public class LoggerService extends Service {
                 if (mIntervalRunnable != null) {
                     Log.d(TAG, "remove interval for job "+mJobId+" "+mIntervalRunnable);
                     mIntervalHandler.removeCallbacks(mIntervalRunnable);
+                    // this should never be needed but just in case there is a mess between location listeners
+                    // like one not being switched off still getting locations and scheduling something...
                     //mIntervalHandler.removeCallbacksAndMessages(null);
                     mIntervalRunnable = null;
                 }
