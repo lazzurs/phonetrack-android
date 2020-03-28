@@ -523,9 +523,8 @@ public class LoggerService extends Service {
                 mLogjobWorkers.get(ljId).updateLastAcquisitionStart();
             }
             if (useNet) {
-                // normal or significant motion based sampling, request single update
-                // the worker takes care of looping
-                locManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locListener, looper);
+                // normal or significant motion based sampling
+                locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locListener, looper);
 
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
@@ -533,7 +532,7 @@ public class LoggerService extends Service {
                 }
             }
             if (usePassive) {
-                locManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, locListener, looper);
+                locManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, locListener, looper);
 
                 if (locManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
                     hasLocationUpdates = true;
@@ -541,7 +540,7 @@ public class LoggerService extends Service {
                 }
             }
             if (useGps) {
-                locManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locListener, looper);
+                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locListener, looper);
 
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
@@ -1156,6 +1155,7 @@ public class LoggerService extends Service {
                             && (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
                             || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER))
                     ) {
+                        // TODO check that
                         locManager.removeUpdates(mLocationListener);
                     }
                 } else {
@@ -1171,47 +1171,39 @@ public class LoggerService extends Service {
                     acceptAndSyncLocation(mJobId, loc);
 
                     mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
+
+                    // Cancel timeout runnable if we got a correct position
+                    if (mTimeoutHandler != null) {
+                        mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
+                        mTimeoutRunnable = null;
+                    }
+
+                    // stop location request
+                    if (useGps || useNet || usePassive) {
+                        locManager.removeUpdates(mLocationListener);
+                    }
                 }
                 else {
                     Log.d(TAG, "Not enough DISTANCE (min "+mLogJob.getMinDistance()+
                             ") or ACCURACY (min "+mLogJob.getMinAccuracy()+"), we skip this location");
                 }
 
-                // we stop the timeout only if there was no accuracy problem
-                // if there was an accuracy problem, we will launch a position request again,
-                // staying in same timeout
-                if (minAccuracyOk) {
-                    // Cancel timeout runnable
-                    if (mTimeoutHandler != null) {
-                        mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
-                        mTimeoutRunnable = null;
-                    }
-                }
+                // If using an interval AND position was accepted : schedule sample for X seconds from last sample
+                if (mUseInterval && minDistanceOk && minAccuracyOk) {
+                    long timeToWaitSecond = mLogJob.getMinTime();
 
-                // If using an interval and NO accuracy problem, schedule sample for X seconds from last sample
-                if (mUseInterval) {
-                    if (minAccuracyOk) {
-                        long timeToWaitSecond = mLogJob.getMinTime();
-
-                        // how much time did it take to get current position?
-                        long cTs = System.currentTimeMillis() / 1000;
-                        long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
-                        timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
-                        if (timeToWaitSecond < 0) {
-                            timeToWaitSecond = 0;
-                        }
-                        Log.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
-                                "with interval=" + mLogJob.getMinTime() + ", " +
-                                "we now wait " + timeToWaitSecond + "s before getting a new one");
-
-                        scheduleSampleAfterInterval(timeToWaitSecond * 1000);
+                    // how much time did it take to get current position?
+                    long cTs = System.currentTimeMillis() / 1000;
+                    long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
+                    timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
+                    if (timeToWaitSecond < 0) {
+                        timeToWaitSecond = 0;
                     }
-                    // if there was an accuracy problem, just request position again, staying in same timeout
-                    else {
-                        Log.d(TAG, "ACCURACY is not good enough, launch location REQUEST again, staying in same timeout");
-                        // except this request does not start a timeout
-                        requestLocationUpdates(mJobId, false, false);
-                    }
+                    Log.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
+                            "with interval=" + mLogJob.getMinTime() + ", " +
+                            "we now wait " + timeToWaitSecond + "s before getting a new one");
+
+                    scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
             } else {
                 Log.d(TAG, "Network location returned first, caching");
@@ -1273,6 +1265,7 @@ public class LoggerService extends Service {
                             && (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
                             || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER))
                     ) {
+                        // TODO check that
                         locManager.removeUpdates(mLocationListener);
                     }
                 } else {
@@ -1304,8 +1297,8 @@ public class LoggerService extends Service {
                             ") or TIME ("+timeSinceLastAccepted+"/"+mLogJob.getMinTime()+"), we skip this location");
                 }
 
-                // we always want a new position
-                scheduleSampleAfterInterval(1000, positionAccepted);
+                // no need to schedule anything now a requestLocationUpdates is still running
+                //scheduleSampleAfterInterval(1000, positionAccepted);
             } else {
                 Log.d(TAG, "Network location returned first, caching");
                 // Cache lower quality network result
@@ -1391,7 +1384,7 @@ public class LoggerService extends Service {
                         if (mUseMixedMode) {
                             Log.d(TAG, "End of delay in SIGMOTION MIXED mode, recording point regardless of motion");
                         } else {
-                            Log.d(TAG, "End of delay in SIGMOTION normal mode, significant motion detected during delay, recording point");
+                            Log.d(TAG, "End of delay in SIGMOTION normal mode, significant motion detected during delay, asking for a point");
                         }
 
                         // Assists with ensuring we don't end up with two interval sequences running for one job
@@ -1428,6 +1421,7 @@ public class LoggerService extends Service {
                             && (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
                                 || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER))
                     ) {
+                        // TODO check that
                         locManager.removeUpdates(mLocationListener);
                     }
                 } else {
@@ -1443,20 +1437,20 @@ public class LoggerService extends Service {
                     acceptAndSyncLocation(mJobId, loc);
 
                     mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
-                } else {
-                    Log.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance() +
-                            ") or ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
-                }
 
-                // we stop the timeout only if there was no accuracy problem
-                // if there was an accuracy problem, we will launch a position request again,
-                // staying in same timeout
-                if (minAccuracyOk) {
                     // Cancel timeout runnable
                     if (mTimeoutHandler != null) {
                         mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
                         mTimeoutRunnable = null;
                     }
+
+                    // stop location request
+                    if (useGps || useNet || usePassive) {
+                        locManager.removeUpdates(mLocationListener);
+                    }
+                } else {
+                    Log.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance() +
+                            ") or ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
                 }
 
                 // Clear significant motion flag for next interval
@@ -1465,19 +1459,14 @@ public class LoggerService extends Service {
                 // Request significant motion notification
                 mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
 
-                // If using an interval and NO accuracy problem, schedule sample for X seconds from last sample
-                if (mUseInterval) {
-                    if (minAccuracyOk) {
-                        long timeToWaitSecond = mLogJob.getMinTime();
-                        scheduleSampleAfterInterval(timeToWaitSecond * 1000);
-                    }
-                    // if there was an accuracy problem, just request position again, staying in same timeout
-                    else {
-                        Log.d(TAG, "ACCURACY is not good enough, launch location REQUEST again, staying in same timeout");
-                        // except this request does not start a timeout
-                        requestLocationUpdates(mJobId, false, false);
-                    }
+                // If using an interval and point accepted, schedule sample for X seconds from last sample
+                if (mUseInterval && minDistanceOk && minAccuracyOk) {
+                    // TODO there could be a better interval calculated here like in classic logjob
+                    long timeToWaitSecond = mLogJob.getMinTime();
+                    scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
+                // anyway if the position was rejected, the location request is still running
+                // and we call this method when we get next location
             } else {
                 Log.d(TAG, "Network location returned first, caching");
                 // Cache lower quality network result
@@ -1485,7 +1474,7 @@ public class LoggerService extends Service {
             }
         }
 
-        // this is triggered only when significant motion mode is enabled
+        // motion detected by the sensor
         @Override
         public void onTrigger(TriggerEvent event) {
             Log.d(TAG, "Significant motion seen");
@@ -1531,7 +1520,7 @@ public class LoggerService extends Service {
                 // already requested a location. This checks helps us prevent having two sampling sequences running
                 // for the same job.
                 if (mIntervalRunnable != null) {
-                    Log.d(TAG, "stop runnable because MIXED mode");
+                    Log.d(TAG, "stop interval schedule runnable because MIXED mode");
                     // Stop waiting runnable
                     mIntervalHandler.removeCallbacks(mIntervalRunnable);
                     mIntervalRunnable = null;
