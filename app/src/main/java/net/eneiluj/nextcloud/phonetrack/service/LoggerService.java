@@ -97,9 +97,9 @@ public class LoggerService extends Service {
     private LoggerThread thread;
     private Looper looper;
     private LocationManager locManager;
+
     private Map<Long, mLocationListener> gpsLocListeners;
     private Map<Long, mLocationListener> networkLocListeners;
-    private Map<Long, mLocationListener> passiveLocListeners;
     private Map<Long, DBLogjob> logjobs;
     private PhoneTrackSQLiteOpenHelper db;
 
@@ -111,7 +111,6 @@ public class LoggerService extends Service {
     private NotificationCompat.Builder mNotificationBuilder;
     private boolean useGps = true;
     private boolean useNet = true;
-    private boolean usePassive = true;
     public static boolean DEBUG = true;
 
     private Map<Long, LogjobWorker> mLogjobWorkers;
@@ -153,7 +152,6 @@ public class LoggerService extends Service {
         lastUpdateRealtime = new HashMap<>();
         gpsLocListeners = new HashMap<>();
         networkLocListeners = new HashMap<>();
-        passiveLocListeners = new HashMap<>();
         logjobs = new HashMap<>();
         mLogjobWorkers = new HashMap<>();
 
@@ -161,9 +159,8 @@ public class LoggerService extends Service {
         List<DBLogjob> ljs = db.getLogjobs();
         for (DBLogjob ljob : ljs) {
             if (ljob.isEnabled()) {
-                gpsLocListeners.put(ljob.getId(), new mLocationListener(ljob));
-                networkLocListeners.put(ljob.getId(), new mLocationListener(ljob));
-                passiveLocListeners.put(ljob.getId(), new mLocationListener(ljob));
+                gpsLocListeners.put(ljob.getId(), new mLocationListener(ljob, "GPS"));
+                networkLocListeners.put(ljob.getId(), new mLocationListener(ljob, "NETWORK"));
                 logjobs.put(ljob.getId(), ljob);
                 lastLocations.put(ljob.getId(), null);
                 lastUpdateRealtime.put(ljob.getId(), Long.valueOf(0));
@@ -417,13 +414,8 @@ public class LoggerService extends Service {
                    || providersPref.equals("6")
                    || providersPref.equals("7")
                  ) && providerExists(LocationManager.NETWORK_PROVIDER));
-        usePassive = ((providersPref.equals("4")
-                || providersPref.equals("5")
-                || providersPref.equals("6")
-                || providersPref.equals("7")
-        ) && providerExists(LocationManager.PASSIVE_PROVIDER));
         if (DEBUG) { Log.d(TAG, "[update prefs "+providersPref+", gps : "+useGps+
-                                     ", net : "+useNet+", passive : "+usePassive+"]"); }
+                                     ", net : "+useNet+"]"); }
     }
 
     /**
@@ -441,16 +433,14 @@ public class LoggerService extends Service {
             mLocationListener ll;
             // this is a new logjob
             if (!gpsLocListeners.containsKey(ljId)) {
-                gpsLocListeners.put(ljId, new mLocationListener(lj));
-                networkLocListeners.put(ljId, new mLocationListener(lj));
-                passiveLocListeners.put(ljId, new mLocationListener(lj));
+                gpsLocListeners.put(ljId, new mLocationListener(lj, "GPS"));
+                networkLocListeners.put(ljId, new mLocationListener(lj, "NETWORK"));
                 lastLocations.put(ljId, null);
                 lastUpdateRealtime.put(ljId, Long.valueOf(0));
             } else {
                 // Update listener for changed parameters
                 gpsLocListeners.get(ljId).populateFromLogjob(lj);
                 networkLocListeners.get(ljId).populateFromLogjob(lj);
-                passiveLocListeners.get(ljId).populateFromLogjob(lj);
 
                 mLogjobWorkers.get(ljId).stop();
                 //mLogjobWorkers.get(ljId).populate(lj);
@@ -479,7 +469,6 @@ public class LoggerService extends Service {
 
                 gpsLocListeners.remove(ljId);
                 networkLocListeners.remove(ljId);
-                passiveLocListeners.remove(ljId);
                 lastLocations.remove(ljId);
                 lastUpdateRealtime.remove(ljId);
                 logjobs.remove(ljId);
@@ -504,13 +493,12 @@ public class LoggerService extends Service {
     private void stopJob(long jobId) {
         locManager.removeUpdates(gpsLocListeners.get(jobId));
         locManager.removeUpdates(networkLocListeners.get(jobId));
-        locManager.removeUpdates(passiveLocListeners.get(jobId));
 
         // stop any runnables waiting for an interval
         DBLogjob lj = db.getLogjob(jobId);
-        Log.d(TAG, "will stop runnable ? for job "+jobId);
+        Log.e(TAG, "will stop runnable ? for job "+jobId);
         if (lj != null) {
-            Log.d(TAG, "YES for job "+jobId);
+            Log.e(TAG, "YES for job "+jobId);
             mLogjobWorkers.get(jobId).stop();
         }
     }
@@ -523,13 +511,12 @@ public class LoggerService extends Service {
     private boolean requestLocationUpdates(long ljId, boolean startTimeout, boolean firstRequestAfterAccepted) {
         // here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
-        Log.d(TAG, "job "+ljId);
+        Log.e(TAG, "job "+ljId);
         int minTimeMillis = lj.getMinTime() * 1000;
         int minDistance = lj.getMinDistance();
         boolean keepGpsOn = lj.keepGpsOnBetweenFixes();
         mLocationListener gpsLocListener = gpsLocListeners.get(ljId);
         mLocationListener networkLocListener = networkLocListeners.get(ljId);
-        mLocationListener passiveLocListener = passiveLocListeners.get(ljId);
         boolean hasLocationUpdates = false;
         if (canAccessLocation()) {
             // update last acquisition start time only if we know
@@ -545,14 +532,6 @@ public class LoggerService extends Service {
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
                     if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using net provider, freq "+lj.getMinTime()+"]"); }
-                }
-            }
-            if (usePassive) {
-                locManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, passiveLocListener, looper);
-
-                if (locManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
-                    hasLocationUpdates = true;
-                    if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using passive provider, freq "+lj.getMinTime()+"]"); }
                 }
             }
             if (useGps) {
@@ -795,6 +774,7 @@ public class LoggerService extends Service {
     private class mLocationListener implements LocationListener {
 
         private DBLogjob logjob;
+        private String type;
         private long logjobId;
         private long minTimeTolerance;
         private long maxTimeMillis;
@@ -802,7 +782,8 @@ public class LoggerService extends Service {
         private boolean keepGpsOn;
         private boolean useSignificantMotion;
 
-        public mLocationListener(DBLogjob logjob) {
+        public mLocationListener(DBLogjob logjob, String type) {
+            this.type = type;
             populateFromLogjob(logjob);
         }
 
@@ -825,7 +806,7 @@ public class LoggerService extends Service {
         public void onLocationChanged(Location location) {
             CorrectingLocation loc = new CorrectingLocation(location);
             if (DEBUG) {
-                Log.d(TAG, "[location changed: " + logjobId + "/" + logjob.getTitle() + " : bat : " + battery + ", " + loc + "]");
+                Log.d(TAG, "[location changed ["+type+"]: " + logjobId + "/" + logjob.getTitle() + " : bat : " + battery + ", " + loc + "]");
             }
 
             // always pass to the worker (sig motion or not)
@@ -983,7 +964,6 @@ public class LoggerService extends Service {
     private abstract class LogjobWorker extends TriggerEventListener {
         protected mLocationListener gpsLocationListener;
         protected mLocationListener networkLocationListener;
-        protected mLocationListener passiveLocationListener;
         protected DBLogjob mLogJob;
         protected long mJobId;
         protected CorrectingLocation lastLocation;
@@ -1009,7 +989,6 @@ public class LoggerService extends Service {
             populate(logjob);
             gpsLocationListener = gpsLocListeners.get(mJobId);
             networkLocationListener = networkLocListeners.get(mJobId);
-            passiveLocationListener = passiveLocListeners.get(mJobId);
         }
 
         protected void populate(DBLogjob logjob) {
@@ -1064,8 +1043,9 @@ public class LoggerService extends Service {
         protected void stop() {
             if (mIntervalHandler != null) {
                 if (mIntervalRunnable != null) {
-                    Log.d(TAG, "remove interval for job "+mJobId);
+                    Log.d(TAG, "remove interval for job "+mJobId+" "+mIntervalRunnable);
                     mIntervalHandler.removeCallbacks(mIntervalRunnable);
+                    //mIntervalHandler.removeCallbacksAndMessages(null);
                     mIntervalRunnable = null;
                 }
                 mIntervalHandler = null;
@@ -1112,30 +1092,28 @@ public class LoggerService extends Service {
 
                     if (mCachedNetworkResult != null) {
                         // Cancel location request
-                        if (useGps || usePassive) {
+                        if (useGps) {
                             locManager.removeUpdates(gpsLocationListener);
                             locManager.removeUpdates(networkLocationListener);
-                            locManager.removeUpdates(passiveLocationListener);
                         }
 
-                        Log.d(TAG, "Reached timeout before GPS or passive sample, using network sample");
+                        Log.d(TAG, "Reached timeout before GPS sample, using network sample");
                         lastLocation = mCachedNetworkResult;
                         acceptAndSyncLocation(mJobId, mCachedNetworkResult);
 
                         mCachedNetworkResult = null;
                     } else {
                         // Cancel location request
-                        if (useGps || useNet || usePassive) {
+                        if (useGps || useNet) {
                             locManager.removeUpdates(gpsLocationListener);
                             locManager.removeUpdates(networkLocationListener);
-                            locManager.removeUpdates(passiveLocationListener);
                         }
                     }
 
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
                         long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000);
-                        Log.d(TAG, "Schedule next sample in "+(timeToWait / 1000)+"s");
+                        Log.d(TAG, "Schedule next sample in "+(timeToWait / 1000)+"s [timeout reached]");
                         scheduleSampleAfterInterval(timeToWait);
                     }
                 }
@@ -1152,7 +1130,7 @@ public class LoggerService extends Service {
 
             mIntervalRunnable = new Runnable() {
                 public void run() {
-                    Log.d(TAG, "End of delay in NORMAL mode, recording point");
+                    Log.e(TAG, "End of delay in NORMAL mode, recording point "+mIntervalRunnable);
 
                     // Assists with ensuring we don't end up with two interval sequences running for one job
                     mIntervalRunnable = null;
@@ -1168,22 +1146,17 @@ public class LoggerService extends Service {
         public void handleLocationChange(Location location) {
             CorrectingLocation loc = new CorrectingLocation(location);
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
-                    || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER)
-                    || (!useGps && !usePassive)
+                    || (!useGps)
             ) {
                 // Got GPS result, accept
                 Log.d(TAG, "Got position result, immediately accepting");
 
                 // Remove any cached network result or disable update
                 if (mCachedNetworkResult == null) {
-                    if (useNet
-                            && (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
-                            || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER))
-                    ) {
+                    if (useNet && loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                         // TODO check that
                         locManager.removeUpdates(gpsLocationListener);
                         locManager.removeUpdates(networkLocationListener);
-                        locManager.removeUpdates(passiveLocationListener);
                     }
                 } else {
                     mCachedNetworkResult = null;
@@ -1206,10 +1179,10 @@ public class LoggerService extends Service {
                     }
 
                     // stop location request
-                    if (useGps || useNet || usePassive) {
+                    if (useGps || useNet) {
                         locManager.removeUpdates(gpsLocationListener);
                         locManager.removeUpdates(networkLocationListener);
-                        locManager.removeUpdates(passiveLocationListener);
+                        Log.e(TAG, "remove updates because got position");
                     }
                 }
                 else {
@@ -1231,7 +1204,7 @@ public class LoggerService extends Service {
                     Log.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
                             "with interval=" + mLogJob.getMinTime() + ", " +
                             "we now wait " + timeToWaitSecond + "s before getting a new one");
-
+                    Log.d(TAG, "Schedule next sample because we accepted a position");
                     scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
             } else {
@@ -1282,22 +1255,17 @@ public class LoggerService extends Service {
         public void handleLocationChange(Location location) {
             CorrectingLocation loc = new CorrectingLocation(location);
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
-                    || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER)
-                    || (!useGps && !usePassive)
+                    || (!useGps)
             ) {
                 // Got GPS result, accept
                 Log.d(TAG, "Got position result, immediately accepting if constraints are respected");
 
                 // Remove any cached network result or disable update
                 if (mCachedNetworkResult == null) {
-                    if (useNet
-                            && (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
-                            || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER))
-                    ) {
+                    if (useNet && loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                         // TODO check that
                         locManager.removeUpdates(gpsLocationListener);
                         locManager.removeUpdates(networkLocationListener);
-                        locManager.removeUpdates(passiveLocationListener);
                     }
                 } else {
                     mCachedNetworkResult = null;
@@ -1370,23 +1338,21 @@ public class LoggerService extends Service {
 
                     if (mCachedNetworkResult != null) {
                         // Cancel location request
-                        if (useGps || usePassive) {
+                        if (useGps) {
                             locManager.removeUpdates(gpsLocationListener);
                             locManager.removeUpdates(networkLocationListener);
-                            locManager.removeUpdates(passiveLocationListener);
                         }
 
-                        Log.d(TAG, "Reached timeout before GPS or passive sample, using network sample");
+                        Log.d(TAG, "Reached timeout before GPS sample, using network sample");
                         lastLocation = mCachedNetworkResult;
                         acceptAndSyncLocation(mJobId, mCachedNetworkResult);
 
                         mCachedNetworkResult = null;
                     } else {
                         // Cancel location request
-                        if (useGps || useNet || usePassive) {
+                        if (useGps || useNet) {
                             locManager.removeUpdates(gpsLocationListener);
                             locManager.removeUpdates(networkLocationListener);
-                            locManager.removeUpdates(passiveLocationListener);
                         }
                     }
 
@@ -1444,22 +1410,17 @@ public class LoggerService extends Service {
         public void handleLocationChange(Location location) {
             CorrectingLocation loc = new CorrectingLocation(location);
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
-                    || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER)
-                    || (!useGps && !usePassive)
+                    || (!useGps)
             ) {
                 // Got GPS result, accept
                 Log.d(TAG, "Got position result, immediately accepting");
 
                 // Remove any cached network result or disable update
                 if (mCachedNetworkResult == null) {
-                    if (useNet
-                            && (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
-                                || loc.getProvider().equals(LocationManager.PASSIVE_PROVIDER))
-                    ) {
+                    if (useNet && loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                         // TODO check that
                         locManager.removeUpdates(gpsLocationListener);
                         locManager.removeUpdates(networkLocationListener);
-                        locManager.removeUpdates(passiveLocationListener);
                     }
                 } else {
                     mCachedNetworkResult = null;
@@ -1482,10 +1443,9 @@ public class LoggerService extends Service {
                     }
 
                     // stop location request
-                    if (useGps || useNet || usePassive) {
+                    if (useGps || useNet) {
                         locManager.removeUpdates(gpsLocationListener);
                         locManager.removeUpdates(networkLocationListener);
-                        locManager.removeUpdates(passiveLocationListener);
                     }
                 } else {
                     Log.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance() +
