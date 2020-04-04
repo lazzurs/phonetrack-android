@@ -27,6 +27,36 @@
         android:orderInCategory="87"
         android:title="@string/menu_delete"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_bike"
+        android:icon="@drawable/ic_directions_bike_white_24dp"
+        android:orderInCategory="83"
+        android:title="@string/menu_preset_bike"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_walk"
+        android:icon="@drawable/ic_walk_grey_24dp"
+        android:orderInCategory="83"
+        android:title="@string/menu_preset_walk"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_drive"
+        android:icon="@drawable/ic_directions_car_white_24dp"
+        android:orderInCategory="83"
+        android:title="@string/menu_preset_drive"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_battery"
+        android:icon="@drawable/ic_battery_90_white_24dp"
+        android:orderInCategory="83"
+        android:title="@string/menu_preset_battery"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_precision"
+        android:icon="@drawable/ic_accuracy_grey_24dp"
+        android:orderInCategory="83"
+        android:title="@string/menu_preset_precision"
+        app:showAsAction="never" />
 
 
 </menu>

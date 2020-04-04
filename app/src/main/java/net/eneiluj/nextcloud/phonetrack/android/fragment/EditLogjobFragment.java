@@ -488,6 +488,9 @@ public abstract class EditLogjobFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.menu_share).setVisible(false);
+        if (!deviceSupportsSignificantMotion()) {
+            menu.findItem(R.id.menu_battery).setVisible(false);
+        }
     }
 
     /**
@@ -519,9 +522,112 @@ public abstract class EditLogjobFragment extends Fragment {
                 }
 
                 return false;
+            case R.id.menu_bike:
+                applyBikePreset();
+                showPresetHint();
+                return true;
+            case R.id.menu_walk:
+                applyWalkPreset();
+                showPresetHint();
+                return true;
+            case R.id.menu_drive:
+                applyDrivePreset();
+                showPresetHint();
+                return true;
+            case R.id.menu_battery:
+                applyBatteryPreset();
+                showPresetHint();
+                return true;
+            case R.id.menu_precision:
+                applyPrecisionPreset();
+                showPresetHint();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showPresetHint() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean userKnows = prefs.getBoolean(getString(R.string.pref_key_preset_hint_disabled), false);
+        if (!userKnows) {
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AppThemeDialog));
+            builder.setTitle(getString(R.string.preset_hint_title))
+                    .setMessage(getString(R.string.preset_hint_content))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setNeutralButton(R.string.dont_show_again, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(getString(R.string.pref_key_preset_hint_disabled), true);
+                            editor.apply();
+                        }
+                    })
+                    .setIcon(R.drawable.ic_info_outline_grey600_24dp)
+                    .show();
+        }
+    }
+
+    private void applyBikePreset() {
+        editUseSignificantMotion.setChecked(false);
+        editMindistance.setText("3");
+        editMintime.setText("5");
+        editMinaccuracy.setText("30");
+        editKeepGpsOn.setChecked(false);
+        editLocationRequestTimeout.setText("0");
+        showHideValidationButtons();
+    }
+
+    private void applyWalkPreset() {
+        editUseSignificantMotion.setChecked(false);
+        editMindistance.setText("3");
+        editMintime.setText("10");
+        editMinaccuracy.setText("20");
+        editKeepGpsOn.setChecked(false);
+        editLocationRequestTimeout.setText("0");
+        showHideValidationButtons();
+    }
+
+    private void applyDrivePreset() {
+        if (deviceSupportsSignificantMotion()) {
+            editUseSignificantMotion.setChecked(true);
+            editUseSignificantMotionInterval.setChecked(true);
+            editUseSignificantMotionMixed.setChecked(false);
+        } else {
+            editUseSignificantMotion.setChecked(false);
+        }
+        editMindistance.setText("50");
+        editMintime.setText("60");
+        editMinaccuracy.setText("50");
+        editKeepGpsOn.setChecked(false);
+        editLocationRequestTimeout.setText("0");
+        showHideValidationButtons();
+    }
+
+    private void applyBatteryPreset() {
+        editUseSignificantMotion.setChecked(true);
+        editUseSignificantMotionInterval.setChecked(true);
+        editUseSignificantMotionMixed.setChecked(false);
+        editMindistance.setText("20");
+        editMintime.setText("300");
+        editMinaccuracy.setText("100");
+        editKeepGpsOn.setChecked(false);
+        editLocationRequestTimeout.setText("60");
+        showHideValidationButtons();
+    }
+
+    private void applyPrecisionPreset() {
+        editUseSignificantMotion.setChecked(false);
+        editMindistance.setText("1");
+        editMintime.setText("3");
+        editMinaccuracy.setText("20");
+        editKeepGpsOn.setChecked(true);
+        editLocationRequestTimeout.setText("0");
+        showHideValidationButtons();
     }
 
     public void onCloseLogjob() {

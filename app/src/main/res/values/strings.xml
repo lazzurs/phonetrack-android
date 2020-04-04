@@ -45,6 +45,14 @@
     <string name="action_pin_to_homescreen">Pin map to home screen</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_save">Save</string>
+    <string name="menu_preset_bike">Bike profile</string>
+    <string name="menu_preset_walk">Walk profile</string>
+    <string name="menu_preset_drive">Drive profile</string>
+    <string name="menu_preset_precision">Max precision profile</string>
+    <string name="menu_preset_battery">Battery saving profile</string>
+    <string name="preset_hint_title">Logjob settings presets</string>
+    <string name="preset_hint_content">Keep in mind those presets are just examples and you might want to adjust selected values.</string>
+    <string name="dont_show_again">Don\'t show again</string>
     <string name="menu_select_session">Use PhoneTrack session</string>
     <string name="menu_from_url">Use PhoneTrack logging link</string>
     <string name="menu_share">Share</string>
@@ -301,6 +309,7 @@
     <string name="pref_key_theme" translatable="false">darkTheme</string>
     <string name="pref_key_color" translatable="false">appColor</string>
     <string name="pref_key_sms" translatable="false">listenSMS</string>
+    <string name="pref_key_preset_hint_disabled" translatable="false">presetHintDisabled</string>
     <string name="pref_key_sms_keyword" translatable="false">SMSkeyword</string>
     <string name="pref_key_use_server_color" translatable="false">useServerColor</string>
     <string name="pref_key_autostart" translatable="false">autostart</string>
