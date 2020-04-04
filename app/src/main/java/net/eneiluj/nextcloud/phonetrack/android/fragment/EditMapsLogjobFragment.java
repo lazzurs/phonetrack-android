@@ -179,7 +179,7 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
             editMindistanceHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
         }
         if (getUseSignificantMotion()) {
-            if (getMintime() < 30) {
+            if (getUseSignificantMotionInterval() && getMintime() < 30) {
                 minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
                 valid = false;
             } else {
