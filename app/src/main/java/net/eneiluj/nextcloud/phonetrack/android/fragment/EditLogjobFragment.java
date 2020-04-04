@@ -130,6 +130,10 @@ public abstract class EditLogjobFragment extends Fragment {
     protected TextInputLayout editMinaccuracyHint;
     protected TextInputLayout editLocationTimeoutHint;
     protected TextView editMinTimeSummary;
+    protected TextView signMotionIntervalSummary;
+    protected TextView signMotionSummary;
+    protected TextView usesignificantmotionmixedSummary;
+    protected TextView keepgpsonSummary;
 
     protected FloatingActionButton fabOk;
 
@@ -203,12 +207,16 @@ public abstract class EditLogjobFragment extends Fragment {
         editLocationRequestTimeout = view.findViewById(R.id.editSigMotionTimeout);
 
         editUseSignificantMotionLayout = view.findViewById(R.id.editSignMotionModeLayout);
+        signMotionSummary = view.findViewById(R.id.signMotionSummary);
         editUseSignificantMotionIntervalLayout = view.findViewById(R.id.editApplyMinTimeLayout);
+        signMotionIntervalSummary = view.findViewById(R.id.signMotionIntervalSummary);
         editUseSignificantMotionMixedLayout = view.findViewById(R.id.editMixedModeLayout);
+        usesignificantmotionmixedSummary = view.findViewById(R.id.usesignificantmotionmixedSummary);
         editLocationRequestTimeoutLayout = view.findViewById(R.id.editSigMotionTimeoutLayout);
         editMintimeLayout = view.findViewById(R.id.editMinTimeLayout);
         editMinaccuracyLayout = view.findViewById(R.id.editMinAccuracyLayout);
         editKeepGpsOnLayout = view.findViewById(R.id.keepGpsOnLayout);
+        keepgpsonSummary = view.findViewById(R.id.keepgpsonSummary);
         editPostLayout = view.findViewById(R.id.usePostLayout);
         editJsonLayout = view.findViewById(R.id.jsonLayout);
         editLoginLayout = view.findViewById(R.id.editLoginLayout);
@@ -350,6 +358,42 @@ public abstract class EditLogjobFragment extends Fragment {
                         Log.d(TAG, "sign motion mode change");
                         showHideValidationButtons();
                         updateVisiblePreferencesForSignificantMotion(getUseSignificantMotion(), isChecked, getUseSignificantMotionMixed());
+                    }
+                }
+        );
+
+        signMotionIntervalSummary.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editUseSignificantMotionInterval.performClick();
+                    }
+                }
+        );
+
+        signMotionSummary.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editUseSignificantMotion.performClick();
+                    }
+                }
+        );
+
+        usesignificantmotionmixedSummary.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editUseSignificantMotionMixed.performClick();
+                    }
+                }
+        );
+
+        keepgpsonSummary.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editKeepGpsOn.performClick();
                     }
                 }
         );
