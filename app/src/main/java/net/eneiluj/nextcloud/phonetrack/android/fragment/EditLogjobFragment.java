@@ -47,6 +47,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -63,6 +64,9 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public abstract class EditLogjobFragment extends Fragment {
@@ -134,6 +138,7 @@ public abstract class EditLogjobFragment extends Fragment {
     protected TextView signMotionSummary;
     protected TextView usesignificantmotionmixedSummary;
     protected TextView keepgpsonSummary;
+    protected Button setPreset;
 
     protected FloatingActionButton fabOk;
 
@@ -229,6 +234,7 @@ public abstract class EditLogjobFragment extends Fragment {
         editMinaccuracyHint = view.findViewById(R.id.input_layout_min_accuracy);
         editMinaccuracyHint = view.findViewById(R.id.input_layout_min_accuracy);
         editLocationTimeoutHint = view.findViewById(R.id.input_layout_sign_motion_timeout);
+        setPreset = view.findViewById(R.id.setPreset);
 
         editMinTimeSummary = view.findViewById(R.id.editMinTimeSummary);
 
@@ -259,6 +265,56 @@ public abstract class EditLogjobFragment extends Fragment {
             public void onClick(View view) {
                 saveLogjob(null);
                 listener.close();
+            }
+        });
+
+        setPreset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder selectBuilder = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AppThemeDialog));
+                selectBuilder.setTitle(getString(R.string.setting_set_preset));
+
+                List<String> choicesList = new ArrayList<>();
+                choicesList.add(getString(R.string.menu_preset_bike));
+                choicesList.add(getString(R.string.menu_preset_walk));
+                choicesList.add(getString(R.string.menu_preset_drive));
+                choicesList.add(getString(R.string.menu_preset_precision));
+                if (deviceSupportsSignificantMotion()) {
+                    choicesList.add(getString(R.string.menu_preset_battery));
+                }
+
+                CharSequence[] choices = choicesList.toArray(new CharSequence[choicesList.size()]);
+                selectBuilder.setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                applyBikePreset();
+                                showPresetHint();
+                                break;
+                            case 1:
+                                applyWalkPreset();
+                                showPresetHint();
+                                break;
+                            case 2:
+                                applyDrivePreset();
+                                showPresetHint();
+                                break;
+                            case 3:
+                                applyPrecisionPreset();
+                                showPresetHint();
+                                break;
+                            case 4:
+                                applyBatteryPreset();
+                                showPresetHint();
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
+                selectBuilder.create().show();
+
             }
         });
 

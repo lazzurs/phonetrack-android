@@ -53,6 +53,8 @@
     <string name="preset_hint_title">Logjob settings presets</string>
     <string name="preset_hint_content">Keep in mind those presets are just examples and you might want to adjust selected values.</string>
     <string name="dont_show_again">Don\'t show again</string>
+    <string name="setting_set_preset">Preconfigured profiles</string>
+    <string name="setting_set_preset_summary">Choose a preconfigured profile that fits your activity.</string>
     <string name="menu_select_session">Use PhoneTrack session</string>
     <string name="menu_from_url">Use PhoneTrack logging link</string>
     <string name="menu_share">Share</string>
