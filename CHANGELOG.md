@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.0.18 – 2020-04-12
+### Added
+- system to fix buggy GPS chips time results
+[!10](https://gitlab.com/eneiluj/phonetrack-android/-/merge_requests/10) @quite
+- logjob config presets (bike, walk, drive, battery, max presicion)
+[#184](https://gitlab.com/eneiluj/phonetrack-android/issues/184) @tmannn.24
+
+### Changed
+- increase zoom margin in map
+[#177](https://gitlab.com/eneiluj/phonetrack-android/issues/177) @huste
+- improve LoggerService, drop requestSingleUpdate, use requestLocationUpdates
+[#179](https://gitlab.com/eneiluj/phonetrack-android/issues/179) @jgoerzen @roydenyates
+- remove passive location provider which was not properly used
+
+### Fixed
+- min accuracy field was hidden with sigMotion mode enabled
+[#172](https://gitlab.com/eneiluj/phonetrack-android/issues/172) @manuquadrat
+- multiple fixes in logjob edition form validity checking
+
 ## 0.0.17 – 2020-01-26
 ### Added
 
