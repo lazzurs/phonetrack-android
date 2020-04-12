@@ -43,6 +43,16 @@
     <string name="action_pin_to_homescreen">Raccourci vers la carte sur l\'écran d\'accueil</string>
     <string name="menu_delete">Supprimer</string>
     <string name="menu_save">Enregistrer</string>
+    <string name="menu_preset_bike">Profil vélo</string>
+    <string name="menu_preset_walk">Profil marche</string>
+    <string name="menu_preset_drive">Profil conduite</string>
+    <string name="menu_preset_precision">Profil précision max</string>
+    <string name="menu_preset_battery">Profil économie de batterie</string>
+    <string name="preset_hint_title">Préréglages des paramètres de log</string>
+    <string name="preset_hint_content">Gardez à l\'esprit que ces préréglages ne sont que des exemples et que vous pourriez vouloir ajuster les valeurs sélectionnées.</string>
+    <string name="dont_show_again">Ne plus afficher</string>
+    <string name="setting_set_preset">Profils préconfigurés</string>
+    <string name="setting_set_preset_summary">Choisissez un profil préconfiguré qui correspond à votre activité.</string>
     <string name="menu_select_session">Utiliser une session PhoneTrack</string>
     <string name="menu_from_url">Utiliser un lien de logging PhoneTrack</string>
     <string name="menu_share">Partager</string>

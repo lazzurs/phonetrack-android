@@ -43,6 +43,16 @@
     <string name="action_pin_to_homescreen">Pripnúť mapu na plochu</string>
     <string name="menu_delete">Vymazať</string>
     <string name="menu_save">Uložiť</string>
+    <string name="menu_preset_bike">Profil bicykla</string>
+    <string name="menu_preset_walk">Profil chôdze</string>
+    <string name="menu_preset_drive">Profil jazdy</string>
+    <string name="menu_preset_precision">Profil max. precíznosti</string>
+    <string name="menu_preset_battery">Profil úspory batérie</string>
+    <string name="preset_hint_title">Predvoľby nastavení úlohy záznamu</string>
+    <string name="preset_hint_content">Pamätajte na to, že tieto nastavenia sú len príklady a môžete potrebovať niektoré hodnoty inak nastavené.</string>
+    <string name="dont_show_again">Nabudúce nezobrazovať</string>
+    <string name="setting_set_preset">Prednastavené profily</string>
+    <string name="setting_set_preset_summary">Vyberte si z prednastavených profilov ten, ktorý vyhovuje vašej aktivite.</string>
     <string name="menu_select_session">Použiť reláciu PhoneTrack</string>
     <string name="menu_from_url">Použiť sledovaciu Url PhoneTrack</string>
     <string name="menu_share">Zdieľať</string>

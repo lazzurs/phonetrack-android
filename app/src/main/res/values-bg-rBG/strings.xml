@@ -43,6 +43,16 @@
     <string name="action_pin_to_homescreen">Поставете картата на началния екран</string>
     <string name="menu_delete">Изтрий</string>
     <string name="menu_save">Запази</string>
+    <string name="menu_preset_bike">Bike profile</string>
+    <string name="menu_preset_walk">Walk profile</string>
+    <string name="menu_preset_drive">Drive profile</string>
+    <string name="menu_preset_precision">Max precision profile</string>
+    <string name="menu_preset_battery">Battery saving profile</string>
+    <string name="preset_hint_title">Logjob settings presets</string>
+    <string name="preset_hint_content">Keep in mind those presets are just examples and you might want to adjust selected values.</string>
+    <string name="dont_show_again">Don\'t show again</string>
+    <string name="setting_set_preset">Preconfigured profiles</string>
+    <string name="setting_set_preset_summary">Choose a preconfigured profile that fits your activity.</string>
     <string name="menu_select_session">Използвайте PhoneTrack сесия</string>
     <string name="menu_from_url">Използвайте връзката за регистриране на PhoneTrack</string>
     <string name="menu_share">Споделяне</string>
