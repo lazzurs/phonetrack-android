@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-## 0.0.18 – 2020-04-12
+## 0.0.18 – 2020-04-13
 ### Added
 - system to fix buggy GPS chips time results
 [!10](https://gitlab.com/eneiluj/phonetrack-android/-/merge_requests/10) @quite
