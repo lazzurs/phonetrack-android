@@ -1293,9 +1293,9 @@ public class LoggerService extends Service {
                 }
                 else {
                     positionAccepted = false;
-                    Log.d(TAG, "Not enough DISTANCE (min "+mLogJob.getMinDistance()+
-                            ") or ACCURACY (min "+mLogJob.getMinAccuracy()+
-                            ") or TIME ("+timeSinceLastAccepted+"/"+mLogJob.getMinTime()+"), we skip this location");
+                    Log.d(TAG, "Not enough DISTANCE ("+minDistanceOk+" min "+mLogJob.getMinDistance()+
+                            ") or ACCURACY ("+minAccuracyOk+" min "+mLogJob.getMinAccuracy()+
+                            ") or TIME ("+minTimeOk+" "+timeSinceLastAccepted+"/"+mLogJob.getMinTime()+"), we skip this location");
                 }
 
                 // no need to schedule anything now a requestLocationUpdates is still running

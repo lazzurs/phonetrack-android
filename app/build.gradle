@@ -63,8 +63,8 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation 'junit:junit:4.12'
-    implementation 'org.osmdroid:osmdroid-android:6.0.3'
-    implementation 'org.osmdroid:osmdroid-mapsforge:6.0.3'
+    implementation 'org.osmdroid:osmdroid-android:6.1.6'
+    implementation 'org.osmdroid:osmdroid-mapsforge:6.1.6'
     implementation 'com.github.kizitonwose.colorpreference:support:1.0.6'
     implementation 'com.larswerkman:lobsterpicker:1.0.1'
     implementation 'com.github.nextcloud:Android-SingleSignOn:0.4.1'
