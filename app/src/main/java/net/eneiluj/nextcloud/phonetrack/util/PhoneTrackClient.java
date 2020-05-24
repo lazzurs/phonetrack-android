@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -158,6 +159,30 @@ public class PhoneTrackClient {
         }
         else {
             return new ServerResponse.GetSessionLastPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, true, false));
+        }
+    }
+
+    public ServerResponse.GetSessionPositionsResponse getSessionPositions(CustomCertManager ccm, DBSession session,
+                                                                          @Nullable Long limit, @Nullable Long tsmin) throws JSONException, IOException, TokenMismatchException {
+        String target = "/index.php/apps/phonetrack/" + "api/getuserpositions/" + URLEncoder.encode(session.getToken(), "utf-8");
+        if (limit != null || tsmin != null) {
+            target += "?";
+            if (limit != null) {
+                target += "limit=" + limit;
+                if (tsmin != null) {
+                    target += "&";
+                }
+            }
+            if (tsmin != null) {
+                target += "tsmin=" + tsmin;
+            }
+        }
+        if (nextcloudAPI != null) {
+            Log.d(getClass().getSimpleName(), "using SSO to get session last positions");
+            return new ServerResponse.GetSessionPositionsResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_GET, null));
+        }
+        else {
+            return new ServerResponse.GetSessionPositionsResponse(requestServer(ccm, target, METHOD_GET, null, null, true, false));
         }
     }
 

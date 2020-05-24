@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
+import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
 import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
@@ -122,6 +123,20 @@ public class ServerResponse {
         }
     }
 
+    public static class GetSessionPositionsResponse extends ServerResponse {
+        public GetSessionPositionsResponse(PhoneTrackClient.ResponseData response) {
+            super(response);
+        }
+
+        public Map<String, List<BasicLocation>> getPositions(DBSession session) throws JSONException {
+            return getMultiplePositionsFromJSON(new JSONObject(getContent()), session);
+        }
+
+        public Map<String, String> getColors(DBSession session) throws JSONException {
+            return getMultipleColorsFromJSON(new JSONObject(getContent()), session);
+        }
+    }
+
     private final PhoneTrackClient.ResponseData response;
 
     public ServerResponse(PhoneTrackClient.ResponseData response) {
@@ -208,7 +223,7 @@ public class ServerResponse {
         if (json.has(session.getToken())) {
             JSONObject jsonLocs = json.getJSONObject(session.getToken());
             Iterator<String> keys = jsonLocs.keys();
-            while(keys.hasNext()) {
+            while (keys.hasNext()) {
                 String devName = keys.next();
                 JSONObject oneLoc = jsonLocs.getJSONObject(devName);
                 locations.put(devName,
@@ -229,6 +244,55 @@ public class ServerResponse {
             }
         }
         return locations;
+    }
+
+    protected Map<String, List<BasicLocation>> getMultiplePositionsFromJSON(JSONObject json, DBSession session) throws JSONException {
+        Map<String, List<BasicLocation>> locations = new HashMap<>();
+        if (json.has(session.getToken())) {
+            JSONObject jsonSession = json.getJSONObject(session.getToken());
+            Iterator<String> keys = jsonSession.keys();
+            while (keys.hasNext()) {
+                String devName = keys.next();
+                JSONObject oneDev = jsonSession.getJSONObject(devName);
+                List<BasicLocation> devLocations = new ArrayList<>();
+                // loop on points
+                JSONArray points = oneDev.getJSONArray("points");
+                for (int i = 0; i < points.length(); i++) {
+                    JSONObject point = points.getJSONObject(i);
+                    devLocations.add(
+                        new BasicLocation(
+                                point.getDouble("lat"),
+                                point.getDouble("lon"),
+                                point.getLong("timestamp"),
+                                point.isNull("bearing") ? null : point.getDouble("bearing"),
+                                point.isNull("altitude") ? null : point.getDouble("altitude"),
+                                point.isNull("speed") ? null : point.getDouble("speed"),
+                                point.isNull("accuracy") ? null : point.getDouble("accuracy"),
+                                point.isNull("satellites") ? null : point.getLong("satellites"),
+                                point.isNull("batterylevel") ? null : point.getDouble("batterylevel"),
+                                point.isNull("useragent") ? null : point.getString("useragent")
+                        )
+                    );
+                    locations.put(devName, devLocations);
+                }
+            }
+        }
+        return locations;
+    }
+
+    protected Map<String, String> getMultipleColorsFromJSON(JSONObject json, DBSession session) throws JSONException {
+        Map<String, String> colors = new HashMap<>();
+        if (json.has(session.getToken())) {
+            JSONObject jsonSession = json.getJSONObject(session.getToken());
+            Iterator<String> keys = jsonSession.keys();
+            while (keys.hasNext()) {
+                String devName = keys.next();
+                JSONObject oneDev = jsonSession.getJSONObject(devName);
+                String color = oneDev.getString("color");
+                colors.put(devName, color);
+            }
+        }
+        return colors;
     }
 
     protected DBSession getSessionFromJSON(JSONArray json, PhoneTrackSQLiteOpenHelper dbHelper) throws JSONException {
