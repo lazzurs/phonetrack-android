@@ -156,4 +156,17 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/settings_map_category"
+        android:key="settings_map_category">
+
+        <Preference
+            android:key="@string/pref_key_osmdroid_change"
+            android:id="@+id/changeOsmdroidPath"
+            android:icon="@drawable/ic_folder_grey600_24dp"
+            android:title="@string/settings_osmdroid_path">
+
+        </Preference>
+    </PreferenceCategory>
+
 </PreferenceScreen>

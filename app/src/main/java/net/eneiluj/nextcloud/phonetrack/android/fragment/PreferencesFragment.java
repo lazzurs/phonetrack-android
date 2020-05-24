@@ -1,12 +1,14 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
@@ -45,6 +47,7 @@ import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +57,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     public final static String UPDATED_PROVIDERS_VALUE = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
 
     public final static int PERMISSION_SMS_SEND_AND_RECEIVE = 4;
+    private final static int import_file_cmd = 123;
 
     private static final String TAG = PreferencesFragment.class.getSimpleName();
 
@@ -103,6 +107,25 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         });
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+        Preference changeOsmdroidPref = findPreference(getString(R.string.pref_key_osmdroid_change));
+
+        String osmdroidPath = sp.getString(getString(R.string.pref_key_osmdroid_path), "");
+        if (!osmdroidPath.equals("")) {
+            changeOsmdroidPref.setSummary(osmdroidPath);
+        }
+
+        changeOsmdroidPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent()
+                        .setType("*/*")
+                        .setAction(Intent.ACTION_GET_CONTENT);
+
+                startActivityForResult(Intent.createChooser(intent, "Select a directory"), import_file_cmd);
+                return true;
+            }
+        });
 
         final CheckBoxPreference useServerColorPref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_use_server_color));
 
@@ -328,6 +351,23 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "[ACT RESULT]");
+        // Check which request we're responding to
+        if(requestCode == import_file_cmd && resultCode == Activity.RESULT_OK) {
+            Uri selectedfile = data.getData();
+
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString(getString(R.string.pref_key_osmdroid_path), selectedfile.getPath());
+            editor.apply();
+
+            Preference changeOsmdroidPref = findPreference(getString(R.string.pref_key_osmdroid_change));
+            changeOsmdroidPref.setSummary(selectedfile.getPath());
+        }
     }
 
     private void setThemePreferenceSummary(SwitchPreferenceCompat themePref, Boolean darkTheme) {

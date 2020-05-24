@@ -1058,6 +1058,7 @@ public class MapActivity extends AppCompatActivity {
         List<StorageUtils.StorageInfo> storageList = StorageUtils.getStorageList();
         for (int i = 0; i < storageList.size(); i++) {
             File f = new File(storageList.get(i).path + File.separator + "osmdroid" + File.separator);
+            Log.v("MAPSFORGE", "looking for "+storageList.get(i).path + File.separator + "osmdroid" + File.separator);
             if (f.exists()) {
                 maps.addAll(scan(f));
             }
