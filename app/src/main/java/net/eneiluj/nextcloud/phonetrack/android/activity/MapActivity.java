@@ -3,9 +3,11 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -19,7 +21,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-//import android.support.v4.widget.DrawerLayout;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -52,14 +52,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
-import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
-import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
@@ -80,7 +79,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
@@ -451,6 +449,7 @@ public class MapActivity extends AppCompatActivity {
         */
         setupNavigationMenu();
         startRefresh();
+        registerBroadcastReceiver();
         Log.i(TAG, "[onResume end]");
     }
 
@@ -464,6 +463,12 @@ public class MapActivity extends AppCompatActivity {
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
 
         stopRefresh();
+        try {
+            unregisterReceiver(mBroadcastReceiver);
+        }
+        catch (RuntimeException e) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "RECEIVER PROBLEM, let's ignore it..."); }
+        }
         Log.i(TAG, "[onPause end]");
     }
 
@@ -1345,4 +1350,31 @@ public class MapActivity extends AppCompatActivity {
             return mBitmap.getHeight();
         }
     }
+
+    private void registerBroadcastReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(LoggerService.BROADCAST_LOCATION_UPDATED);
+        registerReceiver(mBroadcastReceiver, filter);
+    }
+
+    /**
+     * Broadcast receiver
+     */
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast received " + intent + "]"); }
+            if (intent == null || intent.getAction() == null) {
+                return;
+            }
+            switch (intent.getAction()) {
+
+                case LoggerService.BROADCAST_LOCATION_UPDATED:
+                    long ljId = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
+                    if (LoggerService.DEBUG) { Log.d(TAG, "[inMAP broadcast loc updated " + ljId + "]"); }
+                    updatePositionsWithLocalData();
+                    break;
+            }
+        }
+    };
 }
