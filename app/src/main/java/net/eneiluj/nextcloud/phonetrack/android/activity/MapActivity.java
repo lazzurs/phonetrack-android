@@ -131,7 +131,7 @@ public class MapActivity extends AppCompatActivity {
     private Long lastTimestamp = null;
     private Map<String, Long> lastTimestamps;
     private Map<String, List<BasicLocation>> locations;
-    private Map<String, String> colors;
+    private Map<String, Integer> colors;
     // graphical stuff
     private Map<String, Polyline> lines;
     private Map<String, Marker> markers;
@@ -820,15 +820,22 @@ public class MapActivity extends AppCompatActivity {
         BasicLocation lastLoc = deviceLocations.get(deviceLocations.size()-1);
         lastTimestamps.put(devName, lastLoc.getTimestamp());
 
-        /////// LINES
-        // color
-        int color;
-        if (colorStr != null) {
-            Log.v(TAG, "COCO "+colorStr+" "+(colorStr.equals("null")));
-            color = Color.parseColor(colorStr);
+        /////// COLORS
+        if (!colors.containsKey(devName)) {
+            if (colorStr != null) {
+                colors.put(devName, Color.parseColor(colorStr));
+            } else {
+                colors.put(devName, ThemeUtils.primaryColor(ctx));
+            }
         } else {
-            color = ThemeUtils.primaryColor(ctx);
+            if (colorStr != null) {
+                colors.put(devName, Color.parseColor(colorStr));
+            }
         }
+        int color = colors.get(devName);
+
+        /////// LINES
+
         if (!lines.containsKey(devName)) {
             List<GeoPoint> geoPoints = new ArrayList<>();
             for (BasicLocation loc : locations.get(devName)) {
@@ -852,30 +859,21 @@ public class MapActivity extends AppCompatActivity {
         // marker already exists, check if color needs to be updated
         if (markers.containsKey(devName)) {
             markerDrawable = markerDrawables.get(devName);
-            if (colorStr != null) {
-                int newColor = Color.parseColor(colorStr);
-                int currentColor = markerDrawable.getColor();
-                Double currentAccuracy = markerDrawable.getAccuracy();
-                if (newColor != currentColor || currentAccuracy != lastLoc.getAccuracy()) {
-                    int textColor;
-                    if (ThemeUtils.isBrightColor(newColor)) {
-                        textColor = android.R.color.black;
-                    } else {
-                        textColor = android.R.color.white;
-                    }
-                    markerDrawable.update(newColor, textColor, lastLoc.getAccuracy());
+            int currentColor = markerDrawable.getColor();
+            Double currentAccuracy = markerDrawable.getAccuracy();
+            if (color != currentColor || currentAccuracy != lastLoc.getAccuracy()) {
+                int textColor;
+                if (ThemeUtils.isBrightColor(color)) {
+                    textColor = android.R.color.black;
+                } else {
+                    textColor = android.R.color.white;
                 }
+                markerDrawable.update(color, textColor, lastLoc.getAccuracy());
             }
         }
         // create the marker
         else {
             Marker m = new Marker(map);
-
-            if (colorStr != null) {
-                color = Color.parseColor(colorStr);
-            } else {
-                color = ThemeUtils.primaryColor(ctx);
-            }
             int textColor;
             if (ThemeUtils.isBrightColor(color)) {
                 textColor = android.R.color.black;
