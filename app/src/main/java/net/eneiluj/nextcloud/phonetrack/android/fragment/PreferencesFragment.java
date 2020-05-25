@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +50,9 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,14 +113,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-        Preference changeOsmdroidPref = findPreference(getString(R.string.pref_key_osmdroid_change));
+        Preference loadOsmdroidPref = findPreference(getString(R.string.pref_key_osmdroid_load));
 
-        String osmdroidPath = sp.getString(getString(R.string.pref_key_osmdroid_path), "");
-        if (!osmdroidPath.equals("")) {
-            changeOsmdroidPref.setSummary(osmdroidPath);
-        }
-
-        changeOsmdroidPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        loadOsmdroidPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent()
@@ -359,14 +359,65 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         // Check which request we're responding to
         if(requestCode == import_file_cmd && resultCode == Activity.RESULT_OK) {
             Uri selectedfile = data.getData();
+            // get size and name of file
+            Cursor returnCursor =
+                    getActivity().getContentResolver().query(selectedfile, null, null, null, null);
 
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString(getString(R.string.pref_key_osmdroid_path), selectedfile.getPath());
-            editor.apply();
+            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+            returnCursor.moveToFirst();
+            String name = returnCursor.getString(nameIndex);
+            Long size = returnCursor.getLong(sizeIndex);
 
-            Preference changeOsmdroidPref = findPreference(getString(R.string.pref_key_osmdroid_change));
-            changeOsmdroidPref.setSummary(selectedfile.getPath());
+            // copy file in app data storage
+            File[] externalStorageVolumes =
+                    ContextCompat.getExternalFilesDirs(getContext(), null);
+            File primaryExternalStorage = externalStorageVolumes[0];
+            Log.e(TAG, "ACC2 "+primaryExternalStorage.getAbsolutePath()+" "+primaryExternalStorage.exists());
+            if (primaryExternalStorage.exists()) {
+                Log.e(TAG,"prima exists");
+                File f = new File(primaryExternalStorage.getAbsolutePath()+ File.separator);
+                if (f.exists()) {
+                    Log.e(TAG,"prima file exists ");
+                    try {
+                        File fdest = new File(primaryExternalStorage.getAbsolutePath() + File.separator + name);
+                        Log.e(TAG, "path " + primaryExternalStorage.getAbsolutePath() + File.separator + name + " EXISTS " + fdest.exists());
+                        if (fdest.exists()) {
+                            fdest.delete();
+                        }
+                        if (size > primaryExternalStorage.getFreeSpace()) {
+                            showToast(getString(R.string.osmdroid_file_load_no_space), Toast.LENGTH_LONG);
+                            return;
+                        }
+                        boolean ok = fdest.createNewFile();
+                        Log.e(TAG, "prima can write " + fdest.canWrite() + " " + ok + " free space " + primaryExternalStorage.getFreeSpace());
+
+                        // COPY
+                        InputStream inputStream = getActivity().getContentResolver().openInputStream(selectedfile);
+
+                        FileOutputStream outputStream = new FileOutputStream(fdest);
+                        try {
+                            byte[] buffer = new byte[4 * 1024]; // or other buffer size
+                            int read;
+
+                            while ((read = inputStream.read(buffer)) != -1) {
+                                outputStream.write(buffer, 0, read);
+                            }
+                            outputStream.flush();
+                        } finally {
+                            inputStream.close();
+                        }
+                        showToast(getString(R.string.osmdroid_file_load_success), Toast.LENGTH_LONG);
+                        if (getActivity() != null) {
+                            getActivity().recreate();
+                        }
+                        Log.e(TAG, "AFTER file write ");
+                    } catch (Exception e) {
+                        Log.e(TAG,"EXECPTIONNNN "+e);
+                        showToast(getString(R.string.osmdroid_file_load_exception), Toast.LENGTH_LONG);
+                    }
+                }
+            }
         }
     }
 

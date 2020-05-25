@@ -161,10 +161,10 @@
         android:key="settings_map_category">
 
         <Preference
-            android:key="@string/pref_key_osmdroid_change"
+            android:key="@string/pref_key_osmdroid_load"
             android:id="@+id/changeOsmdroidPath"
             android:icon="@drawable/ic_folder_grey600_24dp"
-            android:title="@string/settings_osmdroid_path">
+            android:title="@string/settings_osmdroid_label">
 
         </Preference>
     </PreferenceCategory>

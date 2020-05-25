@@ -39,6 +39,8 @@ import androidx.preference.PreferenceManager;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
+import android.os.Environment;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -1176,7 +1178,7 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    protected static Set<File> findMapFiles() {
+    protected Set<File> findMapFiles() {
         Set<File> maps = new HashSet<>();
         List<StorageUtils.StorageInfo> storageList = StorageUtils.getStorageList();
         for (int i = 0; i < storageList.size(); i++) {
@@ -1186,16 +1188,34 @@ public class MapActivity extends AppCompatActivity {
                 maps.addAll(scan(f));
             }
         }
+        // for Android >= 10
+        File[] externalStorageVolumes =
+                ContextCompat.getExternalFilesDirs(ctx, null);
+        File primaryExternalStorage = externalStorageVolumes[0];
+        Log.e(TAG, "ACC2 "+primaryExternalStorage.getAbsolutePath()+" "+primaryExternalStorage.exists());
+        if (primaryExternalStorage.exists()) {
+            Log.e(TAG,"prima exists");
+            File f = new File(primaryExternalStorage.getAbsolutePath()+ File.separator);
+            if (f.exists()) {
+                Log.e(TAG,"prima file exists");
+                maps.addAll(scan(f));
+            }
+        }
+
         return maps;
     }
 
     static private Collection<? extends File> scan(File f) {
+        Log.e(TAG,"SCANNING inside "+f.getAbsolutePath());
         List<File> ret = new ArrayList<>();
         File[] files = f.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                if (pathname.getName().toLowerCase().endsWith(".map"))
+                Log.e(TAG,"SCANNING "+pathname);
+                if (pathname.getName().toLowerCase().endsWith(".map")) {
+                    Log.e(TAG,"EXEXE "+pathname);
                     return true;
+                }
                 return false;
             }
         });
