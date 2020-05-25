@@ -162,9 +162,17 @@
 
         <Preference
             android:key="@string/pref_key_osmdroid_load"
-            android:id="@+id/changeOsmdroidPath"
+            android:id="@+id/loadOsmdroidPath"
             android:icon="@drawable/ic_folder_grey600_24dp"
             android:title="@string/settings_osmdroid_label">
+
+        </Preference>
+
+        <Preference
+            android:key="@string/pref_key_osmdroid_delete"
+            android:id="@+id/deleteOsmdroidFile"
+            android:icon="@drawable/ic_delete_grey_24dp"
+            android:title="@string/settings_osmdroid_delete_label">
 
         </Preference>
     </PreferenceCategory>

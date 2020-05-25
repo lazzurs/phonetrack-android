@@ -193,6 +193,8 @@
     <string name="settings_sms_category">Sms</string>
     <string name="settings_map_category">Map</string>
     <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
+    <string name="settings_osmdroid_delete_label">Delete Mapsforge offline map tiles file</string>
+    <string name="settings_osmdroid_delete_success">File deleted</string>
     <string name="osmdroid_file_load_success">File import success</string>
     <string name="osmdroid_file_load_no_space">No space left on external storage</string>
     <string name="osmdroid_file_load_exception">Error while copying map file</string>
@@ -326,6 +328,7 @@
     <string name="pref_key_group_sync" translatable="false">groupSync</string>
     <string name="pref_key_osmdroid_load" translatable="false">loadOsmdroidPath</string>
     <string name="pref_key_osmdroid_path" translatable="false">osmdroidPath</string>
+    <string name="pref_key_osmdroid_delete" translatable="false">osmdroidDelete</string>
     <string name="pref_key_providers" translatable="false">locationProviders</string>
     <string name="pref_key_notification_importance" translatable="false">notificationImportance</string>
     <string name="pref_key_reset_stats" translatable="false">resetStats</string>

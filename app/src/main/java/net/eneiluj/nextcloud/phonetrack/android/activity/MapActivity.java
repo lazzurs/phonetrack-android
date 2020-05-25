@@ -1205,7 +1205,7 @@ public class MapActivity extends AppCompatActivity {
         return maps;
     }
 
-    static private Collection<? extends File> scan(File f) {
+    static public Collection<? extends File> scan(File f) {
         Log.e(TAG,"SCANNING inside "+f.getAbsolutePath());
         List<File> ret = new ArrayList<>();
         File[] files = f.listFiles(new FileFilter() {
