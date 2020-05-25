@@ -1,6 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -22,6 +23,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -44,6 +46,8 @@ import android.os.Environment;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -62,6 +66,7 @@ import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
+import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
@@ -112,6 +117,7 @@ public class MapActivity extends AppCompatActivity {
     MapView map = null;
 
     private final static int PERMISSION_WRITE = 3;
+    private final static int import_file_cmd = 123;
     private static final String TAG = MapActivity.class.getSimpleName();
 
     public static final String PARAM_SESSIONID = "net.eneiluj.nextcloud.phonetrack.mapSessionId";
@@ -166,6 +172,43 @@ public class MapActivity extends AppCompatActivity {
     private String selectedLayer;
     private MapTileProviderBasic defaultTileProvider;
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_map_view, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_import_map:
+                Intent intent = new Intent()
+                        .setType("*/*")
+                        .setAction(Intent.ACTION_GET_CONTENT);
+
+                startActivityForResult(Intent.createChooser(intent, "Select a file"), import_file_cmd);
+                return true;
+            case R.id.menu_delete_map:
+                MapUtils.showDeleteMapFileDialog(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "[ACT RESULT]");
+        // Check which request we're responding to
+        if (requestCode == import_file_cmd && resultCode == Activity.RESULT_OK) {
+            Uri selectedfile = data.getData();
+            boolean ok = MapUtils.importMapFile(this, selectedfile);
+            if (ok) {
+                recreate();
+            }
+        }
+    }
+
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -194,7 +237,6 @@ public class MapActivity extends AppCompatActivity {
         listNavigationDevices = findViewById(R.id.navigationList);
         listNavigationMenu = findViewById(R.id.navigationMenu);
 
-        //ButterKnife.bind(this);
         setupActionBar();
         drawerToggle.syncState();
 
@@ -206,14 +248,14 @@ public class MapActivity extends AppCompatActivity {
         markerDrawables = new HashMap<>();
         selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
 
-        //load/initialize the osmdroid configuration, this can be done
+        // load/initialize the osmdroid configuration, this can be done
 
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        //setting this before the layout is inflated is a good idea
-        //it 'should' ensure that the map has a writable location for the map cache, even without permissions
-        //if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
-        //see also StorageUtils
-        //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
+        // setting this before the layout is inflated is a good idea
+        // it 'should' ensure that the map has a writable location for the map cache, even without permissions
+        // if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
+        // see also StorageUtils
+        // note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 

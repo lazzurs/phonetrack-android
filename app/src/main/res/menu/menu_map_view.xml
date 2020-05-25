@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_import_map"
+        android:icon="@drawable/ic_folder_grey600_24dp"
+        android:orderInCategory="80"
+        android:title="@string/settings_osmdroid_label"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_delete_map"
+        android:icon="@drawable/ic_delete_grey_24dp"
+        android:orderInCategory="81"
+        android:title="@string/settings_osmdroid_delete_label"
+        app:showAsAction="never" />
+
+</menu>

@@ -126,7 +126,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                         .setType("*/*")
                         .setAction(Intent.ACTION_GET_CONTENT);
 
-                startActivityForResult(Intent.createChooser(intent, "Select a directory"), import_file_cmd);
+                startActivityForResult(Intent.createChooser(intent, "Select a file"), import_file_cmd);
                 return true;
             }
         });
