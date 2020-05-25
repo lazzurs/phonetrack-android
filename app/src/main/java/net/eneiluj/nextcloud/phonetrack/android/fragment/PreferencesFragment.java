@@ -49,6 +49,7 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.MapActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 
 import java.io.File;
@@ -134,31 +135,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         deleteOsmdroidPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                android.app.AlertDialog.Builder selectBuilder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.AppThemeDialog));
-                selectBuilder.setTitle(getString(R.string.settings_osmdroid_delete_label));
-
-                List<File> fileList = getMapFileNames();
-                List<String> fileNameList = new ArrayList<>();
-                for (File f: fileList) {
-                    fileNameList.add(f.getName());
-                }
-                if (fileNameList.size() > 0) {
-                    CharSequence[] entcs = fileNameList.toArray(new CharSequence[fileNameList.size()]);
-                    selectBuilder.setSingleChoiceItems(entcs, -1, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // user checked an item
-                            String filenameToDelelte = fileNameList.get(which);
-                            Log.v(TAG, "about to delete "+filenameToDelelte);
-                            File fToDel = fileList.get(which);
-                            fToDel.delete();
-                            showToast(getString(R.string.settings_osmdroid_delete_success), Toast.LENGTH_LONG);
-                            dialog.dismiss();
-                        }
-                    });
-                    selectBuilder.setNegativeButton(getString(R.string.simple_cancel), null);
-                    selectBuilder.show();
-                }
+                MapUtils.showDeleteMapFileDialog(getContext());
                 return true;
             }
         });
@@ -389,89 +366,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         });
     }
 
-    private List<File> getMapFileNames() {
-        Set<File> maps = new HashSet<>();
-        File[] externalStorageVolumes =
-                ContextCompat.getExternalFilesDirs(getContext(), null);
-        File primaryExternalStorage = externalStorageVolumes[0];
-        Log.e(TAG, "ACC2 "+primaryExternalStorage.getAbsolutePath()+" "+primaryExternalStorage.exists());
-        if (primaryExternalStorage.exists()) {
-            Log.e(TAG,"prima exists");
-            File f = new File(primaryExternalStorage.getAbsolutePath()+ File.separator);
-            if (f.exists()) {
-                Log.e(TAG,"prima file exists");
-                maps.addAll(MapActivity.scan(f));
-            }
-        }
-
-        List<File> mapList = new ArrayList<>();
-        mapList.addAll(maps);
-        return mapList;
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "[ACT RESULT]");
         // Check which request we're responding to
         if (requestCode == import_file_cmd && resultCode == Activity.RESULT_OK) {
             Uri selectedfile = data.getData();
-            // get size and name of file
-            Cursor returnCursor =
-                    getActivity().getContentResolver().query(selectedfile, null, null, null, null);
-
-            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-            returnCursor.moveToFirst();
-            String name = returnCursor.getString(nameIndex);
-            Long size = returnCursor.getLong(sizeIndex);
-
-            // copy file in app data storage
-            File[] externalStorageVolumes =
-                    ContextCompat.getExternalFilesDirs(getContext(), null);
-            File primaryExternalStorage = externalStorageVolumes[0];
-            Log.e(TAG, "ACC2 "+primaryExternalStorage.getAbsolutePath()+" "+primaryExternalStorage.exists());
-            if (primaryExternalStorage.exists()) {
-                Log.e(TAG,"prima exists");
-                File f = new File(primaryExternalStorage.getAbsolutePath()+ File.separator);
-                if (f.exists()) {
-                    Log.e(TAG,"prima file exists ");
-                    try {
-                        File fdest = new File(primaryExternalStorage.getAbsolutePath() + File.separator + name);
-                        Log.e(TAG, "path " + primaryExternalStorage.getAbsolutePath() + File.separator + name + " EXISTS " + fdest.exists());
-                        if (fdest.exists()) {
-                            fdest.delete();
-                        }
-                        if (size > primaryExternalStorage.getFreeSpace()) {
-                            showToast(getString(R.string.osmdroid_file_load_no_space), Toast.LENGTH_LONG);
-                            return;
-                        }
-                        boolean ok = fdest.createNewFile();
-                        Log.e(TAG, "prima can write " + fdest.canWrite() + " " + ok + " free space " + primaryExternalStorage.getFreeSpace());
-
-                        // COPY
-                        InputStream inputStream = getActivity().getContentResolver().openInputStream(selectedfile);
-                        FileOutputStream outputStream = new FileOutputStream(fdest);
-                        try {
-                            byte[] buffer = new byte[4 * 1024]; // or other buffer size
-                            int read;
-
-                            while ((read = inputStream.read(buffer)) != -1) {
-                                outputStream.write(buffer, 0, read);
-                            }
-                            outputStream.flush();
-                        } finally {
-                            inputStream.close();
-                        }
-                        showToast(getString(R.string.osmdroid_file_load_success), Toast.LENGTH_LONG);
-                        if (getActivity() != null) {
-                            getActivity().recreate();
-                        }
-                        Log.e(TAG, "AFTER file write ");
-                    } catch (Exception e) {
-                        Log.e(TAG,"EXECPTIONNNN "+e);
-                        showToast(getString(R.string.osmdroid_file_load_exception), Toast.LENGTH_LONG);
-                    }
-                }
+            boolean ok = MapUtils.importMapFile(getContext(), selectedfile);
+            if (ok && getActivity() != null) {
+                getActivity().recreate();
             }
         }
     }
