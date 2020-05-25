@@ -288,7 +288,7 @@ public class ServerResponse {
             while (keys.hasNext()) {
                 String devName = keys.next();
                 JSONObject oneDev = jsonSession.getJSONObject(devName);
-                String color = oneDev.getString("color");
+                String color = oneDev.isNull("color") ? null : oneDev.getString("color");
                 colors.put(devName, color);
             }
         }

@@ -46,6 +46,7 @@ import at.bitfire.cert4android.IOnCertificateDecision;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
+import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
 import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
@@ -621,6 +622,28 @@ public class SessionServerSyncHelper {
         }
     }
 
+    public boolean isAccountUrl(String url) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
+        boolean useSSO = preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
+        if (useSSO) {
+            try {
+                SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(appContext.getApplicationContext());
+                String accountUrl = ssoAccount.url;
+                return accountUrl.replaceAll("/$", "").equals(url.replaceAll("/$", ""));
+            }
+            catch (NextcloudFilesAppAccountNotFoundException e) {
+                return false;
+            }
+            catch (NoCurrentAccountSelectedException e) {
+                return false;
+            }
+        }
+        else {
+            String accountUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+            return accountUrl.replaceAll("/$", "").equals(url.replaceAll("/$", ""));
+        }
+    }
+
     public boolean shareDevice(String token, String deviceName, ICallback callback) {
         if (isSyncPossible()) {
             ShareDeviceTask shareDeviceTask = new ShareDeviceTask(token, deviceName, callback);
@@ -717,29 +740,27 @@ public class SessionServerSyncHelper {
         }
     }
 
-    public boolean getSessionLastPositions(DBSession session, IGetLastPosCallback callback) {
+    public boolean getSessionPositions(DBSession session, Long lastTimestamp, IGetLastPosCallback callback) {
         if (isSyncPossible()) {
-            GetSessionlastPositionsTask getSessionlastPositionsTask = new GetSessionlastPositionsTask(session, callback);
-            getSessionlastPositionsTask.execute();
+            GetSessionPositionsTask getSessionPositionsTask = new GetSessionPositionsTask(session, lastTimestamp, callback);
+            getSessionPositionsTask.execute();
             return true;
         }
         return false;
     }
 
-    /**
-     * task to ask server to create public share with name restriction on device
-     * or just get the share token if it already exists
-     *
-     */
-    private class GetSessionlastPositionsTask extends AsyncTask<Void, Void, LoginStatus> {
+    private class GetSessionPositionsTask extends AsyncTask<Void, Void, LoginStatus> {
         private PhoneTrackClient client;
         private DBSession session;
+        private Long lastTimestamp;
         private IGetLastPosCallback callback;
         private List<Throwable> exceptions = new ArrayList<>();
-        private Map<String, ColoredLocation> locations;
+        private Map<String, List<BasicLocation>> locations;
+        private Map<String, String> colors;
 
-        public GetSessionlastPositionsTask(DBSession session, IGetLastPosCallback callback) {
+        public GetSessionPositionsTask(DBSession session, Long lastTimestamp, IGetLastPosCallback callback) {
             this.session = session;
+            this.lastTimestamp = lastTimestamp;
             this.callback = callback;
         }
 
@@ -752,16 +773,16 @@ public class SessionServerSyncHelper {
         protected LoginStatus doInBackground(Void... voids) {
             client = createPhoneTrackClient();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-            if (LoggerService.DEBUG) { Log.i(getClass().getSimpleName(), "STARTING share device"); }
+            if (LoggerService.DEBUG) { Log.i(getClass().getSimpleName(), "STARTING get positions"); }
             LoginStatus status = LoginStatus.OK;
             locations = new HashMap<>();
             try {
-                ServerResponse.GetSessionLastPositionsResponse response = client.getSessionLastPositions(customCertManager, session);
+                ServerResponse.GetSessionPositionsResponse response = client.getSessionPositions(customCertManager, session, null, lastTimestamp);
                 locations = response.getPositions(session);
+                colors = response.getColors(session);
                 if (LoggerService.DEBUG) {
-                    Log.i(getClass().getSimpleName(), "HERE ARE THE positions BIIIITCH "+locations.keySet().size());
+                    Log.i(getClass().getSimpleName(), "HERE ARE THE positions and colors "+locations.keySet().size());
                 }
-
             } catch (IOException e) {
                 if (LoggerService.DEBUG) {
                     Log.e(getClass().getSimpleName(), "Exception", e);
@@ -798,7 +819,7 @@ public class SessionServerSyncHelper {
                     errorString += e.getClass().getName() + ": " + e.getMessage();
                 }
             }
-            callback.onFinish(locations, errorString);
+            callback.onFinish(locations, colors, errorString);
         }
     }
 

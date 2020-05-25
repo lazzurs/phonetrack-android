@@ -211,6 +211,10 @@ public class DBLogjob implements Item, Serializable {
         return locationRequestTimeout;
     }
 
+    public boolean isPhonetrack() {
+        return !getToken().isEmpty() && !getDeviceName().isEmpty() && !getUrl().isEmpty();
+    }
+
     @Override
     public boolean isSection() {
         return false;

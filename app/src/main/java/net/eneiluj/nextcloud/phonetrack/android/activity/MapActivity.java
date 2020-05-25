@@ -53,7 +53,10 @@ import android.widget.TextView;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
+import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
 import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
@@ -80,6 +83,7 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
@@ -104,9 +108,6 @@ import java.util.TimerTask;
 
 import static android.text.format.DateUtils.isToday;
 
-//import butterknife.BindView;
-//import butterknife.ButterKnife;
-
 public class MapActivity extends AppCompatActivity {
     MapView map = null;
 
@@ -128,7 +129,13 @@ public class MapActivity extends AppCompatActivity {
     private ImageButton btZoom;
     private ImageButton btZoomAuto;
 
-    private Map<String, ColoredLocation> locations;
+    // device data
+    private Long lastTimestamp = null;
+    private Map<String, Long> lastTimestamps;
+    private Map<String, List<BasicLocation>> locations;
+    private Map<String, String> colors;
+    // graphical stuff
+    private Map<String, Polyline> lines;
     private Map<String, Marker> markers;
     private Map<String, CustomLocationMarkerDrawable> markerDrawables;
 
@@ -137,18 +144,12 @@ public class MapActivity extends AppCompatActivity {
 
     private String selectedDeviceItemId;
 
-    //@BindView(R.id.mapActivityActionBar)
     Toolbar toolbar;
-    //@BindView(R.id.drawerLayoutMap)
     DrawerLayout drawerLayoutMap;
-    //@BindView(R.id.account)
     TextView account;
-    //@BindView(R.id.relativelayoutMap)
     RelativeLayout relativeLayoutMap;
 
-    //@BindView(R.id.navigationList)
     RecyclerView listNavigationDevices;
-    //@BindView(R.id.navigationMenu)
     RecyclerView listNavigationMenu;
 
     private NavigationAdapter adapterDevices;
@@ -197,9 +198,11 @@ public class MapActivity extends AppCompatActivity {
         setupActionBar();
         drawerToggle.syncState();
 
-
-        markers = new HashMap<>();
+        lastTimestamps = new HashMap<>();
         locations = new HashMap<>();
+        colors = new HashMap<>();
+        lines = new HashMap<>();
+        markers = new HashMap<>();
         markerDrawables = new HashMap<>();
         selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
 
@@ -477,13 +480,16 @@ public class MapActivity extends AppCompatActivity {
                 return s1.compareToIgnoreCase(s2);
             }
         });
+        Log.v(TAG, "NAVIGATION LIST we have "+devNames.size()+" devices");
         for (String devName : devNames) {
             String label = devName;
-            if (isToday(locations.get(devName).getTimestamp()*1000)) {
-                label += " (" + sdfHour.format(locations.get(devName).getTimestamp() * 1000) + ")";
+            List<BasicLocation> locs = locations.get(devName);
+            BasicLocation lastLoc = locs.get(locs.size()-1);
+            if (isToday(lastLoc.getTimestamp()*1000)) {
+                label += " (" + sdfHour.format(lastLoc.getTimestamp() * 1000) + ")";
             }
             else {
-                label += "\n(" + sdfCompleteSimple.format(locations.get(devName).getTimestamp() * 1000) + ")";
+                label += "\n(" + sdfCompleteSimple.format(lastLoc.getTimestamp() * 1000) + ")";
             }
             NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, null, R.drawable.ic_phone_android_grey_24dp);
             itemsNavigationDevice.add(item);
@@ -673,10 +679,10 @@ public class MapActivity extends AppCompatActivity {
         Collections.sort(devNames, new Comparator<String>() {
             @Override
             public int compare(String s1, String s2) {
-                if (locations.get(s1).getTimestamp() == locations.get(s2).getTimestamp()) {
+                if (lastTimestamps.get(s1) == lastTimestamps.get(s2)) {
                     return 0;
                 }
-                boolean yep = (locations.get(s1).getTimestamp() - locations.get(s2).getTimestamp()) > 0;
+                boolean yep = (lastTimestamps.get(s1) - lastTimestamps.get(s2)) > 0;
                 return yep ? 1 : -1;
             }
         });
@@ -753,6 +759,162 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * get data from the database
+     */
+    private void updatePositionsWithLocalData() {
+        List<DBLogjobLocation> locs;
+        List<BasicLocation> basicLocs;
+        // get list of session's devices with a logjob
+        List<DBLogjob> logjobs = db.getLogjobs();
+        for (DBLogjob lj: logjobs) {
+            // if lj URL matches account URL and session token matches
+            if (lj.isPhonetrack()
+                    && db.getPhonetrackServerSyncHelper().isAccountUrl(lj.getUrl())
+                    && lj.getToken().equals(session.getToken())) {
+                // get local positions of devices
+                locs = db.getLocationsOfLogjob(lj.getId());
+                basicLocs = new ArrayList<>();
+                basicLocs.addAll(locs);
+                updateDevicePositions(lj.getDeviceName(), basicLocs, null);
+            }
+        }
+
+        // after data update : view update
+        updateMap();
+    }
+
+    private void updateDevicePositions(String devName, List<BasicLocation> locs, @Nullable String colorStr) {
+        /////// LOCATIONS
+        if (locs.size() == 0) {
+            return;
+        }
+        Long lastDevTs = lastTimestamps.get(devName);
+        List<BasicLocation> locationsToAdd = new ArrayList<>();
+        // if no locations : add all
+        if (!locations.containsKey(devName)) {
+            locations.put(devName, locs);
+            Log.v(TAG, "first add for dev "+devName+" ADD "+locs.size()+" locations");
+        } else {
+            // else add what's new
+            if (lastDevTs == null) {
+                locations.get(devName).addAll(locs);
+            } else {
+                for (BasicLocation loc : locs) {
+                    Log.v(TAG, "AAAAA "+loc.getTimestamp()+" > "+ lastDevTs);
+                    if (loc.getTimestamp() > lastDevTs) {
+                        locationsToAdd.add(loc);
+                    }
+                }
+                locations.get(devName).addAll(locationsToAdd);
+                Log.v(TAG, "existing dev "+devName+" ADD "+locationsToAdd.size()+" locations");
+            }
+        }
+        List<BasicLocation> deviceLocations = locations.get(devName);
+        Log.v(TAG, "deviceLocations size "+deviceLocations.size()+" access "+(deviceLocations.size()-1));
+        BasicLocation lastLoc = deviceLocations.get(deviceLocations.size()-1);
+        lastTimestamps.put(devName, lastLoc.getTimestamp());
+
+        /////// LINES
+        // color
+        int color;
+        if (colorStr != null) {
+            Log.v(TAG, "COCO "+colorStr+" "+(colorStr.equals("null")));
+            color = Color.parseColor(colorStr);
+        } else {
+            color = ThemeUtils.primaryColor(ctx);
+        }
+        if (!lines.containsKey(devName)) {
+            List<GeoPoint> geoPoints = new ArrayList<>();
+            for (BasicLocation loc : locations.get(devName)) {
+                geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
+            }
+            Polyline line = new Polyline();
+            line.getOutlinePaint().setColor(color);
+            line.setPoints(geoPoints);
+            lines.put(devName, line);
+            map.getOverlays().add(line);
+        } else {
+            Polyline line = lines.get(devName);
+            for (BasicLocation loc : locationsToAdd) {
+                line.addPoint(new GeoPoint(loc.getLat(), loc.getLon()));
+            }
+            line.getOutlinePaint().setColor(color);
+        }
+
+        /////// MARKER
+        CustomLocationMarkerDrawable markerDrawable;
+        // marker already exists, check if color needs to be updated
+        if (markers.containsKey(devName)) {
+            markerDrawable = markerDrawables.get(devName);
+            if (colorStr != null) {
+                int newColor = Color.parseColor(colorStr);
+                int currentColor = markerDrawable.getColor();
+                Double currentAccuracy = markerDrawable.getAccuracy();
+                if (newColor != currentColor || currentAccuracy != lastLoc.getAccuracy()) {
+                    int textColor;
+                    if (ThemeUtils.isBrightColor(newColor)) {
+                        textColor = android.R.color.black;
+                    } else {
+                        textColor = android.R.color.white;
+                    }
+                    markerDrawable.update(newColor, textColor, lastLoc.getAccuracy());
+                }
+            }
+        }
+        // create the marker
+        else {
+            Marker m = new Marker(map);
+
+            if (colorStr != null) {
+                color = Color.parseColor(colorStr);
+            } else {
+                color = ThemeUtils.primaryColor(ctx);
+            }
+            int textColor;
+            if (ThemeUtils.isBrightColor(color)) {
+                textColor = android.R.color.black;
+            } else {
+                textColor = android.R.color.white;
+            }
+            markerDrawable = new CustomLocationMarkerDrawable(R.mipmap.ic_marker, devName.substring(0, 1), color, textColor, lastLoc.getAccuracy());
+            m.setIcon(markerDrawable);
+
+            map.getOverlays().add(m);
+            markers.put(devName, m);
+            markerDrawables.put(devName, markerDrawable);
+        }
+
+        // always update location data
+        //locations.put(devName, loc);
+        Marker m = markers.get(devName);
+        String text = devName;
+        text += "\n" + sdfComplete.format(new Date(lastLoc.getTimestamp() * 1000));
+        if (lastLoc.getAltitude() != null) {
+            text += "\n" + getString(R.string.popup_altitude_value, lastLoc.getAltitude());
+        }
+        if (lastLoc.getAccuracy() != null) {
+            text += "\n" + getString(R.string.popup_accuracy_value, lastLoc.getAccuracy());
+        }
+        if (lastLoc.getSpeed() != null) {
+            text += "\n" + getString(R.string.popup_speed_value, lastLoc.getSpeed() * 3.6);
+        }
+        if (lastLoc.getBearing() != null) {
+            text += "\n" + getString(R.string.popup_bearing_value, lastLoc.getBearing());
+        }
+        if (lastLoc.getSatellites() != null) {
+            text += "\n" + getString(R.string.popup_satellites, lastLoc.getSatellites());
+        }
+        if (lastLoc.getBattery() != null) {
+            text += "\n" + getString(R.string.popup_battery_value, lastLoc.getBattery());
+        }
+        if (lastLoc.getUserAgent() != null) {
+            text += "\n" + getString(R.string.popup_user_agent) + " : " + lastLoc.getUserAgent();
+        }
+        m.setTitle(text);
+        m.setPosition(new GeoPoint(lastLoc.getLat(), lastLoc.getLon()));
+    }
+
     private Timer timer;
     private TimerTask timerTask;
 
@@ -766,7 +928,8 @@ public class MapActivity extends AppCompatActivity {
             public void run() {
                 // launch task of server sync with callback
                 Log.i(TAG, "[Task run]");
-                db.getPhonetrackServerSyncHelper().getSessionLastPositions(session, syncCallBack);
+                updatePositionsWithLocalData();
+                db.getPhonetrackServerSyncHelper().getSessionPositions(session, lastTimestamp, syncCallBack);
             }
         };
         int currentFreq = prefs.getInt("map_freq", 15);
@@ -788,88 +951,16 @@ public class MapActivity extends AppCompatActivity {
 
     private IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
         @Override
-        public void onFinish(Map<String, ColoredLocation> newLocations, String message) {
+        public void onFinish(Map<String, List<BasicLocation>> newLocations, Map<String, String> newColors, String message) {
             for (String devName : newLocations.keySet()) {
-                Log.i(TAG, "Results : "+devName+" | "+newLocations.get(devName));
-                ColoredLocation loc = newLocations.get(devName);
-                CustomLocationMarkerDrawable markerDrawable;
-                // marker already exists, check if color needs to be updated
-                if (markers.containsKey(devName)) {
-                    markerDrawable = markerDrawables.get(devName);
-
-                    String colorStr = loc.getColor();
-                    if (colorStr != null) {
-                        int newColor = Color.parseColor(colorStr);
-                        int currentColor = markerDrawable.getColor();
-                        Double currentAccuracy = markerDrawable.getAccuracy();
-                        if (newColor != currentColor || currentAccuracy != loc.getAccuracy()) {
-                            int textColor;
-                            if (ThemeUtils.isBrightColor(newColor)) {
-                                textColor = android.R.color.black;
-                            }
-                            else {
-                                textColor = android.R.color.white;
-                            }
-                            markerDrawable.update(newColor, textColor, loc.getAccuracy());
-                        }
-                    }
-                }
-                // create the marker
-                else {
-                    Marker m = new Marker(map);
-                    int color;
-                    String colorStr = loc.getColor();
-                    if (colorStr != null) {
-                        color = Color.parseColor(colorStr);
-                    }
-                    else {
-                        color = ThemeUtils.primaryColor(ctx);
-                    }
-                    int textColor;
-                    if (ThemeUtils.isBrightColor(color)) {
-                        textColor = android.R.color.black;
-                    }
-                    else {
-                        textColor = android.R.color.white;
-                    }
-                    markerDrawable = new CustomLocationMarkerDrawable(R.mipmap.ic_marker, devName.substring(0, 1), color, textColor, loc.getAccuracy());
-                    m.setIcon(markerDrawable);
-
-                    map.getOverlays().add(m);
-                    markers.put(devName, m);
-                    markerDrawables.put(devName, markerDrawable);
-                }
-
-                // always update location data
-                locations.put(devName, loc);
-                Marker m = markers.get(devName);
-                String text = devName;
-                text += "\n"+sdfComplete.format(new Date(loc.getTimestamp()*1000));
-                if (loc.getAltitude() != null) {
-                    text += "\n"+getString(R.string.popup_altitude_value, loc.getAltitude());
-                }
-                if (loc.getAccuracy() != null) {
-                    text += "\n"+getString(R.string.popup_accuracy_value, loc.getAccuracy());
-                }
-                if (loc.getSpeed() != null) {
-                    text += "\n"+getString(R.string.popup_speed_value, loc.getSpeed()*3.6);
-                }
-                if (loc.getBearing() != null) {
-                    text += "\n"+getString(R.string.popup_bearing_value, loc.getBearing());
-                }
-                if (loc.getSatellites() != null) {
-                    text += "\n"+getString(R.string.popup_satellites, loc.getSatellites());
-                }
-                if (loc.getBattery() != null) {
-                    text += "\n"+getString(R.string.popup_battery_value, loc.getBattery());
-                }
-                if (loc.getUserAgent() != null) {
-                    text += "\n"+getString(R.string.popup_user_agent)+" : "+loc.getUserAgent();
-                }
-                m.setTitle(text);
-                m.setPosition(new GeoPoint(loc.getLat(), loc.getLon()));
+                List<BasicLocation> locs = newLocations.get(devName);
+                Log.i(TAG, "position results for dev : "+devName+" | "+locs.size());
+                String colorStr = newColors.get(devName);
+                // update map with new device positions
+                updateDevicePositions(devName, locs, colorStr);
             }
-            // delete removed
+            /*
+            // delete removed devices
             List<String> devsToDel = new ArrayList<>();
             for (String markerDevName : markers.keySet()) {
                 if (!newLocations.containsKey(markerDevName)) {
@@ -878,19 +969,48 @@ public class MapActivity extends AppCompatActivity {
             }
             for (String devToDel : devsToDel) {
                 map.getOverlays().remove(markers.get(devToDel));
+                map.getOverlays().remove(lines.get(devToDel));
                 markers.remove(devToDel);
-                locations.remove(devToDel);
+                lines.remove(devToDel);
                 markerDrawables.remove(devToDel);
-            }
 
-            map.invalidate();
-            // update device list
-            setupNavigationDeviceList();
-            if (prefs.getBoolean("map_autozoom", true)) {
-                zoomOnAllMarkers();
-            }
+                lastTimestamps.remove(devToDel);
+                locations.remove(devToDel);
+                colors.remove(devToDel);
+            }*/
+
+            // update lastTimestamp for next server request
+            updateLastTimestamp();
+
+            updateMap();
         }
     };
+
+    public void updateMap() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                map.invalidate();
+                // update device list
+                setupNavigationDeviceList();
+                if (prefs.getBoolean("map_autozoom", true)) {
+                    zoomOnAllMarkers();
+                }
+            }
+        });
+    }
+
+    private void updateLastTimestamp() {
+        for (String devName : locations.keySet()) {
+            List<BasicLocation> locs = locations.get(devName);
+            if (locs.size() > 0) {
+                BasicLocation lastLoc = locs.get(locs.size()-1);
+                if (lastTimestamp == null || lastLoc.getTimestamp() > lastTimestamp) {
+                    lastTimestamp = lastLoc.getTimestamp();
+                }
+            }
+        }
+    }
 
     private void setupMapButtons() {
         btDisplayMyLoc = (ImageButton) findViewById(R.id.ic_center_map);
