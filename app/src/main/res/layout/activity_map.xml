@@ -53,6 +53,7 @@
             android:padding="8dp"
             android:background="#00ffffff"
             android:contentDescription="@string/map_choose_layer"
+            android:tooltipText="@string/map_choose_layer"
             android:cropToPadding="true" />
 
         <ImageButton
@@ -67,6 +68,7 @@
             android:padding="8dp"
             android:background="#00ffffff"
             android:contentDescription="@string/center_map"
+            android:tooltipText="@string/center_map"
             android:cropToPadding="true" />
 
         <ImageButton
@@ -76,6 +78,7 @@
             android:src="@drawable/ic_directions_grey_24dp"
             android:background="#00ffffff"
             android:contentDescription="@string/follow_me"
+            android:tooltipText="@string/follow_me"
             android:cropToPadding="true"
             android:layout_below="@+id/ic_center_map"
             android:layout_alignLeft="@+id/ic_center_map"
@@ -90,6 +93,7 @@
             android:src="@drawable/ic_magnify_grey_24dp"
             android:background="#00ffffff"
             android:contentDescription="@string/zoom_all_markers"
+            android:tooltipText="@string/zoom_all_markers"
             android:cropToPadding="true"
             android:layout_below="@+id/ic_follow_me"
             android:layout_alignLeft="@+id/ic_center_map"
@@ -104,6 +108,7 @@
             android:src="@drawable/ic_magnify_plus_outline_grey_24dp"
             android:background="#00ffffff"
             android:contentDescription="@string/auto_zoom"
+            android:tooltipText="@string/auto_zoom"
             android:cropToPadding="true"
             android:layout_below="@+id/ic_zoom_all"
             android:layout_alignLeft="@+id/ic_center_map"

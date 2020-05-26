@@ -338,9 +338,9 @@
     <string name="fallback_weblogin_text">Revert to old login method</string>
     <string name="fallback_weblogin_back">Back</string>
     <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
-    <string name="center_map">Center map</string>
-    <string name="follow_me">Follow me</string>
-    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="center_map">Show my position</string>
+    <string name="follow_me">Follow my position</string>
+    <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Auto zoom</string>
 
     <!-- Plurals -->

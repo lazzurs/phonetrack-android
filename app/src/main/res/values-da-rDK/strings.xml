@@ -43,7 +43,7 @@
     <string name="action_pin_to_homescreen">Pin map to home screen</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_save">Save</string>
-    <string name="menu_preset_bike">Bike profile</string>
+    <string name="menu_preset_bike">Cykelprofil</string>
     <string name="menu_preset_walk">Walk profile</string>
     <string name="menu_preset_drive">Drive profile</string>
     <string name="menu_preset_precision">Max precision profile</string>

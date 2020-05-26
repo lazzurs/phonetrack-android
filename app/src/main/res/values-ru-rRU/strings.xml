@@ -43,9 +43,9 @@
     <string name="action_pin_to_homescreen">Закрепить карту на домашнем экране</string>
     <string name="menu_delete">Удалить</string>
     <string name="menu_save">Сохранить</string>
-    <string name="menu_preset_bike">Bike profile</string>
+    <string name="menu_preset_bike">Велопрофиль</string>
     <string name="menu_preset_walk">Walk profile</string>
-    <string name="menu_preset_drive">Drive profile</string>
+    <string name="menu_preset_drive">Автопрофиль</string>
     <string name="menu_preset_precision">Max precision profile</string>
     <string name="menu_preset_battery">Battery saving profile</string>
     <string name="preset_hint_title">Logjob settings presets</string>

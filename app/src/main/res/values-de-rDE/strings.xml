@@ -88,7 +88,7 @@
     <string name="logjob_title_log_to">In %s protokollieren</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">Mein Gerätename</string>
-    <string name="default_session_token">supertoken</string>
+    <string name="default_session_token">Supertoken</string>
     <string name="logjob_info_dialog_title">Über %s</string>
     <string name="logjob_info_nbsync">%d Standorte gesendet</string>
     <string name="logjob_info_nbnotsync">%d Standorte ausstehend</string>
@@ -132,11 +132,11 @@
     <string name="sms_logjob_created">Ein Protokollierungsauftrag aller %d Sekunden wurde in der Sitzung %s erstellt</string>
     <string name="sms_logjob_creation_impossible">Erstellen des Protolierungsauftrags fehlgeschlagen. Es wurde keine Sitzung gefunden</string>
     <string name="sms_failure_timeout_sms">PhoneTrack konnte innerhalb von %d Sekunden keine Position ermitteln</string>
-    <string name="sms_failure_timeout_notification">Zeitüberschreitung nach %1$d Sekunde(n) erreicht. Es wurde eine Fehler-SMS an %2$s gesendet</string>
+    <string name="sms_failure_timeout_notification">Zeitüberschreitung nach %1$d Sekunde(n) erreicht. Der Fehler wurde als SMS an %2$s gesendet</string>
     <string name="sms_failure_permission_sms">PhoneTrack hat keine Berechtigung um den Standort abzurufen</string>
-    <string name="sms_failure_permission_notification">Abrufen der Standortberechtigung fehlgeschlagen. Es wurde eine Fehler-SMS an %1$s gesendet</string>
+    <string name="sms_failure_permission_notification">Abrufen der Standortberechtigung fehlgeschlagen. Der Fehler wurde als SMS an %1$s gesendet</string>
     <string name="sms_failure_provider_sms">Ermitteln der Position fehlgeschlagen, da der GPS-Dienst deaktiviert ist</string>
-    <string name="sms_failure_provider_notification">Der GPS-Dienst ist deaktiviert. Es wurde eine Fehler-SMS an %1$s gesendet</string>
+    <string name="sms_failure_provider_notification">Der GPS-Dienst ist deaktiviert. Der Fehler wurde als SMS an %1$s gesendet</string>
     <string name="map_choose_layer">Map Tile Provider wählen</string>
     <string name="drawer_connect_hint">Antippen, um Verbindung herzustellen</string>
     <string name="homescreen_map_shortcut_long_title">Karte für %s</string>
@@ -160,7 +160,7 @@
     <string name="settings_sms_keyword_title">SMS-Schlüsselwort</string>
     <string name="settings_sms_keyword_long">Wenn dieses Gerät eine SMS empfängt, die nur dieses Schlüsselwort enthält, werden Standortinformationen zurückgesendet.</string>
     <string name="settings_sms_keyword_long2">Sie können Befehle auch mit dieser Struktur senden: SCHLÜSSELWORT BEFEHL</string>
-    <string name="settings_sms_keyword_long3">Verfügbare Befehle:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+    <string name="settings_sms_keyword_long3">Verfügbare Befehle:\n• %s [NBSECONDS(def=60)]\n• %s [LOGJOB NAME]\n• %s [LOGJOB NAME]\n• %s MINTIME</string>
     <string name="settings_use_server_color_title">Farbe des Servers verwenden</string>
     <string name="settings_use_server_color_subtitle">Farbe des Servers beim Synchronisieren abrufen und als Farbe der Haupt-App verwenden</string>
     <string name="settings_providers_title">Standortdienste</string>
@@ -184,10 +184,10 @@
     <string name="settings_network_category">Netzwerk</string>
     <string name="settings_logging_category">Protokollierung</string>
     <string name="settings_sms_category">SMS</string>
-    <string name="settings_theming_category">Themeneinstellung</string>
-    <string name="settings_group_sync_title">Punkte in einem Paket von mindestens</string>
-    <string name="settings_group_sync_long">Warten Sie, bis es mindestens N Punkte gibt, um sie an den Server zu senden. Dies spart eine Menge Netzwerkdatennutzung, aber Punkte werden nicht immer in Echtzeit verschickt.</string>
-    <string name="settings_saving_category">Energiesparen/Daten</string>
+    <string name="settings_theming_category">Farbeinstellungen</string>
+    <string name="settings_group_sync_title">Datenpunkte in einem Paket senden von mindestens</string>
+    <string name="settings_group_sync_long">Warten, bis mindestens eine bestimmte Anzahl Datenpunkten vorhanden ist, um diese an den Server zu senden. Dies spart eine Menge an Netzwerkdaten, jedoch werden die Datenpunkte nicht immer in Echtzeit übertragen.</string>
+    <string name="settings_saving_category">Energie-/Datensparen</string>
     <string name="settings_power_saving_awareness_title">Status des Energiesparmodus beachten</string>
     <string name="settings_power_saving_awareness_subtitle">Aktive Protokollierungsaufträge anhalten, während der Energiesparmodus aktiviert ist</string>
     <string name="settings_offline_mode_awareness_title">Status des Offline-Modus beachten</string>
@@ -239,7 +239,7 @@
     <string name="error_invalid_minaccuracy">Ungültige Mindestgenauigkeit</string>
     <string name="error_invalid_timeout">Zeitüberschreitung ungültig</string>
     <string name="error_invalid_sms_keyword">Ungültiges SMS-Schlüsselwort</string>
-    <string name="error_invalid_group_sync">Nummer ungültig</string>
+    <string name="error_invalid_group_sync">Ungültige Rufnummer</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->

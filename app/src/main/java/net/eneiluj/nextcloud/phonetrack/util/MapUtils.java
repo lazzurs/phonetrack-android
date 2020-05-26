@@ -115,9 +115,8 @@ public class MapUtils {
                     InputStream inputStream = context.getContentResolver().openInputStream(selectedfile);
                     FileOutputStream outputStream = new FileOutputStream(fdest);
                     try {
-                        byte[] buffer = new byte[4 * 1024]; // or other buffer size
+                        byte[] buffer = new byte[4 * 1024];
                         int read;
-
                         while ((read = inputStream.read(buffer)) != -1) {
                             outputStream.write(buffer, 0, read);
                         }
