@@ -69,6 +69,7 @@ public class SessionServerSyncHelper {
     public static final String BROADCAST_SSO_TOKEN_MISMATCH = "net.eneiluj.nextcloud.phonetrack.broadcast.token_mismatch";
     public static final String BROADCAST_NETWORK_AVAILABLE = "net.eneiluj.nextcloud.phonetrack.broadcast.network_available";
     public static final String BROADCAST_NETWORK_UNAVAILABLE = "net.eneiluj.nextcloud.phonetrack.broadcast.network_unavailable";
+    public static final String BROADCAST_AVATAR_UPDATED = "net.eneiluj.nextcloud.phonetrack.broadcast.avatar_updated";
 
     private static SessionServerSyncHelper instance;
 
@@ -156,6 +157,12 @@ public class SessionServerSyncHelper {
             customCertManager.close();
         }
         super.finalize();
+    }
+
+    public static boolean isNextcloudAccountConfigured(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return !preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS).isEmpty() ||
+                preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -280,6 +287,8 @@ public class SessionServerSyncHelper {
                 GetNCColorTask getColorTask = new GetNCColorTask();
                 getColorTask.execute();
             }
+            GetNCUserAvatarTask getAvatarTask = new GetNCUserAvatarTask();
+            getAvatarTask.execute();
         } else if (!onlyLocalChanges) {
             Log.d(getClass().getSimpleName(), "... scheduled");
             syncScheduled = true;
@@ -605,7 +614,7 @@ public class SessionServerSyncHelper {
             try {
                 SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(appContext.getApplicationContext());
                 NextcloudAPI nextcloudAPI = new NextcloudAPI(appContext.getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
-                return new PhoneTrackClient(url, username, password, nextcloudAPI);
+                return new PhoneTrackClient(url, ssoAccount.userId, password, nextcloudAPI);
             }
             catch (NextcloudFilesAppAccountNotFoundException e) {
                 return null;
@@ -901,6 +910,86 @@ public class SessionServerSyncHelper {
                 errorString += e.getClass().getName() + ": " + e.getMessage();
             }
             callback.onFinish(sessionId, errorString);
+        }
+    }
+
+    private class GetNCUserAvatarTask extends AsyncTask<Void, Void, LoginStatus> {
+
+        private final List<ICallback> callbacks = new ArrayList<>();
+        private PhoneTrackClient client;
+        private List<Throwable> exceptions = new ArrayList<>();
+
+        public GetNCUserAvatarTask() {
+
+        }
+
+        public void addCallbacks(List<ICallback> callbacks) {
+            this.callbacks.addAll(callbacks);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected LoginStatus doInBackground(Void... voids) {
+            client = createPhoneTrackClient();
+            Log.i(getClass().getSimpleName(), "STARTING get account avatar");
+
+            LoginStatus status = LoginStatus.OK;
+
+            if (client != null) {
+                status = getNextcloudUserAvatar();
+            }
+            else {
+                status = LoginStatus.SSO_TOKEN_MISMATCH;
+            }
+            return status;
+        }
+
+        private LoginStatus getNextcloudUserAvatar() {
+            Log.d(getClass().getSimpleName(), "getNextcloudUserAvatar()");
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+            LoginStatus status;
+            try {
+
+                ServerResponse.AvatarResponse response = client.getAvatar(customCertManager, null);
+                String avatar = response.getAvatarString();
+
+                status = LoginStatus.OK;
+                SharedPreferences.Editor editor = preferences.edit();
+                if (avatar != null && !avatar.isEmpty()) {
+                    Log.d(getClass().getSimpleName(), "avatar from server is "+avatar);
+                    editor.putString(appContext.getString(R.string.pref_key_avatar), avatar);
+                }
+                editor.apply();
+            } catch (ServerResponse.NotModifiedException e) {
+                Log.d(getClass().getSimpleName(), "No changes, nothing to do.");
+                status = LoginStatus.OK;
+            } catch (IOException e) {
+                Log.e(getClass().getSimpleName(), "Exception", e);
+                exceptions.add(e);
+                status = LoginStatus.CONNECTION_FAILED;
+            } catch (JSONException e) {
+                Log.e(getClass().getSimpleName(), "Exception", e);
+                exceptions.add(e);
+                status = LoginStatus.JSON_FAILED;
+            } catch (TokenMismatchException e) {
+                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                status = LoginStatus.SSO_TOKEN_MISMATCH;
+            }
+
+            return status;
+        }
+
+        @Override
+        protected void onPostExecute(LoginStatus status) {
+            super.onPostExecute(status);
+            if (status == LoginStatus.OK) {
+                Intent intent = new Intent(BROADCAST_AVATAR_UPDATED);
+                appContext.sendBroadcast(intent);
+            }
         }
     }
 }

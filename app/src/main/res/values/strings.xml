@@ -321,6 +321,7 @@
     <string name="pref_key_preset_hint_disabled" translatable="false">presetHintDisabled</string>
     <string name="pref_key_sms_keyword" translatable="false">SMSkeyword</string>
     <string name="pref_key_use_server_color" translatable="false">useServerColor</string>
+    <string name="pref_key_avatar" translatable="false">ncAvatar</string>
     <string name="pref_key_autostart" translatable="false">autostart</string>
     <string name="pref_key_shownbsynced" translatable="false">shownbsynced</string>
     <string name="pref_value_theme_light">Light</string>

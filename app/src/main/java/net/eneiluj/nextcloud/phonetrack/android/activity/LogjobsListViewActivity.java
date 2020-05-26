@@ -12,6 +12,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -25,6 +27,10 @@ import androidx.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -39,6 +45,8 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
+
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -133,6 +141,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     RecyclerView listNavigationMenu;
     RecyclerView listView;
     Snackbar ssoSnackbar;
+    ImageView avatarView;
 
     private View currentInfoDialogView = null;
     private long currentInfoDialogLogjobId = -1;
@@ -197,6 +206,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         listNavigationCategories = findViewById(R.id.navigationList);
         listNavigationMenu = findViewById(R.id.navigationMenu);
         listView = findViewById(R.id.recycler_view);
+        avatarView = findViewById(R.id.drawer_nc_logo);
 
         //ButterKnife.bind(this);
 
@@ -1084,29 +1094,51 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     private void updateUsernameInDrawer() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String username;
-        String url = "";
-        String content = "";
-        if (preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
-            username = preferences.getString(SettingsActivity.SETTINGS_SSO_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
-            url = preferences.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS).replace("https://", "").replace("http://", "");
-            content = username;
-        }
-        else {
-            username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
-            if (!SettingsActivity.DEFAULT_SETTINGS.equals(username)) {
-                url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS).replace("https://", "").replace("http://", "");
-                if (!url.equals(SettingsActivity.DEFAULT_SETTINGS)) {
-                    content = username + "@" + url.substring(0, url.length() - 1);
+        if (!SessionServerSyncHelper.isNextcloudAccountConfigured(this)) {
+            account.setText(getString(R.string.drawer_connect_hint));
+            updateAvatarInDrawer(false);
+        } else {
+            String accountServerUrl;
+            String accountUser;
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            if (preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
+                try {
+                    SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(this);
+                    accountServerUrl = ssoAccount.url.replaceAll("/+$", "").replaceAll("^https?://", "");
+                    accountUser = ssoAccount.userId;
+                } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+                    accountServerUrl = "error";
+                    accountUser = "error";
                 }
+            } else {
+                accountServerUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
+                        .replaceAll("/+$", "")
+                        .replaceAll("^https?://", "");
+                accountUser = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
             }
+            account.setText(accountUser + "@" + accountServerUrl);
+            updateAvatarInDrawer(true);
         }
-        if (!SettingsActivity.DEFAULT_SETTINGS.equals(username) && !SettingsActivity.DEFAULT_SETTINGS.equals(url)) {
-            this.account.setText(content);
-        }
-        else {
-            this.account.setText(getString(R.string.drawer_connect_hint));
+    }
+
+    private void updateAvatarInDrawer(boolean isAccountConfigured) {
+        if (isAccountConfigured) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String avatarB64 = preferences.getString(getString(R.string.pref_key_avatar), "");
+            if (!"".equals(avatarB64)) {
+                try {
+                    byte[] decodedString = Base64.decode(avatarB64, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    Bitmap rounded = ThemeUtils.getRoundedBitmap(decodedByte, decodedByte.getWidth() / 2);
+                    avatarView.setImageBitmap(rounded);
+                } catch (Exception e) {
+                    avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+                }
+            } else {
+                avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+            }
+        } else {
+            avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
         }
     }
 
@@ -1496,6 +1528,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH);
         filter.addAction(SessionServerSyncHelper.BROADCAST_NETWORK_AVAILABLE);
         filter.addAction(SessionServerSyncHelper.BROADCAST_NETWORK_UNAVAILABLE);
+        filter.addAction(SessionServerSyncHelper.BROADCAST_AVATAR_UPDATED);
         registerReceiver(mBroadcastReceiver, filter);
     }
 
@@ -1672,6 +1705,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case SessionServerSyncHelper.BROADCAST_NETWORK_UNAVAILABLE:
                     swipeRefreshLayout.setEnabled(false);
+                    break;
+                case SessionServerSyncHelper.BROADCAST_AVATAR_UPDATED:
+                    // this is the account avatar
+                    Log.v("AAA", "broadcast UPDATE avatar of NC account");
+                    updateAvatarInDrawer(true);
                     break;
             }
         }

@@ -93,6 +93,16 @@ public class ServerResponse {
         }
     }
 
+    public static class AvatarResponse extends ServerResponse {
+        public AvatarResponse(PhoneTrackClient.ResponseData response) {
+            super(response);
+        }
+
+        public String getAvatarString() throws IOException {
+            return getContent();
+        }
+    }
+
     public static class ShareDeviceResponse extends ServerResponse {
         public ShareDeviceResponse(PhoneTrackClient.ResponseData response) {
             super(response);
