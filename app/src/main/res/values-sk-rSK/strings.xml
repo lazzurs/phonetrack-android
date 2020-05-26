@@ -184,6 +184,13 @@
     <string name="settings_network_category">Sieť</string>
     <string name="settings_logging_category">Zaznamenávanie</string>
     <string name="settings_sms_category">Sms</string>
+    <string name="settings_map_category">Mapa</string>
+    <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
+    <string name="settings_osmdroid_delete_label">Delete Mapsforge offline map tiles file</string>
+    <string name="settings_osmdroid_delete_success">File deleted</string>
+    <string name="osmdroid_file_load_success">File import success</string>
+    <string name="osmdroid_file_load_no_space">No space left on external storage</string>
+    <string name="osmdroid_file_load_exception">Error while copying map file</string>
     <string name="settings_theming_category">Témy</string>
     <string name="settings_group_sync_title">Odosielať body v balíčkoch s najmenej</string>
     <string name="settings_group_sync_long">Počkať, pokiaľ bude dostupných najmenej N bodov na odoslanie na server. Týmto sa ušetrí množstvo dátových prenosov ale body nebudú odosielané v úplne reálnom čase.</string>
@@ -272,9 +279,9 @@
     <string name="fallback_weblogin_text">Vrátiť na starú metódu prihlasovania</string>
     <string name="fallback_weblogin_back">Späť</string>
     <string name="use_sso_toggle">Použiť účet z aplikácie Nextcloud</string>
-    <string name="center_map">Vycentrovať mapu</string>
-    <string name="follow_me">Sleduj ma</string>
-    <string name="zoom_all_markers">Zobraziť všetky značky</string>
+    <string name="center_map">Show my position</string>
+    <string name="follow_me">Follow my position</string>
+    <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Automatické zväčšenie</string>
     <!-- Plurals -->
     <plurals name="ab_selected">

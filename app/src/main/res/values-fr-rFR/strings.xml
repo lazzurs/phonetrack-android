@@ -184,6 +184,13 @@
     <string name="settings_network_category">Réseau</string>
     <string name="settings_logging_category">Logging</string>
     <string name="settings_sms_category">Sms</string>
+    <string name="settings_map_category">Carte</string>
+    <string name="settings_osmdroid_label">Importer un fichier Mapsforge de carte hors ligne</string>
+    <string name="settings_osmdroid_delete_label">Supprimer un fichier Mapsforge de carte hors ligne</string>
+    <string name="settings_osmdroid_delete_success">Fichier supprimé</string>
+    <string name="osmdroid_file_load_success">Importation du fichier réussie</string>
+    <string name="osmdroid_file_load_no_space">Aucun espace disponible sur la mémoire de stockage externe</string>
+    <string name="osmdroid_file_load_exception">Erreur lors de la copie du fichier de carte</string>
     <string name="settings_theming_category">Apparence</string>
     <string name="settings_group_sync_title">Envoyer les points par groupe d\'au moins</string>
     <string name="settings_group_sync_long">Attendre qu\'il y ait au moins N points pour les envoyer au serveur. Cela permettra de fortement réduire l\'utilisation des données réseau mais les points ne seront pas toujours envoyés en temps réel.</string>
@@ -272,7 +279,7 @@
     <string name="fallback_weblogin_text">Revenir à l\'ancienne méthode d\'authentification</string>
     <string name="fallback_weblogin_back">Précédent</string>
     <string name="use_sso_toggle">Utiliser un compte de l\'appli Nextcloud Files</string>
-    <string name="center_map">Centrer la carte</string>
+    <string name="center_map">Afficher ma position</string>
     <string name="follow_me">Suivre ma position</string>
     <string name="zoom_all_markers">Zoomer sur tous les marqueurs</string>
     <string name="auto_zoom">Zoom auto</string>

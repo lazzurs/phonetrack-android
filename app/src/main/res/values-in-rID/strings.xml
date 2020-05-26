@@ -184,6 +184,13 @@
     <string name="settings_network_category">Network</string>
     <string name="settings_logging_category">Logging</string>
     <string name="settings_sms_category">Sms</string>
+    <string name="settings_map_category">Map</string>
+    <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
+    <string name="settings_osmdroid_delete_label">Delete Mapsforge offline map tiles file</string>
+    <string name="settings_osmdroid_delete_success">File deleted</string>
+    <string name="osmdroid_file_load_success">File import success</string>
+    <string name="osmdroid_file_load_no_space">No space left on external storage</string>
+    <string name="osmdroid_file_load_exception">Error while copying map file</string>
     <string name="settings_theming_category">Theming</string>
     <string name="settings_group_sync_title">Send points by bunch of at least</string>
     <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
@@ -272,9 +279,9 @@
     <string name="fallback_weblogin_text">Revert to old login method</string>
     <string name="fallback_weblogin_back">Back</string>
     <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
-    <string name="center_map">Center map</string>
-    <string name="follow_me">Follow me</string>
-    <string name="zoom_all_markers">Zoom all markers</string>
+    <string name="center_map">Show my position</string>
+    <string name="follow_me">Follow my position</string>
+    <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Pembesar otomatis</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
