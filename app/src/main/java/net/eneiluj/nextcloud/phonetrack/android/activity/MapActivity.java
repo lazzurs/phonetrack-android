@@ -23,12 +23,14 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
@@ -448,13 +450,21 @@ public class MapActivity extends AppCompatActivity {
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayoutMap.addDrawerListener(drawerToggle);
         setTitle(getString(R.string.simple_map_title, session.getName()));
-        drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackgroundColor(ThemeUtils.primaryColor(this));
+
+        //drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackgroundColor(ThemeUtils.primaryColor(this));
+        int colors[] = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
+        GradientDrawable gradientDrawable = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackground(gradientDrawable);
+
         ImageView logoView = drawerLayoutMap.findViewById(R.id.drawer_logo_map);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
 
         if (toolbar != null) {
-            int color = ThemeUtils.primaryColor(this);
-            toolbar.setBackgroundColor(color);
+            ActionBar mtoolbar = ((AppCompatActivity) this).getSupportActionBar();
+            GradientDrawable gradientDrawable2 = new GradientDrawable(
+                    GradientDrawable.Orientation.LEFT_RIGHT, colors);
+            mtoolbar.setBackgroundDrawable(gradientDrawable2);
         }
 
         Window window = getWindow();

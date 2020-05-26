@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
@@ -15,6 +16,8 @@ import android.os.Handler;
 import android.os.Looper;
 //import android.preference.EditTextPreference;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
@@ -104,6 +107,7 @@ public abstract class EditLogjobFragment extends Fragment {
 
     private Handler handler;
 
+    private ActionBar toolbar;
     protected EditText editTitle;
     protected EditText editURL;
     protected EditText editMintime;
@@ -538,6 +542,12 @@ public abstract class EditLogjobFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_logjob_fragment, menu);
+
+        toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        int colors[] = { ThemeUtils.primaryColor(getContext()), ThemeUtils.primaryLightColor(getContext()) };
+        GradientDrawable gradientDrawable = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        toolbar.setBackgroundDrawable(gradientDrawable);
     }
 
     @Override

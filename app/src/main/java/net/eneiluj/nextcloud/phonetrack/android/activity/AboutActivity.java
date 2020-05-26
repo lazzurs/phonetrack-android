@@ -1,6 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
@@ -26,9 +27,7 @@ import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public class AboutActivity extends AppCompatActivity {
 
-    //@BindView(R.id.pager)
     ViewPager mViewPager;
-    //@BindView(R.id.tabs)
     TabLayout mTabLayout;
 
     @Override
@@ -37,7 +36,6 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
         mViewPager = findViewById(R.id.pager);
         mTabLayout = findViewById(R.id.tabs);
-        //ButterKnife.bind(this);
 
         mViewPager.setAdapter(new TabsPagerAdapter(getSupportFragmentManager()));
         mTabLayout.setupWithViewPager(mViewPager);
@@ -49,8 +47,10 @@ public class AboutActivity extends AppCompatActivity {
         ActionBar actionBar = getDelegate().getSupportActionBar();
 
         if (actionBar != null) {
-            int color = ThemeUtils.primaryColor(this);
-            actionBar.setBackgroundDrawable(new ColorDrawable(color));
+            int colors[] = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
+            GradientDrawable gradientDrawable = new GradientDrawable(
+                    GradientDrawable.Orientation.LEFT_RIGHT, colors);
+            actionBar.setBackgroundDrawable(gradientDrawable);
         }
 
         Window window = getWindow();

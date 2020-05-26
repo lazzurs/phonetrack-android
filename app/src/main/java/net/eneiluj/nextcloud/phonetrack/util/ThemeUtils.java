@@ -42,18 +42,11 @@ public class ThemeUtils {
     }
 
     public static int primaryDarkColor(Context context) {
-        int color;
-        try {
-            color = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getInt(
-                            context.getString(R.string.pref_key_color),
-                            ContextCompat.getColor(context, R.color.primary)
-                    );
-        }
-        catch (ClassCastException e) {
-            color = defaultColor;
-        }
-        return manipulateColor(color, 0.7f);
+        return manipulateColor(primaryColor(context), 0.6f);
+    }
+
+    public static int primaryLightColor(Context context) {
+        return manipulateColor(primaryColor(context), 1.4f);
     }
 
     public static int manipulateColor(int color, float factor) {

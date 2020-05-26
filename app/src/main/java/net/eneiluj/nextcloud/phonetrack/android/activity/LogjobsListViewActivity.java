@@ -15,6 +15,7 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -394,11 +395,19 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.action_drawer_open, R.string.action_drawer_close);
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.addDrawerListener(drawerToggle);
-        drawerLayout.findViewById(R.id.drawer_top_layout).setBackgroundColor(ThemeUtils.primaryColor(this));
+        //drawerLayout.findViewById(R.id.drawer_top_layout).setBackgroundColor(ThemeUtils.primaryColor(this));
+        int colors[] = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
+        GradientDrawable gradientDrawable = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        drawerLayout.findViewById(R.id.drawer_top_layout).setBackground(gradientDrawable);
+
         ImageView logoView = drawerLayout.findViewById(R.id.drawer_logo);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
 
-        toolbar.setBackgroundColor(ThemeUtils.primaryColor(this));
+        //toolbar.setBackgroundColor(ThemeUtils.primaryColor(this));
+        GradientDrawable gradientDrawableToolbar = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        toolbar.setBackground(gradientDrawableToolbar);
 
         Window window = getWindow();
         if (window != null) {

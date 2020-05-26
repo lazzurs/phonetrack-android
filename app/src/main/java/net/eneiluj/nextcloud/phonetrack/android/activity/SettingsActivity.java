@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.AsyncTask;
@@ -148,11 +149,12 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            int color = ThemeUtils.primaryColor(this);
-            actionBar.setBackgroundDrawable(new ColorDrawable(color));
-        }
+        // toolbar color
+        ActionBar toolbar = getSupportActionBar();
+        int colors[] = {ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this)};
+        GradientDrawable gradientDrawable = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        toolbar.setBackgroundDrawable(gradientDrawable);
 
         Window window = getWindow();
         if (window != null) {
@@ -526,7 +528,6 @@ public class SettingsActivity extends AppCompatActivity {
         webView.setVisibility(View.INVISIBLE);
         setContentView(R.layout.activity_settings);
 
-        //ButterKnife.bind(this);
         setupListener();
 
         field_url.setText(oldUrl);

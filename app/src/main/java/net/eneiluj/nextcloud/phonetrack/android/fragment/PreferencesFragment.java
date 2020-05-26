@@ -9,9 +9,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -51,6 +54,7 @@ import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
+import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -72,6 +76,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     private static final String TAG = PreferencesFragment.class.getSimpleName();
 
     private List<String> providersList;
+    private ActionBar toolbar;
 
     @Override
     public Fragment getCallbackFragment() {
@@ -105,6 +110,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
 
         // hide the keyboard when this window gets the focus
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        // toolbar color
+        toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        int colors[] = {ThemeUtils.primaryColor(getContext()), ThemeUtils.primaryLightColor(getContext())};
+        GradientDrawable gradientDrawable = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        toolbar.setBackgroundDrawable(gradientDrawable);
 
         Preference resetTrust = findPreference(getString(R.string.pref_key_reset_trust));
         resetTrust.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
