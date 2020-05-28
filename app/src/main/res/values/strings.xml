@@ -343,6 +343,7 @@
     <string name="follow_me">Follow my position</string>
     <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Auto zoom</string>
+    <string name="allow_rotation">Allow rotation</string>
 
     <!-- Plurals -->
     <plurals name="ab_selected">

@@ -33,7 +33,7 @@
 
         <LinearLayout
             android:layout_width="60dp"
-            android:layout_height="260dp"
+            android:layout_height="310dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:background="#33000000"
@@ -111,6 +111,21 @@
             android:tooltipText="@string/auto_zoom"
             android:cropToPadding="true"
             android:layout_below="@+id/ic_zoom_all"
+            android:layout_alignLeft="@+id/ic_center_map"
+            android:layout_alignStart="@+id/ic_zoom_all"
+            android:layout_marginTop="10dp"
+            android:padding="8dp"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ic_allow_rotation"
+            android:src="@drawable/ic_rotate_left_black_24dp"
+            android:background="#00ffffff"
+            android:contentDescription="@string/allow_rotation"
+            android:tooltipText="@string/allow_rotation"
+            android:cropToPadding="true"
+            android:layout_below="@+id/ic_zoom_auto"
             android:layout_alignLeft="@+id/ic_center_map"
             android:layout_alignStart="@+id/ic_zoom_all"
             android:layout_marginTop="10dp"

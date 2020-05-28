@@ -136,6 +136,7 @@ public class MapActivity extends AppCompatActivity {
     private ImageButton btFollowMe;
     private ImageButton btZoom;
     private ImageButton btZoomAuto;
+    private ImageButton btAllowRotation;
 
     // device data
     private Long lastTimestamp = null;
@@ -296,6 +297,9 @@ public class MapActivity extends AppCompatActivity {
         //this.mLocationOverlay.enableFollowLocation();
         //this.mLocationOverlay.setEnableAutoStop(true);
         map.getOverlays().add(this.mLocationOverlay);
+
+        mRotationGestureOverlay = new RotationGestureOverlay(ctx, map);
+        map.getOverlays().add(this.mRotationGestureOverlay);
 
         CopyrightOverlay copyrightOverlay = new CopyrightOverlay(map.getContext());
         copyrightOverlay.setTextColor(Color.BLACK);
@@ -1074,12 +1078,14 @@ public class MapActivity extends AppCompatActivity {
         btFollowMe = (ImageButton) findViewById(R.id.ic_follow_me);
         btZoom = (ImageButton) findViewById(R.id.ic_zoom_all);
         btZoomAuto = (ImageButton) findViewById(R.id.ic_zoom_auto);
+        btAllowRotation = (ImageButton) findViewById(R.id.ic_allow_rotation);
         btLayers = (ImageButton) findViewById(R.id.ic_map_layers);
 
         btDisplayMyLoc.setColorFilter(Color.WHITE);
         btFollowMe.setColorFilter(Color.WHITE);
         btZoom.setColorFilter(Color.WHITE);
         btZoomAuto.setColorFilter(Color.WHITE);
+        btAllowRotation.setColorFilter(Color.WHITE);
         btLayers.setColorFilter(Color.WHITE);
 
         if (prefs.getBoolean("map_myposition", true)) {
@@ -1123,6 +1129,31 @@ public class MapActivity extends AppCompatActivity {
         }
         else {
             mLocationOverlay.disableFollowLocation();
+        }
+
+        ///////////// rotation
+        btAllowRotation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "rotation clicked ");
+                if (mRotationGestureOverlay.isEnabled()) {
+                    mRotationGestureOverlay.setEnabled(false);
+                    btAllowRotation.setBackgroundResource(0);
+                    map.setMapOrientation(0);
+                    prefs.edit().putBoolean("map_allow_rotation", false).apply();
+                } else {
+                    mRotationGestureOverlay.setEnabled(true);
+                    btAllowRotation.setBackground(toggleCircle);
+                    prefs.edit().putBoolean("map_allow_rotation", true).apply();
+                }
+            }
+        });
+
+        if (prefs.getBoolean("map_allow_rotation", false)) {
+            mRotationGestureOverlay.setEnabled(true);
+            btAllowRotation.setBackground(toggleCircle);
+        } else {
+            mRotationGestureOverlay.setEnabled(false);
         }
 
         btFollowMe.setOnClickListener(new View.OnClickListener() {
