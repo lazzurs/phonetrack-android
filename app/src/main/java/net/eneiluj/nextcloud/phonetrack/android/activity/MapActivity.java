@@ -1078,7 +1078,7 @@ public class MapActivity extends AppCompatActivity {
             if (locs.size() > 0) {
                 BasicLocation lastLoc = locs.get(locs.size()-1);
                 if (lastTimestamp == null || lastLoc.getTimestamp() > lastTimestamp) {
-                    lastTimestamp = lastLoc.getTimestamp();
+                    lastTimestamp = lastLoc.getTimestamp() + 1;
                 }
             }
         }

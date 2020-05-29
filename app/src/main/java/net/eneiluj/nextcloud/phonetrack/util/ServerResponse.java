@@ -258,7 +258,7 @@ public class ServerResponse {
 
     protected Map<String, List<BasicLocation>> getMultiplePositionsFromJSON(JSONObject json, DBSession session) throws JSONException {
         Map<String, List<BasicLocation>> locations = new HashMap<>();
-        if (json.has(session.getToken())) {
+        if (json.has(session.getToken()) && json.get(session.getToken()) instanceof JSONObject) {
             JSONObject jsonSession = json.getJSONObject(session.getToken());
             Iterator<String> keys = jsonSession.keys();
             while (keys.hasNext()) {
@@ -292,7 +292,7 @@ public class ServerResponse {
 
     protected Map<String, String> getMultipleColorsFromJSON(JSONObject json, DBSession session) throws JSONException {
         Map<String, String> colors = new HashMap<>();
-        if (json.has(session.getToken())) {
+        if (json.has(session.getToken()) && json.get(session.getToken()) instanceof JSONObject) {
             JSONObject jsonSession = json.getJSONObject(session.getToken());
             Iterator<String> keys = jsonSession.keys();
             while (keys.hasNext()) {
