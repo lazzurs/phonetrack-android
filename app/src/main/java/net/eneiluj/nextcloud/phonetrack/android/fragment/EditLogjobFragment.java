@@ -29,7 +29,6 @@ import androidx.preference.Preference;
 //import android.support.v7.preference.PreferenceFragmentCompat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.view.ContextThemeWrapper;
