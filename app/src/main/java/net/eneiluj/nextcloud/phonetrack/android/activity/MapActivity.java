@@ -44,7 +44,6 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
-import android.os.Environment;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -577,8 +576,7 @@ public class MapActivity extends AppCompatActivity {
                 Log.i(TAG, "[select item] "+item.id);
                 selectedDeviceItemId = item.id;
                 if (!selectedDeviceItemId.equals(ID_ITEM_ALL_DEVICES)) {
-                    Marker m = markers.get(selectedDeviceItemId);
-                    bringMarkerToFront(m);
+                    bringDeviceToFront(selectedDeviceItemId);
                 }
 
                 // update views
@@ -738,9 +736,11 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    private void bringMarkerToFront(Marker m) {
-        map.getOverlays().remove(m);
-        map.getOverlays().add(m);
+    private void bringDeviceToFront(String devName) {
+        map.getOverlays().remove(lines.get(devName));
+        map.getOverlays().add(lines.get(devName));
+        map.getOverlays().remove(markers.get(devName));
+        map.getOverlays().add(markers.get(devName));
     }
 
     private void bringMarkersToFrontByTimestamp() {
@@ -757,7 +757,7 @@ public class MapActivity extends AppCompatActivity {
             }
         });
         for (String devName : devNames) {
-            bringMarkerToFront(markers.get(devName));
+            bringDeviceToFront(devName);
         }
     }
 
@@ -864,6 +864,8 @@ public class MapActivity extends AppCompatActivity {
         // if no locations : add all
         if (!locations.containsKey(devName)) {
             locations.put(devName, locs);
+            // just to know if marker needs an update
+            locationsToAdd = locs;
             Log.v(TAG, "first add for dev "+devName+" ADD "+locs.size()+" locations");
         } else {
             // else add what's new
@@ -980,7 +982,9 @@ public class MapActivity extends AppCompatActivity {
             text += "\n" + getString(R.string.popup_user_agent) + " : " + lastLoc.getUserAgent();
         }
         m.setTitle(text);
-        m.setPosition(new GeoPoint(lastLoc.getLat(), lastLoc.getLon()));
+        if (locationsToAdd.size() > 0) {
+            m.setPosition(new GeoPoint(lastLoc.getLat(), lastLoc.getLon()));
+        }
     }
 
     private Timer timer;
