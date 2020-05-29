@@ -294,11 +294,18 @@ public class MapActivity extends AppCompatActivity {
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
 
         this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
-        //this.mLocationOverlay.enableFollowLocation();
-        //this.mLocationOverlay.setEnableAutoStop(true);
+        Bitmap iconPos = BitmapFactory.decodeResource(ctx.getResources(), R.mipmap.ic_my_position)
+                .copy(Bitmap.Config.ARGB_8888, true);
+        iconPos = Bitmap.createScaledBitmap(iconPos, 70, 70, true);
+        Bitmap iconDir = BitmapFactory.decodeResource(ctx.getResources(), R.mipmap.ic_my_direction)
+                .copy(Bitmap.Config.ARGB_8888, true);
+        iconDir = Bitmap.createScaledBitmap(iconDir, 70, 70, true);
+
+        mLocationOverlay.setDirectionArrow(iconPos, iconDir);
+
         map.getOverlays().add(this.mLocationOverlay);
 
-        mRotationGestureOverlay = new RotationGestureOverlay(ctx, map);
+        mRotationGestureOverlay = new RotationGestureOverlay(map);
         map.getOverlays().add(this.mRotationGestureOverlay);
 
         CopyrightOverlay copyrightOverlay = new CopyrightOverlay(map.getContext());
