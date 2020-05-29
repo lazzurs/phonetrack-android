@@ -185,12 +185,12 @@
     <string name="settings_logging_category">Protokollierung</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Karte</string>
-    <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
-    <string name="settings_osmdroid_delete_label">Delete Mapsforge offline map tiles file</string>
-    <string name="settings_osmdroid_delete_success">File deleted</string>
-    <string name="osmdroid_file_load_success">File import success</string>
-    <string name="osmdroid_file_load_no_space">No space left on external storage</string>
-    <string name="osmdroid_file_load_exception">Error while copying map file</string>
+    <string name="settings_osmdroid_label">Mapsforge Offline-Kartendatei importieren</string>
+    <string name="settings_osmdroid_delete_label">Mapsforge Offline-Kartendatei löschen</string>
+    <string name="settings_osmdroid_delete_success">Datei gelöscht</string>
+    <string name="osmdroid_file_load_success">Datei erfolgreich importiert</string>
+    <string name="osmdroid_file_load_no_space">Kein Platz mehr auf externem Speicher</string>
+    <string name="osmdroid_file_load_exception">Fehler beim Kopieren der Kartendatei</string>
     <string name="settings_theming_category">Farbeinstellungen</string>
     <string name="settings_group_sync_title">Datenpunkte in einem Paket senden von mindestens</string>
     <string name="settings_group_sync_long">Warten, bis mindestens eine bestimmte Anzahl Datenpunkten vorhanden ist, um diese an den Server zu senden. Dies spart eine Menge an Netzwerkdaten, jedoch werden die Datenpunkte nicht immer in Echtzeit übertragen.</string>
@@ -279,9 +279,9 @@
     <string name="fallback_weblogin_text">Zurück zur alte Anmeldemethode</string>
     <string name="fallback_weblogin_back">Zurück</string>
     <string name="use_sso_toggle">Konto aus der Nextcloud-Files-App verwenden</string>
-    <string name="center_map">Show my position</string>
-    <string name="follow_me">Follow my position</string>
-    <string name="zoom_all_markers">Zoom on all markers</string>
+    <string name="center_map">Standort anzeigen</string>
+    <string name="follow_me">Meinem Standort folgen</string>
+    <string name="zoom_all_markers">Über alle Markierungen vergrößern</string>
     <string name="auto_zoom">Automatischer Bildausschnitt</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
