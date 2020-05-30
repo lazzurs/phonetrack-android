@@ -151,6 +151,7 @@ public class MapActivity extends AppCompatActivity {
     private PhoneTrackSQLiteOpenHelper db;
 
     private String selectedDeviceItemId;
+    private Map<String, Boolean> linesEnabled;
 
     Toolbar toolbar;
     DrawerLayout drawerLayoutMap;
@@ -161,6 +162,7 @@ public class MapActivity extends AppCompatActivity {
     RecyclerView listNavigationMenu;
 
     private NavigationAdapter adapterDevices;
+    ArrayList<NavigationAdapter.NavigationItem> itemsNavigationDevice;
 
     private ActionBarDrawerToggle drawerToggle;
     private SharedPreferences prefs;
@@ -249,6 +251,7 @@ public class MapActivity extends AppCompatActivity {
         markers = new HashMap<>();
         markerDrawables = new HashMap<>();
         selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
+        linesEnabled = new HashMap<>();
 
         // load/initialize the osmdroid configuration, this can be done
 
@@ -537,9 +540,9 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void setupNavigationDeviceList() {
-        ArrayList<NavigationAdapter.NavigationItem> itemsNavigationDevice = new ArrayList<>();
+        itemsNavigationDevice = new ArrayList<>();
 
-        NavigationAdapter.NavigationItem itemAll = new NavigationAdapter.NavigationItem(ID_ITEM_ALL_DEVICES, getString(R.string.item_all_devices_label), markers.keySet().size(), R.drawable.ic_allgrey_24dp);
+        NavigationAdapter.NavigationItem itemAll = new NavigationAdapter.NavigationItem(ID_ITEM_ALL_DEVICES, getString(R.string.item_all_devices_label), markers.keySet().size(), R.drawable.ic_check_box_grey_24dp);
         itemsNavigationDevice.add(itemAll);
         List<String> devNames = new ArrayList<>();
         devNames.addAll(markers.keySet());
@@ -560,7 +563,13 @@ public class MapActivity extends AppCompatActivity {
             else {
                 label += "\n(" + sdfCompleteSimple.format(lastLoc.getTimestamp() * 1000) + ")";
             }
-            NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, null, R.drawable.ic_phone_android_grey_24dp);
+            int icon;
+            if (linesEnabled.get(devName)) {
+                icon = R.drawable.ic_device_check_24;
+            } else {
+                icon = R.drawable.ic_phone_android_grey_24dp;
+            }
+            NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, null, icon);
             itemsNavigationDevice.add(item);
         }
         bringMarkersToFrontByTimestamp();
@@ -588,7 +597,22 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onIconClick(NavigationAdapter.NavigationItem item) {
-                onItemClick(item);
+                if (!item.id.equals(ID_ITEM_ALL_DEVICES)) {
+                    if (linesEnabled.get(item.id)) {
+                        item.icon = R.drawable.ic_phone_android_grey_24dp;
+                        linesEnabled.put(item.id, false);
+                        map.getOverlays().remove(lines.get(item.id));
+                    } else {
+                        item.icon = R.drawable.ic_device_check_24;
+                        linesEnabled.put(item.id, true);
+                        map.getOverlays().add(lines.get(item.id));
+                    }
+                    adapterDevices.notifyDataSetChanged();
+                    map.invalidate();
+                } else {
+                    toggleAllDeviceLines();
+                }
+                //onItemClick(item);
             }
         });
 
@@ -601,6 +625,36 @@ public class MapActivity extends AppCompatActivity {
             selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
         }
         listNavigationDevices.setAdapter(adapterDevices);
+    }
+
+    private void toggleAllDeviceLines() {
+        NavigationAdapter.NavigationItem item;
+        boolean oneEnabled = false;
+        for (int i = 1; i < itemsNavigationDevice.size(); i++) {
+            item = itemsNavigationDevice.get(i);
+            if (linesEnabled.get(item.id)) {
+                oneEnabled = true;
+                break;
+            }
+        }
+        if (oneEnabled) {
+            for (int i = 1; i < itemsNavigationDevice.size(); i++) {
+                item = itemsNavigationDevice.get(i);
+                item.icon = R.drawable.ic_phone_android_grey_24dp;
+                linesEnabled.put(item.id, false);
+                map.getOverlays().remove(lines.get(item.id));
+            }
+        } else {
+            for (int i = 1; i < itemsNavigationDevice.size(); i++) {
+                item = itemsNavigationDevice.get(i);
+                item.icon = R.drawable.ic_device_check_24;
+                linesEnabled.put(item.id, true);
+                map.getOverlays().add(lines.get(item.id));
+            }
+        }
+        //adapterDevices.setItems(itemsNavigationDevice);
+        adapterDevices.notifyDataSetChanged();
+        map.invalidate();
     }
 
     private void setupNavigationMenu() {
@@ -734,8 +788,10 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void bringDeviceToFront(String devName) {
-        map.getOverlays().remove(lines.get(devName));
-        map.getOverlays().add(lines.get(devName));
+        if (linesEnabled.get(devName)) {
+            map.getOverlays().remove(lines.get(devName));
+            map.getOverlays().add(lines.get(devName));
+        }
         map.getOverlays().remove(markers.get(devName));
         map.getOverlays().add(markers.get(devName));
     }
@@ -909,6 +965,8 @@ public class MapActivity extends AppCompatActivity {
             line.getOutlinePaint().setColor(color);
             line.setPoints(geoPoints);
             lines.put(devName, line);
+            // enabled lines by default for new devices
+            linesEnabled.put(devName, true);
             map.getOverlays().add(line);
         } else {
             Polyline line = lines.get(devName);

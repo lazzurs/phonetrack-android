@@ -59,13 +59,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
         @NonNull
         private final View view;
 
-        //@BindView(R.id.navigationItemLabel)
         TextView name;
-
-        //@BindView(R.id.navigationItemCount)
         TextView count;
-
-        //@BindView(R.id.navigationItemIcon)
         ImageView icon;
 
         private NavigationItem currentItem;
@@ -76,7 +71,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
             name = view.findViewById(R.id.navigationItemLabel);
             count = view.findViewById(R.id.navigationItemCount);
             icon = view.findViewById(R.id.navigationItemIcon);
-            //ButterKnife.bind(this, view);
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
