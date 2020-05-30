@@ -578,15 +578,12 @@ public class MapActivity extends AppCompatActivity {
                 if (!selectedDeviceItemId.equals(ID_ITEM_ALL_DEVICES)) {
                     bringDeviceToFront(selectedDeviceItemId);
                 }
-
                 // update views
                 if (closeNavigation) {
                     drawerLayoutMap.closeDrawers();
                 }
-
                 // zoom anyway, whatever the autozoom value is
                 zoomOnAllMarkers();
-
             }
 
             @Override
@@ -1067,6 +1064,9 @@ public class MapActivity extends AppCompatActivity {
                 setupNavigationDeviceList();
                 if (prefs.getBoolean("map_autozoom", true)) {
                     zoomOnAllMarkers();
+                }
+                if (!selectedDeviceItemId.equals(ID_ITEM_ALL_DEVICES)) {
+                    bringDeviceToFront(selectedDeviceItemId);
                 }
             }
         });
