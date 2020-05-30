@@ -40,6 +40,7 @@
     <string name="action_drawer_open">obrir menú lateral</string>
     <string name="action_drawer_close">tancar menú lateral</string>
     <string name="action_frequency">Fixar freqüència de refresc</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Fixar mapa a la pantalla d\'inici</string>
     <string name="menu_delete">Esborrar</string>
     <string name="menu_save">Guardar</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Impossible mostrar una sessió en el mapa</string>
     <string name="map_choose_frequency_dialog_title">Triar freqüencia de refresc del mapa (segons)</string>
     <string name="map_choose_frequency_dialog_message">Quants segons entre el refresc de dos mapes?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">Tots els dispositius</string>
     <string name="popup_battery_value">Nivell de bateria : %.2f%%</string>
     <string name="popup_altitude_value">Altitud: %.2fm</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Follow my position</string>
     <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Auto zoom</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d selecionat</item>

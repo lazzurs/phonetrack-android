@@ -40,6 +40,7 @@
     <string name="action_drawer_open">Seitenmenü öffnen</string>
     <string name="action_drawer_close">Seitenmenü schließen</string>
     <string name="action_frequency">Aktualisierungshäufigkeit festlegen</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Karte zum Startbildschirm hinzufügen</string>
     <string name="menu_delete">Löschen</string>
     <string name="menu_save">Speichern</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Sitzung konnte nicht auf der Karte angezeigt werden</string>
     <string name="map_choose_frequency_dialog_title">Aktualisierungshäufigkeit der Karte wählen (in Sek.)</string>
     <string name="map_choose_frequency_dialog_message">Wie viele Sekunden zwischen zwei Kartenaktualisierungen?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">Alle Geräte</string>
     <string name="popup_battery_value">Batterieladung: %.2f%%</string>
     <string name="popup_altitude_value">Höhenlage: %.2fm</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Meinem Standort folgen</string>
     <string name="zoom_all_markers">Über alle Markierungen vergrößern</string>
     <string name="auto_zoom">Automatischer Bildausschnitt</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d ausgewählt</item>

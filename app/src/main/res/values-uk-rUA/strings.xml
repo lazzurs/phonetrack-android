@@ -40,6 +40,7 @@
     <string name="action_drawer_open">відкрити бокове меню</string>
     <string name="action_drawer_close">закрити бокове меню</string>
     <string name="action_frequency">Встановити частоту оновлення</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Закріпити мапу на початковому екрані</string>
     <string name="menu_delete">Видалити</string>
     <string name="menu_save">Save</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Неможливо відобразити сесію на мапі</string>
     <string name="map_choose_frequency_dialog_title">Вибрати частоту оновлення мапи (секунди)</string>
     <string name="map_choose_frequency_dialog_message">Скільки секунд між двома оновленнями мапи?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">Усі пристрої</string>
     <string name="popup_battery_value">Рівень заряду батареї: %.2f%%</string>
     <string name="popup_altitude_value">Висота: %.2fм</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Follow my position</string>
     <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Auto zoom</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d обрано</item>

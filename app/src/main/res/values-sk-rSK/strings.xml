@@ -40,6 +40,7 @@
     <string name="action_drawer_open">otvoriť bočné menu</string>
     <string name="action_drawer_close">zatvoriť bočné menu</string>
     <string name="action_frequency">Nastaviť frekvenciu obnovovania</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Pripnúť mapu na plochu</string>
     <string name="menu_delete">Vymazať</string>
     <string name="menu_save">Uložiť</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Nie je možné zobraziť reláciu na mape</string>
     <string name="map_choose_frequency_dialog_title">Zvoľte si frekvenciu obnovovania mapy (sek)</string>
     <string name="map_choose_frequency_dialog_message">Koľko sekúnd medzi dvoma obnoveniami mapy?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">Všetky zariadenia</string>
     <string name="popup_battery_value">Úroveň batérie : %.2f%%</string>
     <string name="popup_altitude_value">Nadmorská výška: %.2fm</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Sledovať moju polohu</string>
     <string name="zoom_all_markers">Zobraziť všetky značky</string>
     <string name="auto_zoom">Automatické zväčšenie</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d označený</item>

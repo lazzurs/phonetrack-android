@@ -40,6 +40,7 @@
     <string name="action_drawer_open">ouvrir le menu latéral</string>
     <string name="action_drawer_close">fermer le menu latéral</string>
     <string name="action_frequency">Changer la fréquence de rafraichissement</string>
+    <string name="action_map_limit">Définir le nombre maximum de points</string>
     <string name="action_pin_to_homescreen">Raccourci vers la carte sur l\'écran d\'accueil</string>
     <string name="menu_delete">Supprimer</string>
     <string name="menu_save">Enregistrer</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Impossible d\'afficher une session sur la carte</string>
     <string name="map_choose_frequency_dialog_title">Choisissez la fréquence de rafraichissement de la carte (sec)</string>
     <string name="map_choose_frequency_dialog_message">Combien de secondes entre les rafraichissements ?</string>
+    <string name="map_choose_limit_dialog_title">Choisissez le nombre maximum de points affichés par appareil</string>
+    <string name="map_choose_limit_dialog_message">Réduire ce nombre pour augmenter la visibilité sur la carte</string>
     <string name="item_all_devices_label">Tous les appareils</string>
     <string name="popup_battery_value">Batterie : %.2f%%</string>
     <string name="popup_altitude_value">Altitude : %.2fm</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Suivre ma position</string>
     <string name="zoom_all_markers">Zoomer sur tous les marqueurs</string>
     <string name="auto_zoom">Zoom auto</string>
+    <string name="allow_rotation">Permettre la rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d sélectionnés</item>

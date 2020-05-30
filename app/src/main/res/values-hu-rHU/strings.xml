@@ -40,6 +40,7 @@
     <string name="action_drawer_open">oldalmenü megnyitása</string>
     <string name="action_drawer_close">oldalmenü bezárása</string>
     <string name="action_frequency">Set refresh frequency</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Pin map to home screen</string>
     <string name="menu_delete">Törlés</string>
     <string name="menu_save">Mentés</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Impossible to display a session on the map</string>
     <string name="map_choose_frequency_dialog_title">Choose map refresh frequency (sec)</string>
     <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">All devices</string>
     <string name="popup_battery_value">Battery level : %.2f%%</string>
     <string name="popup_altitude_value">Altitude: %.2fm</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Follow my position</string>
     <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Auto zoom</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d selected</item>

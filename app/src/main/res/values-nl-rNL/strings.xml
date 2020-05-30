@@ -40,6 +40,7 @@
     <string name="action_drawer_open">open zijmenu</string>
     <string name="action_drawer_close">sluit zijmenu</string>
     <string name="action_frequency">Vernieuwingsfrequentie instellen</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Kaart vastzetten op beginscherm</string>
     <string name="menu_delete">Verwijder</string>
     <string name="menu_save">Opslaan</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Weergeven van een sessie op de kaart is niet mogelijk</string>
     <string name="map_choose_frequency_dialog_title">Vernieuwingsfrequentie van de kaart kiezen (sec)</string>
     <string name="map_choose_frequency_dialog_message">Hoeveel seconden tussen twee kaartvernieuwingen?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">Alle apparaten</string>
     <string name="popup_battery_value">Batterijniveau: %.2f%%</string>
     <string name="popup_altitude_value">Hoogte: %.2fm</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Volg mijn positie</string>
     <string name="zoom_all_markers">Zoom op alle markeringen</string>
     <string name="auto_zoom">Autozoom</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d geselecteerd</item>

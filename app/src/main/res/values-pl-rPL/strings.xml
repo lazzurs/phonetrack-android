@@ -40,6 +40,7 @@
     <string name="action_drawer_open">otwórz boczne menu</string>
     <string name="action_drawer_close">zamknij boczne menu</string>
     <string name="action_frequency">Ustaw częstotliwość odświeżania</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Przypnij mapę do ekranu głównego</string>
     <string name="menu_delete">Usuń</string>
     <string name="menu_save">Zapisz</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Nie można wyświetlić sesji na mapie</string>
     <string name="map_choose_frequency_dialog_title">Wybierz częstotliwość odświeżania mapy (s)</string>
     <string name="map_choose_frequency_dialog_message">Ile sekund między odświeżeniem mapy?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">Wszystkie urządzenia</string>
     <string name="popup_battery_value">Poziom baterii: %.2f%%</string>
     <string name="popup_altitude_value">Wysokość: %.2fm</string>
@@ -159,7 +162,7 @@
     <string name="settings_sms_subtitle">Nadsłuchuje przychodzące wiadomości SMS i wysyła informacje o lokalizacji, jeśli odebrano słowo kluczowe</string>
     <string name="settings_sms_keyword_title">Słowo kluczowe SMS</string>
     <string name="settings_sms_keyword_long">Informacje o lokalizacji zostaną odesłane, gdy telefon otrzyma poniższe słowo kluczowe w wiadomości SMS.</string>
-    <string name="settings_sms_keyword_long2">Możesz także wysyłać polecenia z taką składnią: POLECENIE KLUCZOWE</string>
+    <string name="settings_sms_keyword_long2">Możesz także wysyłać polecenia o następującej składni: KEYWORD COMMAND</string>
     <string name="settings_sms_keyword_long3">Dostępne polecenia:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Użyj koloru serwera</string>
     <string name="settings_use_server_color_subtitle">Uzyskuje kolor serwera podczas synchronizacji i używa go jako głównego koloru aplikacji</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Śledź moją pozycję</string>
     <string name="zoom_all_markers">Powiększ wszystkie znaczniki</string>
     <string name="auto_zoom">Automatyczne powiększanie</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">wybrano %d</item>

@@ -40,6 +40,7 @@
     <string name="action_drawer_open">apri menu laterale</string>
     <string name="action_drawer_close">chiudi menu laterale</string>
     <string name="action_frequency">Imposta frequenza di aggiornamento</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Aggiungi mappa alla schermata home</string>
     <string name="menu_delete">Cancella</string>
     <string name="menu_save">Salva</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Impossibile visualizzare una sessione sulla mappa</string>
     <string name="map_choose_frequency_dialog_title">Scegli la frequenza di aggiornamento della mappa (sec)</string>
     <string name="map_choose_frequency_dialog_message">Quanti secondi tra due aggiornamenti della mappa?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">Tutti i dispositivi</string>
     <string name="popup_battery_value">Livello della batteria: %.2f%%</string>
     <string name="popup_altitude_value">Altitudine: %.2fm</string>
@@ -284,6 +287,7 @@ href=\"https://materialdesignicons.com/\"&gt;Icone Material Design&lt;/a&gt; pro
     <string name="follow_me">Segui la mia posizione</string>
     <string name="zoom_all_markers">Zoom su tutti i marcatori</string>
     <string name="auto_zoom">Zoom automatico</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d selezionato</item>

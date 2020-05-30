@@ -40,6 +40,7 @@
     <string name="action_drawer_open">отвори страничното меню</string>
     <string name="action_drawer_close">затвори страничното меню</string>
     <string name="action_frequency">Задайте честота на опресняване</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">Поставете картата на началния екран</string>
     <string name="menu_delete">Изтрий</string>
     <string name="menu_save">Запазване</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">Невъзможно е да се покаже сесията на картата</string>
     <string name="map_choose_frequency_dialog_title">Изберете честота на опресняване на картата (сек)</string>
     <string name="map_choose_frequency_dialog_message">Колко секунди между две обновявания на картата?</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">Всички устройства</string>
     <string name="popup_battery_value">Ниво на батерията: %.2f%%</string>
     <string name="popup_altitude_value">Надморска височина: %.2fm</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Follow my position</string>
     <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Автоматично мащабиране</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d избран</item>

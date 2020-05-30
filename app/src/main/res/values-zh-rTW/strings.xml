@@ -40,6 +40,7 @@
     <string name="action_drawer_open">打開側邊欄</string>
     <string name="action_drawer_close">關閉側邊欄</string>
     <string name="action_frequency">設定重新整理頻率</string>
+    <string name="action_map_limit">Set max point number</string>
     <string name="action_pin_to_homescreen">新增地圖至主螢幕</string>
     <string name="menu_delete">刪除</string>
     <string name="menu_save">儲存</string>
@@ -111,6 +112,8 @@
     <string name="map_choose_session_dialog_impossible">無法在地圖上顯示軌跡記錄</string>
     <string name="map_choose_frequency_dialog_title">選擇地圖重新整理時間(秒)</string>
     <string name="map_choose_frequency_dialog_message">地圖重新整理時間，單位：秒</string>
+    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
+    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
     <string name="item_all_devices_label">所有裝置</string>
     <string name="popup_battery_value">電量：%.2f%%</string>
     <string name="popup_altitude_value">高度：%.2fm</string>
@@ -283,6 +286,7 @@
     <string name="follow_me">Follow my position</string>
     <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">自動縮放</string>
+    <string name="allow_rotation">Allow rotation</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="other">%d selected</item>
