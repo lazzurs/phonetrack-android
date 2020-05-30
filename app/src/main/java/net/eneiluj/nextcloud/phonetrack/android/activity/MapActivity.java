@@ -660,15 +660,17 @@ public class MapActivity extends AppCompatActivity {
     private void setupNavigationMenu() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int freq = prefs.getInt("map_freq", 15);
+        int limit = prefs.getInt("map_limit", 300);
         //final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
         final NavigationAdapter.NavigationItem itemFreq = new NavigationAdapter.NavigationItem("freq", getString(R.string.action_frequency), freq, R.drawable.ic_timer_grey_24dp);
+        final NavigationAdapter.NavigationItem itemlimit = new NavigationAdapter.NavigationItem("limit", getString(R.string.action_map_limit), limit, R.drawable.ic_baseline_more_horiz_24);
         //final NavigationAdapter.NavigationItem itemSettings = new NavigationAdapter.NavigationItem("settings", getString(R.string.action_settings), null, R.drawable.ic_settings_grey600_24dp);
         //final NavigationAdapter.NavigationItem itemAbout = new NavigationAdapter.NavigationItem("about", getString(R.string.simple_about), null, R.drawable.ic_info_outline_grey600_24dp);
         final NavigationAdapter.NavigationItem itemPin = new NavigationAdapter.NavigationItem("pin", getString(R.string.action_pin_to_homescreen), null, R.drawable.ic_add_menu_grey_24dp);
 
         ArrayList<NavigationAdapter.NavigationItem> itemsMenu = new ArrayList<>();
         itemsMenu.add(itemFreq);
-        //itemsMenu.add(itemSettings);
+        itemsMenu.add(itemlimit);
         //itemsMenu.add(itemAbout);
 
         // If the platform supports pinned shortcuts, show menu item
@@ -681,15 +683,46 @@ public class MapActivity extends AppCompatActivity {
         NavigationAdapter adapterMenu = new NavigationAdapter(new NavigationAdapter.ClickListener() {
             @Override
             public void onItemClick(NavigationAdapter.NavigationItem item) {
-                /*if (item == itemSettings) {
-                    Intent settingsIntent = new Intent(getApplicationContext(), PreferencesActivity.class);
-                    startActivityForResult(settingsIntent, server_settings);
-                }
-                else if (item == itemAbout) {
-                    Intent aboutIntent = new Intent(getApplicationContext(), AboutActivity.class);
-                    startActivityForResult(aboutIntent, about);
-                }
-                else*/ if (item == itemFreq) {
+                if (item == itemlimit) {
+                    int currentLimit = prefs.getInt("map_limit", 300);
+
+                    final EditText limitEdit = new EditText(map.getContext());
+                    limitEdit.setText(String.valueOf(currentLimit));
+                    limitEdit.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+                    limitEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    AlertDialog.Builder fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.AppThemeDialog));
+                    fromUrlBuilder.setMessage(getString(R.string.map_choose_limit_dialog_message));
+                    fromUrlBuilder.setTitle(getString(R.string.map_choose_limit_dialog_title));
+
+                    fromUrlBuilder.setView(limitEdit);
+
+                    fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            setLimit(limitEdit.getText().toString());
+                            Log.i(TAG, "[CHANGE LIMIT] "+limitEdit.getText().toString());
+                            // restore keyboard auto hide behaviour
+                            InputMethodManager inputMethodManager = (InputMethodManager) limitEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        }
+                    });
+
+                    fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // restore keyboard auto hide behaviour
+                            InputMethodManager inputMethodManager = (InputMethodManager) limitEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        }
+                    });
+
+                    // create the alert dialog
+                    Dialog fromUrlDialog = fromUrlBuilder.create();
+                    fromUrlDialog.show();
+                    limitEdit.setSelectAllOnFocus(true);
+                    limitEdit.requestFocus();
+                    // show keyboard
+                    InputMethodManager inputMethodManager = (InputMethodManager) limitEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                } else if (item == itemFreq) {
                     int currentFreq = prefs.getInt("map_freq", 15);
 
                     final EditText frequencyEdit = new EditText(map.getContext());
@@ -785,6 +818,41 @@ public class MapActivity extends AppCompatActivity {
         catch (Exception e) {
 
         }
+    }
+
+    private void setLimit(String f) {
+        try {
+            int limit = Integer.valueOf(f);
+            if (limit > 0) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                prefs.edit().putInt("map_limit", limit).apply();
+                // to update limit displayed value
+                setupNavigationMenu();
+                applyNewPointLimit(limit);
+            }
+        }
+        catch (Exception e) {
+
+        }
+    }
+
+    private void applyNewPointLimit(int limit) {
+        List<BasicLocation> locationsToDisplay;
+        List<GeoPoint> geoPoints;
+        for (String devName: lines.keySet()) {
+            if (locations.get(devName).size() > limit) {
+                locationsToDisplay = getLimitedLocations(locations.get(devName), limit);
+            } else {
+                locationsToDisplay = locations.get(devName);
+            }
+
+            geoPoints = new ArrayList<>();
+            for (BasicLocation loc : locationsToDisplay) {
+                geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
+            }
+            lines.get(devName).setPoints(geoPoints);
+        }
+        map.invalidate();
     }
 
     private void bringDeviceToFront(String devName) {
@@ -956,9 +1024,16 @@ public class MapActivity extends AppCompatActivity {
 
         /////// LINES
 
+        int currentLimit = prefs.getInt("map_limit", 300);
         if (!lines.containsKey(devName)) {
             List<GeoPoint> geoPoints = new ArrayList<>();
-            for (BasicLocation loc : locations.get(devName)) {
+            List<BasicLocation> locationsToDisplay;
+            if (locations.get(devName).size() > currentLimit) {
+                locationsToDisplay = getLimitedLocations(locations.get(devName), currentLimit);
+            } else {
+                locationsToDisplay = locations.get(devName);
+            }
+            for (BasicLocation loc : locationsToDisplay) {
                 geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
             }
             Polyline line = new Polyline();
@@ -970,8 +1045,17 @@ public class MapActivity extends AppCompatActivity {
             map.getOverlays().add(line);
         } else {
             Polyline line = lines.get(devName);
-            for (BasicLocation loc : locationsToAdd) {
-                line.addPoint(new GeoPoint(loc.getLat(), loc.getLon()));
+            if (locations.get(devName).size() > currentLimit) {
+                List<GeoPoint> geoPoints = new ArrayList<>();
+                List<BasicLocation> locationsToDisplay = getLimitedLocations(locations.get(devName), currentLimit);
+                for (BasicLocation loc : locationsToDisplay) {
+                    geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
+                }
+                line.setPoints(geoPoints);
+            } else {
+                for (BasicLocation loc : locationsToAdd) {
+                    line.addPoint(new GeoPoint(loc.getLat(), loc.getLon()));
+                }
             }
             line.getOutlinePaint().setColor(color);
         }
@@ -1042,6 +1126,18 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    private List<BasicLocation> getLimitedLocations(List<BasicLocation> locations, int limit) {
+        List<BasicLocation> result;
+        if (locations.size() <= limit) {
+            result = locations;
+        } else {
+            int lastIndex = locations.size();
+            int firstIndex = lastIndex - limit;
+            result = locations.subList(firstIndex, lastIndex);
+        }
+        return result;
+    }
+
     private Timer timer;
     private TimerTask timerTask;
 
@@ -1056,7 +1152,8 @@ public class MapActivity extends AppCompatActivity {
                 // launch task of server sync with callback
                 Log.i(TAG, "[Task run]");
                 updatePositionsWithLocalData();
-                db.getPhonetrackServerSyncHelper().getSessionPositions(session, lastTimestamp, syncCallBack);
+                int currentLimit = prefs.getInt("map_limit", 300);
+                db.getPhonetrackServerSyncHelper().getSessionPositions(session, lastTimestamp, Long.valueOf(currentLimit), syncCallBack);
             }
         };
         int currentFreq = prefs.getInt("map_freq", 15);

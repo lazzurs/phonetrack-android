@@ -749,9 +749,9 @@ public class SessionServerSyncHelper {
         }
     }
 
-    public boolean getSessionPositions(DBSession session, Long lastTimestamp, IGetLastPosCallback callback) {
+    public boolean getSessionPositions(DBSession session, Long lastTimestamp, Long limit, IGetLastPosCallback callback) {
         if (isSyncPossible()) {
-            GetSessionPositionsTask getSessionPositionsTask = new GetSessionPositionsTask(session, lastTimestamp, callback);
+            GetSessionPositionsTask getSessionPositionsTask = new GetSessionPositionsTask(session, lastTimestamp, limit, callback);
             getSessionPositionsTask.execute();
             return true;
         }
@@ -762,14 +762,16 @@ public class SessionServerSyncHelper {
         private PhoneTrackClient client;
         private DBSession session;
         private Long lastTimestamp;
+        private Long limit;
         private IGetLastPosCallback callback;
         private List<Throwable> exceptions = new ArrayList<>();
         private Map<String, List<BasicLocation>> locations;
         private Map<String, String> colors;
 
-        public GetSessionPositionsTask(DBSession session, Long lastTimestamp, IGetLastPosCallback callback) {
+        public GetSessionPositionsTask(DBSession session, Long lastTimestamp, Long limit, IGetLastPosCallback callback) {
             this.session = session;
             this.lastTimestamp = lastTimestamp;
+            this.limit = limit;
             this.callback = callback;
         }
 
@@ -786,7 +788,7 @@ public class SessionServerSyncHelper {
             LoginStatus status = LoginStatus.OK;
             locations = new HashMap<>();
             try {
-                ServerResponse.GetSessionPositionsResponse response = client.getSessionPositions(customCertManager, session, null, lastTimestamp);
+                ServerResponse.GetSessionPositionsResponse response = client.getSessionPositions(customCertManager, session, limit, lastTimestamp);
                 locations = response.getPositions(session);
                 colors = response.getColors(session);
                 if (LoggerService.DEBUG) {
