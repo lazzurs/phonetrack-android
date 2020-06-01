@@ -85,6 +85,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -1294,6 +1295,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         } catch (UnsupportedEncodingException e) {
 
         }
+        String userAgent = getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME;
+        contentToExport = contentToExport.replace("AndroidGPX ( http://codebutchery.wordpress.com )", userAgent);
 
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -1310,7 +1313,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private void saveToFileUri(String content, Uri fileUri) {
         try {
             OutputStream fOut = getContentResolver().openOutputStream(fileUri);
-            //FileOutputStream fOut = new FileOutputStream(fileUri.getPath());
             OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
             myOutWriter.append(content);
             myOutWriter.close();
