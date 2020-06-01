@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+<item
+    android:id="@+id/menuDisplayLogjobInfo"
+    android:title="@string/display_info_menu_title"
+    android:icon="@drawable/ic_info_outline_grey600_24dp"/>
+
+<item
+    android:id="@+id/menuDisplayMap"
+    android:title="@string/display_map_menu_title"
+    android:icon="@drawable/ic_map_grey_24dp"
+    />
+
+<item
+    android:id="@+id/menuExportToGpx"
+    android:title="@string/export_gpx_menu_title"
+    android:icon="@drawable/ic_folder_open_grey600_24dp"/>
+
+<item
+    android:id="@+id/menuDeleteLogjob"
+    android:title="@string/delete_logjob_menu_title"
+    android:icon="@drawable/ic_delete_grey_24dp" />
+
+</menu>

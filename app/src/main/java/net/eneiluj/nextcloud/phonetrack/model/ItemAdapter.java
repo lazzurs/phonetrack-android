@@ -154,40 +154,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
 
-            nvHolder.infoButton.setOnClickListener(new View.OnClickListener() {
+            nvHolder.moreButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    logjobClickListener.onLogjobInfoButtonClick(holder.getAdapterPosition(), view);
+                    logjobClickListener.onLogjobMoreButtonClick(holder.getAdapterPosition(), view);
                 }
             });
-
-            nvHolder.mapButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    long sessionId = 0;
-                    String token = logjob.getToken();
-                    if (token != null && !token.equals("")){
-                        List<DBSession> sessions = db.getSessions();
-                        for (DBSession s : sessions) {
-                            if (s.getToken().equals(token)) {
-                                sessionId = s.getId();
-                            }
-                        }
-                    }
-                    logjobClickListener.onLogjobMapButtonClick(sessionId);
-                }
-            });
-
-            nvHolder.mapButton.setVisibility(View.GONE);
-            String token = logjob.getToken();
-            if (token != null && !token.equals("")){
-                List<DBSession> sessions = db.getSessions();
-                for (DBSession s : sessions) {
-                    if (s.getToken().equals(token)) {
-                        nvHolder.mapButton.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
 
             // nb not synced (pending)
             int nb = db.getLogjobLocationNotSyncedCount(logjob.getId());
@@ -288,9 +260,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         void onLogjobEnabledClick(int position, View v);
 
-        void onLogjobInfoButtonClick(int position, View v);
-
-        void onLogjobMapButtonClick(long sessionId);
+        void onLogjobMoreButtonClick(int position, View v);
 
         boolean onLogjobLongClick(int position, View v);
     }
@@ -309,8 +279,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         SwitchCompat logjobEnabled;
         TextView nbNotSync;
         TextView nbSync;
-        ImageButton infoButton;
-        ImageButton mapButton;
+        ImageButton moreButton;
 
         private LogjobViewHolder(View v) {
             super(v);
@@ -326,8 +295,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
             this.nbSync = v.findViewById(R.id.nbSync);
-            this.infoButton = v.findViewById(R.id.infoButton);
-            this.mapButton = v.findViewById(R.id.mapButton);
+            this.moreButton = v.findViewById(R.id.moreButton);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }

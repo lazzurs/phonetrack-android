@@ -1,6 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
@@ -18,14 +19,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 
+import com.codebutchery.androidgpx.data.GPXDocument;
+import com.codebutchery.androidgpx.data.GPXSegment;
+import com.codebutchery.androidgpx.data.GPXTrack;
+import com.codebutchery.androidgpx.data.GPXTrackPoint;
 import com.google.android.material.snackbar.Snackbar;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
 import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
@@ -61,9 +68,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -126,6 +141,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private final static int server_settings = 2;
     private final static int about = 3;
     private final static int map = 4;
+    private final static int save_file_cmd = 5;
+    private static String contentToExport = "";
 
 
     Toolbar toolbar;
@@ -843,43 +860,25 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         db.deleteLogjob(dbLogjob.getId());
         adapter.remove(dbLogjob);
         refreshLists();
+        notifyLoggerService(dbLogjob.getId());
 
         Log.v(TAG, "Item deleted through swipe ----------------------------------------------");
         Snackbar.make(swipeRefreshLayout, R.string.action_logjob_deleted, Snackbar.LENGTH_LONG)
                 .setAction(R.string.action_undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        db.addLogjob(dbLogjob);
+                        long restoredId = db.addLogjob(dbLogjob);
+                        Log.e("CCCC", "ljid "+dbLogjob.getId()+ " restored "+restoredId);
                         for (DBLogjobLocation dbloc : locations) {
                             db.addLocation(dbloc);
                         }
                         refreshLists();
                         Snackbar.make(swipeRefreshLayout, R.string.action_logjob_restored, Snackbar.LENGTH_SHORT)
                                 .show();
-                        notifyLoggerService(dbLogjob.getId());
+                        notifyLoggerService(restoredId);
                     }
                 })
                 .show();
-        notifyLoggerService(dbLogjob.getId());
-    }
-
-    private void confirmLogjobDeletion(DBLogjob dbLogjob) {
-        AlertDialog.Builder confirmDeleteAlertBuilder = new AlertDialog.Builder(new ContextThemeWrapper(listView.getContext(), R.style.AppThemeDialog));
-        confirmDeleteAlertBuilder.setMessage(getString(R.string.confirm_delete_logjob_dialog_title))
-                .setPositiveButton(getString(R.string.simple_yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        cancelableLogjobDeletion(dbLogjob);
-                    }
-                })
-                .setNegativeButton(getString(R.string.simple_no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        refreshLists();
-                    }
-                });
-        Dialog confirmDeleteAlertDialog = confirmDeleteAlertBuilder.create();
-        confirmDeleteAlertDialog.show();
     }
 
     public void initList() {
@@ -918,7 +917,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
                         DBLogjob upToDateLogjob = db.getLogjob(dbLogjob.getId());
                         if (upToDateLogjob.isEnabled()) {
-                            confirmLogjobDeletion(dbLogjob);
+                            showToast(getString(R.string.logjob_delete_active_impossible));
+                            adapter.notifyItemChanged(viewHolder.getAdapterPosition());
                         }
                         else {
                             cancelableLogjobDeletion(dbLogjob);
@@ -1090,6 +1090,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
                 }
             }
+        } else if (requestCode == save_file_cmd) {
+            if (data != null) {
+                Uri savedFile = data.getData();
+                Log.v(TAG, "WE SAVE to "+savedFile);
+                saveToFileUri(contentToExport, savedFile);
+            }
         }
     }
 
@@ -1202,7 +1208,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     }
 
-    @Override
     public void onLogjobMapButtonClick(long sessionId) {
         Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
         mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sessionId);
@@ -1215,19 +1220,124 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     @Override
-    public void onLogjobInfoButtonClick(int position, View view) {
+    public void onLogjobMoreButtonClick(int position, View view) {
         DBLogjob logjobItem = (DBLogjob) adapter.getItem(position);
         if (logjobItem != null) {
             DBLogjob logjob = db.getLogjob(logjobItem.getId());
+
+            PopupMenu popup = new PopupMenu(this, view);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                popup.setForceShowIcon(true);
+            }
+
+            popup.getMenuInflater()
+                    .inflate(R.menu.logjob_popup_menu, popup.getMenu());
+
+            if (!logjob.isPhonetrack()) {
+                popup.getMenu().findItem(R.id.menuDisplayMap).setVisible(false);
+            }
+
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                public boolean onMenuItemClick(MenuItem item) {
+                    DBLogjob logjobMenu = db.getLogjob(logjobItem.getId());
+                    if (item.getItemId() == R.id.menuDisplayMap) {
+                        long sessionId = 0;
+                        String token = logjobMenu.getToken();
+                        if (token != null && !token.equals("")){
+                            List<DBSession> sessions = db.getSessions();
+                            for (DBSession s : sessions) {
+                                if (s.getToken().equals(token)) {
+                                    sessionId = s.getId();
+                                    break;
+                                }
+                            }
+                        }
+                        onLogjobMapButtonClick(sessionId);
+                    } else if (item.getItemId() == R.id.menuDisplayLogjobInfo) {
+                        onLogjobInfoButtonClick(logjobMenu);
+                    } else if (item.getItemId() == R.id.menuDeleteLogjob) {
+                        if (logjobMenu.isEnabled()) {
+                            showToast(getString(R.string.logjob_delete_active_impossible));
+                        } else {
+                            cancelableLogjobDeletion(logjobItem);
+                        }
+                    } else if (item.getItemId() == R.id.menuExportToGpx) {
+                        exportLogjobToGPX(logjobMenu);
+                    }
+                    return true;
+                }
+            });
+            popup.show();
+        }
+    }
+
+    public void exportLogjobToGPX(DBLogjob logjob) {
+        List<DBLogjobLocation> locs = db.getLocationsOfLogjob(logjob.getId());
+
+        GPXSegment segment = new GPXSegment();
+        GPXTrackPoint point;
+        for (DBLogjobLocation loc: locs) {
+            point = new GPXTrackPoint((float)loc.getLat(), (float)loc.getLon());
+            segment.addPoint(point);
+        }
+        GPXTrack track = new GPXTrack();
+        track.addSegment(segment);
+        List<GPXTrack> tracks = new ArrayList<>();
+        tracks.add(track);
+        GPXDocument gpxDoc = new GPXDocument(null, tracks, null);
+
+        contentToExport = "";
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (PrintStream ps = new PrintStream(baos, true, "utf-8")) {
+            gpxDoc.toGPX(ps);
+            contentToExport = baos.toString("utf-8");
+        } catch (UnsupportedEncodingException e) {
+
+        }
+
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/gpx+xml");
+        intent.putExtra(Intent.EXTRA_TITLE, logjob.getTitle() + ".gpx");
+
+        // Optionally, specify a URI for the directory that should be opened in
+        // the system file picker when your app creates the document.
+        //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
+
+        startActivityForResult(intent, save_file_cmd);
+    }
+
+    private void saveToFileUri(String content, Uri fileUri) {
+        try {
+            OutputStream fOut = getContentResolver().openOutputStream(fileUri);
+            //FileOutputStream fOut = new FileOutputStream(fileUri.getPath());
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+            myOutWriter.append(content);
+            myOutWriter.close();
+            fOut.flush();
+            fOut.close();
+            showToast(getString(R.string.file_saved_success, fileUri.getLastPathSegment().replace(
+                    Environment.getExternalStorageDirectory().toString(),
+                    ""))
+            );
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+            showToast(e.toString());
+        }
+    }
+
+    public void onLogjobInfoButtonClick(DBLogjob logjob) {
+        if (logjob != null) {
             long ljId = logjob.getId();
-            PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
+            PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(this);
             View iView = LayoutInflater.from(this).inflate(R.layout.items_infodialog, null);
 
-            updateInfoDialogContent(iView, ljId, view.getContext());
+            updateInfoDialogContent(iView, ljId, this);
 
             AlertDialog.Builder builder;
-            builder = new AlertDialog.Builder(new ContextThemeWrapper(view.getContext(), R.style.AppThemeDialog));
-            builder.setTitle(view.getContext().getString(R.string.logjob_info_dialog_title, logjob.getTitle()))
+            builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog));
+            builder.setTitle(getString(R.string.logjob_info_dialog_title, logjob.getTitle()))
                     .setView(iView)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {

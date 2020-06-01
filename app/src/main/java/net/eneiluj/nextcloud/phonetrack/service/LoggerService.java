@@ -511,7 +511,7 @@ public class LoggerService extends Service {
     private boolean requestLocationUpdates(long ljId, boolean startTimeout, boolean firstRequestAfterAccepted) {
         // here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
-        Log.e(TAG, "job "+ljId);
+        Log.e(TAG, "requestLocationUpdates job "+ljId);
         int minTimeMillis = lj.getMinTime() * 1000;
         int minDistance = lj.getMinDistance();
         boolean keepGpsOn = lj.keepGpsOnBetweenFixes();
