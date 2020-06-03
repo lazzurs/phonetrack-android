@@ -569,7 +569,8 @@ public class MapActivity extends AppCompatActivity {
             } else {
                 icon = R.drawable.ic_phone_android_grey_24dp;
             }
-            NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, null, icon);
+            int nbPoints = lines.get(devName).getActualPoints().size();
+            NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, nbPoints, icon);
             itemsNavigationDevice.add(item);
         }
         bringMarkersToFrontByTimestamp();
@@ -661,9 +662,11 @@ public class MapActivity extends AppCompatActivity {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int freq = prefs.getInt("map_freq", 15);
         int limit = prefs.getInt("map_limit", 300);
+        int lastMin = prefs.getInt("map_last_min", 120);
         //final NavigationAdapter.NavigationItem itemTrashbin = new NavigationAdapter.NavigationItem("trashbin", getString(R.string.action_trashbin), null, R.drawable.ic_delete_grey600_24dp);
         final NavigationAdapter.NavigationItem itemFreq = new NavigationAdapter.NavigationItem("freq", getString(R.string.action_frequency), freq, R.drawable.ic_timer_grey_24dp);
         final NavigationAdapter.NavigationItem itemlimit = new NavigationAdapter.NavigationItem("limit", getString(R.string.action_map_limit), limit, R.drawable.ic_baseline_more_horiz_24);
+        final NavigationAdapter.NavigationItem itemLastMin = new NavigationAdapter.NavigationItem("lastmin", getString(R.string.action_map_last_min), lastMin, R.drawable.ic_baseline_av_timer_24);
         //final NavigationAdapter.NavigationItem itemSettings = new NavigationAdapter.NavigationItem("settings", getString(R.string.action_settings), null, R.drawable.ic_settings_grey600_24dp);
         //final NavigationAdapter.NavigationItem itemAbout = new NavigationAdapter.NavigationItem("about", getString(R.string.simple_about), null, R.drawable.ic_info_outline_grey600_24dp);
         final NavigationAdapter.NavigationItem itemPin = new NavigationAdapter.NavigationItem("pin", getString(R.string.action_pin_to_homescreen), null, R.drawable.ic_add_menu_grey_24dp);
@@ -671,7 +674,7 @@ public class MapActivity extends AppCompatActivity {
         ArrayList<NavigationAdapter.NavigationItem> itemsMenu = new ArrayList<>();
         itemsMenu.add(itemFreq);
         itemsMenu.add(itemlimit);
-        //itemsMenu.add(itemAbout);
+        itemsMenu.add(itemLastMin);
 
         // If the platform supports pinned shortcuts, show menu item
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
@@ -683,7 +686,46 @@ public class MapActivity extends AppCompatActivity {
         NavigationAdapter adapterMenu = new NavigationAdapter(new NavigationAdapter.ClickListener() {
             @Override
             public void onItemClick(NavigationAdapter.NavigationItem item) {
-                if (item == itemlimit) {
+                if (item == itemLastMin) {
+                    int currentLastMin = prefs.getInt("map_last_min", 120);
+
+                    final EditText numberEdit = new EditText(map.getContext());
+                    numberEdit.setText(String.valueOf(currentLastMin));
+                    numberEdit.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+                    numberEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    AlertDialog.Builder fromUrlBuilder = new AlertDialog.Builder(new ContextThemeWrapper(map.getContext(), R.style.AppThemeDialog));
+                    fromUrlBuilder.setMessage(getString(R.string.map_choose_last_min_dialog_message));
+                    fromUrlBuilder.setTitle(getString(R.string.map_choose_last_min_dialog_title));
+
+                    fromUrlBuilder.setView(numberEdit);
+
+                    fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            setLastMin(numberEdit.getText().toString());
+                            Log.i(TAG, "[CHANGE last min] "+numberEdit.getText().toString());
+                            // restore keyboard auto hide behaviour
+                            InputMethodManager inputMethodManager = (InputMethodManager) numberEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        }
+                    });
+
+                    fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // restore keyboard auto hide behaviour
+                            InputMethodManager inputMethodManager = (InputMethodManager) numberEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        }
+                    });
+
+                    // create the alert dialog
+                    Dialog fromUrlDialog = fromUrlBuilder.create();
+                    fromUrlDialog.show();
+                    numberEdit.setSelectAllOnFocus(true);
+                    numberEdit.requestFocus();
+                    // show keyboard
+                    InputMethodManager inputMethodManager = (InputMethodManager) numberEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                } else if (item == itemlimit) {
                     int currentLimit = prefs.getInt("map_limit", 300);
 
                     final EditText limitEdit = new EditText(map.getContext());
@@ -820,6 +862,23 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    private void setLastMin(String f) {
+        try {
+            int nbMin = Integer.valueOf(f);
+            if (nbMin < 0) {
+                nbMin = 0;
+            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            prefs.edit().putInt("map_last_min", nbMin).apply();
+            // to update last min displayed value
+            setupNavigationMenu();
+            applyPointFilters();
+        }
+        catch (Exception e) {
+
+        }
+    }
+
     private void setLimit(String f) {
         try {
             int limit = Integer.valueOf(f);
@@ -828,7 +887,7 @@ public class MapActivity extends AppCompatActivity {
                 prefs.edit().putInt("map_limit", limit).apply();
                 // to update limit displayed value
                 setupNavigationMenu();
-                applyNewPointLimit(limit);
+                applyPointFilters();
             }
         }
         catch (Exception e) {
@@ -836,14 +895,23 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    private void applyNewPointLimit(int limit) {
+    private void applyPointFilters() {
+        int limit = prefs.getInt("map_limit", 300);
+        int lastMin = prefs.getInt("map_last_min", 120);
+
         List<BasicLocation> locationsToDisplay;
         List<GeoPoint> geoPoints;
         for (String devName: lines.keySet()) {
+            // first apply point limit
             if (locations.get(devName).size() > limit) {
                 locationsToDisplay = getLimitedLocations(locations.get(devName), limit);
             } else {
                 locationsToDisplay = locations.get(devName);
+            }
+            // then apply time filter
+            if (lastMin > 0) {
+                Log.v("FIFI", "time filtering for "+devName);
+                locationsToDisplay = getTimeFilteredLocations(locationsToDisplay, lastMin);
             }
 
             geoPoints = new ArrayList<>();
@@ -852,7 +920,7 @@ public class MapActivity extends AppCompatActivity {
             }
             lines.get(devName).setPoints(geoPoints);
         }
-        map.invalidate();
+        updateMap();
     }
 
     private void bringDeviceToFront(String devName) {
@@ -1024,41 +1092,18 @@ public class MapActivity extends AppCompatActivity {
 
         /////// LINES
 
-        int currentLimit = prefs.getInt("map_limit", 300);
         if (!lines.containsKey(devName)) {
-            List<GeoPoint> geoPoints = new ArrayList<>();
-            List<BasicLocation> locationsToDisplay;
-            if (locations.get(devName).size() > currentLimit) {
-                locationsToDisplay = getLimitedLocations(locations.get(devName), currentLimit);
-            } else {
-                locationsToDisplay = locations.get(devName);
-            }
-            for (BasicLocation loc : locationsToDisplay) {
-                geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
-            }
             Polyline line = new Polyline();
             line.getOutlinePaint().setColor(color);
-            line.setPoints(geoPoints);
             lines.put(devName, line);
             // enabled lines by default for new devices
             linesEnabled.put(devName, true);
             map.getOverlays().add(line);
         } else {
             Polyline line = lines.get(devName);
-            if (locations.get(devName).size() > currentLimit) {
-                List<GeoPoint> geoPoints = new ArrayList<>();
-                List<BasicLocation> locationsToDisplay = getLimitedLocations(locations.get(devName), currentLimit);
-                for (BasicLocation loc : locationsToDisplay) {
-                    geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
-                }
-                line.setPoints(geoPoints);
-            } else {
-                for (BasicLocation loc : locationsToAdd) {
-                    line.addPoint(new GeoPoint(loc.getLat(), loc.getLon()));
-                }
-            }
             line.getOutlinePaint().setColor(color);
         }
+        applyPointFilters();
 
         /////// MARKER
         CustomLocationMarkerDrawable markerDrawable;
@@ -1138,6 +1183,27 @@ public class MapActivity extends AppCompatActivity {
         return result;
     }
 
+    private List<BasicLocation> getTimeFilteredLocations(List<BasicLocation> locations, int nbMin) {
+        List<BasicLocation> result;
+        if (nbMin <= 0) {
+            result = locations;
+        } else {
+            long nowTs = System.currentTimeMillis() / 1000;
+            long pastTs = nowTs - (60 * nbMin);
+            int lastIndex = locations.size();
+            int firstIndex = lastIndex;
+            for (int i=0; i < locations.size(); i++) {
+                if (locations.get(i).getTimestamp() >= pastTs) {
+                    firstIndex = i;
+                    break;
+                }
+            }
+            Log.v("FIFI", "time filtering "+firstIndex+" "+lastIndex);
+            result = locations.subList(firstIndex, lastIndex);
+        }
+        return result;
+    }
+
     private Timer timer;
     private TimerTask timerTask;
 
@@ -1183,25 +1249,6 @@ public class MapActivity extends AppCompatActivity {
                 // update map with new device positions
                 updateDevicePositions(devName, locs, colorStr);
             }
-            /*
-            // delete removed devices
-            List<String> devsToDel = new ArrayList<>();
-            for (String markerDevName : markers.keySet()) {
-                if (!newLocations.containsKey(markerDevName)) {
-                    devsToDel.add(markerDevName);
-                }
-            }
-            for (String devToDel : devsToDel) {
-                map.getOverlays().remove(markers.get(devToDel));
-                map.getOverlays().remove(lines.get(devToDel));
-                markers.remove(devToDel);
-                lines.remove(devToDel);
-                markerDrawables.remove(devToDel);
-
-                lastTimestamps.remove(devToDel);
-                locations.remove(devToDel);
-                colors.remove(devToDel);
-            }*/
 
             // update lastTimestamp for next server request
             updateLastTimestamp();
