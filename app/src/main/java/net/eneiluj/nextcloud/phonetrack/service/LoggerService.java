@@ -1266,8 +1266,8 @@ public class LoggerService extends Service {
                 if (mCachedNetworkResult == null) {
                     if (useNet && loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                         // TODO check that
-                        locManager.removeUpdates(gpsLocationListener);
-                        locManager.removeUpdates(networkLocationListener);
+                        //locManager.removeUpdates(gpsLocationListener);
+                        //locManager.removeUpdates(networkLocationListener);
                     }
                 } else {
                     mCachedNetworkResult = null;
