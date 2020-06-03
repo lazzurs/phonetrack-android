@@ -44,6 +44,7 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Parcelable;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -162,7 +163,7 @@ public class MapActivity extends AppCompatActivity {
     RecyclerView listNavigationMenu;
 
     private NavigationAdapter adapterDevices;
-    ArrayList<NavigationAdapter.NavigationItem> itemsNavigationDevice;
+    ArrayList<NavigationAdapter.NavigationItem> itemsNavigationDevice = null;
 
     private ActionBarDrawerToggle drawerToggle;
     private SharedPreferences prefs;
@@ -540,6 +541,16 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void setupNavigationDeviceList() {
+        // potentially save scroll position
+        Parcelable state = null;
+        boolean restoreScroll = false;
+        if (itemsNavigationDevice != null && itemsNavigationDevice.size() > 0) {
+            restoreScroll = true;
+        }
+        if (restoreScroll) {
+            state = listNavigationDevices.getLayoutManager().onSaveInstanceState();
+        }
+
         itemsNavigationDevice = new ArrayList<>();
 
         NavigationAdapter.NavigationItem itemAll = new NavigationAdapter.NavigationItem(ID_ITEM_ALL_DEVICES, getString(R.string.item_all_devices_label), markers.keySet().size(), R.drawable.ic_check_box_grey_24dp);
@@ -626,6 +637,9 @@ public class MapActivity extends AppCompatActivity {
             selectedDeviceItemId = ID_ITEM_ALL_DEVICES;
         }
         listNavigationDevices.setAdapter(adapterDevices);
+        if (restoreScroll) {
+            listNavigationDevices.getLayoutManager().onRestoreInstanceState(state);
+        }
     }
 
     private void toggleAllDeviceLines() {
