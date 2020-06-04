@@ -41,7 +41,7 @@
     <string name="action_drawer_close">Seitenmenü schließen</string>
     <string name="action_frequency">Aktualisierungshäufigkeit festlegen</string>
     <string name="action_map_limit">Maximale Punkteanzahl festlegen</string>
-    <string name="action_map_last_min">Set time filter</string>
+    <string name="action_map_last_min">Zeitfilter festlegen</string>
     <string name="action_pin_to_homescreen">Karte zum Startbildschirm hinzufügen</string>
     <string name="menu_delete">Löschen</string>
     <string name="menu_save">Speichern</string>
@@ -108,7 +108,7 @@
     <string name="dialog_msg_create_session">Protokollierungssitzung in der Nextcloud-PhoneTrack-App erstellen</string>
     <string name="dialog_title_create_session">Sitzung anlegen</string>
     <string name="confirm_delete_logjob_dialog_title">Sind Sie sicher?</string>
-    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
+    <string name="logjob_delete_active_impossible">Ein aktiver Protikollierungsauftrag kann nicht gelöscht werden</string>
     <string name="edit_logjob_choose_session_dialog_title">Sitzung wählen</string>
     <string name="map_choose_session_dialog_title">Sitzung wählen, die auf der Karte angezeigt werden soll</string>
     <string name="map_choose_session_dialog_impossible">Sitzung konnte nicht auf der Karte angezeigt werden</string>
@@ -116,8 +116,8 @@
     <string name="map_choose_frequency_dialog_message">Wie viele Sekunden zwischen zwei Kartenaktualisierungen?</string>
     <string name="map_choose_limit_dialog_title">Wählen Sie die maximale Anzahl der pro Gerät angezeigten Datenpunkte</string>
     <string name="map_choose_limit_dialog_message">Verringern Sie diese Anzahl, um die Sichtbarkeit auf der Karte zu verbessern</string>
-    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
-    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
+    <string name="map_choose_last_min_dialog_title">Anzahl der anzuzeigenden letzten Minuten wählen</string>
+    <string name="map_choose_last_min_dialog_message">Datenpunkte, die weniger als N Minuten in der Vergangenheit liegen, werden angezeigt. Auf 0 (Null) setzen, um sie zu deaktivieren.</string>
     <string name="item_all_devices_label">Alle Geräte</string>
     <string name="popup_battery_value">Batterieladung: %.2f%%</string>
     <string name="popup_altitude_value">Höhenlage: %.2fm</string>
@@ -147,11 +147,11 @@
     <string name="map_choose_layer">Map Tile Provider wählen</string>
     <string name="drawer_connect_hint">Antippen, um Verbindung herzustellen</string>
     <string name="homescreen_map_shortcut_long_title">Karte für %s</string>
-    <string name="display_info_menu_title">Logjob information</string>
-    <string name="display_map_menu_title">Map of logjob\'s session</string>
-    <string name="export_gpx_menu_title">Export to GPX</string>
-    <string name="file_saved_success">Logjob exported in %s</string>
-    <string name="delete_logjob_menu_title">Delete logjob</string>
+    <string name="display_info_menu_title">Informationen des Protokollierungsauftrags</string>
+    <string name="display_map_menu_title">Karte der Protokollierungsauftragssitzung</string>
+    <string name="export_gpx_menu_title">Als GPX exportieren</string>
+    <string name="file_saved_success">Protokollierungsauftrag als %s exportiert</string>
+    <string name="delete_logjob_menu_title">Protokollierungsauftrag löschen</string>
     <string name="is_running">wird ausgeführt (%s ausstehend, %s gesendet)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
