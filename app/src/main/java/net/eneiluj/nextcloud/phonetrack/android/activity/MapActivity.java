@@ -142,6 +142,7 @@ public class MapActivity extends AppCompatActivity {
     private Long lastTimestamp = null;
     private Map<String, Long> lastTimestamps;
     private Map<String, List<BasicLocation>> locations;
+    private Map<String, List<BasicLocation>> displayedLocations;
     private Map<String, Integer> colors;
     // graphical stuff
     private Map<String, Polyline> lines;
@@ -247,6 +248,7 @@ public class MapActivity extends AppCompatActivity {
 
         lastTimestamps = new HashMap<>();
         locations = new HashMap<>();
+        displayedLocations = new HashMap<>();
         colors = new HashMap<>();
         lines = new HashMap<>();
         markers = new HashMap<>();
@@ -580,7 +582,10 @@ public class MapActivity extends AppCompatActivity {
             } else {
                 icon = R.drawable.ic_phone_android_grey_24dp;
             }
-            int nbPoints = lines.get(devName).getActualPoints().size();
+            int nbPoints = 0;
+            if (displayedLocations.containsKey(devName)) {
+                nbPoints = displayedLocations.get(devName).size();
+            }
             NavigationAdapter.NavigationItem item = new NavigationAdapter.NavigationItem(devName, label, nbPoints, icon);
             itemsNavigationDevice.add(item);
         }
@@ -933,6 +938,7 @@ public class MapActivity extends AppCompatActivity {
                 geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
             }
             lines.get(devName).setPoints(geoPoints);
+            displayedLocations.put(devName, locationsToDisplay);
         }
         updateMap();
     }

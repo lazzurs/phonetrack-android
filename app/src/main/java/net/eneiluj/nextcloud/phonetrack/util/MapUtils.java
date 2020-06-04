@@ -54,6 +54,8 @@ public class MapUtils {
             });
             selectBuilder.setNegativeButton(context.getString(R.string.simple_cancel), null);
             selectBuilder.show();
+        } else {
+            Toast.makeText(context, context.getString(R.string.settings_no_osmdroid_files_found), Toast.LENGTH_LONG).show();
         }
     }
 
