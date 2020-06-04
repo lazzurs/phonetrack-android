@@ -41,6 +41,7 @@
     <string name="action_drawer_close">tancar menú lateral</string>
     <string name="action_frequency">Fixar freqüència de refresc</string>
     <string name="action_map_limit">Set max point number</string>
+    <string name="action_map_last_min">Set time filter</string>
     <string name="action_pin_to_homescreen">Fixar mapa a la pantalla d\'inici</string>
     <string name="menu_delete">Esborrar</string>
     <string name="menu_save">Guardar</string>
@@ -107,6 +108,7 @@
     <string name="dialog_msg_create_session">Crear una sessió de registre en l\'aplicació Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Crear sessió</string>
     <string name="confirm_delete_logjob_dialog_title">Segur?</string>
+    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
     <string name="edit_logjob_choose_session_dialog_title">Triar una sessió</string>
     <string name="map_choose_session_dialog_title">Triar una sessió per mostrar al mapa</string>
     <string name="map_choose_session_dialog_impossible">Impossible mostrar una sessió en el mapa</string>
@@ -114,6 +116,8 @@
     <string name="map_choose_frequency_dialog_message">Quants segons entre el refresc de dos mapes?</string>
     <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
     <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
+    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
+    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">Tots els dispositius</string>
     <string name="popup_battery_value">Nivell de bateria : %.2f%%</string>
     <string name="popup_altitude_value">Altitud: %.2fm</string>
@@ -143,6 +147,11 @@
     <string name="map_choose_layer">Triar un proveïdor de seccións de mapa</string>
     <string name="drawer_connect_hint">Clicka aquí per conectar</string>
     <string name="homescreen_map_shortcut_long_title">Mapa per %s</string>
+    <string name="display_info_menu_title">Logjob information</string>
+    <string name="display_map_menu_title">Map of logjob\'s session</string>
+    <string name="export_gpx_menu_title">Export to GPX</string>
+    <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="is_running">corrent (%s pendent, %s enviat)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>

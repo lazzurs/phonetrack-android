@@ -41,6 +41,7 @@
     <string name="action_drawer_close">close side menu</string>
     <string name="action_frequency">Set refresh frequency</string>
     <string name="action_map_limit">Set max point number</string>
+    <string name="action_map_last_min">Set time filter</string>
     <string name="action_pin_to_homescreen">Pin map to home screen</string>
     <string name="menu_delete">Excluir</string>
     <string name="menu_save">Salvar</string>
@@ -107,6 +108,7 @@
     <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
     <string name="dialog_title_create_session">Criar a sessão</string>
     <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
+    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
     <string name="edit_logjob_choose_session_dialog_title">Choose a session</string>
     <string name="map_choose_session_dialog_title">Choose a session to display on the map</string>
     <string name="map_choose_session_dialog_impossible">Impossible to display a session on the map</string>
@@ -114,6 +116,8 @@
     <string name="map_choose_frequency_dialog_message">How many seconds between two map refresh ?</string>
     <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
     <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
+    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
+    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">All devices</string>
     <string name="popup_battery_value">Battery level : %.2f%%</string>
     <string name="popup_altitude_value">Altitude: %.2fm</string>
@@ -143,6 +147,11 @@
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
     <string name="homescreen_map_shortcut_long_title">Map for %s</string>
+    <string name="display_info_menu_title">Logjob information</string>
+    <string name="display_map_menu_title">Map of logjob\'s session</string>
+    <string name="export_gpx_menu_title">Export to GPX</string>
+    <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="is_running">running (%s pending, %s sent)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -228,8 +237,8 @@
     <string name="error_token_mismatch">Please reauthenticate your SSO account in settings</string>
     <!-- Web errors -->
     <!-- Certificates -->
-    <string name="certificate_notification_connection_security">PhoneTrack - Connection security</string>
-    <string name="trust_certificate_unknown_certificate_found">PhoneTrack has encountered an unknown certificate. Do you want to trust it?</string>
+    <string name="certificate_notification_connection_security">Segurança da conexão</string>
+    <string name="trust_certificate_unknown_certificate_found">O cert4android encontrou um certificado desconhecido. Deseja torná-lo confiável?</string>
     <!-- Network -->
     <!-- Error -->
     <string name="error_sync">Session retrieval failed: %1$s</string>

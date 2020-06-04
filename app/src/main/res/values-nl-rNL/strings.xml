@@ -40,7 +40,8 @@
     <string name="action_drawer_open">open zijmenu</string>
     <string name="action_drawer_close">sluit zijmenu</string>
     <string name="action_frequency">Vernieuwingsfrequentie instellen</string>
-    <string name="action_map_limit">Set max point number</string>
+    <string name="action_map_limit">Maximale aantal punten instellen</string>
+    <string name="action_map_last_min">Set time filter</string>
     <string name="action_pin_to_homescreen">Kaart vastzetten op beginscherm</string>
     <string name="menu_delete">Verwijder</string>
     <string name="menu_save">Opslaan</string>
@@ -107,13 +108,16 @@
     <string name="dialog_msg_create_session">Maak een logging sessie aan in de Nextcloud PhoneTrack app</string>
     <string name="dialog_title_create_session">Sessie aanmaken</string>
     <string name="confirm_delete_logjob_dialog_title">Weet je het zeker?</string>
+    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
     <string name="edit_logjob_choose_session_dialog_title">Kies een sessie</string>
     <string name="map_choose_session_dialog_title">Kies een sessie om weer te geven op de kaart</string>
     <string name="map_choose_session_dialog_impossible">Weergeven van een sessie op de kaart is niet mogelijk</string>
     <string name="map_choose_frequency_dialog_title">Vernieuwingsfrequentie van de kaart kiezen (sec)</string>
     <string name="map_choose_frequency_dialog_message">Hoeveel seconden tussen twee kaartvernieuwingen?</string>
-    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
-    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
+    <string name="map_choose_limit_dialog_title">Kies het maximale aantal punten dat wordt weergegeven per apparaat</string>
+    <string name="map_choose_limit_dialog_message">Verminder dit aantal om de zichtbaarheid op de kaart te vergroten</string>
+    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
+    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">Alle apparaten</string>
     <string name="popup_battery_value">Batterijniveau: %.2f%%</string>
     <string name="popup_altitude_value">Hoogte: %.2fm</string>
@@ -143,6 +147,11 @@
     <string name="map_choose_layer">Kies een kaart tegel provider</string>
     <string name="drawer_connect_hint">Tik hier om te verbinden</string>
     <string name="homescreen_map_shortcut_long_title">Kaart voor %s</string>
+    <string name="display_info_menu_title">Logjob information</string>
+    <string name="display_map_menu_title">Map of logjob\'s session</string>
+    <string name="export_gpx_menu_title">Export to GPX</string>
+    <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="is_running">draaiend (%s in behandeling, %s verzonden)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -286,7 +295,7 @@
     <string name="follow_me">Volg mijn positie</string>
     <string name="zoom_all_markers">Zoom op alle markeringen</string>
     <string name="auto_zoom">Autozoom</string>
-    <string name="allow_rotation">Allow rotation</string>
+    <string name="allow_rotation">Rotatie toestaan</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d geselecteerd</item>

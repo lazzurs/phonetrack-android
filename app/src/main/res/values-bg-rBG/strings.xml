@@ -41,6 +41,7 @@
     <string name="action_drawer_close">затвори страничното меню</string>
     <string name="action_frequency">Задайте честота на опресняване</string>
     <string name="action_map_limit">Set max point number</string>
+    <string name="action_map_last_min">Set time filter</string>
     <string name="action_pin_to_homescreen">Поставете картата на началния екран</string>
     <string name="menu_delete">Изтрий</string>
     <string name="menu_save">Запазване</string>
@@ -107,6 +108,7 @@
     <string name="dialog_msg_create_session">Създайте сесия за регистриране в приложението Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Създаване на сесия</string>
     <string name="confirm_delete_logjob_dialog_title">Сигурни ли сте?</string>
+    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
     <string name="edit_logjob_choose_session_dialog_title">Изберете сесия</string>
     <string name="map_choose_session_dialog_title">Изберете сесия, кяото да се покаже на картата</string>
     <string name="map_choose_session_dialog_impossible">Невъзможно е да се покаже сесията на картата</string>
@@ -114,6 +116,8 @@
     <string name="map_choose_frequency_dialog_message">Колко секунди между две обновявания на картата?</string>
     <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
     <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
+    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
+    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">Всички устройства</string>
     <string name="popup_battery_value">Ниво на батерията: %.2f%%</string>
     <string name="popup_altitude_value">Надморска височина: %.2fm</string>
@@ -143,6 +147,11 @@
     <string name="map_choose_layer">Изберете тип карта</string>
     <string name="drawer_connect_hint">Докоснете тук, за да се свържете</string>
     <string name="homescreen_map_shortcut_long_title">Карта за %s</string>
+    <string name="display_info_menu_title">Logjob information</string>
+    <string name="display_map_menu_title">Map of logjob\'s session</string>
+    <string name="export_gpx_menu_title">Export to GPX</string>
+    <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="is_running">изпълнение (%s изчакват, %s изпратени)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Профил</string>

@@ -40,7 +40,8 @@
     <string name="action_drawer_open">otvoriť bočné menu</string>
     <string name="action_drawer_close">zatvoriť bočné menu</string>
     <string name="action_frequency">Nastaviť frekvenciu obnovovania</string>
-    <string name="action_map_limit">Set max point number</string>
+    <string name="action_map_limit">Nastavte max. počet bodov</string>
+    <string name="action_map_last_min">Set time filter</string>
     <string name="action_pin_to_homescreen">Pripnúť mapu na plochu</string>
     <string name="menu_delete">Vymazať</string>
     <string name="menu_save">Uložiť</string>
@@ -107,13 +108,16 @@
     <string name="dialog_msg_create_session">Vytvoriť sledovanie v aplikácii Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Vytvoriť reláciu</string>
     <string name="confirm_delete_logjob_dialog_title">Ste si istý?</string>
+    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
     <string name="edit_logjob_choose_session_dialog_title">Vyberte reláciu</string>
     <string name="map_choose_session_dialog_title">Zvoľte si reláciu pre zobrazenie na mape</string>
     <string name="map_choose_session_dialog_impossible">Nie je možné zobraziť reláciu na mape</string>
     <string name="map_choose_frequency_dialog_title">Zvoľte si frekvenciu obnovovania mapy (sek)</string>
     <string name="map_choose_frequency_dialog_message">Koľko sekúnd medzi dvoma obnoveniami mapy?</string>
-    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
-    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
+    <string name="map_choose_limit_dialog_title">Vyberte max. počet zobrazených bodov zo zariadenia</string>
+    <string name="map_choose_limit_dialog_message">Znížte toto číslo zvýšením viditeľnosti na mape</string>
+    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
+    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">Všetky zariadenia</string>
     <string name="popup_battery_value">Úroveň batérie : %.2f%%</string>
     <string name="popup_altitude_value">Nadmorská výška: %.2fm</string>
@@ -143,6 +147,11 @@
     <string name="map_choose_layer">Zvoľte si poskytovateľa mapových dlaždíc</string>
     <string name="drawer_connect_hint">Na pripojenie kliknite sem</string>
     <string name="homescreen_map_shortcut_long_title">Mapa pre %s</string>
+    <string name="display_info_menu_title">Logjob information</string>
+    <string name="display_map_menu_title">Map of logjob\'s session</string>
+    <string name="export_gpx_menu_title">Export to GPX</string>
+    <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="is_running">spustené (%s čakajúce, %s odoslané)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Účet</string>
@@ -286,7 +295,7 @@
     <string name="follow_me">Sledovať moju polohu</string>
     <string name="zoom_all_markers">Zobraziť všetky značky</string>
     <string name="auto_zoom">Automatické zväčšenie</string>
-    <string name="allow_rotation">Allow rotation</string>
+    <string name="allow_rotation">Povoliť otáčanie</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d označený</item>

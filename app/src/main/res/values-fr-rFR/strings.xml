@@ -41,6 +41,7 @@
     <string name="action_drawer_close">fermer le menu latéral</string>
     <string name="action_frequency">Changer la fréquence de rafraichissement</string>
     <string name="action_map_limit">Définir le nombre maximum de points</string>
+    <string name="action_map_last_min">Définir le filtre de temps</string>
     <string name="action_pin_to_homescreen">Raccourci vers la carte sur l\'écran d\'accueil</string>
     <string name="menu_delete">Supprimer</string>
     <string name="menu_save">Enregistrer</string>
@@ -107,6 +108,7 @@
     <string name="dialog_msg_create_session">Créer une session de logging dans l\'application Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Créer une session</string>
     <string name="confirm_delete_logjob_dialog_title">Êtes-vous sûr(e) ?</string>
+    <string name="logjob_delete_active_impossible">Impossible de supprimer un logjob actif</string>
     <string name="edit_logjob_choose_session_dialog_title">Choisissez une session</string>
     <string name="map_choose_session_dialog_title">Choisissez une session à afficher sur la carte</string>
     <string name="map_choose_session_dialog_impossible">Impossible d\'afficher une session sur la carte</string>
@@ -114,6 +116,8 @@
     <string name="map_choose_frequency_dialog_message">Combien de secondes entre les rafraichissements ?</string>
     <string name="map_choose_limit_dialog_title">Choisissez le nombre maximum de points affichés par appareil</string>
     <string name="map_choose_limit_dialog_message">Réduire ce nombre pour augmenter la visibilité sur la carte</string>
+    <string name="map_choose_last_min_dialog_title">Choisissez le nombre de dernières minutes à afficher</string>
+    <string name="map_choose_last_min_dialog_message">Les points qui sont plus récents que N minutes dans le passé seront affichés. Mettre à 0 pour désactiver.</string>
     <string name="item_all_devices_label">Tous les appareils</string>
     <string name="popup_battery_value">Batterie : %.2f%%</string>
     <string name="popup_altitude_value">Altitude : %.2fm</string>
@@ -143,6 +147,11 @@
     <string name="map_choose_layer">Choisissez un fournisseur de tuiles</string>
     <string name="drawer_connect_hint">Appuyez ici pour vous connecter</string>
     <string name="homescreen_map_shortcut_long_title">Carte pour %s</string>
+    <string name="display_info_menu_title">Informations sur le logjob</string>
+    <string name="display_map_menu_title">Carte pour la session du logjob</string>
+    <string name="export_gpx_menu_title">Exporter en GPX</string>
+    <string name="file_saved_success">Logjob exporté dans %s</string>
+    <string name="delete_logjob_menu_title">Supprimer le logjob</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>
@@ -186,7 +195,7 @@
     <string name="settings_cert_reset_toast">Tous les certificats personnels ont été effacés</string>
     <string name="settings_network_category">Réseau</string>
     <string name="settings_logging_category">Logging</string>
-    <string name="settings_sms_category">Sms</string>
+    <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Carte</string>
     <string name="settings_osmdroid_label">Importer un fichier Mapsforge de carte hors ligne</string>
     <string name="settings_osmdroid_delete_label">Supprimer un fichier Mapsforge de carte hors ligne</string>

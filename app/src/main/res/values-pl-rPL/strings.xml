@@ -40,7 +40,8 @@
     <string name="action_drawer_open">otwórz boczne menu</string>
     <string name="action_drawer_close">zamknij boczne menu</string>
     <string name="action_frequency">Ustaw częstotliwość odświeżania</string>
-    <string name="action_map_limit">Set max point number</string>
+    <string name="action_map_limit">Ustaw maksymalną liczbę punktów</string>
+    <string name="action_map_last_min">Set time filter</string>
     <string name="action_pin_to_homescreen">Przypnij mapę do ekranu głównego</string>
     <string name="menu_delete">Usuń</string>
     <string name="menu_save">Zapisz</string>
@@ -107,13 +108,16 @@
     <string name="dialog_msg_create_session">Utwórz sesję rejestrowania w aplikacji Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Utwórz sesję</string>
     <string name="confirm_delete_logjob_dialog_title">Czy jesteś pewny?</string>
+    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
     <string name="edit_logjob_choose_session_dialog_title">Wybierz sesję</string>
     <string name="map_choose_session_dialog_title">Wybierz sesję do wyświetlenia na mapie</string>
     <string name="map_choose_session_dialog_impossible">Nie można wyświetlić sesji na mapie</string>
     <string name="map_choose_frequency_dialog_title">Wybierz częstotliwość odświeżania mapy (s)</string>
     <string name="map_choose_frequency_dialog_message">Ile sekund między odświeżeniem mapy?</string>
-    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
-    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
+    <string name="map_choose_limit_dialog_title">Wybierz maksymalną liczbę wyświetlanych punktów na urządzenie</string>
+    <string name="map_choose_limit_dialog_message">Zmniejsz tę liczbę, aby zwiększyć widoczność na mapie</string>
+    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
+    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">Wszystkie urządzenia</string>
     <string name="popup_battery_value">Poziom baterii: %.2f%%</string>
     <string name="popup_altitude_value">Wysokość: %.2fm</string>
@@ -143,6 +147,11 @@
     <string name="map_choose_layer">Wybierz dostawcę kafelka mapy</string>
     <string name="drawer_connect_hint">Naciśnij tutaj, aby połączyć się</string>
     <string name="homescreen_map_shortcut_long_title">Mapa dla %s</string>
+    <string name="display_info_menu_title">Logjob information</string>
+    <string name="display_map_menu_title">Map of logjob\'s session</string>
+    <string name="export_gpx_menu_title">Export to GPX</string>
+    <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="is_running">uruchomionych (%s oczekujących, %s wysłanych)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>
@@ -191,7 +200,7 @@
     <string name="settings_osmdroid_label">Importuj plik kafelków mapy offline</string>
     <string name="settings_osmdroid_delete_label">Usuń plik kafelków mapy offline</string>
     <string name="settings_osmdroid_delete_success">Plik usunięty</string>
-    <string name="osmdroid_file_load_success">Pomyślny import pliku</string>
+    <string name="osmdroid_file_load_success">Plik pomyślnie zaimportowany</string>
     <string name="osmdroid_file_load_no_space">Brak miejsca w pamięci zewnętrznej</string>
     <string name="osmdroid_file_load_exception">Błąd podczas kopiowania pliku mapy</string>
     <string name="settings_theming_category">Wygląd</string>
@@ -261,13 +270,13 @@
     <string name="about_translators_crowdin">Społeczność PhoneTrack na &lt;a href=\"%1$s\"&gt;Crowdinie&lt;/a&gt;</string>
     <string name="about_testers_title">Testerzy</string>
     <string name="about_source_title">Kod źródłowy</string>
-    <string name="about_source">Ten projekt jest hostowany na Gitlabie: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
+    <string name="about_source">Projekt jest hostowany na Gitlabie: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
     <string name="about_issues_title">Problemy</string>
     <string name="about_issues">Możesz zgłaszać błędy, propozycje ulepszeń i prośby o funkcje w liście problemów na Gitlabie: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
     <string name="about_translate_title">Tłumaczyć</string>
     <string name="about_translate">Dołącz do zespołu PhoneTrack na Crowdinie i pomóż nam przetłumaczyć tę aplikację: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
     <string name="about_app_license_title">Licencja aplikacji</string>
-    <string name="about_app_license">Ta aplikacja jest na licencji GNU GENERAL PUBLIC LICENSE v3 +.</string>
+    <string name="about_app_license">Aplikacja jest na licencji GNU GENERAL PUBLIC LICENSE v3 +.</string>
     <string name="about_app_license_button">Pokaż licencję</string>
     <string name="about_icons_disclaimer_title">Ikony</string>
     <string name="about_icons_disclaimer">&lt;p&gt;Oryginalna ikona wykonana przez %1$s&lt;/p&gt;&lt;p&gt;Wszystkie pozostałe ikony używane przez tę aplikację są &lt;a href=\"https://materialdesignicons.com/\"&gt;Material Design Icons&lt;/a&gt; wykonane przez Google Inc. i licencjonowane na podstawie Apache 2.0 License.&lt;/p&gt;</string>
@@ -286,7 +295,7 @@
     <string name="follow_me">Śledź moją pozycję</string>
     <string name="zoom_all_markers">Powiększ wszystkie znaczniki</string>
     <string name="auto_zoom">Automatyczne powiększanie</string>
-    <string name="allow_rotation">Allow rotation</string>
+    <string name="allow_rotation">Zezwól na obrót</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">wybrano %d</item>

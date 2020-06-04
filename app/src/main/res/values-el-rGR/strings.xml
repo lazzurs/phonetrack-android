@@ -41,6 +41,7 @@
     <string name="action_drawer_close">κλείσιμο πλευρικού μενού</string>
     <string name="action_frequency">Ορισμός συχνότητας ανανέωσης</string>
     <string name="action_map_limit">Set max point number</string>
+    <string name="action_map_last_min">Set time filter</string>
     <string name="action_pin_to_homescreen">Καρφίτσωμα χάρτη στην αρχική οθόνη</string>
     <string name="menu_delete">Διαγραφή</string>
     <string name="menu_save">Αποθήκευση</string>
@@ -109,6 +110,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="dialog_msg_create_session">Δημιουργία μιας συνεδρίας καταγραφής στην εφαρμογή Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Δημιουργία συνεδρίας</string>
     <string name="confirm_delete_logjob_dialog_title">Είσαι σίγουρος;</string>
+    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
     <string name="edit_logjob_choose_session_dialog_title">Επιλογή συνεδρίας</string>
     <string name="map_choose_session_dialog_title">Επίλεξε μια συνεδρία για εμφάνιση στο χάρτη</string>
     <string name="map_choose_session_dialog_impossible">Αδυναμία εμφάνισης της συνεδρίας στο χάρτη</string>
@@ -116,6 +118,8 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="map_choose_frequency_dialog_message">Πόσα δευτερόλεπτα μεταξύ δύο ανανεώσεων χάρτη;</string>
     <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
     <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
+    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
+    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">Όλες οι συσκευές</string>
     <string name="popup_battery_value">Επίπεδο μπαταρίας: %.2f%%</string>
     <string name="popup_altitude_value">Υψόμετρο: %.2fμ</string>
@@ -145,6 +149,11 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="map_choose_layer">Επιλογή υπηρεσίας παροχής πλακιδίων χάρτη</string>
     <string name="drawer_connect_hint">Πίεσε εδώ για να σύνδεση</string>
     <string name="homescreen_map_shortcut_long_title">Χάρτης για %s</string>
+    <string name="display_info_menu_title">Logjob information</string>
+    <string name="display_map_menu_title">Map of logjob\'s session</string>
+    <string name="export_gpx_menu_title">Export to GPX</string>
+    <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="is_running">τρέχει (%s εκκρεμούν, %s εστάλησαν)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Λογαριασμός</string>
