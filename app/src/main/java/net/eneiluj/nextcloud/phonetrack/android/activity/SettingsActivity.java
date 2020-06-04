@@ -128,7 +128,7 @@ public class SettingsActivity extends AppCompatActivity {
         btn_submit = findViewById(R.id.settings_submit);
         urlWarnHttp = findViewById(R.id.settings_url_warn_http);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
 
             if (LoggerService.DEBUG) { Log.d(TAG, "[request get accounts permission]"); }
@@ -137,7 +137,7 @@ public class SettingsActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.GET_ACCOUNTS},
                     PERMISSION_GET_ACCOUNTS
             );
-        }
+        }*/
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());

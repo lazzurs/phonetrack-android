@@ -65,7 +65,7 @@ dependencies {
     implementation 'org.osmdroid:osmdroid-mapsforge:6.1.6'
     implementation 'com.github.kizitonwose.colorpreference:support:1.0.6'
     implementation 'com.larswerkman:lobsterpicker:1.0.1'
-    implementation 'com.github.nextcloud:Android-SingleSignOn:0.4.1'
+    implementation 'com.github.nextcloud:Android-SingleSignOn:0.5.1'
     //implementation 'com.github.nextcloud:Android-SingleSignOn:-SNAPSHOT'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.android.support:multidex:1.0.3'

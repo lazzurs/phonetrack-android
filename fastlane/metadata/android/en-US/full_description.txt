@@ -1,6 +1,7 @@
 PhoneTrack is an application for continuous logging of location coordinates.
 Application works in background. Points are saved at chosen frequency and
-uploaded to a server in real time. This logger works with
+uploaded to a server in real time (or when network connectivity becomes available).
+This logger works with
 [https://gitlab.com/eneiluj/phonetrack-oc PhoneTrack Nextcloud app] or any
 custom server (GET or POST HTTP requests). PhoneTrack app can also be remotely
 controlled by SMS commands.
@@ -30,7 +31,7 @@ If you want to log to Nextcloud PhoneTrack app :
 - Nextcloud instance running
 - Nextcloud PhoneTrack app enabled
 
-Otherwise, no requirements ! (Except Android>=4.1)
+Otherwise, no requirements! (Except Android>=4.3)
 
 # Alternatives
 

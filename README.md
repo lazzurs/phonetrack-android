@@ -44,7 +44,7 @@ This app is pretty simple so it has a low inpact on battery life. There has been
 
 
 ## :link: Requirements
-* Android >= 4.1
+* Android >= 4.3
 
 If you want to log to Nextcloud PhoneTrack :
 

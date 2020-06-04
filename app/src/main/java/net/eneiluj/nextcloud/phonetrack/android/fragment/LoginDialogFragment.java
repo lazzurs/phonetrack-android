@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 
 import com.nextcloud.android.sso.AccountImporter;
+import com.nextcloud.android.sso.exceptions.AccountImportCancelledException;
 import com.nextcloud.android.sso.exceptions.AndroidGetAccountsPermissionNotGranted;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppNotInstalledException;
 import com.nextcloud.android.sso.model.SingleSignOnAccount;
@@ -40,8 +41,12 @@ public class LoginDialogFragment extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        AccountImporter.onActivityResult(requestCode, resultCode, data, LoginDialogFragment.this, (SingleSignOnAccount account) -> {
-            ((SettingsActivity) getActivity()).onAccountChoose(account);
-        });
+        try {
+            AccountImporter.onActivityResult(requestCode, resultCode, data, LoginDialogFragment.this, (SingleSignOnAccount account) -> {
+                ((SettingsActivity) getActivity()).onAccountChoose(account);
+            });
+        } catch (AccountImportCancelledException e) {
+            Log.v("PhoneTrack", "Account import was cancelled");
+        }
     }
 }
