@@ -5,6 +5,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.0.19 – 2020-06-05
+### Added
+- ability to import MapsForge files from anywhere and store them in app data
+- display device history in map (local+remote data), able to toggle and filter history
+[#199](https://gitlab.com/eneiluj/phonetrack-android/issues/199) [#134](https://gitlab.com/eneiluj/phonetrack-android/issues/134) @tgc12 @Valdnet
+- option to be able to rotate the map
+- export local logjob points to GPX
+
+### Changed
+- update OsmDroid to 6.1.6 which fixes display bug and brings MapsForge v5 compat
+[#183](https://gitlab.com/eneiluj/phonetrack-android/issues/183) @Valdnet
+- improve main sidebar layout
+- display NC account avatar in sidebar
+- use color gradient everywhere
+- remove 'read contacts' permission finally not necessary for SSO
+- update SSO lib to 0.5.1
+
+### Fixed
+- fix logging with keepGpsOn which was stopped after getting the first point
+[#197](https://gitlab.com/eneiluj/phonetrack-android/issues/197) @DavidMndz @huste
+- get rid of takisoft stuff and fix some resources to be able to update gradle
+- map sidebar display with lots of devices
+- keep map sidebar device list scroll state on data update
+
 ## 0.0.18 – 2020-04-13
 ### Added
 - system to fix buggy GPS chips time results
