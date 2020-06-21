@@ -203,6 +203,7 @@
     <string name="osmdroid_file_load_success">Archivo importado correctamente</string>
     <string name="osmdroid_file_load_no_space">No queda espacio en el almacenamiento externo</string>
     <string name="osmdroid_file_load_exception">Error al copiar el archivo de mapa</string>
+    <string name="settings_no_osmdroid_files_found">No map file found in app data</string>
     <string name="settings_theming_category">Tema</string>
     <string name="settings_group_sync_title">Enviar puntos por conjuntos de al menos</string>
     <string name="settings_group_sync_long">Esperar hasta que hay al menos N puntos que enviar al servidor. Esto usará mucho uso de datos de red, pero los puntos no siempre se enviarán en tiempo real.</string>

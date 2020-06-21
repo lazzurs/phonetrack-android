@@ -203,6 +203,7 @@
     <string name="osmdroid_file_load_success">Fil importeret korrekt</string>
     <string name="osmdroid_file_load_no_space">Ingen plads tilbage på ekstern opbevaring</string>
     <string name="osmdroid_file_load_exception">Der opstod en fejl under kopiering kort-filen</string>
+    <string name="settings_no_osmdroid_files_found">No map file found in app data</string>
     <string name="settings_theming_category">Theming</string>
     <string name="settings_group_sync_title">Send points by bunch of at least</string>
     <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
