@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-## 0.0.19 – 2020-06-05
+## 0.0.19 – 2020-06-22
 ### Added
 - ability to import MapsForge files from anywhere and store them in app data
 - display device history in map (local+remote data), able to toggle and filter history
