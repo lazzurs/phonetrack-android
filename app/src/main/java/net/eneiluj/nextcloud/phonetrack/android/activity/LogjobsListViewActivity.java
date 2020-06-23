@@ -1,9 +1,9 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
-import android.app.Activity;
+import android.animation.AnimatorInflater;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,6 +30,7 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 
@@ -37,6 +38,8 @@ import com.codebutchery.androidgpx.data.GPXDocument;
 import com.codebutchery.androidgpx.data.GPXSegment;
 import com.codebutchery.androidgpx.data.GPXTrack;
 import com.codebutchery.androidgpx.data.GPXTrackPoint;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
 import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
@@ -46,7 +49,6 @@ import com.nextcloud.android.sso.model.SingleSignOnAccount;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -57,6 +59,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -66,7 +69,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -82,7 +84,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -111,6 +112,8 @@ import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static net.eneiluj.nextcloud.phonetrack.util.SupportUtil.formatDistance;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
@@ -166,11 +169,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     ImageView avatarView;
     AppCompatImageButton menuButton;
     AppCompatImageView accountButton;
+    MaterialCardView homeToolbar;
+    AppBarLayout appBar;
+
 
     private View currentInfoDialogView = null;
     private long currentInfoDialogLogjobId = -1;
 
-    private ActionBarDrawerToggle drawerToggle;
     private ItemAdapter adapter = null;
     private NavigationAdapter adapterCategories;
     private NavigationAdapter.NavigationItem itemAll, itemEnabled, itemPhonetrack, itemCustom, itemUncategorized;
@@ -233,10 +238,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         avatarView = findViewById(R.id.drawer_nc_logo);
         menuButton = findViewById(R.id.menu_button);
         accountButton = findViewById(R.id.launchAccountSwitcher);
+        searchView = findViewById(R.id.search_view);
+        homeToolbar = findViewById(R.id.home_toolbar);
+        appBar = findViewById(R.id.appBar);
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
-        setupActionBar();
+        setupToolBar();
         setupLogjobsList();
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
@@ -403,19 +411,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         if (LoggerService.DEBUG) { Log.d(TAG, "[onPause END]"); }
     }
 
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.syncState();
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -424,12 +419,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         outState.putString(SAVED_STATE_NAVIGATION_OPEN, navigationOpen);
     }
 
-    private void setupActionBar() {
+    private void setupToolBar() {
         setSupportActionBar(toolbar);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.action_drawer_open, R.string.action_drawer_close);
-        drawerToggle.setDrawerIndicatorEnabled(true);
-        drawerLayout.addDrawerListener(drawerToggle);
-        //drawerLayout.findViewById(R.id.drawer_top_layout).setBackgroundColor(ThemeUtils.primaryColor(this));
         int colors[] = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
         GradientDrawable gradientDrawable = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT, colors);
@@ -447,6 +438,81 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 startActivityForResult(settingsIntent, server_settings);
             }
         });
+
+        ///////// SEARCH
+        homeToolbar.setOnClickListener((v) -> {
+            if (toolbar.getVisibility() == GONE) {
+                updateToolbars(false);
+            }
+        });
+
+        final LinearLayout searchEditFrame = searchView.findViewById(R.id
+                .search_edit_frame);
+
+        searchEditFrame.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            int oldVisibility = -1;
+
+            @Override
+            public void onGlobalLayout() {
+                int currentVisibility = searchEditFrame.getVisibility();
+
+                if (currentVisibility != oldVisibility) {
+                    if (currentVisibility == VISIBLE) {
+                        fabMenu.setVisibility(View.INVISIBLE);
+                    } else {
+                        new Handler().postDelayed(() -> fabMenu.setVisibility(View.VISIBLE), 150);
+                    }
+
+                    oldVisibility = currentVisibility;
+                }
+            }
+
+        });
+        searchView.setOnCloseListener(() -> {
+            if (toolbar.getVisibility() == VISIBLE && TextUtils.isEmpty(searchView.getQuery())) {
+                updateToolbars(true);
+                return true;
+            }
+            return false;
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                refreshLists();
+                return true;
+            }
+        });
+    }
+
+    @SuppressLint("PrivateResource")
+    private void updateToolbars(boolean disableSearch) {
+        homeToolbar.setVisibility(disableSearch ? VISIBLE : GONE);
+        toolbar.setVisibility(disableSearch ? GONE : VISIBLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            appBar.setStateListAnimator(AnimatorInflater.loadStateListAnimator(appBar.getContext(),
+                    disableSearch ? R.animator.appbar_elevation_off : R.animator.appbar_elevation_on));
+        } else {
+            ViewCompat.setElevation(appBar, disableSearch ? 0 : getResources().getDimension(R.dimen.design_appbar_elevation));
+        }
+        if (disableSearch) {
+            searchView.setQuery(null, true);
+        }
+        searchView.setIconified(disableSearch);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        if (toolbar.getVisibility() == VISIBLE) {
+            updateToolbars(true);
+            return true;
+        } else {
+            return super.onSupportNavigateUp();
+        }
     }
 
     private void setupLogjobsList() {
@@ -1000,61 +1066,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         return swipeRefreshLayout;
     }
 
-    /**
-     * Adds the Menu Items to the Action Bar.
-     *
-     * @param menu Menu
-     * @return boolean
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_list_view, menu);
-        // Associate searchable configuration with the SearchView
-        final MenuItem item = menu.findItem(R.id.search);
-        searchView = (SearchView) item.getActionView();
-
-        final LinearLayout searchEditFrame = searchView.findViewById(androidx.appcompat.R.id
-                .search_edit_frame);
-
-        searchEditFrame.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            int oldVisibility = -1;
-            @Override
-            public void onGlobalLayout() {
-                int currentVisibility = searchEditFrame.getVisibility();
-
-                if (currentVisibility != oldVisibility) {
-                    if (currentVisibility == View.VISIBLE) {
-                        fabMenu.setVisibility(View.INVISIBLE);
-                    } else {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                fabMenu.setVisibility(View.VISIBLE);
-                            }
-                        }, 150);
-                    }
-
-                    oldVisibility = currentVisibility;
-                }
-            }
-
-        });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                refreshLists();
-                return true;
-            }
-        });
-        return true;
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -1523,10 +1534,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     @Override
     public void onBackPressed() {
-        if (searchView == null || searchView.isIconified()) {
-            super.onBackPressed();
+        if (toolbar.getVisibility() == VISIBLE) {
+            updateToolbars(true);
         } else {
-            searchView.setIconified(true);
+            super.onBackPressed();
         }
     }
 
