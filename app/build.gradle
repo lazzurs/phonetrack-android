@@ -38,6 +38,11 @@ android {
             resValue "string", "app_name", "PhoneTrack Dev"
             resValue "string", "applicationId", applicationId
         }
+        play {
+            applicationId "net.eneiluj.nextcloud.phonetrack.play"
+            resValue "string", "app_name", "PhoneTrack"
+            resValue "string", "applicationId", applicationId
+        }
     }
     flavorDimensions "default"
     // solves cert4android crash
