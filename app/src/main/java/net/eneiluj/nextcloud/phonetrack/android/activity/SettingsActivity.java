@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
@@ -30,6 +31,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.webkit.SslErrorHandler;
@@ -90,20 +92,14 @@ public class SettingsActivity extends AppCompatActivity {
 
     private SharedPreferences preferences = null;
 
-    //@BindView(R.id.settings_url)
     Switch use_sso_switch;
     EditText field_url;
     TextInputLayout url_wrapper;
     TextInputLayout username_wrapper;
-    //@BindView(R.id.settings_username)
     EditText field_username;
-    //@BindView(R.id.settings_password)
     EditText field_password;
-    //@BindView(R.id.settings_password_wrapper)
     TextInputLayout password_wrapper;
-    //@BindView(R.id.settings_submit)
     Button btn_submit;
-    //@BindView(R.id.settings_url_warn_http)
     View urlWarnHttp;
     private String old_password = "";
 
@@ -117,7 +113,10 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        View view = LayoutInflater.from(this).inflate(R.layout.activity_settings, null);
+        setContentView(view);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         use_sso_switch = findViewById(R.id.use_sso_switch);
         field_url = findViewById(R.id.settings_url);
