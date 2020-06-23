@@ -540,6 +540,7 @@ public abstract class EditLogjobFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.e("DDDDDDDDDDDD", "menu inflater");
         inflater.inflate(R.menu.menu_logjob_fragment, menu);
 
         toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();

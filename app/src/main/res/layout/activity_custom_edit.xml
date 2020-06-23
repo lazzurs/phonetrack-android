@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -16,14 +17,13 @@
             android:layout_height="?attr/actionBarSize"
             app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/ic_arrow_back_grey600_24dp"
-            app:title="@string/action_settings"
-            app:titleMarginStart="0dp" />
+            app:titleMarginStart="0dp"
+            app:title="@string/simple_edit_cu" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container_view"
+    <include
+        layout="@layout/activity_custom_edit_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/bg_normal" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

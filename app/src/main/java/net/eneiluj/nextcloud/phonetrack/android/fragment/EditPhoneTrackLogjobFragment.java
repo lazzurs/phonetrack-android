@@ -79,7 +79,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_edit_form, container, false);
+        View view = inflater.inflate(R.layout.activity_edit, container, false);
         super.onCreateView(view);
 
         editToken = view.findViewById(R.id.editToken);

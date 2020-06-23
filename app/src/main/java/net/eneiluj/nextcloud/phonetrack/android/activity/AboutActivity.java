@@ -15,6 +15,9 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Window;
 
 //import butterknife.BindView;
@@ -33,7 +36,9 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+        View view = LayoutInflater.from(this).inflate(R.layout.activity_about, null);
+        //setContentView(R.layout.activity_about);
+        setContentView(view);
         mViewPager = findViewById(R.id.pager);
         mTabLayout = findViewById(R.id.tabs);
 
