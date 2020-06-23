@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,8 +21,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.preference.EditTextPreference;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -40,13 +37,7 @@ import java.util.List;
 
 import static android.webkit.URLUtil.isValidUrl;
 
-//import android.preference.EditTextPreference;
-//import android.preference.ListPreference;
-//import android.preference.Preference;
-//import android.preference.PreferenceFragment;
 
-//public abstract class EditLogjobFragment extends Fragment implements CategoryDialogFragment.CategoryDialogListener {
-//public class EditLogjobFragment extends PreferencesFragment {
 public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
     private static final String TAG = EditPhoneTrackLogjobFragment.class.getSimpleName();

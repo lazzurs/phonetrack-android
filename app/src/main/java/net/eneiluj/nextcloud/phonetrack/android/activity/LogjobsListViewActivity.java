@@ -438,21 +438,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         ImageView logoView = drawerLayout.findViewById(R.id.drawer_logo);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
 
-        //toolbar.setBackgroundColor(ThemeUtils.primaryColor(this));
-        /*GradientDrawable gradientDrawableToolbar = new GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT, colors);
-        toolbar.setBackground(gradientDrawableToolbar);
-
-         */
-
-        /*Window window = getWindow();
-        if (window != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int color = ThemeUtils.primaryDarkColor(this);
-                window.setStatusBarColor(color);
-            }
-        }*/
-
         menuButton.setOnClickListener((v) -> drawerLayout.openDrawer(GravityCompat.START));
         final LogjobsListViewActivity that = this;
         accountButton.setOnClickListener(new View.OnClickListener() {
@@ -1156,14 +1141,18 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     Bitmap rounded = ThemeUtils.getRoundedBitmap(decodedByte, decodedByte.getWidth() / 2);
                     avatarView.setImageBitmap(rounded);
+                    accountButton.setImageBitmap(rounded);
                 } catch (Exception e) {
                     avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+                    accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
                 }
             } else {
                 avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+                accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
             }
         } else {
             avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+            accountButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_account_circle_grey_24dp));
         }
     }
 

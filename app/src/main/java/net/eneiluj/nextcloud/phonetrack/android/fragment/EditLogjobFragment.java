@@ -18,6 +18,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
@@ -59,6 +60,7 @@ import android.widget.Toast;
 
 //import butterknife.ButterKnife;
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
@@ -179,6 +181,9 @@ public abstract class EditLogjobFragment extends Fragment {
 
 
     public void onCreateView(View view) {
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        ((EditLogjobActivity)getActivity()).setSupportActionBar(toolbar);
+
         fabOk = view.findViewById(R.id.fab_edit_ok);
 
         boolean darkTheme = PhoneTrack.getAppTheme(getContext());
@@ -540,14 +545,7 @@ public abstract class EditLogjobFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.e("DDDDDDDDDDDD", "menu inflater");
         inflater.inflate(R.menu.menu_logjob_fragment, menu);
-
-        toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        int colors[] = { ThemeUtils.primaryColor(getContext()), ThemeUtils.primaryLightColor(getContext()) };
-        GradientDrawable gradientDrawable = new GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT, colors);
-        toolbar.setBackgroundDrawable(gradientDrawable);
     }
 
     @Override

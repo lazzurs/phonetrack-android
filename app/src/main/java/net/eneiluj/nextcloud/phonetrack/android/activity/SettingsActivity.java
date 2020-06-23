@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -149,23 +150,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        // toolbar color
-        /*ActionBar toolbar = getSupportActionBar();
-        int colors[] = {ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this)};
-        GradientDrawable gradientDrawable = new GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT, colors);
-        toolbar.setBackgroundDrawable(gradientDrawable);
-
-         */
-
-        Window window = getWindow();
-        if (window != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int colorDark = ThemeUtils.primaryDarkColor(this);
-                window.setStatusBarColor(colorDark);
-            }
-        }
-
         setupListener();
 
         // Load current Preferences
@@ -174,6 +158,14 @@ public class SettingsActivity extends AppCompatActivity {
             url_wrapper.setVisibility(View.INVISIBLE);
             urlWarnHttp.setVisibility(View.GONE);
             btn_submit.setVisibility(View.INVISIBLE);
+        }
+        // manage switch color
+        if (use_sso_switch.isChecked()) {
+            use_sso_switch.getTrackDrawable().setColorFilter(ThemeUtils.primaryDarkColor(this), PorterDuff.Mode.SRC_IN);
+            use_sso_switch.getThumbDrawable().setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.MULTIPLY);
+        } else {
+            use_sso_switch.getTrackDrawable().setColorFilter(ContextCompat.getColor(this, R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
+            use_sso_switch.getThumbDrawable().setColorFilter(ContextCompat.getColor(this, R.color.fg_default_high), PorterDuff.Mode.MULTIPLY);
         }
         field_url.setText(preferences.getString(SETTINGS_URL, DEFAULT_SETTINGS));
         field_username.setText(preferences.getString(SETTINGS_USERNAME, DEFAULT_SETTINGS));
@@ -209,8 +201,10 @@ public class SettingsActivity extends AppCompatActivity {
                     loginDialogFragment.show(SettingsActivity.this.getSupportFragmentManager(), "NoticeDialogFragment");
 
                     use_sso_switch.setChecked(false);
-                }
-                else {
+                } else {
+                    use_sso_switch.getTrackDrawable().setColorFilter(ContextCompat.getColor(SettingsActivity.this, R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
+                    use_sso_switch.getThumbDrawable().setColorFilter(ContextCompat.getColor(SettingsActivity.this, R.color.fg_default_high), PorterDuff.Mode.MULTIPLY);
+
                     url_wrapper.setVisibility(View.VISIBLE);
                     //urlWarnHttp.setVisibility(View.VISIBLE);
                     // stimulate url field to update http warning

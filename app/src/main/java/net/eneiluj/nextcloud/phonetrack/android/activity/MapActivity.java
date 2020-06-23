@@ -475,21 +475,6 @@ public class MapActivity extends AppCompatActivity {
 
         ImageView logoView = drawerLayoutMap.findViewById(R.id.drawer_logo_map);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
-
-        if (toolbar != null) {
-            ActionBar mtoolbar = ((AppCompatActivity) this).getSupportActionBar();
-            GradientDrawable gradientDrawable2 = new GradientDrawable(
-                    GradientDrawable.Orientation.LEFT_RIGHT, colors);
-            mtoolbar.setBackgroundDrawable(gradientDrawable2);
-        }
-
-        Window window = getWindow();
-        if (window != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int colorDark = ThemeUtils.primaryDarkColor(this);
-                window.setStatusBarColor(colorDark);
-            }
-        }
     }
 
     public void onResume(){

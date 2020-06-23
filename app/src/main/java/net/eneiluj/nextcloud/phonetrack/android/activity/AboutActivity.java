@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
 //import android.support.v4.app.Fragment;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 //import android.support.v4.app.FragmentManager;
 import androidx.fragment.app.FragmentManager;
@@ -37,34 +38,16 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = LayoutInflater.from(this).inflate(R.layout.activity_about, null);
+
         //setContentView(R.layout.activity_about);
         setContentView(view);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         mViewPager = findViewById(R.id.pager);
         mTabLayout = findViewById(R.id.tabs);
 
         mViewPager.setAdapter(new TabsPagerAdapter(getSupportFragmentManager()));
         mTabLayout.setupWithViewPager(mViewPager);
-
-        setupActionBar();
-    }
-
-    private void setupActionBar() {
-        ActionBar actionBar = getDelegate().getSupportActionBar();
-
-        if (actionBar != null) {
-            int colors[] = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
-            GradientDrawable gradientDrawable = new GradientDrawable(
-                    GradientDrawable.Orientation.LEFT_RIGHT, colors);
-            actionBar.setBackgroundDrawable(gradientDrawable);
-        }
-
-        Window window = getWindow();
-        if (window != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int colorDark = ThemeUtils.primaryDarkColor(this);
-                window.setStatusBarColor(colorDark);
-            }
-        }
     }
 
     private class TabsPagerAdapter extends FragmentPagerAdapter {
@@ -118,5 +101,11 @@ public class AboutActivity extends AppCompatActivity {
                     return null;
             }
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish(); // close this activity as oppose to navigating up
+        return true;
     }
 }

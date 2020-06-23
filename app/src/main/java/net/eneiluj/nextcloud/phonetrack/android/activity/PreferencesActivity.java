@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.PreferenceManager;
@@ -40,27 +41,18 @@ public class PreferencesActivity extends AppCompatActivity {
         setResult(RESULT_CANCELED);
         View view = LayoutInflater.from(this).inflate(R.layout.activity_preferences, null);
         setContentView(view);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container_view, new PreferencesFragment(), "preftag")
                 .commit();
-        setupActionBar();
     }
 
     @Override
     public void onBackPressed() {
         NavUtils.navigateUpFromSameTask(this);
         //finish();
-    }
-
-    private void setupActionBar() {
-        Window window = getWindow();
-        if (window != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int colorDark = ThemeUtils.primaryDarkColor(this);
-                window.setStatusBarColor(colorDark);
-            }
-        }
     }
 
     @Override
