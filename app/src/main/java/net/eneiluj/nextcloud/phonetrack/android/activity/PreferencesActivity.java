@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -16,6 +17,8 @@ import androidx.preference.CheckBoxPreference;
 import androidx.preference.PreferenceManager;
 
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Window;
 
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -35,8 +38,11 @@ public class PreferencesActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setResult(RESULT_CANCELED);
+        View view = LayoutInflater.from(this).inflate(R.layout.activity_preferences, null);
+        setContentView(view);
+
         getSupportFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new PreferencesFragment(), "preftag")
+                .replace(R.id.fragment_container_view, new PreferencesFragment(), "preftag")
                 .commit();
         setupActionBar();
     }
@@ -48,14 +54,6 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void setupActionBar() {
-        ActionBar actionBar = getDelegate().getSupportActionBar();
-
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            int color = ThemeUtils.primaryColor(this);
-            actionBar.setBackgroundDrawable(new ColorDrawable(color));
-        }
-
         Window window = getWindow();
         if (window != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

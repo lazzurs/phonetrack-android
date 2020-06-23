@@ -4,6 +4,7 @@
 
     <color name="primary">#0082C9</color>
     <color name="primary_dark">#286090</color>
+    <color name="accent">#121212</color>
 
     <color name="separator">#d2d2d2</color>
 
@@ -19,6 +20,8 @@
     <color name="fg_default_high">#cccccc</color>
     <color name="fg_contrast">#ffffff</color>
     <color name="icon_grey">#757575</color>
+
+    <color name="appbar">@android:color/white</color>
 
     <!-- Dark Theme -->
     <!-- Defined here until appwidgets can use night/colors -->

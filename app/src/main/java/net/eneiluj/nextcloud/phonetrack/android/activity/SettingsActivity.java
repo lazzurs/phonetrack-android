@@ -150,11 +150,13 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         // toolbar color
-        ActionBar toolbar = getSupportActionBar();
+        /*ActionBar toolbar = getSupportActionBar();
         int colors[] = {ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this)};
         GradientDrawable gradientDrawable = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT, colors);
         toolbar.setBackgroundDrawable(gradientDrawable);
+
+         */
 
         Window window = getWindow();
         if (window != null) {

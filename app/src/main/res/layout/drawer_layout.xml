@@ -16,6 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/bg_normal"
         android:fitsSystemWindows="false">
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -124,6 +125,7 @@
                     android:layout_gravity="start"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
+                    android:background="@color/bg_normal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <View
@@ -138,6 +140,7 @@
                     android:layout_gravity="start"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
+                    android:background="@color/bg_normal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

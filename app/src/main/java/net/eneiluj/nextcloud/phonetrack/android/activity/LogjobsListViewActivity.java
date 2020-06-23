@@ -25,7 +25,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 
@@ -160,6 +164,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     RecyclerView listView;
     Snackbar ssoSnackbar;
     ImageView avatarView;
+    AppCompatImageButton menuButton;
+    AppCompatImageView accountButton;
 
     private View currentInfoDialogView = null;
     private long currentInfoDialogLogjobId = -1;
@@ -225,8 +231,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         listNavigationMenu = findViewById(R.id.navigationMenu);
         listView = findViewById(R.id.recycler_view);
         avatarView = findViewById(R.id.drawer_nc_logo);
-
-        //ButterKnife.bind(this);
+        menuButton = findViewById(R.id.menu_button);
+        accountButton = findViewById(R.id.launchAccountSwitcher);
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
@@ -433,17 +439,29 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
 
         //toolbar.setBackgroundColor(ThemeUtils.primaryColor(this));
-        GradientDrawable gradientDrawableToolbar = new GradientDrawable(
+        /*GradientDrawable gradientDrawableToolbar = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT, colors);
         toolbar.setBackground(gradientDrawableToolbar);
 
-        Window window = getWindow();
+         */
+
+        /*Window window = getWindow();
         if (window != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 int color = ThemeUtils.primaryDarkColor(this);
                 window.setStatusBarColor(color);
             }
-        }
+        }*/
+
+        menuButton.setOnClickListener((v) -> drawerLayout.openDrawer(GravityCompat.START));
+        final LogjobsListViewActivity that = this;
+        accountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settingsIntent = new Intent(that, SettingsActivity.class);
+                startActivityForResult(settingsIntent, server_settings);
+            }
+        });
     }
 
     private void setupLogjobsList() {

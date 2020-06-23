@@ -11,6 +11,9 @@ android {
         versionCode 19
         versionName "0.0.19"
         multiDexEnabled true
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
     buildTypes {
         release {
