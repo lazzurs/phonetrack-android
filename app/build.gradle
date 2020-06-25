@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
     buildToolsVersion '29.0.2'
-
     defaultConfig {
         applicationId "net.eneiluj.nextcloud.phonetrack"
         minSdkVersion 18
@@ -57,10 +56,7 @@ android {
 dependencies {
     implementation project(':cert4android')
     implementation 'com.github.clans:fab:1.6.4'
-    //implementation 'com.jakewharton:butterknife:10.0.0'
-    //annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     def supportLibVersion = '1.1.0'
-    //implementation "com.android.support:preference-v7:${supportLibVersion}"
     implementation "androidx.appcompat:appcompat:${supportLibVersion}"
     implementation "com.google.android.material:material:${supportLibVersion}"
     implementation "androidx.recyclerview:recyclerview:${supportLibVersion}"
@@ -68,14 +64,14 @@ dependencies {
     // needed for cert4android (conflict resolution)
     implementation "androidx.cardview:cardview:1.0.0"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'junit:junit:4.13'
     implementation 'org.osmdroid:osmdroid-android:6.1.6'
     implementation 'org.osmdroid:osmdroid-mapsforge:6.1.6'
     implementation 'com.github.kizitonwose.colorpreference:support:1.0.6'
     implementation 'com.larswerkman:lobsterpicker:1.0.1'
     implementation 'com.github.nextcloud:Android-SingleSignOn:0.5.1'
     //implementation 'com.github.nextcloud:Android-SingleSignOn:-SNAPSHOT'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.codebutchery.android:gpx_lib:1.0.3'
 }

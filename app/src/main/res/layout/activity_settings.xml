@@ -31,8 +31,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin">
 
-
-
     <Switch
         android:id="@+id/use_sso_switch"
         android:layout_width="match_parent"
