@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.1.0 – 2020-06-25
+### Changed
+- apply new design (like NC Notes and NC Files)
+[#206](https://gitlab.com/eneiluj/phonetrack-android/issues/206) @stefan-niedermann
+
 ## 0.0.19 – 2020-06-22
 ### Added
 - ability to import MapsForge files from anywhere and store them in app data
