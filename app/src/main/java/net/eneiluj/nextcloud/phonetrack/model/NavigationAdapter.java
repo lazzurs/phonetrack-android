@@ -100,9 +100,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
             } else {
                 icon.setVisibility(View.GONE);
             }
-            //view.setBackgroundColor(isSelected ? view.getResources().getColor(R.color.bg_highlighted) : Color.TRANSPARENT);
-            view.setBackgroundColor(isSelected ? ContextCompat.getColor(view.getContext(), R.color.bg_highlighted) : Color.TRANSPARENT);
-            //int textColor = view.getResources().getColor(isSelected ? R.color.primary_dark : R.color.fg_default);
             int textColor = ContextCompat.getColor(view.getContext(), R.color.fg_default);
 
             name.setTextColor(textColor);
@@ -113,6 +110,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
                 name.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
                 count.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
             }
+            //view.setBackgroundColor(isSelected ? ContextCompat.getColor(view.getContext(), R.color.bg_highlighted) : Color.TRANSPARENT);
+            view.setSelected(isSelected);
         }
     }
 
