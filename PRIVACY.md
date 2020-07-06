@@ -1,6 +1,6 @@
 # PhoneTrack-Android Privacy Policy
 
-PhoneTrack-Android does not collect any personal data for its developpers or any other entity.
+PhoneTrack-Android does not collect any personal data for its developers or any other entity.
 This is a Free/Libre software so you can verify no data is collected
 by reading the source code or asking someone to do it.
 
