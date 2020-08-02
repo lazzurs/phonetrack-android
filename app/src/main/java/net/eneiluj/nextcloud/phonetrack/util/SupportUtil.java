@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.util;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -8,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.WorkerThread;
 
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.Spanned;
@@ -172,5 +174,16 @@ public class SupportUtil {
         return Settings.Global.getInt(context.getContentResolver(),
                 Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
 
+    }
+
+    @TargetApi(23)
+    public static boolean isDozing(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            return powerManager.isDeviceIdleMode() &&
+                    !powerManager.isIgnoringBatteryOptimizations(context.getPackageName());
+        } else {
+            return false;
+        }
     }
 }

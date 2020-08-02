@@ -11,6 +11,7 @@ package net.eneiluj.nextcloud.phonetrack.service;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -90,6 +91,11 @@ public class LoggerService extends Service {
     public static final String BROADCAST_ERROR_MESSAGE = "net.eneiluj.nextcloud.phonetrack.broadcast.error_message";
     public static final String UPDATE_NOTIFICATION = "net.eneiluj.nextcloud.phonetrack.UPDATE_NOTIFICATION";
 
+    public static final String GET_NEXT_POINT = "getnextpoint";
+    public static final String FIRST_REQ_AFTER_ACCEPTED = "firstafteraccepted";
+    public static final String START_TIMEOUT = "starttimeout";
+    public static final String JOB_ID = "jobid";
+
     private Intent syncIntent;
 
     private static volatile boolean isRunning = false;
@@ -118,6 +124,8 @@ public class LoggerService extends Service {
     private ConnectionStateMonitor connectionMonitor;
     private BroadcastReceiver powerSaverChangeReceiver;
     private BroadcastReceiver airplaneModeChangeReceiver;
+
+    AlarmManager alarmManager;
 
     /**
      * Basic initializations.
@@ -203,6 +211,7 @@ public class LoggerService extends Service {
             thread = new LoggerThread();
             thread.start();
             looper = thread.getLooper();
+            alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
             battery = getBatteryLevelOnce();
             // register for battery level
@@ -271,6 +280,7 @@ public class LoggerService extends Service {
             final boolean logjobsUpdated = (intent != null) && intent.getBooleanExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, false);
             final boolean providersUpdated = (intent != null) && intent.getBooleanExtra(PreferencesFragment.UPDATED_PROVIDERS, false);
             final boolean updateNotif = (intent != null) && intent.getBooleanExtra(UPDATE_NOTIFICATION, false);
+            final boolean getNextPoint = (intent != null) && intent.getBooleanExtra(GET_NEXT_POINT, false);
             if (logjobsUpdated) {
                 // this to avoid doing two loc upd when service is down and then a logjob is enabled
                 // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
@@ -296,6 +306,14 @@ public class LoggerService extends Service {
                 }
             } else if (updateNotif && isRunning) {
                 updateNotificationContent();
+            } else if (getNextPoint) {
+                long jobId = intent.getLongExtra(JOB_ID, 0);
+                if (logjobs.containsKey(jobId)) {
+                    Log.d(TAG, "!!!!!!! START command, request loc upd for " + jobId);
+                    boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
+                    boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
+                    requestLocationUpdates(jobId, startTimeout, firstReqAfterAccepted);
+                }
             } else {
                 // start without parameter
                 if (DEBUG) {
@@ -974,6 +992,7 @@ public class LoggerService extends Service {
         protected Runnable mIntervalRunnable;
         protected Handler mTimeoutHandler;
         protected Runnable mTimeoutRunnable;
+        protected PendingIntent nextPointIntent;
         protected Boolean mMotionDetected;
         protected CorrectingLocation mCachedNetworkResult;
 
@@ -1003,6 +1022,7 @@ public class LoggerService extends Service {
             mIntervalRunnable = null;
             mTimeoutHandler = null;
             mTimeoutRunnable = null;
+            nextPointIntent = null;
             mCachedNetworkResult = null;
 
             mIntervalTimeMillis = mLogJob.getMinTime() * 1000;
@@ -1059,6 +1079,10 @@ public class LoggerService extends Service {
                 }
                 mTimeoutHandler = null;
             }
+            if (nextPointIntent != null) {
+                alarmManager.cancel(nextPointIntent);
+            }
+
         }
 
         public void startResultTimeout() {
@@ -1125,24 +1149,28 @@ public class LoggerService extends Service {
 
         private void scheduleSampleAfterInterval(long millisDelay) {
             Log.d(TAG, "Scheduling sampling delay for " + millisDelay/1000.0 + "s");
-            // Create new handler if one doesn't exist
-            if (mIntervalHandler == null) {
-                mIntervalHandler = new Handler();
+            if (nextPointIntent != null) {
+                alarmManager.cancel(nextPointIntent);
             }
 
-            mIntervalRunnable = new Runnable() {
-                public void run() {
-                    Log.e(TAG, "End of delay in NORMAL mode, recording point "+mIntervalRunnable);
+            Intent i = new Intent(LoggerService.this, LoggerService.class);
+            i.putExtra(GET_NEXT_POINT, true);
+            i.putExtra(JOB_ID, mJobId);
+            i.putExtra(START_TIMEOUT, true);
+            i.putExtra(FIRST_REQ_AFTER_ACCEPTED, true);
+            int intJobId = (int) mJobId;
+            nextPointIntent = PendingIntent.getService(LoggerService.this, intJobId, i, 0);
+            alarmManager.cancel(nextPointIntent);
 
-                    // Assists with ensuring we don't end up with two interval sequences running for one job
-                    mIntervalRunnable = null;
-
-                    requestLocationUpdates(mJobId, true, true);
-                }
-            };
-
-            // Create and post
-            mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
+            if (SupportUtil.isDozing(LoggerService.this)){
+                //Only invoked once per 15 minutes in doze mode
+                Log.e(TAG, "Device is dozing, using infrequent alarm");
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
+            }
+            else {
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
+            }
+            Log.e(TAG, "STARTING to wait");
         }
 
         public void handleLocationChange(Location location) {
