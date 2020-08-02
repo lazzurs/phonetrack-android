@@ -95,6 +95,8 @@ public class LoggerService extends Service {
     public static final String FIRST_REQ_AFTER_ACCEPTED = "firstafteraccepted";
     public static final String START_TIMEOUT = "starttimeout";
     public static final String JOB_ID = "jobid";
+    public static final String ONLY_SCHEDULE = "onlyschedule";
+    public static final String SCHEDULE_INTERVAL = "scheduleinterval";
 
     private Intent syncIntent;
 
@@ -309,10 +311,17 @@ public class LoggerService extends Service {
             } else if (getNextPoint) {
                 long jobId = intent.getLongExtra(JOB_ID, 0);
                 if (logjobs.containsKey(jobId)) {
-                    Log.d(TAG, "!!!!!!! START command, request loc upd for " + jobId);
-                    boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
-                    boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
-                    requestLocationUpdates(jobId, startTimeout, firstReqAfterAccepted);
+                    boolean onlySchedule = intent.getBooleanExtra(ONLY_SCHEDULE, false);
+                    if (onlySchedule) {
+                        // we just schedule next time to get a point. this happens in sigmotion when no motion has been seen
+                        long intervalTimeMillis = intent.getLongExtra(SCHEDULE_INTERVAL, 0);
+                        mLogjobWorkers.get(jobId).scheduleSampleAfterInterval(intervalTimeMillis);
+                    } else {
+                        Log.d(TAG, "!!!!!!! START command, request loc upd for " + jobId);
+                        boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
+                        boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
+                        requestLocationUpdates(jobId, startTimeout, firstReqAfterAccepted);
+                    }
                 }
             } else {
                 // start without parameter
@@ -988,8 +997,6 @@ public class LoggerService extends Service {
 
         protected Long mLastUpdateRealtime;
 
-        protected Handler mIntervalHandler;
-        protected Runnable mIntervalRunnable;
         protected Handler mTimeoutHandler;
         protected Runnable mTimeoutRunnable;
         protected PendingIntent nextPointIntent;
@@ -1018,8 +1025,6 @@ public class LoggerService extends Service {
             mLastUpdateRealtime = Long.valueOf(0);
             lastAcquisitionStartTimestamp = System.currentTimeMillis()/1000;
 
-            mIntervalHandler = null;
-            mIntervalRunnable = null;
             mTimeoutHandler = null;
             mTimeoutRunnable = null;
             nextPointIntent = null;
@@ -1061,17 +1066,6 @@ public class LoggerService extends Service {
         }
 
         protected void stop() {
-            if (mIntervalHandler != null) {
-                if (mIntervalRunnable != null) {
-                    Log.d(TAG, "remove interval for job "+mJobId+" "+mIntervalRunnable);
-                    mIntervalHandler.removeCallbacks(mIntervalRunnable);
-                    // this should never be needed but just in case there is a mess between location listeners
-                    // like one not being switched off still getting locations and scheduling something...
-                    //mIntervalHandler.removeCallbacksAndMessages(null);
-                    mIntervalRunnable = null;
-                }
-                mIntervalHandler = null;
-            }
             if (mTimeoutHandler != null) {
                 if (mTimeoutRunnable != null) {
                     mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
@@ -1102,6 +1096,7 @@ public class LoggerService extends Service {
         protected abstract Runnable createSampleTimeoutDelayRunnable();
 
         public abstract void handleLocationChange(Location location);
+        public abstract void scheduleSampleAfterInterval(long millisDelay);
     }
 
     private class LogjobClassicWorker extends LogjobWorker {
@@ -1147,7 +1142,7 @@ public class LoggerService extends Service {
             return runnable;
         }
 
-        private void scheduleSampleAfterInterval(long millisDelay) {
+        public void scheduleSampleAfterInterval(long millisDelay) {
             Log.d(TAG, "Scheduling sampling delay for " + millisDelay/1000.0 + "s");
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
@@ -1260,26 +1255,8 @@ public class LoggerService extends Service {
             return null;
         }
 
-        private void scheduleSampleAfterInterval(long millisDelay, boolean firstRequestAfterAccepted) {
-            Log.d(TAG, "Scheduling sampling delay for " + millisDelay/1000.0 + "s");
-            // Create new handler if one doesn't exist
-            if (mIntervalHandler == null) {
-                mIntervalHandler = new Handler();
-            }
+        public void scheduleSampleAfterInterval(long millisDelay) {
 
-            mIntervalRunnable = new Runnable() {
-                public void run() {
-                    Log.d(TAG, "End of delay in NORMAL mode, recording point");
-
-                    // Assists with ensuring we don't end up with two interval sequences running for one job
-                    mIntervalRunnable = null;
-
-                    requestLocationUpdates(mJobId, false, firstRequestAfterAccepted);
-                }
-            };
-
-            // Create and post
-            mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
         }
 
         public void handleLocationChange(Location location) {
@@ -1402,10 +1379,10 @@ public class LoggerService extends Service {
             return runnable;
         }
 
-        private void scheduleSampleAfterInterval(long millisDelay) {
+        public void scheduleSampleAfterInterval(long millisDelay) {
             Log.d(TAG, "Scheduling sampling delay for " + millisDelay / 1000.0 + "s");
             // Create new handler if one doesn't exist
-            if (mIntervalHandler == null) {
+            /*if (mIntervalHandler == null) {
                 mIntervalHandler = new Handler();
             }
 
@@ -1428,13 +1405,35 @@ public class LoggerService extends Service {
                         scheduleSampleAfterInterval(mIntervalTimeMillis);
                     }
                 }
-            };
+            };*/
+
+            if (nextPointIntent != null) {
+                alarmManager.cancel(nextPointIntent);
+            }
+
+            Intent i = new Intent(LoggerService.this, LoggerService.class);
+            i.putExtra(GET_NEXT_POINT, true);
+            i.putExtra(JOB_ID, mJobId);
+            i.putExtra(START_TIMEOUT, true);
+            i.putExtra(FIRST_REQ_AFTER_ACCEPTED, true);
+            i.putExtra(ONLY_SCHEDULE, (!mMotionDetected && !mUseMixedMode));
+            i.putExtra(SCHEDULE_INTERVAL, mIntervalTimeMillis);
+            int intJobId = (int) mJobId;
+            nextPointIntent = PendingIntent.getService(LoggerService.this, intJobId, i, 0);
+            alarmManager.cancel(nextPointIntent);
+
+            if (SupportUtil.isDozing(LoggerService.this)){
+                //Only invoked once per 15 minutes in doze mode
+                Log.e(TAG, "Device is dozing, using infrequent alarm");
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
+            }
+            else {
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
+            }
+            Log.e(TAG, "STARTING to wait");
 
             // Ensure significant motion notifications are enabled
             mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
-
-            // Create and post
-            mIntervalHandler.postDelayed(mIntervalRunnable, millisDelay);
         }
 
         public void handleLocationChange(Location location) {
@@ -1523,10 +1522,10 @@ public class LoggerService extends Service {
                     // If we're interval-based and there is a runnable waiting for the next interval we know we haven't
                     // already requested a location. This checks helps us prevent having two sampling sequences running
                     // for the same job.
-                    if (mUseInterval && mIntervalRunnable != null) {
-                        // Stop waiting runnable
-                        mIntervalHandler.removeCallbacks(mIntervalRunnable);
-                        mIntervalRunnable = null;
+                    if (mUseInterval && nextPointIntent != null) {
+
+                        alarmManager.cancel(nextPointIntent);
+                        nextPointIntent = null;
 
                         Log.d(TAG, "Triggering immediate sample after significant motion due to " +
                                 millisSinceLast / 1000.0 + "s since last point");
@@ -1548,11 +1547,10 @@ public class LoggerService extends Service {
                 // If we're interval-based and there is a runnable waiting for the next interval we know we haven't
                 // already requested a location. This checks helps us prevent having two sampling sequences running
                 // for the same job.
-                if (mIntervalRunnable != null) {
+                if (nextPointIntent != null) {
                     Log.d(TAG, "stop interval schedule runnable because MIXED mode");
-                    // Stop waiting runnable
-                    mIntervalHandler.removeCallbacks(mIntervalRunnable);
-                    mIntervalRunnable = null;
+                    // Stop waiting
+                    alarmManager.cancel(nextPointIntent);
                 }
 
                 requestLocationUpdates(mJobId, true, true);
