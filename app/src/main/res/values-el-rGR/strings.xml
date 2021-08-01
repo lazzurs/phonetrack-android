@@ -11,7 +11,7 @@
     <string name="action_create_custom_share">Εισαγωγή προσαρμοσμένου συνδέσμου καταγραφής</string>
     <string name="action_settings">Ρυθμίσεις</string>
     <string name="setting_title">Τίτλος</string>
-    <string name="setting_title_long">Καταγραφή τίτλου εργασίας (ορατό μόνο στην εφαρμογή)</string>
+    <string name="setting_title_long">Τίτλος της εργασίας καταγραφής (ορατό μόνο στην εφαρμογή)</string>
     <string name="mandatory">(υποχρεωτικό)</string>
     <string name="setting_devicename">Όνομα συσκευής</string>
     <string name="setting_devicename_long">Όνομα συσκευής ή διακριτικό κράτησης</string>
@@ -40,21 +40,21 @@
     <string name="action_drawer_open">άνοιγμα πλευρικού μενού</string>
     <string name="action_drawer_close">κλείσιμο πλευρικού μενού</string>
     <string name="action_frequency">Ορισμός συχνότητας ανανέωσης</string>
-    <string name="action_map_limit">Set max point number</string>
-    <string name="action_map_last_min">Set time filter</string>
+    <string name="action_map_limit">Ορισμός μέγιστου αριθμού σημείων</string>
+    <string name="action_map_last_min">Ορισμός χρονικού φίλτρου</string>
     <string name="action_pin_to_homescreen">Καρφίτσωμα χάρτη στην αρχική οθόνη</string>
     <string name="menu_delete">Διαγραφή</string>
     <string name="menu_save">Αποθήκευση</string>
-    <string name="menu_preset_bike">Bike profile</string>
-    <string name="menu_preset_walk">Walk profile</string>
-    <string name="menu_preset_drive">Drive profile</string>
-    <string name="menu_preset_precision">Max precision profile</string>
-    <string name="menu_preset_battery">Battery saving profile</string>
-    <string name="preset_hint_title">Logjob settings presets</string>
-    <string name="preset_hint_content">Keep in mind those presets are just examples and you might want to adjust selected values.</string>
-    <string name="dont_show_again">Don\'t show again</string>
-    <string name="setting_set_preset">Preconfigured profiles</string>
-    <string name="setting_set_preset_summary">Choose a preconfigured profile that fits your activity.</string>
+    <string name="menu_preset_bike">Προφίλ ποδηλάτου</string>
+    <string name="menu_preset_walk">Προφίλ περπατήματος</string>
+    <string name="menu_preset_drive">Προφίλ οδήγησης</string>
+    <string name="menu_preset_precision">Προφίλ μέγιστης ακρίβειας</string>
+    <string name="menu_preset_battery">Προφίλ εξοικονόμησης μπαταρίας</string>
+    <string name="preset_hint_title">Προεπιλεγμένες ρυθμίσεις καταγραφής</string>
+    <string name="preset_hint_content">Να έχετε υπόψη ότι αυτές οι ρυθμίσεις είναι απλά παραδείγματα και μπορεί να θέλετε να προσαρμόσετε τις επιλεγμένες τιμές.</string>
+    <string name="dont_show_again">Να μην εμφανιστεί ξανά</string>
+    <string name="setting_set_preset">Προρυθμισμένα προφίλ</string>
+    <string name="setting_set_preset_summary">Επιλέξτε ένα προρυθμισμένο προφίλ που ταιριάζει στην δραστηριότητα σας.</string>
     <string name="menu_select_session">Χρήση συνεδρίας PhoneTrack</string>
     <string name="menu_from_url">Χρήση συνδέσμου καταγραφής PhoneTrack</string>
     <string name="menu_share">Κοινοποίηση</string>
@@ -72,23 +72,21 @@
     <string name="setting_min_distance_long">Ελάχιστη απόσταση μεταξύ δύο καταγεγραμμένων σημείων (μέτρα)</string>
     <string name="setting_min_time">Ελάχιστος χρόνος</string>
     <string name="setting_min_time_mixed">Μέγιστος χρόνος</string>
-    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
+    <string name="setting_min_time_long">Ελάχιστος χρόνος μεταξύ δύο καταγεγραμμένων σημείων (δευτερόλεπτα). Πρέπει να είναι ανώτερος από το χρονικό όριο τοποθεσίας.</string>
     <string name="setting_min_time_mixed_long">Μέγιστος χρόνος μεταξύ δύο καταγεγραμμένων σημείων (δευτερόλεπτα)</string>
     <string name="setting_min_accuracy">Ελάχιστη ακρίβεια</string>
-    <string name="setting_min_accuracy_long">Ελάχιστη ακρίβεια για καταγεγραμμένα σημεία (μέτρα). Παύση καταγραφής εάν η τιμή ακρίβειας είναι μεγαλύτερη από:</string>
+    <string name="setting_min_accuracy_long">Ελάχιστη ακρίβεια για καταγεγραμμένα σημεία (μέτρα). Χωρίς καταγραφή, εάν η τιμή ακρίβειας είναι μεγαλύτερη από:</string>
     <string name="setting_keepgps_title">Διατήρηση ανοιχτού GPS μεταξύ των σταθεροποιήσεων</string>
     <string name="setting_keepgps_summary">Αυτό θα φέρει πιο ακριβείς θέσεις, αλλά θα έχει μεγαλύτερη επίδραση στη διάρκεια ζωής μπαταρίας. Χρησιμοποιείστε το όταν ελάχιστος χρόνος είναι κάτω από 60 δευτερόλεπτα.</string>
     <string name="setting_significantmotion_enabled">Λειτουργία σημαντικής κίνησης</string>
     <string name="setting_significantmotion_title">Λήψη θέσης μόνο μετά από σημαντική κίνηση</string>
     <string name="setting_significantmotion_summary">Πειραματικό: Αναμονή για σημαντική κίνηση πριν τη λήψη της επόμενης θέσης. Εξοικονομεί πολλή ενέργεια σε κάποιες περιπτώσεις. Ασύμβατη με κάποιες άλλες επιλογές.</string>
     <string name="setting_significantmotion_min_time_applied">Εφαρμογή ελάχιστου χρόνου</string>
-    <string name="setting_significantmotion_min_time_applied_summary">Αποφυγή καταγραφής θέσης με κάθε κίνηση. Αναμονή \"ελάχιστου χρόνου\" μεταξύ δύο σημείων. Προσφέρει εξοικονόμηση ενέργειας.
-
-Don\'t record a position every time motion is detected, wait \"minimum time\" between two points. This saves battery.</string>
+    <string name="setting_significantmotion_min_time_applied_summary">Αποφυγή καταγραφής θέσης με κάθε κίνηση. Αναμονή \"ελάχιστου χρόνου\" μεταξύ δύο σημείων. Αυτό εξοικονομεί μπαταρία.</string>
     <string name="setting_significantmotion_mixed">Υβριδική κατάσταση (εφαρμογή μέγιστου χρόνου)</string>
-    <string name="setting_significantmotion_mixed_summary">Καταγραφή μιας θέσης κάθε φορά που εντοπίζεται κίνηση. Αν δεν εντοπιστεί καμία κίνηση, καταγραφή μιας θέσης κάθε \"μέγιστο χρόνο\". Αυτό εξοικονομεί λιγότερη μπαταρία.</string>
+    <string name="setting_significantmotion_mixed_summary">Καταγραφή μιας θέσης κάθε φορά που εντοπίζεται κίνηση. Αν δεν εντοπιστεί καμία κίνηση, καταγραφή μιας θέσης κάθε \"μέγιστο χρόνο\". Αυτό εξοικονομεί λίγο λιγότερη μπαταρία.</string>
     <string name="setting_significantmotion_timeout">Λήξη χρονικού ορίου θέσης</string>
-    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
+    <string name="setting_significantmotion_timeout_summary">Χρόνος αναμονής για μία σταθεροποίηση θέσης (δευτερόλεπτα). Εξοικονομεί μπαταρία σε περιοχές χωρίς καλή κάλυψη. Εάν χρησιμοποιείτε τόσο το GPS όσο και το δίκτυο, αυτό καθορίζει επίσης μετά από πόσο χρονικό διάστημα θα χρησιμοποιηθεί η χαμηλότερη ποιότητα θέσης του δικτύου. Ορίστε το σε μηδέν για να απενεργοποιήσετε το χρονικό όριο. Πρέπει να είναι λιγότερο από τον ελάχιστο χρόνο.</string>
     <string name="logjob_title_log_to">Καταγραφή σε %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">τοόνοματηςσυσκευήςμου</string>
@@ -110,31 +108,31 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="dialog_msg_create_session">Δημιουργία μιας συνεδρίας καταγραφής στην εφαρμογή Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Δημιουργία συνεδρίας</string>
     <string name="confirm_delete_logjob_dialog_title">Είσαι σίγουρος;</string>
-    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
+    <string name="logjob_delete_active_impossible">Η διαγραφή μια ενεργής εργασία καταγραφής είναι αδύνατη</string>
     <string name="edit_logjob_choose_session_dialog_title">Επιλογή συνεδρίας</string>
     <string name="map_choose_session_dialog_title">Επίλεξε μια συνεδρία για εμφάνιση στο χάρτη</string>
     <string name="map_choose_session_dialog_impossible">Αδυναμία εμφάνισης της συνεδρίας στο χάρτη</string>
     <string name="map_choose_frequency_dialog_title">Επιλογή συχνότητας ανανέωσης χάρτη (δευτ.)</string>
     <string name="map_choose_frequency_dialog_message">Πόσα δευτερόλεπτα μεταξύ δύο ανανεώσεων χάρτη;</string>
-    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
-    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
-    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
-    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
+    <string name="map_choose_limit_dialog_title">Επιλέξτε μέγιστο αριθμό σημείων που εμφανίζονται ανά συσκευή</string>
+    <string name="map_choose_limit_dialog_message">Μειώστε αυτόν τον αριθμό για να αυξήσετε την ορατότητα στον χάρτη</string>
+    <string name="map_choose_last_min_dialog_title">Επιλέξτε τον αριθμό των τελευταίων λεπτών για εμφάνιση</string>
+    <string name="map_choose_last_min_dialog_message">Θα εμφανιστούν σημεία που είναι πιο πρόσφατα από N λεπτά στο παρελθόν. Ρυθμίστε το σε 0 για απενεργοποίηση.</string>
     <string name="item_all_devices_label">Όλες οι συσκευές</string>
     <string name="popup_battery_value">Επίπεδο μπαταρίας: %.2f%%</string>
     <string name="popup_altitude_value">Υψόμετρο: %.2fμ</string>
     <string name="popup_accuracy_value">Ακρίβεια: %.2fμ</string>
     <string name="popup_satellites">Δορυφόροι: %d</string>
     <string name="popup_bearing_value">Κατεύθυνση: %.2f°</string>
-    <string name="popup_speed_value">Ταχύτητα: %.2fχλμ/ω</string>
+    <string name="popup_speed_value">Ταχύτητα: %.2fkm/h</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">Η θέση σου εστάλη με SMS στο %s</string>
     <string name="sms_notif_info_dialog_title">Πληροφορίες SMS</string>
     <string name="sms_notif_info_dialog_message1">Αυτό το SMS στάλθηκε σε %s:</string>
-    <string name="sms_notif_info_dialog_message2">Μετάβαση στις ρυθμίσεις PhoneTrack, για απενεργοποίηση αυτού του χαρακτηριστικού.</string>
+    <string name="sms_notif_info_dialog_message2">Για απενεργοποίηση αυτού του χαρακτηριστικού μεταβείτε στις ρυθμίσεις του PhoneTrack.</string>
     <string name="sms_geo_link">Γεωσύνδεσμος</string>
     <string name="sms_osm_link">Σύνδεσμος OSM</string>
-    <string name="sms_alarm_started">Η ειδοποίηση θα ηχήσει για %d δευτερόλεπτα</string>
+    <string name="sms_alarm_started">Ο συναγερμός θα ηχήσει για %d δευτερόλεπτα</string>
     <string name="sms_alarm_stopped">Ο συναγερμός σταμάτησε</string>
     <string name="sms_logjobs_started">%d εργασίες καταγραφής ξεκίνησαν</string>
     <string name="sms_logjobs_stopped">%d εργασίες καταγραφής σταμάτησαν</string>
@@ -149,11 +147,13 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="map_choose_layer">Επιλογή υπηρεσίας παροχής πλακιδίων χάρτη</string>
     <string name="drawer_connect_hint">Πίεσε εδώ για να σύνδεση</string>
     <string name="homescreen_map_shortcut_long_title">Χάρτης για %s</string>
-    <string name="display_info_menu_title">Logjob information</string>
-    <string name="display_map_menu_title">Map of logjob\'s session</string>
-    <string name="export_gpx_menu_title">Export to GPX</string>
-    <string name="file_saved_success">Logjob exported in %s</string>
-    <string name="delete_logjob_menu_title">Delete logjob</string>
+    <string name="display_info_menu_title">Πληροφορίες καταγραφής</string>
+    <string name="display_map_menu_title">Χάρτης της συνεδρίας καταγραφής</string>
+    <string name="export_gpx_menu_title">Εξαγωγή σε GPX</string>
+    <string name="file_saved_success">Η εργασία καταγραφής εξάχθηκε στο %s</string>
+    <string name="delete_logjob_menu_title">Διαγραφή εργασίας καταγραφής</string>
+    <string name="action_sorting_method">Sorting method</string>
+    <string name="manage_accounts">Manage accounts</string>
     <string name="is_running">τρέχει (%s εκκρεμούν, %s εστάλησαν)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Λογαριασμός</string>
@@ -161,7 +161,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="settings_url_warn_http">ΠΡΟΣΟΧΗ: Το \"http\" δεν είναι ασφαλές. Παρακαλώ χρησιμοποιήστε το \"https\".</string>
     <string name="settings_username">Όνομα Χρήστη</string>
     <string name="settings_password">Κωδικός πρόσβασης</string>
-    <string name="settings_password_unchanged">Κωδικό πρόσβασης (δεν άλλαξε)</string>
+    <string name="settings_password_unchanged">Κωδικός πρόσβασης (δεν άλλαξε)</string>
     <string name="settings_submit">Σύνδεση</string>
     <string name="settings_submitting">Συνδέεται &#8230;</string>
     <string name="settings_theme_title">Θέμα</string>
@@ -173,10 +173,10 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="settings_sms_subtitle">Αναμονή για εισερχόμενα SMS και απάντηση με πληροφορίες τοποθεσίας, αν περιλαμβάνεται η ακόλουθη λέξη-κλειδί</string>
     <string name="settings_sms_keyword_title">Λέξη-κλειδί SMS</string>
     <string name="settings_sms_keyword_long">Εάν αυτή η συσκευή λάβει SMS που περιλαμβάνει αυτή τη λέξη-κλειδί, οι πληροφορίες τοποθεσίας θα σταλούν ως απάντηση.</string>
-    <string name="settings_sms_keyword_long2">Οι εντολές μπορούν να σταλούν και με αυτή τη σύνταξη: ΛΕΞΗ-ΚΛΕΙΔΙ ΕΝΤΟΛΗ</string>
+    <string name="settings_sms_keyword_long2">Οι εντολές μπορούν να σταλούν και με αυτή τη σύνταξη: ΛΕΞΗΚΛΕΙΔΙ ΕΝΤΟΛΗ</string>
     <string name="settings_sms_keyword_long3">Διαθέσιμες εντολές:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
     <string name="settings_use_server_color_title">Χρήση χρώματος διακομιστή</string>
-    <string name="settings_use_server_color_subtitle">Λήψη χρώματος διακομιστή κατά το συγχρονισμό και χρήση ως βασικού χρώματος τηε εφαρμογής</string>
+    <string name="settings_use_server_color_subtitle">Λήψη χρώματος διακομιστή κατά το συγχρονισμό και χρήση ως βασικού χρώματος της εφαρμογής</string>
     <string name="settings_providers_title">Πάροχοι τοποθεσίας</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Δίκτυο</string>
@@ -186,7 +186,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="providers_passive_network">Παθητικό και Δίκτυο</string>
     <string name="providers_passive_gps_network">Παθητικό και GPS και Δίκτυο</string>
     <string name="settings_color_title">Κύριο χρώμα εφαρμογής</string>
-    <string name="settings_color_summary">Χρώματα για τα μενού, τα πλήκτρα χάρτη και άλλα...</string>
+    <string name="settings_color_summary">Χρώμα για τα μενού, τα πλήκτρα χάρτη και άλλα...</string>
     <string name="settings_colorpicker_title">Επιλογή χρώματος</string>
     <string name="settings_cert_category">Διαχείριση πιστοποιητικών</string>
     <string name="settings_cert_trust_system">Αξιόπιστα πιστοποιητικά συστήματος</string>
@@ -199,19 +199,19 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="settings_logging_category">Καταγραφή</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Χάρτης</string>
-    <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
-    <string name="settings_osmdroid_delete_label">Delete Mapsforge offline map tiles file</string>
-    <string name="settings_osmdroid_delete_success">File deleted</string>
-    <string name="osmdroid_file_load_success">File import success</string>
-    <string name="osmdroid_file_load_no_space">No space left on external storage</string>
-    <string name="osmdroid_file_load_exception">Error while copying map file</string>
-    <string name="settings_no_osmdroid_files_found">No map file found in app data</string>
+    <string name="settings_osmdroid_label">Εισαγωγή αρχείου πλακιδίων χάρτη χωρίς σύνδεση Mapsforge</string>
+    <string name="settings_osmdroid_delete_label">Διαγραφή αρχείου πλακιδίων χάρτη χωρίς σύνδεση Mapsforge</string>
+    <string name="settings_osmdroid_delete_success">Το αρχείο διαγράφηκε</string>
+    <string name="osmdroid_file_load_success">Επιτυχής εισαγωγή αρχείου</string>
+    <string name="osmdroid_file_load_no_space">Δεν έχει απομείνει χώρος στον εξωτερικό χώρο αποθήκευσης</string>
+    <string name="osmdroid_file_load_exception">Σφάλμα κατά την αντιγραφή του αρχείου χάρτη</string>
+    <string name="settings_no_osmdroid_files_found">Δεν βρέθηκε αρχείο χάρτη στα δεδομένα εφαρμογής</string>
     <string name="settings_theming_category">Θέματα</string>
     <string name="settings_group_sync_title">Αποστολή σημείων ανά ομάδα από τουλάχιστον</string>
-    <string name="settings_group_sync_long">Αναμονή μέχρι να υπάρχουν τουλάχιστον Ν σημεία για αποστολή τους στον εξυπηρετητή. Αυτό θα εξοικονομήσει πολλά δεδομένα δικτύου, αλλά τα σημεία δεν θα αποστέλονται πάντα σε πραγματικό χρόνο.</string>
+    <string name="settings_group_sync_long">Αναμονή μέχρι να υπάρχουν τουλάχιστον Ν σημεία για αποστολή τους στον εξυπηρετητή. Αυτό θα εξοικονομήσει πολλά δεδομένα δικτύου, αλλά τα σημεία δεν θα στέλνονται πάντα σε πραγματικό χρόνο.</string>
     <string name="settings_saving_category">Εξοικονόμηση ενέργειας/δεδομένων</string>
     <string name="settings_power_saving_awareness_title">Σεβασμός της κατάστασης εξοικονόμησης ενέργειας</string>
-    <string name="settings_power_saving_awareness_subtitle">Πάγωμα των ενεργών εργασιών καταγραφής όταν είναι ενεργοποιημένη η κατάσταση εξοικονόμησης ενέργειας</string>
+    <string name="settings_power_saving_awareness_subtitle">Παύση των ενεργών εργασιών καταγραφής όταν είναι ενεργοποιημένη η κατάσταση εξοικονόμησης ενέργειας</string>
     <string name="settings_offline_mode_awareness_title">Σεβασμός της κατάστασης εκτός σύνδεσης</string>
     <string name="settings_offline_mode_awareness_subtitle">Πάγωμα των ενεργών εργασιών καταγραφής όταν είναι ενεργοποιημένη η κατάσταση εκτός σύνδεσης</string>
     <string name="tracking_started">Η καταγραφή ξεκίνησε</string>
@@ -226,7 +226,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="pref_autostart_title">Αυτόματη εκκίνηση</string>
     <string name="pref_autostart_summary">Η καταγραφή θα ξεκινήσει κατά την εκκίνηση του συστήματος</string>
     <string name="pref_shownbsynced_title">Εμφάνιση αριθμού συγχρονισμένων σημείων</string>
-    <string name="pref_shownbsynced_summary">συγχρονίστηκαν = εστάλησαν στο διακομιστή</string>
+    <string name="pref_shownbsynced_summary">συγχρονίστηκαν = στάλθηκαν στο διακομιστή</string>
     <string name="share_dev_title">Κοινοποίηση δημόσιας διεύθυνσης URL του PhoneTrack</string>
     <string name="menu_share_dev_title">Κοινοποίηση δημόσιας διεύθυνσης URL του PhoneTrack</string>
     <string name="error_share_dev_same_url">Η διεύθυνση Nextcloud πρέπει να είναι η ίδια όπως στις ρυθμίσεις λογαριασμού για να μπορεί να κοινοποιηθεί</string>
@@ -261,7 +261,7 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="error_invalid_minaccuracy">Μη έγκυρη ελάχιστη ακρίβεια</string>
     <string name="error_invalid_timeout">Μη έγκυρη λήξη χρονικού ορίου</string>
     <string name="error_invalid_sms_keyword">Μη έγκυρη λέξη-κλειδί SMS</string>
-    <string name="error_invalid_group_sync">Άκυρος αριθμός</string>
+    <string name="error_invalid_group_sync">Μη έγκυρος αριθμός</string>
     <!-- Snackbar Actions -->
     <!-- URLs -->
     <!-- About -->
@@ -278,8 +278,8 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="about_issues">Μπορείτε να αναφέρετε σφάλματα, προτάσεις βελτίωσης και αιτήματα για νέες δυνατότητες στο Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
     <string name="about_translate_title">Μετάφραση</string>
     <string name="about_translate">Γίνετε μέλος της ομάδας PhoneTrack στο Crowdin και βοηθήστε μας να μεταφράσουμε αυτήν την εφαρμογή: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
-    <string name="about_app_license_title">Άδεια χρήσης εφαμρογής</string>
-    <string name="about_app_license">Αυτή η εφαρμογή έχει άδεια χρήσης σύμφωνα με την GNU GENERAL PUBLIC LICENSE v3 +.</string>
+    <string name="about_app_license_title">Άδεια χρήσης εφαρμογής</string>
+    <string name="about_app_license">Αυτή η εφαρμογή έχει άδεια χρήσης σύμφωνα με την GNU GENERAL PUBLIC LICENSE v3+.</string>
     <string name="about_app_license_button">Προβολή άδειας</string>
     <string name="about_icons_disclaimer_title">Εικονίδια</string>
     <string name="about_icons_disclaimer">&lt;p&gt;Το πρωτότυπο εικονίδιο δημιουργήθηκε από τον %1$s&lt;/p&gt;&lt;p&gt;Όλα τα άλλα εικονίδια που χρησιμοποιούνται από αυτήν την εφαρμογή είναι &lt;a href=\"https://materialdesignicons.com/\"&gt;εικονίδια Material Design&lt;/a&gt; φτιαγμένα από την Google Inc. και αδειοδοτημένα βάσει της άδειας Apache 2.0 License.&lt;/p&gt;</string>
@@ -294,11 +294,11 @@ Don\'t record a position every time motion is detected, wait \"minimum time\" be
     <string name="fallback_weblogin_text">Επιστροφή σε παλιά μέθοδο σύνδεσης</string>
     <string name="fallback_weblogin_back">Πίσω</string>
     <string name="use_sso_toggle">Χρήση λογαριασμού από την εφαρμογή Nextcloud Files</string>
-    <string name="center_map">Show my position</string>
-    <string name="follow_me">Follow my position</string>
-    <string name="zoom_all_markers">Zoom on all markers</string>
+    <string name="center_map">Εμφάνιση της θέσης μου</string>
+    <string name="follow_me">Παρακολούθηση της θέσης μου</string>
+    <string name="zoom_all_markers">Μεγέθυνση σε όλους τους δείκτες</string>
     <string name="auto_zoom">Αυτόματη μεγέθυνση</string>
-    <string name="allow_rotation">Allow rotation</string>
+    <string name="allow_rotation">Να επιτρέπεται η περιστροφή</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d επιλέχθηκε</item>

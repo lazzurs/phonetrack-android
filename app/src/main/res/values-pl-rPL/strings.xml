@@ -117,7 +117,7 @@
     <string name="map_choose_limit_dialog_title">Wybierz maks. liczbę wyświetlanych punktów na urządzenie</string>
     <string name="map_choose_limit_dialog_message">Zmniejsz tę liczbę, aby zwiększyć widoczność na mapie.</string>
     <string name="map_choose_last_min_dialog_title">Wybierz liczbę ostatnich minut do wyświetlenia</string>
-    <string name="map_choose_last_min_dialog_message">Zostaną wyświetlone punkty, które są starsze o N minut od najświeższego. Ustaw na 0, aby wyłączyć.</string>
+    <string name="map_choose_last_min_dialog_message">Zostaną wyświetlone punkty, które są starsze o N minut od najnowszego. Ustaw na 0, aby wyłączyć.</string>
     <string name="item_all_devices_label">Wszystkie urządzenia</string>
     <string name="popup_battery_value">Poziom baterii: %.2f%%</string>
     <string name="popup_altitude_value">Wysokość: %.2fm</string>
@@ -152,6 +152,8 @@
     <string name="export_gpx_menu_title">Eksportuj do GPX</string>
     <string name="file_saved_success">Rejestr wyeksportowany do %s</string>
     <string name="delete_logjob_menu_title">Usuń zadanie rejestratora</string>
+    <string name="action_sorting_method">Sorting method</string>
+    <string name="manage_accounts">Manage accounts</string>
     <string name="is_running">uruchomionych (%s oczekujących, %s wysłanych)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>

@@ -152,6 +152,8 @@
     <string name="export_gpx_menu_title">Exporter en GPX</string>
     <string name="file_saved_success">Logjob exporté dans %s</string>
     <string name="delete_logjob_menu_title">Supprimer le logjob</string>
+    <string name="action_sorting_method">Méthode de tri</string>
+    <string name="manage_accounts">Gérer les comptes</string>
     <string name="is_running">en marche (%s en attente, %s envoyés)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Compte</string>

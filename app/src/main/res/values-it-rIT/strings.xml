@@ -41,7 +41,7 @@
     <string name="action_drawer_close">chiudi menu laterale</string>
     <string name="action_frequency">Imposta frequenza di aggiornamento</string>
     <string name="action_map_limit">Imposta numero massimo di punti</string>
-    <string name="action_map_last_min">Set time filter</string>
+    <string name="action_map_last_min">Filtro di tempo</string>
     <string name="action_pin_to_homescreen">Aggiungi mappa alla schermata home</string>
     <string name="menu_delete">Cancella</string>
     <string name="menu_save">Salva</string>
@@ -108,7 +108,7 @@
     <string name="dialog_msg_create_session">Creare una sessione di log nella app PhoneTrack su Nextcloud</string>
     <string name="dialog_title_create_session">Creare la sessione</string>
     <string name="confirm_delete_logjob_dialog_title">Sei sicuro?</string>
-    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
+    <string name="logjob_delete_active_impossible">Impossibile eliminare un logjob attivo</string>
     <string name="edit_logjob_choose_session_dialog_title">Seleziona una sessione</string>
     <string name="map_choose_session_dialog_title">Seleziona una sessione da visualizzare sulla mappa</string>
     <string name="map_choose_session_dialog_impossible">Impossibile visualizzare una sessione sulla mappa</string>
@@ -116,7 +116,7 @@
     <string name="map_choose_frequency_dialog_message">Quanti secondi tra due aggiornamenti della mappa?</string>
     <string name="map_choose_limit_dialog_title">Scegli il numero massimo di punti visualizzati per dispositivo</string>
     <string name="map_choose_limit_dialog_message">Riduci questo numero per aumentare la visibilità sulla mappa</string>
-    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
+    <string name="map_choose_last_min_dialog_title">Scegli il numero degli ultimi minuti da visualizzare</string>
     <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">Tutti i dispositivi</string>
     <string name="popup_battery_value">Livello della batteria: %.2f%%</string>
@@ -152,6 +152,8 @@
     <string name="export_gpx_menu_title">Export to GPX</string>
     <string name="file_saved_success">Logjob exported in %s</string>
     <string name="delete_logjob_menu_title">Delete logjob</string>
+    <string name="action_sorting_method">Sorting method</string>
+    <string name="manage_accounts">Manage accounts</string>
     <string name="is_running">in esecuzione (%s in sospeso, %s inviato)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>

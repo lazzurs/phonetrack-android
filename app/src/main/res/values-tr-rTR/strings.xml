@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="swipe_left">Değiştir</string>
-    <string name="label_all_logjobs">All log jobs</string>
+    <string name="label_all_logjobs">Tüm Log Kayıtları</string>
     <string name="label_enabled">Etkin</string>
-    <string name="label_phonetrack_lj">PhoneTrack log jobs</string>
-    <string name="label_custom_lj">Custom log jobs</string>
+    <string name="label_phonetrack_lj">PhoneTrack Kayıt İşleri</string>
+    <string name="label_custom_lj">Kişisel Kayıt İşleri</string>
     <string name="label_custom">Özelleştir</string>
-    <string name="action_create">New log job</string>
-    <string name="action_create_share">Import PhTrk logging URL</string>
+    <string name="action_create">Yeni Kayıt İşi</string>
+    <string name="action_create_share">PhTrk log adresini içeri aktar</string>
     <string name="action_create_custom_share">Import custom logging URL</string>
     <string name="action_settings">Ayarlar</string>
     <string name="setting_title">Title</string>
@@ -152,6 +152,8 @@
     <string name="export_gpx_menu_title">Export to GPX</string>
     <string name="file_saved_success">Logjob exported in %s</string>
     <string name="delete_logjob_menu_title">Delete logjob</string>
+    <string name="action_sorting_method">Sorting method</string>
+    <string name="manage_accounts">Manage accounts</string>
     <string name="is_running">running (%s pending, %s sent)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>

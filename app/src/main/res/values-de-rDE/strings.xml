@@ -152,6 +152,8 @@
     <string name="export_gpx_menu_title">Als GPX exportieren</string>
     <string name="file_saved_success">Protokollierungsauftrag als %s exportiert</string>
     <string name="delete_logjob_menu_title">Protokollierungsauftrag löschen</string>
+    <string name="action_sorting_method">Sorting method</string>
+    <string name="manage_accounts">Manage accounts</string>
     <string name="is_running">wird ausgeführt (%s ausstehend, %s gesendet)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>

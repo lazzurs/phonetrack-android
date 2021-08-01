@@ -46,15 +46,15 @@
     <string name="menu_delete">Удалить</string>
     <string name="menu_save">Сохранить</string>
     <string name="menu_preset_bike">Велопрофиль</string>
-    <string name="menu_preset_walk">Walk profile</string>
+    <string name="menu_preset_walk">Пеший профиль</string>
     <string name="menu_preset_drive">Автопрофиль</string>
-    <string name="menu_preset_precision">Max precision profile</string>
+    <string name="menu_preset_precision">Профиль с максимальной точностью</string>
     <string name="menu_preset_battery">Профиль энергосбережения</string>
-    <string name="preset_hint_title">Logjob settings presets</string>
-    <string name="preset_hint_content">Keep in mind those presets are just examples and you might want to adjust selected values.</string>
+    <string name="preset_hint_title">Предустановки параметров заданий журнала</string>
+    <string name="preset_hint_content">Имейте в виду, что эти предустановки являются всего лишь примерами, и вы можете изменить любые значения.</string>
     <string name="dont_show_again">Не показывать снова</string>
-    <string name="setting_set_preset">Preconfigured profiles</string>
-    <string name="setting_set_preset_summary">Choose a preconfigured profile that fits your activity.</string>
+    <string name="setting_set_preset">Предварительно настроенные профили</string>
+    <string name="setting_set_preset_summary">Выберите предустановленный профиль, который соответствует вашей активности.</string>
     <string name="menu_select_session">Использовать сессию PhoneTrack</string>
     <string name="menu_from_url">Использовать ссылку для журнала PhoneTrack</string>
     <string name="menu_share">Поделиться</string>
@@ -86,11 +86,11 @@
     <string name="setting_significantmotion_mixed">Гибридный режим (применять максимум времени)</string>
     <string name="setting_significantmotion_mixed_summary">Запись позиции каждый раз, когда обнаружено движение. Если движение не обнаружено, запись позиции каждые \"максимальное время\". Это немного экономит батарею.</string>
     <string name="setting_significantmotion_timeout">Таймаут определения местоположения</string>
-    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
+    <string name="setting_significantmotion_timeout_summary">Время ожидания при определении единичного местоположения (в секундах). Экономит заряд батареи в районах с плохим покрытием. При использовании GPS и определения местоположения по сети также задаётся, как долго будет использоваться местоположение источника более низкого качества. Установите на ноль, чтобы отключить тайм-аут. Должно быть меньше минимального времени между двумя записанными точками.</string>
     <string name="logjob_title_log_to">Запись в %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_device_name">имяУстройства</string>
-    <string name="default_session_token">supertoken</string>
+    <string name="default_session_token">супертокен</string>
     <string name="logjob_info_dialog_title">О %s</string>
     <string name="logjob_info_nbsync">%d положений передано</string>
     <string name="logjob_info_nbnotsync">%d положений ожидает</string>
@@ -108,16 +108,16 @@
     <string name="dialog_msg_create_session">Создать сессию журнала в приложении Nextcloud PhoneTrack</string>
     <string name="dialog_title_create_session">Создать сессию</string>
     <string name="confirm_delete_logjob_dialog_title">Вы уверены?</string>
-    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
+    <string name="logjob_delete_active_impossible">Невозможно удалить активное задание журнала</string>
     <string name="edit_logjob_choose_session_dialog_title">Выберите сессию</string>
     <string name="map_choose_session_dialog_title">Выберите сессию для отображения на карте</string>
     <string name="map_choose_session_dialog_impossible">Невозможно отобразить сессию на карте</string>
     <string name="map_choose_frequency_dialog_title">Выбрать частоту обновления карты (сек)</string>
     <string name="map_choose_frequency_dialog_message">Сколько секунд между двумя обновлениями карты?</string>
-    <string name="map_choose_limit_dialog_title">Choose max number of points displayed per device</string>
-    <string name="map_choose_limit_dialog_message">Reduce this number to increase visibility on the map</string>
-    <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
-    <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
+    <string name="map_choose_limit_dialog_title">Выберите максимальное количество отображаемых точек для каждого устройства</string>
+    <string name="map_choose_limit_dialog_message">Уменьшите это число, чтобы увеличить видимость на карте</string>
+    <string name="map_choose_last_min_dialog_title">Выберите количество последних минут для отображения</string>
+    <string name="map_choose_last_min_dialog_message">Будут показаны точки за последние N минут. Установите 0, чтобы отключить.</string>
     <string name="item_all_devices_label">Все устройства</string>
     <string name="popup_battery_value">Уровень заряда батареи: %.2f%%</string>
     <string name="popup_altitude_value">Высота: %.2fм</string>
@@ -138,20 +138,22 @@
     <string name="sms_logjobs_stopped">%d журналов остановлено</string>
     <string name="sms_logjob_created">В сессии %s был создан журнал с частотой записи %d секунд</string>
     <string name="sms_logjob_creation_impossible">Невозможно создать журнал, сессия не найдена</string>
-    <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
-    <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>
-    <string name="sms_failure_permission_sms">PhoneTrack failed to get location permission</string>
+    <string name="sms_failure_timeout_sms">Не удалось получить позицию в течении %d секунд</string>
+    <string name="sms_failure_timeout_notification">Достигнут таймаут %1$d сек, было отправлено SMS сообщение об ошибке %2$s</string>
+    <string name="sms_failure_permission_sms">PhoneTrack не имеет доступа к определению местоположению</string>
     <string name="sms_failure_permission_notification">Не удалось получить разрешение на местоположение, SMS об ошибке было отправлено на %1$s</string>
-    <string name="sms_failure_provider_sms">PhoneTrack failed to get position because GPS service is disabled</string>
-    <string name="sms_failure_provider_notification">GPS service is disabled, an error SMS has been sent to %1$s</string>
+    <string name="sms_failure_provider_sms">PhoneTrack не удалось определить местоположение, так как служба GPS отключена</string>
+    <string name="sms_failure_provider_notification">Служба GPS отключена, SMS сообщение об ошибке отправлено на %1$s</string>
     <string name="map_choose_layer">Выберите провайдера тайловых карт</string>
     <string name="drawer_connect_hint">Нажмите здесь для установки соединения</string>
     <string name="homescreen_map_shortcut_long_title">Карта для %s</string>
-    <string name="display_info_menu_title">Logjob information</string>
+    <string name="display_info_menu_title">Информация о задании журнала</string>
     <string name="display_map_menu_title">Карта лога сессии</string>
-    <string name="export_gpx_menu_title">Export to GPX</string>
-    <string name="file_saved_success">Logjob exported in %s</string>
-    <string name="delete_logjob_menu_title">Delete logjob</string>
+    <string name="export_gpx_menu_title">Экспорт в GPX</string>
+    <string name="file_saved_success">Задание журнала экспортировано в %s</string>
+    <string name="delete_logjob_menu_title">Удалить задание журнала</string>
+    <string name="action_sorting_method">Sorting method</string>
+    <string name="manage_accounts">Manage accounts</string>
     <string name="is_running">выполнение (ожидает %s, отправлено %s)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Учетная запись</string>
@@ -171,10 +173,10 @@
     <string name="settings_sms_subtitle">Слушайте входящую SMS и информацию о местоположении, если получено следующее ключевое слово</string>
     <string name="settings_sms_keyword_title">SMS-ключевое слово</string>
     <string name="settings_sms_keyword_long">Если этот телефон получает SMS, которое только что содержит это ключевое слово, информация о местоположении будет отправлена обратно.</string>
-    <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
-    <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+    <string name="settings_sms_keyword_long2">Вы также можете отправить команды с помощью этого синтаксиса: KEYWORD COMMAND</string>
+    <string name="settings_sms_keyword_long3">Доступные команды:\n- %s [СЕКУНД(по умолчанию=60)]\n- %s [ИМЯ ЗАДАНИЯ ЖУРНАЛА]\n- %s [ИМЯ ЗАДАНИЯ ЖУРНАЛА]\n- %s ВРЕМЯ_В_МИНУТАХ</string>
     <string name="settings_use_server_color_title">Использовать цвет сервера</string>
-    <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
+    <string name="settings_use_server_color_subtitle">Получить цветовую схему сервера при синхронизации и использовать её в качестве основного цвета приложения</string>
     <string name="settings_providers_title">Поставщик местоположения</string>
     <string name="providers_gps">GPS</string>
     <string name="providers_network">Сеть</string>
@@ -195,14 +197,14 @@
     <string name="settings_cert_reset_toast">Все пользовательские сертификаты были очищены</string>
     <string name="settings_network_category">Сеть</string>
     <string name="settings_logging_category">Журналирование</string>
-    <string name="settings_sms_category">Sms</string>
+    <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Карта</string>
-    <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
-    <string name="settings_osmdroid_delete_label">Delete Mapsforge offline map tiles file</string>
-    <string name="settings_osmdroid_delete_success">File deleted</string>
-    <string name="osmdroid_file_load_success">File import success</string>
-    <string name="osmdroid_file_load_no_space">No space left on external storage</string>
-    <string name="osmdroid_file_load_exception">Error while copying map file</string>
+    <string name="settings_osmdroid_label">Импорт файла оффлайн карт Mapsforge</string>
+    <string name="settings_osmdroid_delete_label">Удалить файл оффлайн карт Mapsforge</string>
+    <string name="settings_osmdroid_delete_success">Файл удален</string>
+    <string name="osmdroid_file_load_success">Файл успешно импортирован</string>
+    <string name="osmdroid_file_load_no_space">На внешнем накопителе нет места</string>
+    <string name="osmdroid_file_load_exception">Ошибка при копировании файла карт</string>
     <string name="settings_no_osmdroid_files_found">Не найден файл карты в данных приложения</string>
     <string name="settings_theming_category">Оформление</string>
     <string name="settings_group_sync_title">Отправлять несколько точек за раз</string>
@@ -234,7 +236,7 @@
     <string name="error_share_dev_helper">Ошибка совместного использования устройства : %s</string>
     <string name="error_create_session_helper">Ошибка при создании сессии : %s</string>
     <string name="error_create_session_exists">Сессия уже существует</string>
-    <string name="error_no_account_maps">No account is configured, impossible to send positions to Nextcloud Maps</string>
+    <string name="error_no_account_maps">Не настроен аккаунт, невозможно отправить позиции в карты Nextcloud</string>
     <string name="error_token_mismatch">Пожалуйста, повторно авторизуйтесь в настройках</string>
     <!-- Web errors -->
     <!-- Certificates -->
@@ -257,7 +259,7 @@
     <string name="error_invalid_mintime">Параметр \"Минимальное время\" за пределами допустимых значений</string>
     <string name="error_invalid_mindistance">Параметр \"Минимальная дистанция\" за пределами допустимых значений</string>
     <string name="error_invalid_minaccuracy">Параметр \"Минимальная точность\" за пределами допустимых значений</string>
-    <string name="error_invalid_timeout">Invalid timeout</string>
+    <string name="error_invalid_timeout">Неверный тайм-аут</string>
     <string name="error_invalid_sms_keyword">Недопустимое ключевое слово SMS</string>
     <string name="error_invalid_group_sync">Недопустимый номер</string>
     <!-- Snackbar Actions -->
@@ -292,11 +294,11 @@
     <string name="fallback_weblogin_text">Вернуться к старому методу авторизации</string>
     <string name="fallback_weblogin_back">Назад</string>
     <string name="use_sso_toggle">Использовать учетную запись Nextcloud</string>
-    <string name="center_map">Show my position</string>
-    <string name="follow_me">Follow my position</string>
-    <string name="zoom_all_markers">Zoom on all markers</string>
+    <string name="center_map">Показать мою позицию</string>
+    <string name="follow_me">Следовать за мной</string>
+    <string name="zoom_all_markers">Показать все метки</string>
     <string name="auto_zoom">Авто масштаб</string>
-    <string name="allow_rotation">Allow rotation</string>
+    <string name="allow_rotation">Разрешить поворот</string>
     <!-- Plurals -->
     <plurals name="ab_selected">
         <item quantity="one">%d выбрано</item>
