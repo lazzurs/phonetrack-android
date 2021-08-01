@@ -1774,7 +1774,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     im2.setImageResource(R.drawable.ic_nextcloud_logo_white);
 
                     Toast toast2 = new Toast(getApplicationContext());
-                    toast2.setGravity(Gravity.TOP | Gravity.LEFT, 75, 28);
+                    toast2.setGravity(Gravity.TOP | Gravity.END, 65, 16);
                     toast2.setDuration(Toast.LENGTH_SHORT);
                     toast2.setView(layout2);
                     toast2.show();
