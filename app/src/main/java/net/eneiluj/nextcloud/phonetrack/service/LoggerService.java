@@ -50,6 +50,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import android.util.Log;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,6 @@ public class LoggerService extends Service {
     public static final String FIRST_REQ_AFTER_ACCEPTED = "firstafteraccepted";
     public static final String START_TIMEOUT = "starttimeout";
     public static final String JOB_ID = "jobid";
-    public static final String ONLY_SCHEDULE = "onlyschedule";
     public static final String SCHEDULE_INTERVAL = "scheduleinterval";
 
     private Intent syncIntent;
@@ -311,13 +311,14 @@ public class LoggerService extends Service {
             } else if (getNextPoint) {
                 long jobId = intent.getLongExtra(JOB_ID, 0);
                 if (logjobs.containsKey(jobId)) {
-                    boolean onlySchedule = intent.getBooleanExtra(ONLY_SCHEDULE, false);
-                    if (onlySchedule) {
+                    boolean shouldGetPosition = mLogjobWorkers.get(jobId).shouldGetPositionAfterInterval();
+                    if (!shouldGetPosition) {
+                        Log.d(TAG, "[command] only schedule for " + jobId);
                         // we just schedule next time to get a point. this happens in sigmotion when no motion has been seen
                         long intervalTimeMillis = intent.getLongExtra(SCHEDULE_INTERVAL, 0);
                         mLogjobWorkers.get(jobId).scheduleSampleAfterInterval(intervalTimeMillis);
                     } else {
-                        Log.d(TAG, "!!!!!!! START command, request loc upd for " + jobId);
+                        Log.d(TAG, "[command] request location update for " + jobId);
                         boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
                         boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
                         requestLocationUpdates(jobId, startTimeout, firstReqAfterAccepted);
@@ -538,7 +539,8 @@ public class LoggerService extends Service {
     private boolean requestLocationUpdates(long ljId, boolean startTimeout, boolean firstRequestAfterAccepted) {
         // here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
-        Log.e(TAG, "requestLocationUpdates job "+ljId);
+        Log.d(TAG, "requestLocationUpdates job " + ljId);
+        // Log.d(TAG, (new Date()) + " logjobs keys: " + logjobs.keySet());
         int minTimeMillis = lj.getMinTime() * 1000;
         int minDistance = lj.getMinDistance();
         boolean keepGpsOn = lj.keepGpsOnBetweenFixes();
@@ -1000,7 +1002,6 @@ public class LoggerService extends Service {
         protected Handler mTimeoutHandler;
         protected Runnable mTimeoutRunnable;
         protected PendingIntent nextPointIntent;
-        protected Boolean mMotionDetected;
         protected CorrectingLocation mCachedNetworkResult;
 
         protected boolean mUseSignificantMotion;
@@ -1076,7 +1077,6 @@ public class LoggerService extends Service {
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
             }
-
         }
 
         public void startResultTimeout() {
@@ -1091,6 +1091,11 @@ public class LoggerService extends Service {
                 Log.d(TAG, "Waiting " + mLocationTimeout + "s for timeout");
                 mTimeoutHandler.postDelayed(mTimeoutRunnable, mLocationTimeout * 1000);
             }
+        }
+
+        public boolean shouldGetPositionAfterInterval() {
+            // by default, a logjob gets a position after the interval
+            return true;
         }
 
         protected abstract Runnable createSampleTimeoutDelayRunnable();
@@ -1329,12 +1334,28 @@ public class LoggerService extends Service {
     private class LogjobSignificantMotionWorker extends LogjobWorker {
         private SensorManager mSensorManager;
         private Sensor mSensor;
+        private Boolean mMotionDetected;
 
         LogjobSignificantMotionWorker(DBLogjob logjob) {
             super(logjob);
 
             mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+        }
+
+        public void stop() {
+            super.stop();
+            Log.e(TAG, "STOP SIGMOTION SENSOR");
+            mSensorManager.cancelTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+        }
+
+        public boolean shouldGetPositionAfterInterval() {
+            // in case the interval is over, get a position if a motion was detected
+            // or if using the mixed mode
+            boolean shouldWe = mMotionDetected || mUseMixedMode;
+            Log.d(TAG, "[SigMotion] Interval is finished, should we? => " + shouldWe
+                    + " (motion detected: " + mMotionDetected + " ; mixed mode: " + mUseMixedMode + ")");
+            return shouldWe;
         }
 
         protected Runnable createSampleTimeoutDelayRunnable() {
@@ -1380,33 +1401,7 @@ public class LoggerService extends Service {
         }
 
         public void scheduleSampleAfterInterval(long millisDelay) {
-            Log.d(TAG, "Scheduling sampling delay for " + millisDelay / 1000.0 + "s");
-            // Create new handler if one doesn't exist
-            /*if (mIntervalHandler == null) {
-                mIntervalHandler = new Handler();
-            }
-
-            mIntervalRunnable = new Runnable() {
-                public void run() {
-                    if (mMotionDetected || mUseMixedMode) {
-                        if (mUseMixedMode) {
-                            Log.d(TAG, "End of delay in SIGMOTION MIXED mode, recording point regardless of motion");
-                        } else {
-                            Log.d(TAG, "End of delay in SIGMOTION normal mode, significant motion detected during delay, asking for a point");
-                        }
-
-                        // Assists with ensuring we don't end up with two interval sequences running for one job
-                        mIntervalRunnable = null;
-
-                        requestLocationUpdates(mJobId, true, true);
-                    } else {
-                        Log.d(TAG, "No significant motion, not recording point");
-
-                        scheduleSampleAfterInterval(mIntervalTimeMillis);
-                    }
-                }
-            };*/
-
+            Log.d(TAG, "Scheduling next position request in " + millisDelay / 1000.0 + "s");
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
             }
@@ -1416,7 +1411,6 @@ public class LoggerService extends Service {
             i.putExtra(JOB_ID, mJobId);
             i.putExtra(START_TIMEOUT, true);
             i.putExtra(FIRST_REQ_AFTER_ACCEPTED, true);
-            i.putExtra(ONLY_SCHEDULE, (!mMotionDetected && !mUseMixedMode));
             i.putExtra(SCHEDULE_INTERVAL, mIntervalTimeMillis);
             int intJobId = (int) mJobId;
             nextPointIntent = PendingIntent.getService(LoggerService.this, intJobId, i, 0);
@@ -1429,7 +1423,6 @@ public class LoggerService extends Service {
             } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             }
-            Log.e(TAG, "STARTING to wait");
 
             // Ensure significant motion notifications are enabled
             mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
@@ -1512,7 +1505,7 @@ public class LoggerService extends Service {
         // motion detected by the sensor
         @Override
         public void onTrigger(TriggerEvent event) {
-            Log.d(TAG, "Significant motion seen");
+            Log.d(TAG, "Significant motion seen, logjob " + mJobId);
 
             // Flag motion in interval
             mMotionDetected = true;
