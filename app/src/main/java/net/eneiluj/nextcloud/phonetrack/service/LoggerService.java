@@ -1022,15 +1022,15 @@ public class LoggerService extends Service {
             mJobId = logjob.getId();
             lastLocation = null;
 
-            mLastUpdateRealtime = Long.valueOf(0);
-            lastAcquisitionStartTimestamp = System.currentTimeMillis()/1000;
+            mLastUpdateRealtime = 0L;
+            lastAcquisitionStartTimestamp = System.currentTimeMillis() / 1000;
 
             mTimeoutHandler = null;
             mTimeoutRunnable = null;
             nextPointIntent = null;
             mCachedNetworkResult = null;
 
-            mIntervalTimeMillis = mLogJob.getMinTime() * 1000;
+            mIntervalTimeMillis = mLogJob.getMinTime() * 1000L;
             mUseInterval = mIntervalTimeMillis > 0;
             mUseSignificantMotion = logjob.useSignificantMotion();
             mUseMixedMode = logjob.useSignificantMotionMixed();
@@ -1423,11 +1423,10 @@ public class LoggerService extends Service {
             alarmManager.cancel(nextPointIntent);
 
             if (SupportUtil.isDozing(LoggerService.this)){
-                //Only invoked once per 15 minutes in doze mode
+                // Only invoked every 15 minutes in doze mode
                 Log.e(TAG, "Device is dozing, using infrequent alarm");
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
-            }
-            else {
+            } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             }
             Log.e(TAG, "STARTING to wait");
@@ -1489,8 +1488,16 @@ public class LoggerService extends Service {
 
                 // If using an interval and point accepted, schedule sample for X seconds from last sample
                 if (mUseInterval && minDistanceOk && minAccuracyOk) {
-                    // TODO there could be a better interval calculated here like in classic logjob
-                    long timeToWaitSecond = mLogJob.getMinTime();
+                    // how much time did it take to get current position?
+                    long cTs = System.currentTimeMillis() / 1000;
+                    long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
+                    long timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
+                    if (timeToWaitSecond < 0) {
+                        timeToWaitSecond = 0;
+                    }
+                    Log.d(TAG, "[MOTION] As we spent " + timeSpentSearching + "s to search position, " +
+                            "with interval=" + mLogJob.getMinTime() + ", " +
+                            "we now wait " + timeToWaitSecond + "s before getting a new one");
                     scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
                 // anyway if the position was rejected, the location request is still running
