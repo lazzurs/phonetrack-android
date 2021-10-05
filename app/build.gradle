@@ -1,18 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     // buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "net.eneiluj.nextcloud.phonetrack"
         minSdkVersion 23
-        targetSdkVersion 30
-        versionCode 20
-        versionName "0.1.0"
-        multiDexEnabled true
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        targetSdkVersion 31
+        versionCode 21
+        versionName "0.1.1"
+        vectorDrawables.useSupportLibrary true
+        resValue "string", "applicationId", applicationId
     }
     buildTypes {
         release {
@@ -31,19 +29,17 @@ android {
     productFlavors {
         normal {
             // yes this is repeated
-            applicationId "net.eneiluj.nextcloud.phonetrack"
             resValue "string", "app_name", "PhoneTrack"
-            resValue "string", "applicationId", applicationId
         }
         dev {
             applicationId 'net.eneiluj.nextcloud.phonetrack.dev'
-            resValue "string", "app_name", "PhoneTrack Dev"
             resValue "string", "applicationId", applicationId
+            resValue "string", "app_name", "PhoneTrack Dev"
         }
         play {
             applicationId "net.eneiluj.nextcloud.phonetrack.play"
-            resValue "string", "app_name", "PhoneTrack"
             resValue "string", "applicationId", applicationId
+            resValue "string", "app_name", "PhoneTrack"
         }
     }
     flavorDimensions "default"
@@ -70,7 +66,6 @@ dependencies {
     implementation 'com.larswerkman:lobsterpicker:1.0.1'
     // implementation 'com.github.nextcloud:Android-SingleSignOn:0.5.1'
     implementation 'com.github.nextcloud:Android-SingleSignOn:-SNAPSHOT'
-    implementation 'com.google.code.gson:gson:2.8.7'
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.codebutchery.android:gpx_lib:1.0.3'
 }
