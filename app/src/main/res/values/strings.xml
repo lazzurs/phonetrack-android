@@ -226,6 +226,8 @@
     <string name="location_disabled">Warning : Location disabled</string>
     <string name="using_network">Using network location</string>
     <string name="using_gps">Using gps location</string>
+    <string name="background_location_permission_title">Background location permission</string>
+    <string name="background_location_permission_message">To allow PhoneTrack to run in the background, an additional permission must be granted. On the next setting screen please select: </string>
     <string name="location_permission_denied">Location permission denied</string>
     <string name="sessions_sync_success">Sessions synchronized</string>
     <string name="pref_autostart_title">Auto start</string>

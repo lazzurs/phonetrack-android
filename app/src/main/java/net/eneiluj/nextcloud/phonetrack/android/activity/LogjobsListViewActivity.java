@@ -120,6 +120,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     public final static int PERMISSION_LOCATION = 1;
     private final static int PERMISSION_FOREGROUND = 2;
+    public final static int PERMISSION_BACKGROUND_LOCATION = 3;
 
     private final static int PERMISSION_FOREGROUND_SERVICE = 1;
 
@@ -249,7 +250,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        // Android 10
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED
                     || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -270,8 +272,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         PERMISSION_LOCATION
                 );
             }
-        }
-        else {
+        } else {
+            // android != 10
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED
                     || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -288,6 +290,36 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         },
                         PERMISSION_LOCATION
                 );
+            }
+        }
+
+        // Android >= 30
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                AlertDialog.Builder builder;
+                builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog));
+                builder.setTitle(this.getString(R.string.background_location_permission_title))
+                        .setMessage(getString(R.string.background_location_permission_message)
+                                + "\n\n"
+                                + getPackageManager().getBackgroundPermissionOptionLabel()
+                        )
+                        .setPositiveButton(R.string.simple_yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // this request will take user to Application's Setting page
+                                ActivityCompat.requestPermissions(
+                                        LogjobsListViewActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                                        PERMISSION_BACKGROUND_LOCATION
+                                );
+                            }
+                        })
+                        .setNegativeButton(R.string.simple_no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
         }
 
