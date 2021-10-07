@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -32,7 +31,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
-import androidx.annotation.Nullable;
 
 import com.codebutchery.androidgpx.data.GPXDocument;
 import com.codebutchery.androidgpx.data.GPXSegment;
@@ -59,6 +57,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -250,6 +250,46 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
 
+        checkAndRequestPermissions();
+
+        Map<String, Integer> enabled = db.getEnabledCount();
+        int nbEnabledLogjobs = enabled.containsKey("1") ? enabled.get("1") : 0;
+        if (nbEnabledLogjobs > 0) {
+            // start loggerservice !
+            Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                startService(intent);
+            } else {
+                startForegroundService(intent);
+            }
+        }
+
+        String smsInfoContent = getIntent().getStringExtra(PARAM_SMSINFO_CONTENT);
+        String smsInfoFrom = getIntent().getStringExtra(PARAM_SMSINFO_FROM);
+        if (smsInfoContent != null) {
+            View dView = LayoutInflater.from(this).inflate(R.layout.items_sms_infodialog, null);
+            TextView tv = dView.findViewById(R.id.smsInfoDialogTextMessage);
+            tv.setText(smsInfoContent);
+            TextView tv2 = dView.findViewById(R.id.smsInfoDialogText1);
+            tv2.setText(getString(R.string.sms_notif_info_dialog_message1, smsInfoFrom));
+
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog));
+            builder.setTitle(this.getString(R.string.sms_notif_info_dialog_title))
+                    .setView(dView)
+                    //.setMessage(this.getString(R.string.sms_notif_info_dialog_message, smsInfoContent))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setIcon(R.drawable.ic_sms_grey_24dp)
+                    .show();
+        }
+    }
+
+    @SuppressLint("BatteryLife")
+    private final void checkAndRequestPermissions() {
         // Android 10
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -336,39 +376,22 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         }
 
-        Map<String, Integer> enabled = db.getEnabledCount();
-        int nbEnabledLogjobs = enabled.containsKey("1") ? enabled.get("1") : 0;
-        if (nbEnabledLogjobs > 0) {
-            // start loggerservice !
-            Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                startService(intent);
-            } else {
-                startForegroundService(intent);
+        // battery optimization
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                Intent i = new Intent();
+                String packageName = getPackageName();
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+
+                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                    i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    i.setData(Uri.parse("package:" + packageName));
+                    Log.d(TAG,"request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
+                }
+                startActivity(i);
+            } catch (Exception e) {
+                Log.d(TAG,"Unable to request ignoring battery optimizations." + e);
             }
-        }
-
-        String smsInfoContent = getIntent().getStringExtra(PARAM_SMSINFO_CONTENT);
-        String smsInfoFrom = getIntent().getStringExtra(PARAM_SMSINFO_FROM);
-        if (smsInfoContent != null) {
-            View dView = LayoutInflater.from(this).inflate(R.layout.items_sms_infodialog, null);
-            TextView tv = dView.findViewById(R.id.smsInfoDialogTextMessage);
-            tv.setText(smsInfoContent);
-            TextView tv2 = dView.findViewById(R.id.smsInfoDialogText1);
-            tv2.setText(getString(R.string.sms_notif_info_dialog_message1, smsInfoFrom));
-
-            AlertDialog.Builder builder;
-            builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog));
-            builder.setTitle(this.getString(R.string.sms_notif_info_dialog_title))
-                    .setView(dView)
-                    //.setMessage(this.getString(R.string.sms_notif_info_dialog_message, smsInfoContent))
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .setIcon(R.drawable.ic_sms_grey_24dp)
-                    .show();
         }
     }
 
