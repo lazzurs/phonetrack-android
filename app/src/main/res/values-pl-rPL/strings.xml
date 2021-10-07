@@ -152,8 +152,8 @@
     <string name="export_gpx_menu_title">Eksportuj do GPX</string>
     <string name="file_saved_success">Rejestr wyeksportowany do %s</string>
     <string name="delete_logjob_menu_title">Usuń zadanie rejestratora</string>
-    <string name="action_sorting_method">Sorting method</string>
-    <string name="manage_accounts">Manage accounts</string>
+    <string name="action_sorting_method">Metoda sortowania</string>
+    <string name="manage_accounts">Zarządzaj kontami</string>
     <string name="is_running">uruchomionych (%s oczekujących, %s wysłanych)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Konto</string>

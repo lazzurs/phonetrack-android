@@ -152,8 +152,8 @@
     <string name="export_gpx_menu_title">Exportovat do GPX</string>
     <string name="file_saved_success">Úloha zaznamenávání exportována do %s</string>
     <string name="delete_logjob_menu_title">Smazat úlohu zaznamenávání</string>
-    <string name="action_sorting_method">Sorting method</string>
-    <string name="manage_accounts">Manage accounts</string>
+    <string name="action_sorting_method">Způsob řazení</string>
+    <string name="manage_accounts">Spravovat účty</string>
     <string name="is_running">spuštěné (%s čeká, %s odesláno)</string>
     <!-- Settings -->
     <string name="settings_server_settings">Účet</string>
