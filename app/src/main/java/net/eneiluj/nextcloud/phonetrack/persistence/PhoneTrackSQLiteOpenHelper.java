@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.persistence;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -23,6 +24,7 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.DBSyslog;
 import net.eneiluj.nextcloud.phonetrack.model.SyncError;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -86,6 +88,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_synced = "SYNCED";
     private static final String key_currentRun = "CURRENTRUN";
 
+    private static final String table_syslog = "SYSLOG";
+    private static final String key_tag = "TAG";
+    private static final String key_message = "MESSAGE";
+    private static final String key_level = "LEVEL";
+    private static final String key_timestamp = "TIMESTAMP";
+
     private static final String[] columnsSessions = {
             key_id, key_token, key_name, key_nextURL,
             key_publicToken, key_isFromShare, key_isPublic
@@ -104,7 +112,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             key_id, key_logjobid, key_lat, key_lon, key_time,
             key_bearing, key_altitude, key_speed, key_accuracy,
             key_satellites, key_battery, key_userAgent,
-            key_synced, key_currentRun};
+            key_synced, key_currentRun
+    };
+    private static final String[] columnsSyslog = {
+            key_id, key_tag, key_message, key_level, key_timestamp
+    };
 
     private static final String default_order = key_id + " DESC";
     private static final String default_order_sessions = key_id + " ASC";
@@ -145,6 +157,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         createTableSessions(db, table_sessions);
         createTableLogjobs(db, table_logjobs);
         createTableLocations(db, table_locations);
+        createTableSyslog(db, table_syslog);
         createIndexes(db);
     }
 
@@ -156,7 +169,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_publicToken + " TEXT, " +
                 key_isFromShare + " INTEGER DEFAULT 0, " +
                 key_isPublic + " INTEGER DEFAULT 1, " +
-                key_token + " TEXT)");
+                key_token + " TEXT)"
+        );
 
     }
 
@@ -185,7 +199,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_password + " TEXT DEFAULT NULL, " +
                 key_useSignificantMotion + " INTEGER DEFAULT 0," +
                 key_useSignificantMotionMixed + " INTEGER DEFAULT 0," +
-                key_locationTimeout + " INTEGER)");
+                key_locationTimeout + " INTEGER)"
+        );
     }
 
     private void createTableLocations(SQLiteDatabase db, String tableName) {
@@ -204,7 +219,18 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_userAgent + " TEXT, " +
                 key_synced + " INTEGER DEFAULT 0, " +
                 key_currentRun + " INTEGER DEFAULT 0, " +
-                key_battery + " FLOAT)");
+                key_battery + " FLOAT)"
+        );
+    }
+
+    private void createTableSyslog(SQLiteDatabase db, String tableName) {
+        db.execSQL("CREATE TABLE " + tableName + " ( " +
+                key_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                key_tag + " VARCHAR(64), " +
+                key_message + " TEXT, " +
+                key_level + " VARCHAR(1), " +
+                key_timestamp + " INTEGER)"
+        );
     }
 
     @Override
@@ -243,6 +269,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         }
         if (oldVersion < 18) {
             db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_json + " INTEGER DEFAULT 0");
+        }
+        if (oldVersion < 19) {
+            createTableSyslog(db, table_syslog);
         }
     }
 
@@ -292,6 +321,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         dropIndexes(db);
         db.execSQL("DROP TABLE " + table_sessions);
         db.execSQL("DROP TABLE " + table_logjobs);
+        db.execSQL("DROP TABLE " + table_locations);
+        db.execSQL("DROP TABLE " + table_syslog);
         onCreate(db);
     }
 
@@ -306,6 +337,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private void createIndexes(SQLiteDatabase db) {
         createIndex(db, table_sessions, key_token);
         createIndex(db, table_logjobs, key_token);
+        createIndex(db, table_locations, key_token);
     }
 
     private void createIndex(SQLiteDatabase db, String table, String column) {
@@ -1138,5 +1170,70 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     void notifySessionsChanged() {
         // update the widgets
+    }
+
+    public long addSyslog(String level, String tag, String message) {
+        long timestamp = System.currentTimeMillis() / 1000;
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(key_level, level);
+        values.put(key_tag, tag);
+        values.put(key_message, message);
+        values.put(key_timestamp, timestamp);
+        return db.insert(table_syslog, null, values);
+    }
+
+    public List<DBSyslog> getSyslogs(@Nullable Integer tsMin, @Nullable Integer tsMax) {
+        if (tsMin != null && tsMax != null) {
+            return getSyslogsCustom(
+                key_timestamp + " >= ? AND " + key_timestamp + " <= ?",
+                new String[]{String.valueOf(tsMin), String.valueOf(tsMax)},
+                key_timestamp
+            );
+        } else if (tsMin != null) {
+            return getSyslogsCustom(
+                    key_timestamp + " >= ?",
+                    new String[]{String.valueOf(tsMin)},
+                    key_timestamp
+            );
+        } else if (tsMax != null) {
+            return getSyslogsCustom(
+                    key_timestamp + " <= ?",
+                    new String[]{String.valueOf(tsMax)},
+                    key_timestamp
+            );
+        } else {
+            return getSyslogsCustom("", new String[]{}, key_timestamp);
+        }
+    }
+
+    @NonNull
+    @WorkerThread
+    private List<DBSyslog> getSyslogsCustom(@NonNull String selection, @NonNull String[] selectionArgs, @Nullable String orderBy) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(table_syslog, columnsSyslog, selection, selectionArgs, null, null, orderBy);
+        List<DBSyslog> syslogs = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            syslogs.add(getSyslogFromCursor(cursor));
+        }
+        cursor.close();
+        return syslogs;
+    }
+
+    @SuppressLint("Range")
+    @NonNull
+    private DBSyslog getSyslogFromCursor(@NonNull Cursor cursor) {
+        return new DBSyslog(
+            cursor.getString(cursor.getColumnIndex(key_message)),
+            cursor.getString(cursor.getColumnIndex(key_tag)),
+            cursor.getString(cursor.getColumnIndex(key_level)),
+            cursor.getLong(cursor.getColumnIndex(key_timestamp))
+        );
+    }
+
+    public void clearSyslog() {
+        Log.d(TAG, "Clear syslog");
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(table_syslog, null, null);
     }
 }

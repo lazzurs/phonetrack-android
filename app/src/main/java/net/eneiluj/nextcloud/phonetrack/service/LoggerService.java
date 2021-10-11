@@ -48,9 +48,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
-import android.util.Log;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +61,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
+import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 
 import static android.location.LocationProvider.AVAILABLE;
 import static android.location.LocationProvider.OUT_OF_SERVICE;
@@ -135,7 +134,7 @@ public class LoggerService extends Service {
     @Override
     public void onCreate() {
         if (DEBUG) {
-            Log.d(TAG, "[onCreate]");
+            SystemLogger.d(TAG, "onCreate");
         }
         firstRun = true;
 
@@ -181,8 +180,7 @@ public class LoggerService extends Service {
                 } else {
                     if (ljob.keepGpsOnBetweenFixes()) {
                         jw = new LogjobClassicGpsOnWorker(ljob);
-                    }
-                    else {
+                    } else {
                         jw = new LogjobClassicWorker(ljob);
                     }
                 }
@@ -229,7 +227,7 @@ public class LoggerService extends Service {
             powerSaverChangeReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    Log.d(TAG, "[POWER LISTENER] power saving state changed");
+                    SystemLogger.d(TAG, "[POWER LISTENER] power saving state changed");
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     boolean respectPowerSaveMode = prefs.getBoolean(getString(R.string.pref_key_power_saving_awareness), false);
                     if (respectPowerSaveMode) {
@@ -245,7 +243,7 @@ public class LoggerService extends Service {
             airplaneModeChangeReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    Log.d(TAG, "[AIRPLANE MODE LISTENER] airplane mode state changed");
+                    SystemLogger.d(TAG, "[AIRPLANE MODE LISTENER] airplane mode state changed");
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     boolean respectAirplaneMode = prefs.getBoolean(getString(R.string.pref_key_offline_mode_awareness), false);
                     if (respectAirplaneMode) {
@@ -257,12 +255,11 @@ public class LoggerService extends Service {
             //filterAirplane.addAction("android.intent.action.AIRPLANE_MODE_CHANGED");
             filterAirplane.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
             registerReceiver(airplaneModeChangeReceiver, filterAirplane);
-        }
-        else {
+        } else {
             final Notification notification = showNotification(NOTIFICATION_ID);
             startForeground(NOTIFICATION_ID, notification);
             if (DEBUG) {
-                Log.d(TAG, "[onCreate : stop because no logjob enabled]");
+                SystemLogger.d(TAG, "onCreate: stop because no logjob enabled");
             }
             stopSelf();
         }
@@ -288,18 +285,18 @@ public class LoggerService extends Service {
                 // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
                 if (firstRun) {
                     if (DEBUG) {
-                        Log.d(TAG, "[onStartCommand : upd logjob but firstrun so nothing]");
+                        SystemLogger.d(TAG, "onStartCommand: updated logjob but firstrun so nothing");
                     }
                 } else {
                     long ljId = intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0);
                     if (DEBUG) {
-                        Log.d(TAG, "[onStartCommand : upd logjob]");
+                        SystemLogger.d(TAG, "onStartCommand: updated logjob");
                     }
                     handleLogjobUpdated(ljId);
                 }
             } else if (providersUpdated) {
                 if (DEBUG) {
-                    Log.d(TAG, "[onStartCommand : upd providers]");
+                    SystemLogger.d(TAG, "onStartCommand : updated providers");
                 }
                 String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
                 updatePreferences(providersValue);
@@ -313,12 +310,12 @@ public class LoggerService extends Service {
                 if (logjobs.containsKey(jobId)) {
                     boolean shouldGetPosition = mLogjobWorkers.get(jobId).shouldGetPositionAfterInterval();
                     if (!shouldGetPosition) {
-                        Log.d(TAG, "[command] only schedule for " + jobId);
+                        SystemLogger.d(TAG, "[command] only schedule for " + jobId);
                         // we just schedule next time to get a point. this happens in sigmotion when no motion has been seen
                         long intervalTimeMillis = intent.getLongExtra(SCHEDULE_INTERVAL, 0);
                         mLogjobWorkers.get(jobId).scheduleSampleAfterInterval(intervalTimeMillis);
                     } else {
-                        Log.d(TAG, "[command] request location update for " + jobId);
+                        SystemLogger.d(TAG, "[command] request location update for " + jobId);
                         boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
                         boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
                         requestLocationUpdates(jobId, startTimeout, firstReqAfterAccepted);
@@ -327,7 +324,7 @@ public class LoggerService extends Service {
             } else {
                 // start without parameter
                 if (DEBUG) {
-                    Log.d(TAG, "[onStartCommand : start without parameter]");
+                    SystemLogger.d(TAG, "onStartCommand: start without parameter");
                 }
             }
             // anyway, first run is over
@@ -388,8 +385,10 @@ public class LoggerService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && pm != null) {
             isPowerSaveMode = pm.isPowerSaveMode();
         }
-        if (DEBUG) { Log.d(TAG, "POWEEEEEEEEE "+ isPowerSaveMode); }
-        if (DEBUG) { Log.d(TAG, "AIRPLANEEEEEEEEEEEEEEEEEEEEEEEE "+ SupportUtil.isAirplaneModeOn(this)); }
+        if (DEBUG) {
+            SystemLogger.d(TAG, "POWERSAVE mode: " + isPowerSaveMode);
+            SystemLogger.d(TAG, "AIRPLANE mode: " + SupportUtil.isAirplaneModeOn(this));
+        }
 
         boolean respectPowerSaveMode = prefs.getBoolean(getString(R.string.pref_key_power_saving_awareness), false);
 
@@ -428,8 +427,7 @@ public class LoggerService extends Service {
         if (value == null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             providersPref = prefs.getString(getString(R.string.pref_key_providers), "1");
-        }
-        else {
+        } else {
             providersPref = value;
         }
         useGps = ((providersPref.equals("1")
@@ -442,8 +440,10 @@ public class LoggerService extends Service {
                    || providersPref.equals("6")
                    || providersPref.equals("7")
                  ) && providerExists(LocationManager.NETWORK_PROVIDER));
-        if (DEBUG) { Log.d(TAG, "[update prefs "+providersPref+", gps : "+useGps+
-                                     ", net : "+useNet+"]"); }
+        if (DEBUG) {
+            SystemLogger.d(TAG, "update prefs " + providersPref + ", gps : " + useGps
+                + ", net : " + useNet + "]");
+        }
     }
 
     /**
@@ -511,7 +511,7 @@ public class LoggerService extends Service {
      * @return True if succeeded, false otherwise (eg. disabled all providers)
      */
     private boolean restartUpdates(long jobId) {
-        if (DEBUG) { Log.d(TAG, "[job "+jobId+" location updates restart]"); }
+        if (DEBUG) { SystemLogger.d(TAG, "location updates restart for job: " + jobId); }
 
         stopJob(jobId);
 
@@ -524,9 +524,9 @@ public class LoggerService extends Service {
 
         // stop any runnables waiting for an interval
         DBLogjob lj = db.getLogjob(jobId);
-        Log.e(TAG, "will stop runnable ? for job "+jobId);
+        SystemLogger.d(TAG, "will stop runnable? job " + jobId);
         if (lj != null) {
-            Log.e(TAG, "YES for job "+jobId);
+            SystemLogger.e(TAG, "YES, stop for job " + jobId);
             mLogjobWorkers.get(jobId).stop();
         }
     }
@@ -539,8 +539,8 @@ public class LoggerService extends Service {
     private boolean requestLocationUpdates(long ljId, boolean startTimeout, boolean firstRequestAfterAccepted) {
         // here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
-        Log.d(TAG, "requestLocationUpdates job " + ljId);
-        // Log.d(TAG, (new Date()) + " logjobs keys: " + logjobs.keySet());
+        SystemLogger.d(TAG, "requestLocationUpdates job " + ljId);
+        // SystemLogger.d(TAG, (new Date()) + " logjobs keys: " + logjobs.keySet());
         int minTimeMillis = lj.getMinTime() * 1000;
         int minDistance = lj.getMinDistance();
         boolean keepGpsOn = lj.keepGpsOnBetweenFixes();
@@ -560,7 +560,7 @@ public class LoggerService extends Service {
 
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using net provider, freq "+lj.getMinTime()+"]"); }
+                    if (DEBUG) { SystemLogger.d(TAG, "requestLocationUpdates using network provider, min time " + lj.getMinTime()); }
                 }
             }
             if (useGps) {
@@ -568,23 +568,24 @@ public class LoggerService extends Service {
 
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { Log.d(TAG, "job "+ljId+" [Using gps provider, freq "+(minTimeMillis/1000)+"]"); }
+                    if (DEBUG) { SystemLogger.d(TAG, "requestLocationUpdates using gps provider, min time " + lj.getMinTime()); }
                 }
             }
             if (hasLocationUpdates) {
                 // start timeout only if we're not in an "accuracy improvement" loop
                 if (startTimeout) {
+                    if (DEBUG) { SystemLogger.d(TAG, "requestLocationUpdates startResultTimeout()"); }
                     mLogjobWorkers.get(ljId).startResultTimeout();
                 }
             } else {
                 // no location provider available
                 sendBroadcast(BROADCAST_LOCATION_DISABLED);
-                if (DEBUG) { Log.d(TAG, "job "+ljId+"[No available location updates]"); }
+                if (DEBUG) { SystemLogger.d(TAG, "No available location updates"); }
             }
         } else {
             // can't access location
             sendBroadcast(BROADCAST_LOCATION_PERMISSION_DENIED);
-            if (DEBUG) { Log.d(TAG, "job "+ljId+"[Location permission denied]"); }
+            if (DEBUG) { SystemLogger.d(TAG, "Location permission denied"); }
         }
 
         return hasLocationUpdates;
@@ -595,7 +596,7 @@ public class LoggerService extends Service {
      */
     @Override
     public void onDestroy() {
-        if (DEBUG) { Log.d(TAG, "[onDestroy]"); }
+        if (DEBUG) { SystemLogger.d(TAG, "onDestroy"); }
 
         if (canAccessLocation()) {
             //noinspection MissingPermission
@@ -671,18 +672,18 @@ public class LoggerService extends Service {
 
         @Override
         public void interrupt() {
-            if (DEBUG) { Log.d(TAG, "[interrupt]"); }
+            if (DEBUG) { SystemLogger.d(TAG, "LoggerThread interrupt"); }
         }
 
         @Override
         public void finalize() throws Throwable {
-            if (DEBUG) { Log.d(TAG, "[finalize]"); }
+            if (DEBUG) { SystemLogger.d(TAG, "LoggerThread finalize"); }
             super.finalize();
         }
 
         @Override
         public void run() {
-            if (DEBUG) { Log.d(TAG, "[run]"); }
+            if (DEBUG) { SystemLogger.d(TAG, "LoggerThread run"); }
             super.run();
         }
     }
@@ -693,7 +694,7 @@ public class LoggerService extends Service {
      * @param mId Notification Id
      */
     private Notification showNotification(int mId) {
-        if (DEBUG) { Log.d(TAG, "[showNotification " + mId + "]"); }
+        if (DEBUG) { SystemLogger.v(TAG, "showNotification " + mId); }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean lowImportance = prefs.getBoolean(getString(R.string.pref_key_notification_importance), false);
@@ -775,12 +776,12 @@ public class LoggerService extends Service {
         public void onReceive(Context ctxt, Intent intent) {
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-            if(level == -1 || scale == -1) {
+            if (level == -1 || scale == -1) {
                 battery = 0.0;
             }
             double batLevel = ((double)level / (double)scale) * 100.0;
             battery = Math.round(batLevel * 100.0) / 100.0;
-            if (LoggerService.DEBUG) { Log.d(TAG, "[BATT changed " + battery + "]"); }
+            if (LoggerService.DEBUG) { SystemLogger.i(TAG, "battery level changed " + battery); }
         }
     };
 
@@ -835,7 +836,7 @@ public class LoggerService extends Service {
         public void onLocationChanged(Location location) {
             CorrectingLocation loc = new CorrectingLocation(location);
             if (DEBUG) {
-                Log.d(TAG, "[location changed ["+type+"]: " + logjobId + "/" + logjob.getTitle() + " : bat : " + battery + ", " + loc + "]");
+                SystemLogger.d(TAG, "location changed [" + type + "]: " + logjobId + "/" + logjob.getTitle() + ", bat : " + battery);
             }
 
             // always pass to the worker (sig motion or not)
@@ -854,14 +855,14 @@ public class LoggerService extends Service {
                 elapsedMillisSinceLastUpdate = (loc.getElapsedRealtimeNanos() / 1000000) - lastUpdateRealtime.get(logjobId);
 
                 if (elapsedMillisSinceLastUpdate < minTimeMillis) {
-                    if (DEBUG) { Log.d(TAG,"skip because "+elapsedMillisSinceLastUpdate + " < "+ minTimeMillis); }
+                    if (DEBUG) { SystemLogger.d(TAG,"skip because " + elapsedMillisSinceLastUpdate + " < "+ minTimeMillis); }
                     return true;
                 }
             }
             int maxAccuracy = logjob.getMinAccuracy();
             // accuracy radius too high
             if (loc.hasAccuracy() && loc.getAccuracy() > maxAccuracy) {
-                if (DEBUG) { Log.d(TAG, "[location accuracy above limit: " + loc.getAccuracy() + " > " + maxAccuracy + "]"); }
+                if (DEBUG) { SystemLogger.d(TAG, "[location accuracy above limit: " + loc.getAccuracy() + " > " + maxAccuracy + "]"); }
                 // reset gps provider to get better accuracy even if time and distance criteria don't change
                 if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                     restartUpdates(logjobId);
@@ -874,7 +875,7 @@ public class LoggerService extends Service {
                 long elapsedMillis = SystemClock.elapsedRealtime() - lastUpdateRealtime.get(logjobId);
                 if (lastLocations.get(logjobId).getProvider().equals(LocationManager.GPS_PROVIDER) && elapsedMillis < maxTimeMillis) {
                     // skip network provider
-                    if (DEBUG) { Log.d(TAG, "[location network provider skipped]"); }
+                    if (DEBUG) { SystemLogger.d(TAG, "[location network provider skipped]"); }
                     return true;
                 }
             }
@@ -887,7 +888,7 @@ public class LoggerService extends Service {
          */
         @Override
         public void onProviderDisabled(String provider) {
-            if (DEBUG) { Log.d(TAG, "[location provider " + provider + " disabled]"); }
+            if (DEBUG) { SystemLogger.d(TAG, "location provider " + provider + " disabled"); }
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
                 sendBroadcast(BROADCAST_LOCATION_GPS_DISABLED);
             } else if (provider.equals(LocationManager.NETWORK_PROVIDER)) {
@@ -901,7 +902,7 @@ public class LoggerService extends Service {
          */
         @Override
         public void onProviderEnabled(String provider) {
-            if (DEBUG) { Log.d(TAG, "[location provider " + provider + " enabled]"); }
+            if (DEBUG) { SystemLogger.d(TAG, "location provider " + provider + " enabled"); }
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
                 sendBroadcast(BROADCAST_LOCATION_GPS_ENABLED);
             } else if (provider.equals(LocationManager.NETWORK_PROVIDER)) {
@@ -933,7 +934,7 @@ public class LoggerService extends Service {
                         statusString = "unknown";
                         break;
                 }
-                if (DEBUG) { Log.d(TAG, "[location status for " + provider + " changed: " + statusString + "]"); }
+                if (DEBUG) { SystemLogger.d(TAG, "location status for " + provider + " changed: " + statusString); }
             }
         }
     }
@@ -961,15 +962,14 @@ public class LoggerService extends Service {
 
         @Override
         public void onAvailable(Network network) {
-            if (DEBUG) { Log.d(TAG, "Network is available again : launch sync from loggerservice"); }
+            if (DEBUG) { SystemLogger.d(TAG, "Network is available again: launch sync from loggerservice"); }
             try {
                 // just to be sure the connection is effective
                 // sometimes i experienced problems when connecting to slow wifi networks
                 // i think internet access was not yet established when syncService was launched
                 TimeUnit.SECONDS.sleep(5);
-            }
-            catch (InterruptedException e) {
-
+            } catch (InterruptedException e) {
+                if (DEBUG) { SystemLogger.e(TAG, "interrupted"); }
             }
             startService(syncIntent);
         }
@@ -1049,21 +1049,25 @@ public class LoggerService extends Service {
                         lastLocation.getLongitude(), loc.getLongitude(),
                         lastLocation.getAltitude(), loc.getAltitude()
                 );
-                Log.d(TAG, "Distance with last point: "+distance);
-                Log.d(TAG, "Logjob minimum distance: "+minDistance);
-                return (distance >= minDistance);
+                SystemLogger.d(TAG, "Distance with last point: " + distance);
+                SystemLogger.d(TAG, "Logjob minimum distance: " + minDistance);
+                boolean isOk = (distance >= minDistance);
+                SystemLogger.d(TAG, "isMinDistanceOk? " + isOk);
+                return isOk;
             }
         }
 
         protected boolean isMinAccuracyOk(CorrectingLocation loc) {
             int minAccuracy = mLogJob.getMinAccuracy();
-            Log.d(TAG, "Accuracy of current point: "+loc.getAccuracy());
-            return (loc.getAccuracy() <= minAccuracy);
+            SystemLogger.d(TAG, "Accuracy of current point: "+loc.getAccuracy());
+            boolean isOk = (loc.getAccuracy() <= minAccuracy);
+            SystemLogger.d(TAG, "isMinAccuracyOk? " + isOk);
+            return isOk;
         }
 
         public void updateLastAcquisitionStart() {
             // store time when position acquisition was launched
-            lastAcquisitionStartTimestamp = System.currentTimeMillis()/1000;
+            lastAcquisitionStartTimestamp = System.currentTimeMillis() / 1000;
         }
 
         protected void stop() {
@@ -1088,7 +1092,7 @@ public class LoggerService extends Service {
 
                 // Create and post
                 mTimeoutRunnable = createSampleTimeoutDelayRunnable();
-                Log.d(TAG, "Waiting " + mLocationTimeout + "s for timeout");
+                SystemLogger.d(TAG, "Waiting " + mLocationTimeout + " seconds for timeout");
                 mTimeoutHandler.postDelayed(mTimeoutRunnable, mLocationTimeout * 1000);
             }
         }
@@ -1114,7 +1118,7 @@ public class LoggerService extends Service {
 
             Runnable runnable = new Runnable() {
                 public void run() {
-                    Log.d(TAG, "Sampling timeout hit");
+                    SystemLogger.d(TAG, "Location request timeout hit");
 
                     if (mCachedNetworkResult != null) {
                         // Cancel location request
@@ -1123,7 +1127,7 @@ public class LoggerService extends Service {
                             locManager.removeUpdates(networkLocationListener);
                         }
 
-                        Log.d(TAG, "Reached timeout before GPS sample, using network sample");
+                        SystemLogger.d(TAG, "Reached timeout for GPS location request, using network sample");
                         lastLocation = mCachedNetworkResult;
                         acceptAndSyncLocation(mJobId, mCachedNetworkResult);
 
@@ -1139,7 +1143,7 @@ public class LoggerService extends Service {
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
                         long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000);
-                        Log.d(TAG, "Schedule next sample in "+(timeToWait / 1000)+"s [timeout reached]");
+                        SystemLogger.d(TAG, "Schedule next sample in " + (timeToWait / 1000) + " seconds [timeout reached]");
                         scheduleSampleAfterInterval(timeToWait);
                     }
                 }
@@ -1148,7 +1152,7 @@ public class LoggerService extends Service {
         }
 
         public void scheduleSampleAfterInterval(long millisDelay) {
-            Log.d(TAG, "Scheduling sampling delay for " + millisDelay/1000.0 + "s");
+            SystemLogger.d(TAG, "Schedule location request in " + (millisDelay / 1000.0) + " seconds");
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
             }
@@ -1164,13 +1168,11 @@ public class LoggerService extends Service {
 
             if (SupportUtil.isDozing(LoggerService.this)){
                 //Only invoked once per 15 minutes in doze mode
-                Log.e(TAG, "Device is dozing, using infrequent alarm");
+                SystemLogger.d(TAG, "Device is dozing, using infrequent alarm");
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
-            }
-            else {
+            } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             }
-            Log.e(TAG, "STARTING to wait");
         }
 
         public void handleLocationChange(Location location) {
@@ -1179,7 +1181,7 @@ public class LoggerService extends Service {
                     || (!useGps)
             ) {
                 // Got GPS result, accept
-                Log.d(TAG, "Got position result, immediately accepting");
+                SystemLogger.d(TAG, "Got location result, immediately accepting");
 
                 // Remove any cached network result or disable update
                 if (mCachedNetworkResult == null) {
@@ -1212,33 +1214,30 @@ public class LoggerService extends Service {
                     if (useGps || useNet) {
                         locManager.removeUpdates(gpsLocationListener);
                         locManager.removeUpdates(networkLocationListener);
-                        Log.e(TAG, "remove updates because got position");
+                        SystemLogger.d(TAG, "remove updates because got position");
                     }
-                }
-                else {
-                    Log.d(TAG, "Not enough DISTANCE (min "+mLogJob.getMinDistance()+
-                            ") or ACCURACY (min "+mLogJob.getMinAccuracy()+"), we skip this location");
+                } else {
+                    SystemLogger.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance() +
+                            ") or ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
                 }
 
                 // If using an interval AND position was accepted : schedule sample for X seconds from last sample
                 if (mUseInterval && minDistanceOk && minAccuracyOk) {
-                    long timeToWaitSecond = mLogJob.getMinTime();
-
                     // how much time did it take to get current position?
                     long cTs = System.currentTimeMillis() / 1000;
                     long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
-                    timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
+                    long timeToWaitSecond = mLogJob.getMinTime() - timeSpentSearching;
                     if (timeToWaitSecond < 0) {
                         timeToWaitSecond = 0;
                     }
-                    Log.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
+                    SystemLogger.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
                             "with interval=" + mLogJob.getMinTime() + ", " +
-                            "we now wait " + timeToWaitSecond + "s before getting a new one");
-                    Log.d(TAG, "Schedule next sample because we accepted a position");
+                            "we now wait " + timeToWaitSecond + " seconds before getting a new one");
+                    SystemLogger.d(TAG, "Schedule next location request because we accepted a position");
                     scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
             } else {
-                Log.d(TAG, "Network location returned first, caching");
+                SystemLogger.d(TAG, "Network location returned first, caching");
                 // Cache lower quality network result
                 mCachedNetworkResult = loc;
             }
@@ -1270,7 +1269,7 @@ public class LoggerService extends Service {
                     || (!useGps)
             ) {
                 // Got GPS result, accept
-                Log.d(TAG, "Got position result, immediately accepting if constraints are respected");
+                SystemLogger.d(TAG, "Got position result, immediately accepting if constraints are respected");
 
                 // Remove any cached network result or disable update
                 if (mCachedNetworkResult == null) {
@@ -1300,18 +1299,17 @@ public class LoggerService extends Service {
                     // how much time did it take to get current position?
                     long cTs = System.currentTimeMillis() / 1000;
                     long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
-                }
-                else {
+                } else {
                     positionAccepted = false;
-                    Log.d(TAG, "Not enough DISTANCE ("+minDistanceOk+" min "+mLogJob.getMinDistance()+
+                    SystemLogger.d(TAG, "Not enough DISTANCE ("+minDistanceOk+" min "+mLogJob.getMinDistance()+
                             ") or ACCURACY ("+minAccuracyOk+" min "+mLogJob.getMinAccuracy()+
                             ") or TIME ("+minTimeOk+" "+timeSinceLastAccepted+"/"+mLogJob.getMinTime()+"), we skip this location");
                 }
 
-                // no need to schedule anything now a requestLocationUpdates is still running
+                // no need to schedule anything now as requestLocationUpdates is still running
                 //scheduleSampleAfterInterval(1000, positionAccepted);
             } else {
-                Log.d(TAG, "Network location returned first, caching");
+                SystemLogger.d(TAG, "Network location returned first, caching");
                 // Cache lower quality network result
                 mCachedNetworkResult = loc;
             }
@@ -1320,8 +1318,10 @@ public class LoggerService extends Service {
         protected boolean isMinTimeOk(CorrectingLocation loc) {
             long timeSinceLastAccepted = (loc.getElapsedRealtimeNanos() / 1000000000) - (mLastUpdateRealtime / 1000);
             int minTime = mLogJob.getMinTime();
-            Log.d(TAG, "is "+timeSinceLastAccepted+" >= "+minTime+" ?");
-            return (timeSinceLastAccepted >= minTime);
+            SystemLogger.d(TAG, "is " + timeSinceLastAccepted + " >= " + minTime + "?");
+            boolean isOk = (timeSinceLastAccepted >= minTime);
+            SystemLogger.d(TAG, "isMinTimeOk? " + isOk);
+            return isOk;
         }
 
         // this is triggered only when significant motion mode is enabled
@@ -1345,7 +1345,7 @@ public class LoggerService extends Service {
 
         public void stop() {
             super.stop();
-            Log.e(TAG, "STOP SIGMOTION SENSOR");
+            SystemLogger.e(TAG, "stop sigmotion sensor");
             mSensorManager.cancelTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
         }
 
@@ -1353,7 +1353,7 @@ public class LoggerService extends Service {
             // in case the interval is over, get a position if a motion was detected
             // or if using the mixed mode
             boolean shouldWe = mMotionDetected || mUseMixedMode;
-            Log.d(TAG, "[SigMotion] Interval is finished, should we? => " + shouldWe
+            SystemLogger.d(TAG, "[SigMotion] Interval is finished, should we get a location after having waited? => " + shouldWe
                     + " (motion detected: " + mMotionDetected + " ; mixed mode: " + mUseMixedMode + ")");
             return shouldWe;
         }
@@ -1362,7 +1362,7 @@ public class LoggerService extends Service {
 
             Runnable runnable = new Runnable() {
                 public void run() {
-                    Log.d(TAG, "Sampling timeout hit");
+                    SystemLogger.d(TAG, "Location request timeout hit");
 
                     if (mCachedNetworkResult != null) {
                         // Cancel location request
@@ -1371,7 +1371,7 @@ public class LoggerService extends Service {
                             locManager.removeUpdates(networkLocationListener);
                         }
 
-                        Log.d(TAG, "Reached timeout before GPS sample, using network sample");
+                        SystemLogger.d(TAG, "Reached timeout before GPS sample, using network sample");
                         lastLocation = mCachedNetworkResult;
                         acceptAndSyncLocation(mJobId, mCachedNetworkResult);
 
@@ -1392,7 +1392,7 @@ public class LoggerService extends Service {
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
                         long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000);
-                        Log.d(TAG, "Schedule next sample in " + (timeToWait / 1000) + "s");
+                        SystemLogger.d(TAG, "Schedule next location request in " + (timeToWait / 1000) + "s");
                         scheduleSampleAfterInterval(timeToWait);
                     }
                 }
@@ -1401,7 +1401,7 @@ public class LoggerService extends Service {
         }
 
         public void scheduleSampleAfterInterval(long millisDelay) {
-            Log.d(TAG, "Scheduling next position request in " + millisDelay / 1000.0 + "s");
+            SystemLogger.d(TAG, "Scheduling next location request in " + (millisDelay / 1000.0) + "s");
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
             }
@@ -1418,7 +1418,7 @@ public class LoggerService extends Service {
 
             if (SupportUtil.isDozing(LoggerService.this)){
                 // Only invoked every 15 minutes in doze mode
-                Log.e(TAG, "Device is dozing, using infrequent alarm");
+                SystemLogger.e(TAG, "Device is dozing, using infrequent alarm");
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
@@ -1434,7 +1434,7 @@ public class LoggerService extends Service {
                     || (!useGps)
             ) {
                 // Got GPS result, accept
-                Log.d(TAG, "Got position result, immediately accepting");
+                SystemLogger.d(TAG, "Got location result, immediately accepting");
 
                 // Remove any cached network result or disable update
                 if (mCachedNetworkResult == null) {
@@ -1469,7 +1469,7 @@ public class LoggerService extends Service {
                         locManager.removeUpdates(networkLocationListener);
                     }
                 } else {
-                    Log.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance() +
+                    SystemLogger.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance() +
                             ") or ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
                 }
 
@@ -1488,15 +1488,15 @@ public class LoggerService extends Service {
                     if (timeToWaitSecond < 0) {
                         timeToWaitSecond = 0;
                     }
-                    Log.d(TAG, "[MOTION] As we spent " + timeSpentSearching + "s to search position, " +
+                    SystemLogger.d(TAG, "[MOTION] As we spent " + timeSpentSearching + " seconds to search position, " +
                             "with interval=" + mLogJob.getMinTime() + ", " +
-                            "we now wait " + timeToWaitSecond + "s before getting a new one");
+                            "we now wait " + timeToWaitSecond + " seconds before requesting a new one");
                     scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
                 // anyway if the position was rejected, the location request is still running
                 // and we call this method when we get next location
             } else {
-                Log.d(TAG, "Network location returned first, caching");
+                SystemLogger.d(TAG, "Network location returned first, caching");
                 // Cache lower quality network result
                 mCachedNetworkResult = loc;
             }
@@ -1505,7 +1505,7 @@ public class LoggerService extends Service {
         // motion detected by the sensor
         @Override
         public void onTrigger(TriggerEvent event) {
-            Log.d(TAG, "Significant motion seen, logjob " + mJobId);
+            SystemLogger.d(TAG, "Significant motion seen, logjob " + mJobId);
 
             // Flag motion in interval
             mMotionDetected = true;
@@ -1527,8 +1527,8 @@ public class LoggerService extends Service {
                         alarmManager.cancel(nextPointIntent);
                         nextPointIntent = null;
 
-                        Log.d(TAG, "Triggering immediate sample after significant motion due to " +
-                                millisSinceLast / 1000.0 + "s since last point");
+                        SystemLogger.d(TAG, "Triggering immediate location request after significant motion due to " +
+                                (millisSinceLast / 1000.0) + " seconds since last point");
 
                         requestUpdates = true;
                     }
@@ -1542,13 +1542,13 @@ public class LoggerService extends Service {
             // we take the position anyway, then runnable has to be killed, it will be launched again
             // when handling the position result
             else {
-                Log.d(TAG, "Triggering immediate sample after significant motion because we're in MIXED mode");
+                SystemLogger.d(TAG, "Triggering immediate sample after significant motion because we're in MIXED mode");
 
                 // If we're interval-based and there is a runnable waiting for the next interval we know we haven't
                 // already requested a location. This checks helps us prevent having two sampling sequences running
                 // for the same job.
                 if (nextPointIntent != null) {
-                    Log.d(TAG, "stop interval schedule runnable because MIXED mode");
+                    SystemLogger.d(TAG, "stop interval schedule runnable because MIXED mode");
                     // Stop waiting
                     alarmManager.cancel(nextPointIntent);
                 }

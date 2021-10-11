@@ -110,6 +110,7 @@ import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
+import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import static android.view.View.GONE;
@@ -300,7 +301,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     != PackageManager.PERMISSION_GRANTED) {
 
                 if (LoggerService.DEBUG) {
-                    Log.d(TAG, "[request location permission]");
+                    SystemLogger.d(TAG, "request fine, coarse and background location permissions");
                 }
                 ActivityCompat.requestPermissions(
                         this,
@@ -320,7 +321,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     != PackageManager.PERMISSION_GRANTED) {
 
                 if (LoggerService.DEBUG) {
-                    Log.d(TAG, "[request location permission]");
+                    SystemLogger.d(TAG, "request fine and coarse location permissions");
                 }
                 ActivityCompat.requestPermissions(
                         this,
@@ -346,6 +347,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         )
                         .setPositiveButton(R.string.simple_yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                if (LoggerService.DEBUG) {
+                                    SystemLogger.d(TAG, "request background location permission");
+                                }
                                 // this request will take user to Application's Setting page
                                 ActivityCompat.requestPermissions(
                                         LogjobsListViewActivity.this,
@@ -367,7 +371,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)
                     != PackageManager.PERMISSION_GRANTED) {
 
-                if (LoggerService.DEBUG) { Log.d(TAG, "[request foreground permission]"); }
+                if (LoggerService.DEBUG) { SystemLogger.d(TAG, "request foreground permission"); }
                 ActivityCompat.requestPermissions(
                         this,
                         new String[]{Manifest.permission.FOREGROUND_SERVICE},
@@ -386,11 +390,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 if (!pm.isIgnoringBatteryOptimizations(packageName)) {
                     i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                     i.setData(Uri.parse("package:" + packageName));
-                    Log.d(TAG,"request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
+                    SystemLogger.d(TAG,"request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
                 }
                 startActivity(i);
             } catch (Exception e) {
-                Log.d(TAG,"Unable to request ignoring battery optimizations." + e);
+                SystemLogger.d(TAG,"Unable to request ignoring battery optimizations: " + e);
             }
         }
     }
@@ -417,7 +421,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     @Override
     protected void onResume() {
-        if (LoggerService.DEBUG) { Log.d(TAG, "[onResume]"); }
+        if (LoggerService.DEBUG) { SystemLogger.d(TAG, "onResume"); }
         super.onResume();
         // refresh and sync every time the activity gets visible
         refreshLists();
@@ -437,7 +441,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         updateUsernameInDrawer();
 
-        if (LoggerService.DEBUG) { Log.d(TAG, "[onResume END]"); }
+        if (LoggerService.DEBUG) { SystemLogger.d(TAG, "onResume END"); }
     }
 
     private void updateCurrentInfoDialog() {
@@ -451,19 +455,18 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
      */
     @Override
     protected void onPause() {
-        if (LoggerService.DEBUG) { Log.d(TAG, "[onPause]"); }
+        if (LoggerService.DEBUG) { SystemLogger.d(TAG, "onPause"); }
         super.onPause();
 
         try {
             unregisterReceiver(mBroadcastReceiver);
+        } catch (RuntimeException e) {
+            // i don't understand why this is happening on 6.0 only
+            // onPause is called twice when trying to launch preferences activity
+            // anyway this solves it, at least the app does not crash anymore
+            if (LoggerService.DEBUG) { SystemLogger.d(TAG, "RECEIVER PROBLEM, let's ignore it..."); }
         }
-        // i don't understand why this is happening on 6.0 only
-        // onPause is called twice when trying to launch preferences activity
-        // anyway this solves it, at least the app does not crash anymore
-        catch (RuntimeException e) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "RECEIVER PROBLEM, let's ignore it..."); }
-        }
-        if (LoggerService.DEBUG) { Log.d(TAG, "[onPause END]"); }
+        if (LoggerService.DEBUG) { SystemLogger.d(TAG, "onPause END"); }
     }
 
     @Override
@@ -987,13 +990,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         refreshLists();
         notifyLoggerService(dbLogjob.getId());
 
-        Log.v(TAG, "Item deleted through swipe ----------------------------------------------");
+        SystemLogger.v(TAG, "Item deleted through swipe");
         Snackbar.make(swipeRefreshLayout, R.string.action_logjob_deleted, Snackbar.LENGTH_LONG)
                 .setAction(R.string.action_undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         long restoredId = db.addLogjob(dbLogjob);
-                        Log.e("CCCC", "ljid "+dbLogjob.getId()+ " restored "+restoredId);
+                        SystemLogger.e(TAG, "logjob " + dbLogjob.getId() + " restored " + restoredId);
                         for (DBLogjobLocation dbloc : locations) {
                             db.addLocation(dbloc);
                         }
@@ -1163,7 +1166,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         } else if (requestCode == save_file_cmd) {
             if (data != null) {
                 Uri savedFile = data.getData();
-                Log.v(TAG, "WE SAVE to "+savedFile);
+                SystemLogger.v(TAG, "Save to " + savedFile);
                 saveToFileUri(contentToExport, savedFile);
             }
         }
@@ -1395,9 +1398,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     Environment.getExternalStorageDirectory().toString(),
                     ""))
             );
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+        } catch (IOException e) {
+            SystemLogger.e(TAG, "File write failed: " + e.toString());
             showToast(e.toString());
         }
     }
@@ -1450,7 +1452,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
-        if (LoggerService.DEBUG) { Log.d(TAG, "[LAST " + tsLastLoc + " "+tsLastSync+ "]"); }
+        if (LoggerService.DEBUG) { SystemLogger.d(TAG, "updateInfoDialogContent " + tsLastLoc + " " + tsLastSync); }
 
         List<DBLogjobLocation> cRLocations = db.getCurrentRunLocationsOfLogjob(ljId);
         double totDistance = 0.0;
@@ -1597,7 +1599,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     private void synchronize() {
-        if (LoggerService.DEBUG) { Log.d(TAG, "[call synchronize()]"); }
+        if (LoggerService.DEBUG) { SystemLogger.d(TAG, "synchronize()"); }
         db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         db.getPhonetrackServerSyncHelper().scheduleSync(false);
     }
@@ -1684,7 +1686,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         for (int i = 0; i < adapter.getItemCount(); i++) {
             adapter.notifyItemChanged(i);
             if (LoggerService.DEBUG) {
-                Log.d(TAG, "[notifyItemChanged " + i + "]");
+                SystemLogger.d(TAG, "notifyItemChanged " + i);
             }
         }
     }
@@ -1723,7 +1725,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast received " + intent + "]"); }
+            if (LoggerService.DEBUG) { SystemLogger.d(TAG, "broadcast received " + intent); }
             if (intent == null || intent.getAction() == null) {
                 return;
             }
@@ -1733,7 +1735,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case LoggerService.BROADCAST_LOCATION_UPDATED:
                     long ljId = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
-                    if (LoggerService.DEBUG) { Log.d(TAG, "[broadcast loc updated " + ljId + "]"); }
+                    if (LoggerService.DEBUG) { SystemLogger.d(TAG, "broadcast location updated " + ljId); }
                     // to update all items
                     //adapter.notifyDataSetChanged();
                     // but we update just the changed one
@@ -1754,7 +1756,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     long ljId2 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     if (ljId2 != 0) {
                         if (LoggerService.DEBUG) {
-                            Log.d(TAG, "[broadcast loc synced " + ljId2 + "]");
+                            SystemLogger.d(TAG, "broadcast loc synced " + ljId2);
                         }
                         // to update all items
                         //adapter.notifyDataSetChanged();
@@ -1765,7 +1767,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                             if (lj2.getId() == ljId2) {
                                 adapter.notifyItemChanged(i);
                                 if (LoggerService.DEBUG) {
-                                    Log.d(TAG, "[notifyItemChanged " + i + "]");
+                                    SystemLogger.d(TAG, "notifyItemChanged " + i);
                                 }
                                 break;
                             }
@@ -1893,7 +1895,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case SessionServerSyncHelper.BROADCAST_AVATAR_UPDATED:
                     // this is the account avatar
-                    Log.v("AAA", "broadcast UPDATE avatar of NC account");
+                    SystemLogger.v(TAG, "broadcast UPDATE avatar of NC account");
                     updateAvatarInDrawer(true);
                     break;
             }

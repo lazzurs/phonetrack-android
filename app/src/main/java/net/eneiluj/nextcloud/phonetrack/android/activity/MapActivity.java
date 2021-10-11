@@ -520,8 +520,7 @@ public class MapActivity extends AppCompatActivity {
         stopRefresh();
         try {
             unregisterReceiver(mBroadcastReceiver);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             if (LoggerService.DEBUG) { Log.d(TAG, "RECEIVER PROBLEM, let's ignore it..."); }
         }
         Log.i(TAG, "[onPause end]");
