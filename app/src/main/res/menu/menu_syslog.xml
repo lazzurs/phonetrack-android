@@ -9,6 +9,12 @@
         android:title="@string/settings_save_syslogs"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/menu_share_logs"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:orderInCategory="80"
+        android:title="@string/settings_share_syslogs"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/menu_toggle_logs"
         android:icon="@drawable/ic_save_black_24dp"
         android:orderInCategory="80"

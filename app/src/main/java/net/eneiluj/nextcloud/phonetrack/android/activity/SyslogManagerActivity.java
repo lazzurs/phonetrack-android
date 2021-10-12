@@ -74,6 +74,9 @@ public class SyslogManagerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_share_logs:
+                shareLogs();
+                return true;
             case R.id.menu_save_logs:
                 Log.d(TAG, "SAVEEEEEE");
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -202,6 +205,15 @@ public class SyslogManagerActivity extends AppCompatActivity {
         });
     }
 
+    private void shareLogs() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "phonetrack logs");
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, getSaveContent());
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.settings_share_syslogs)));
+    }
+
     private String getSaveContent() {
         String content = "";
         List<DBSyslog> syslogs = db.getSyslogs(null, null);
@@ -214,7 +226,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
     private void saveLogs() {
         Log.d(TAG, "Saving logs!!!!");
         contentToExport = getSaveContent();
-        String fileName = "phonetrack.logs.txt";
+        String fileName = "phonetrack logs.txt";
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/plain");
