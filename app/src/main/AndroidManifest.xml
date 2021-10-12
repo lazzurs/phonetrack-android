@@ -73,6 +73,14 @@
             />
 
         <activity
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity"
+            android:label="@string/settings_syslog_label"
+            android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.PreferencesActivity"
+            android:windowSoftInputMode="stateVisible"
+            android:launchMode="standard"
+            />
+
+        <activity
             android:name="net.eneiluj.nextcloud.phonetrack.android.activity.PreferencesActivity"
             android:label="@string/action_settings"
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"

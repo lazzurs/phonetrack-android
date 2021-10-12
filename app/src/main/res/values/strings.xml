@@ -11,6 +11,7 @@
     <string name="action_create_share">Import PhTrk logging URL</string>
     <string name="action_create_custom_share">Import custom logging URL</string>
     <string name="action_settings">Settings</string>
+    <string name="action_syslog">Activity logs</string>
     <string name="setting_title">Title</string>
     <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(mandatory)</string>
@@ -153,6 +154,7 @@
     <string name="display_map_menu_title">Map of logjob\'s session</string>
     <string name="export_gpx_menu_title">Export to GPX</string>
     <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="syslog_saved_success">Activity log exported in %s</string>
     <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="action_sorting_method">Sorting method</string>
     <string name="manage_accounts">Manage accounts</string>
@@ -203,6 +205,7 @@
     <string name="settings_logging_category">Logging</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_map_category">Map</string>
+    <string name="settings_debug_category">Debugging</string>
     <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
     <string name="settings_osmdroid_delete_label">Delete Mapsforge offline map tiles file</string>
     <string name="settings_osmdroid_delete_success">File deleted</string>
@@ -210,6 +213,9 @@
     <string name="osmdroid_file_load_no_space">No space left on external storage</string>
     <string name="osmdroid_file_load_exception">Error while copying map file</string>
     <string name="settings_no_osmdroid_files_found">No map file found in app data</string>
+    <string name="settings_save_syslogs">Activity logs</string>
+    <string name="settings_toggle_syslogs">Enable activity logs</string>
+    <string name="settings_syslog_label">Activity logs</string>
     <string name="settings_theming_category">Theming</string>
     <string name="settings_group_sync_title">Send points by bunch of at least</string>
     <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
@@ -344,6 +350,7 @@
     <string name="pref_key_osmdroid_load" translatable="false">loadOsmdroidPath</string>
     <string name="pref_key_osmdroid_path" translatable="false">osmdroidPath</string>
     <string name="pref_key_osmdroid_delete" translatable="false">osmdroidDelete</string>
+    <string name="pref_key_open_syslog" translatable="false">openSyslogManager</string>
     <string name="pref_key_providers" translatable="false">locationProviders</string>
     <string name="pref_key_notification_importance" translatable="false">notificationImportance</string>
     <string name="pref_key_reset_stats" translatable="false">resetStats</string>

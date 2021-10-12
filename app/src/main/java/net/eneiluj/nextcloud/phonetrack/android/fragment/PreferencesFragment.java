@@ -47,8 +47,10 @@ import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import at.bitfire.cert4android.CustomCertManager;
 import net.eneiluj.nextcloud.phonetrack.R;
 
+import net.eneiluj.nextcloud.phonetrack.android.activity.EditMapsLogjobActivity;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.android.activity.MapActivity;
+import net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
@@ -111,6 +113,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         // hide the keyboard when this window gets the focus
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        Preference openSyslog = findPreference(getString(R.string.pref_key_open_syslog));
+        openSyslog.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent createIntent = new Intent(getContext(), SyslogManagerActivity.class);
+                startActivity(createIntent);
+                return true;
+            }
+        });
 
 
         Preference resetTrust = findPreference(getString(R.string.pref_key_reset_trust));

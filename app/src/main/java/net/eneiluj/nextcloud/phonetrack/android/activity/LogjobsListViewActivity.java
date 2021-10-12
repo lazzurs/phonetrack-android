@@ -1499,16 +1499,14 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
         else {
             iView.findViewById(R.id.infoNbPointsLayout).setVisibility(View.GONE);
-        }
-        if (totDistance != 0.0) {
+        } if (totDistance != 0.0) {
             String formattedDistance = formatDistance(totDistance, c);
             String totDistanceText = c.getString(R.string.logjob_info_distance, formattedDistance);
 
             TextView tv3 = iView.findViewById(R.id.infoDistanceText);
             tv3.setText(totDistanceText);
             iView.findViewById(R.id.infoDistanceLayout).setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             iView.findViewById(R.id.infoDistanceLayout).setVisibility(View.GONE);
         }
         if (duration != 0) {
@@ -1518,8 +1516,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             TextView tv3 = iView.findViewById(R.id.infoDurationText);
             tv3.setText(durationText);
             iView.findViewById(R.id.infoDurationLayout).setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             iView.findViewById(R.id.infoDurationLayout).setVisibility(View.GONE);
         }
         if (tsLastLoc != 0 && cRLocations.size() > 0) {
@@ -1530,8 +1527,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             TextView tv3 = iView.findViewById(R.id.infoLastLocText);
             tv3.setText(lastLocText);
             iView.findViewById(R.id.infoLastLocLayout).setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             iView.findViewById(R.id.infoLastLocLayout).setVisibility(View.GONE);
         }
         if (tsLastSync != 0 && logjob.getNbSync() > 0) {
@@ -1542,8 +1538,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             TextView tv4 = iView.findViewById(R.id.infoLastSyncText);
             tv4.setText(lastSyncText);
             iView.findViewById(R.id.infoLastSyncLayout).setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             iView.findViewById(R.id.infoLastSyncLayout).setVisibility(View.GONE);
         }
 
@@ -1559,8 +1554,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             TextView tv5 = iView.findViewById(R.id.infoLastSyncErrText);
             tv5.setText(lastSyncErrText);
             iView.findViewById(R.id.infoLastSyncErrLayout).setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             iView.findViewById(R.id.infoLastSyncErrLayout).setVisibility(View.GONE);
         }
         if (logjob.isEnabled()) {
@@ -1571,8 +1565,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             TextView tv3 = iView.findViewById(R.id.infoLastActivationText);
             tv3.setText(lastActivationText);
             iView.findViewById(R.id.infoLastActivationLayout).setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             iView.findViewById(R.id.infoLastActivationLayout).setVisibility(View.GONE);
         }
     }

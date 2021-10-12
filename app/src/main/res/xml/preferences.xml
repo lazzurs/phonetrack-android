@@ -177,4 +177,15 @@
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/settings_debug_category"
+        android:key="settings_map_category">
+
+    <Preference
+            android:key="@string/pref_key_open_syslog"
+            android:id="@+id/openSyslogManager"
+            android:icon="@drawable/ic_baseline_list_alt_24"
+            android:title="@string/settings_syslog_label" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -3,6 +3,7 @@ package net.eneiluj.nextcloud.phonetrack.persistence;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -37,7 +39,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 18;
+    private static final int database_version = 19;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -337,7 +339,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private void createIndexes(SQLiteDatabase db) {
         createIndex(db, table_sessions, key_token);
         createIndex(db, table_logjobs, key_token);
-        createIndex(db, table_locations, key_token);
     }
 
     private void createIndex(SQLiteDatabase db, String table, String column) {
@@ -1180,6 +1181,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_tag, tag);
         values.put(key_message, message);
         values.put(key_timestamp, timestamp);
+
+        Intent intent = new Intent(SyslogManagerActivity.BROADCAST_NEW_SYSLOG);
+        intent.putExtra(SyslogManagerActivity.BROADCAST_MESSAGE, message);
+        intent.putExtra(SyslogManagerActivity.BROADCAST_TIMESTAMP, timestamp);
+        context.sendBroadcast(intent);
+
         return db.insert(table_syslog, null, values);
     }
 

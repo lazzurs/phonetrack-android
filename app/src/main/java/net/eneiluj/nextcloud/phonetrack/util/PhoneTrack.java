@@ -15,7 +15,6 @@ public class PhoneTrack extends Application {
         setAppTheme(getAppTheme(getApplicationContext()));
         super.onCreate();
         SystemLogger.getDb(getApplicationContext());
-        SystemLogger.setEnabled(true);
     }
 
     public static void setAppTheme(Boolean darkTheme) {
