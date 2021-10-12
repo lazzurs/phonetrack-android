@@ -20,6 +20,7 @@ import androidx.preference.PreferenceManager;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Environment;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -196,7 +197,9 @@ public class SyslogManagerActivity extends AppCompatActivity {
     }
 
     private void addLine(String message, long timestamp) {
-        textView.append(sdfCompleteSimple.format(timestamp * 1000) + " " + message + "\n");
+        textView.append(
+                Html.fromHtml("<b>[" + sdfCompleteSimple.format(timestamp * 1000) + "]</b> " + message + "<br/>")
+        );
         scrollView.post(new Runnable() {
             @Override
             public void run() {
