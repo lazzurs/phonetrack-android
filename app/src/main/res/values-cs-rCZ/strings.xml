@@ -10,6 +10,7 @@
     <string name="action_create_share">Importovat URL adresu PhTrk zaznamenávání</string>
     <string name="action_create_custom_share">Importovat URL uživatelsky určeného zaznamenávání</string>
     <string name="action_settings">Nastavení</string>
+    <string name="action_syslog">Activity logs</string>
     <string name="setting_title">Nadpis</string>
     <string name="setting_title_long">Název úlohy zaznamenávání (viditelné pouze v aplikaci)</string>
     <string name="mandatory">(povinné)</string>
@@ -95,7 +96,7 @@
     <string name="logjob_info_nbsync">odesláno %d pozic</string>
     <string name="logjob_info_nbnotsync">%d pozic čeká</string>
     <string name="logjob_info_last_activation">Poslední aktivace\n před %s v\n%s</string>
-    <string name="logjob_info_lastloc">Poslední poloha získána\n%s před\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
     <string name="logjob_info_lastsync">Poslední úspěšná synchronizace\n%s před\n%s</string>
     <string name="logjob_info_lastsync_error">Poslední chyba synchronizace\npřed %s v\n%s\n\n%s</string>
     <string name="logjob_info_distance">Celková vzdálenost\n%s</string>
@@ -151,6 +152,7 @@
     <string name="display_map_menu_title">Mapa relace úlohy zaznamenávání</string>
     <string name="export_gpx_menu_title">Exportovat do GPX</string>
     <string name="file_saved_success">Úloha zaznamenávání exportována do %s</string>
+    <string name="syslog_saved_success">Activity log exported in %s</string>
     <string name="delete_logjob_menu_title">Smazat úlohu zaznamenávání</string>
     <string name="action_sorting_method">Způsob řazení</string>
     <string name="manage_accounts">Spravovat účty</string>
@@ -199,6 +201,7 @@
     <string name="settings_logging_category">Zaznamenávání</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Mapa</string>
+    <string name="settings_debug_category">Debugging</string>
     <string name="settings_osmdroid_label">Importovat mapové dlaždice z Mapsforge pro fungování i bez připojení k Internetu</string>
     <string name="settings_osmdroid_delete_label">Smazat soubor s offline mapovými podklady Mapsforge</string>
     <string name="settings_osmdroid_delete_success">Soubor smazán</string>
@@ -206,6 +209,10 @@
     <string name="osmdroid_file_load_no_space">Na externím úložišti nezbývá žádné místo</string>
     <string name="osmdroid_file_load_exception">Chyba při kopírování souboru s mapou</string>
     <string name="settings_no_osmdroid_files_found">V datech aplikace nenalezen žádný soubor s mapou</string>
+    <string name="settings_save_syslogs">Save activity logs</string>
+    <string name="settings_share_syslogs">Share activity logs</string>
+    <string name="settings_toggle_syslogs">Enable activity logs</string>
+    <string name="settings_syslog_label">Activity logs</string>
     <string name="settings_theming_category">Motivy vzhledu</string>
     <string name="settings_group_sync_title">Posílat body v dávkách obsahujících přinejmenším</string>
     <string name="settings_group_sync_long">Čekat, dokud zde není alespoň N bodů a až poté je poslat na server. Toto ušetří mnoho přenesených dat, ale body ne vždy budou odesílány v reálném čase.</string>
@@ -221,6 +228,8 @@
     <string name="location_disabled">Varování: určování polohy je vypnuté</string>
     <string name="using_network">Pomocí určování polohy ze sítě</string>
     <string name="using_gps">Pomocí určování polohy z gps</string>
+    <string name="background_location_permission_title">Background location permission</string>
+    <string name="background_location_permission_message">To allow PhoneTrack to run in the background, an additional permission must be granted. On the next setting screen please select: </string>
     <string name="location_permission_denied">Oprávnění k poloze bylo odepřeno</string>
     <string name="sessions_sync_success">Relace synchronizovány</string>
     <string name="pref_autostart_title">Automatické spuštění</string>

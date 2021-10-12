@@ -10,6 +10,7 @@
     <string name="action_create_share">Importer URL PT</string>
     <string name="action_create_custom_share">Importer URL personnalisée</string>
     <string name="action_settings">Paramètres</string>
+    <string name="action_syslog">Journaux d\'activité</string>
     <string name="setting_title">Titre</string>
     <string name="setting_title_long">Nom du job log (uniquement visible dans l\'application)</string>
     <string name="mandatory">(obligatoire)</string>
@@ -95,7 +96,7 @@
     <string name="logjob_info_nbsync">%d positions envoyées</string>
     <string name="logjob_info_nbnotsync">%d positions en attente</string>
     <string name="logjob_info_last_activation">Dernière activation\nil y a %s à\n%s</string>
-    <string name="logjob_info_lastloc">Dernière position acquise\nil y a %s à\n%s</string>
+    <string name="logjob_info_lastloc">Dernière position acquise il y a\n%1$s à\n%2$s</string>
     <string name="logjob_info_lastsync">Dernière synchronisation de position réussie\nil y a %s à\n%s</string>
     <string name="logjob_info_lastsync_error">Dernière erreur de synchronisation\nil y a %s à\n%s\n\n%s</string>
     <string name="logjob_info_distance">Distance totale\n%s</string>
@@ -151,6 +152,7 @@
     <string name="display_map_menu_title">Carte pour la session du logjob</string>
     <string name="export_gpx_menu_title">Exporter en GPX</string>
     <string name="file_saved_success">Logjob exporté dans %s</string>
+    <string name="syslog_saved_success">Journal d\'activité exporté dans %s</string>
     <string name="delete_logjob_menu_title">Supprimer le logjob</string>
     <string name="action_sorting_method">Méthode de tri</string>
     <string name="manage_accounts">Gérer les comptes</string>
@@ -199,6 +201,7 @@
     <string name="settings_logging_category">Logging</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Carte</string>
+    <string name="settings_debug_category">Débogage</string>
     <string name="settings_osmdroid_label">Importer un fichier Mapsforge de carte hors ligne</string>
     <string name="settings_osmdroid_delete_label">Supprimer un fichier Mapsforge de carte hors ligne</string>
     <string name="settings_osmdroid_delete_success">Fichier supprimé</string>
@@ -206,6 +209,10 @@
     <string name="osmdroid_file_load_no_space">Aucun espace disponible sur la mémoire de stockage externe</string>
     <string name="osmdroid_file_load_exception">Erreur lors de la copie du fichier de carte</string>
     <string name="settings_no_osmdroid_files_found">Aucun fichier de carte trouvé dans les données de l\'application</string>
+    <string name="settings_save_syslogs">Enregistrer les journaux d\'activité</string>
+    <string name="settings_share_syslogs">Partager les journaux d\'activité</string>
+    <string name="settings_toggle_syslogs">Activer le journal d\'activité</string>
+    <string name="settings_syslog_label">Journaux d\'activité</string>
     <string name="settings_theming_category">Apparence</string>
     <string name="settings_group_sync_title">Envoyer les points par groupe d\'au moins</string>
     <string name="settings_group_sync_long">Attendre qu\'il y ait au moins N points pour les envoyer au serveur. Cela permettra de fortement réduire l\'utilisation des données réseau mais les points ne seront pas toujours envoyés en temps réel.</string>
@@ -221,6 +228,8 @@
     <string name="location_disabled">Attention : localisation désactivée</string>
     <string name="using_network">Utilise la localisation par le réseau</string>
     <string name="using_gps">Utilise la localisation Gps</string>
+    <string name="background_location_permission_title">Accès à l\'emplacement en arrière-plan</string>
+    <string name="background_location_permission_message">Pour permettre à PhoneTrack de s\'exécuter en arrière-plan, une autorisation supplémentaire doit être accordée. Sur l\'écran de réglage suivant, veuillez sélectionner : </string>
     <string name="location_permission_denied">Permission de localisation refusée</string>
     <string name="sessions_sync_success">Sessions synchronisées</string>
     <string name="pref_autostart_title">Démarrage auto</string>

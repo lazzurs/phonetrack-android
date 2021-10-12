@@ -10,6 +10,7 @@
     <string name="action_create_share">Importar PhTrk URL d\'enregistrament</string>
     <string name="action_create_custom_share">Importar URL d\'enregistrament personalitzada</string>
     <string name="action_settings">Opcions</string>
+    <string name="action_syslog">Activity logs</string>
     <string name="setting_title">Títol</string>
     <string name="setting_title_long">Nom de l\'enregistrament (només visible a l\'app)</string>
     <string name="mandatory">(obligatori)</string>
@@ -95,7 +96,7 @@
     <string name="logjob_info_nbsync">%d posicions enviades</string>
     <string name="logjob_info_nbnotsync">%d posicions en espera</string>
     <string name="logjob_info_last_activation">Última activació fa\n%s a\n%s</string>
-    <string name="logjob_info_lastloc">Última localització adquirida fa\n%s a\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
     <string name="logjob_info_lastsync">Última sincronització efectiva fa\n%s a\n%s</string>
     <string name="logjob_info_lastsync_error">Última sincronització fallida fa\n%s a\n%s\n\n%s</string>
     <string name="logjob_info_distance">Total distancia\n%s</string>
@@ -151,6 +152,7 @@
     <string name="display_map_menu_title">Map of logjob\'s session</string>
     <string name="export_gpx_menu_title">Export to GPX</string>
     <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="syslog_saved_success">Activity log exported in %s</string>
     <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="action_sorting_method">Sorting method</string>
     <string name="manage_accounts">Manage accounts</string>
@@ -199,6 +201,7 @@
     <string name="settings_logging_category">Registre</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_map_category">Mapa</string>
+    <string name="settings_debug_category">Debugging</string>
     <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
     <string name="settings_osmdroid_delete_label">Delete Mapsforge offline map tiles file</string>
     <string name="settings_osmdroid_delete_success">File deleted</string>
@@ -206,6 +209,10 @@
     <string name="osmdroid_file_load_no_space">No space left on external storage</string>
     <string name="osmdroid_file_load_exception">Error while copying map file</string>
     <string name="settings_no_osmdroid_files_found">No map file found in app data</string>
+    <string name="settings_save_syslogs">Save activity logs</string>
+    <string name="settings_share_syslogs">Share activity logs</string>
+    <string name="settings_toggle_syslogs">Enable activity logs</string>
+    <string name="settings_syslog_label">Activity logs</string>
     <string name="settings_theming_category">Aparença</string>
     <string name="settings_group_sync_title">Enviar els punt en grups de com a mínim</string>
     <string name="settings_group_sync_long">Esperar que hi hagi al menys N punts per enviar-los al servidor. Això permetrà reduir la despesa de la xarxa de dades, però el punts no seran sempre enviats en temps real.</string>
@@ -221,6 +228,8 @@
     <string name="location_disabled">Atenció : Ubicació desactivada</string>
     <string name="using_network">Localització per xarxa activa</string>
     <string name="using_gps">Localització per gps activa</string>
+    <string name="background_location_permission_title">Background location permission</string>
+    <string name="background_location_permission_message">To allow PhoneTrack to run in the background, an additional permission must be granted. On the next setting screen please select: </string>
     <string name="location_permission_denied">Denegat el permís de localització</string>
     <string name="sessions_sync_success">Sessions sincronitzades</string>
     <string name="pref_autostart_title">Auto start</string>

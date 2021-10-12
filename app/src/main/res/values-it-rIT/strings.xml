@@ -10,6 +10,7 @@
     <string name="action_create_share">Importa l\'URL di registrazione di PhTrk</string>
     <string name="action_create_custom_share">Importa URL di registrazione personalizzato</string>
     <string name="action_settings">Impostazioni</string>
+    <string name="action_syslog">Activity logs</string>
     <string name="setting_title">Titolo</string>
     <string name="setting_title_long">Registra titolo lavoro (visibile solo nell\'app)</string>
     <string name="mandatory">(obbligatorio)</string>
@@ -95,7 +96,7 @@
     <string name="logjob_info_nbsync">%d posizioni inviate</string>
     <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
     <string name="logjob_info_last_activation">Ultima attivazione\n%s fa alle\n%s</string>
-    <string name="logjob_info_lastloc">Ultima posizione acquisita\n%s fa alle\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
     <string name="logjob_info_lastsync">Ultima sincronizzazione riuscita\n%s fa alle\n%s</string>
     <string name="logjob_info_lastsync_error">Ultimo errore di sincronizzazione\n%s fa alle\n%s\n\n%s</string>
     <string name="logjob_info_distance">Distanza totale\n%s</string>
@@ -151,6 +152,7 @@
     <string name="display_map_menu_title">Map of logjob\'s session</string>
     <string name="export_gpx_menu_title">Export to GPX</string>
     <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="syslog_saved_success">Activity log exported in %s</string>
     <string name="delete_logjob_menu_title">Delete logjob</string>
     <string name="action_sorting_method">Sorting method</string>
     <string name="manage_accounts">Manage accounts</string>
@@ -199,6 +201,7 @@
     <string name="settings_logging_category">Registro</string>
     <string name="settings_sms_category">Sms</string>
     <string name="settings_map_category">Mappa</string>
+    <string name="settings_debug_category">Debugging</string>
     <string name="settings_osmdroid_label">Importa Mapsforge file di mappe offline</string>
     <string name="settings_osmdroid_delete_label">Elimina Mapsforge file di mappe offline</string>
     <string name="settings_osmdroid_delete_success">File eliminato</string>
@@ -206,6 +209,10 @@
     <string name="osmdroid_file_load_no_space">Spazio insufficiente nella memoria esterna</string>
     <string name="osmdroid_file_load_exception">Errore durante la copia del file mappa</string>
     <string name="settings_no_osmdroid_files_found">Nessun file mappa trovato nei dati dell\'app</string>
+    <string name="settings_save_syslogs">Save activity logs</string>
+    <string name="settings_share_syslogs">Share activity logs</string>
+    <string name="settings_toggle_syslogs">Enable activity logs</string>
+    <string name="settings_syslog_label">Activity logs</string>
     <string name="settings_theming_category">In tema</string>
     <string name="settings_group_sync_title">Invia punti per gruppo di almeno</string>
     <string name="settings_group_sync_long">Attendi fino a quando non ci saranno almeno N punti per inviarli al server. Questo ti farà utilizzare meno dati di rete, ma i punti non saranno inviati sempre in tempo reale.</string>
@@ -221,6 +228,8 @@
     <string name="location_disabled">Attenzione: posizione disabilitata</string>
     <string name="using_network">Utilizzando la posizione di rete</string>
     <string name="using_gps">Usando la posizione Gps</string>
+    <string name="background_location_permission_title">Background location permission</string>
+    <string name="background_location_permission_message">To allow PhoneTrack to run in the background, an additional permission must be granted. On the next setting screen please select: </string>
     <string name="location_permission_denied">Autorizzazione di posizione negata</string>
     <string name="sessions_sync_success">Sessioni sincronizzate</string>
     <string name="pref_autostart_title">Avvio automatico</string>
