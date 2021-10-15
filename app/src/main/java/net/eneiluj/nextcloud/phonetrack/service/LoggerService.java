@@ -1195,9 +1195,9 @@ public class LoggerService extends Service {
                 if (mCachedNetworkResult == null) {
                     if (useNet && loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                         // TODO check that
-                        SystemLogger.d(TAG, "LogjobClassicWorker::handleLocationChange => cached is null && useNet && loc.provider==GPS so locManager.removeUpdates()");
-                        locManager.removeUpdates(gpsLocationListener);
-                        locManager.removeUpdates(networkLocationListener);
+                        //SystemLogger.d(TAG, "LogjobClassicWorker::handleLocationChange => cached is null && useNet && loc.provider==GPS so locManager.removeUpdates()");
+                        //locManager.removeUpdates(gpsLocationListener);
+                        //locManager.removeUpdates(networkLocationListener);
                     }
                 } else {
                     mCachedNetworkResult = null;
@@ -1404,7 +1404,7 @@ public class LoggerService extends Service {
 
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
-                        long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000);
+                        long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000L);
                         SystemLogger.d(TAG, "Schedule next location request in " + (timeToWait / 1000) + "s");
                         scheduleSampleAfterInterval(timeToWait);
                     }
@@ -1453,9 +1453,9 @@ public class LoggerService extends Service {
                 if (mCachedNetworkResult == null) {
                     if (useNet && loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                         // TODO check that
-                        SystemLogger.d(TAG, "LogjobSignificantMotionWorker::handleLocationChange => cached==null && useNet && loc.prov==GPS so locManager.removeUpdates()");
-                        locManager.removeUpdates(gpsLocationListener);
-                        locManager.removeUpdates(networkLocationListener);
+                        //SystemLogger.d(TAG, "LogjobSignificantMotionWorker::handleLocationChange => cached==null && useNet && loc.prov==GPS so locManager.removeUpdates()");
+                        //locManager.removeUpdates(gpsLocationListener);
+                        //locManager.removeUpdates(networkLocationListener);
                     }
                 } else {
                     mCachedNetworkResult = null;
@@ -1477,7 +1477,7 @@ public class LoggerService extends Service {
                         mTimeoutRunnable = null;
                     }
 
-                    // stop location request
+                    // stop location request because we accept the location
                     if (useGps || useNet) {
                         SystemLogger.d(TAG, "LogjobSignificantMotionWorker::timeoutRunnable => minDistanceOk && minAccuracyOk && (useGps || useNet) so locManager.removeUpdates()");
                         locManager.removeUpdates(gpsLocationListener);
