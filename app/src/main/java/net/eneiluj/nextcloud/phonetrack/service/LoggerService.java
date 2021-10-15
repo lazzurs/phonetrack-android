@@ -780,8 +780,13 @@ public class LoggerService extends Service {
                 battery = 0.0;
             }
             double batLevel = ((double)level / (double)scale) * 100.0;
-            battery = Math.round(batLevel * 100.0) / 100.0;
-            if (LoggerService.DEBUG) { SystemLogger.i(TAG, "battery level changed " + battery); }
+            double newBatteryLevel = Math.round(batLevel * 100.0) / 100.0;
+            if (newBatteryLevel != battery) {
+                battery = newBatteryLevel;
+                if (LoggerService.DEBUG) {
+                    SystemLogger.i(TAG, "battery level changed " + battery);
+                }
+            }
         }
     };
 
