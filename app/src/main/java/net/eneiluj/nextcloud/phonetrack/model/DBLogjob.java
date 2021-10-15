@@ -226,4 +226,19 @@ public class DBLogjob implements Item, Serializable {
                 this.url + ", " + this.token + ", " +
                 this.deviceName;
     }
+
+    public String toPrivateString() {
+        return "[Logjob " + getId() + "]\n"
+                + "enabled: " + this.enabled + "\n"
+                + "post: " + this.post + "\n"
+                + "json: " + this.json + "\n"
+                + "minAccuracy: " + this.minAccuracy + "\n"
+                + "minDistance: " + this.minDistance + "\n"
+                + "minTime: " + this.minTime + "\n"
+                + "keepGpsOnBetweenFixes: " + this.keepGpsOnBetweenFixes + "\n"
+                + "useSignificantMotion: " + this.useSignificantMotion + "\n"
+                + "useSignificantMotionMixed: " + this.useSignificantMotionMixed + "\n"
+                + "locationRequestTimeout: " + this.locationRequestTimeout + "\n";
+
+    }
 }

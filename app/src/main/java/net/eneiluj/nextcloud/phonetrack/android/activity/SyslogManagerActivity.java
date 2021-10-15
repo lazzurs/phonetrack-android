@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSyslog;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
@@ -220,6 +221,34 @@ public class SyslogManagerActivity extends AppCompatActivity {
 
     private String getSaveContent() {
         String content = "";
+
+        // get settings
+        String providersPref = prefs.getString(getString(R.string.pref_key_providers), "1");
+        String providerName = "unknown";
+        if (providersPref.equals("1")) {
+            providerName = "GPS";
+        } else if (providersPref.equals("2")) {
+            providerName = "Network";
+        } else if (providersPref.equals("3")) {
+            providerName = "GPS and Network";
+        }
+        content += "Location provider: " + providerName + "\n";
+        boolean respectPowerSaveMode = prefs.getBoolean(getString(R.string.pref_key_power_saving_awareness), false);
+        content += "Respect power saving state: " + respectPowerSaveMode + "\n";
+        boolean respectAirplaneMode = prefs.getBoolean(getString(R.string.pref_key_offline_mode_awareness), false);
+        content += "Respect airplane mode state: " + respectAirplaneMode + "\n";
+        content += "\n";
+
+        // get logjobs
+        List<DBLogjob> logjobs = db.getLogjobs();
+        for (DBLogjob lj: logjobs) {
+            content += lj.toPrivateString() + "\n";
+            content += "\n";
+        }
+
+        content += "\n";
+
+        // get all syslogs
         List<DBSyslog> syslogs = db.getSyslogs(null, null);
         for (DBSyslog sl: syslogs) {
             content += "[" + sdfComplete.format(sl.getTimestamp() * 1000) + "] " + sl.getMessage() + "\n";

@@ -406,7 +406,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     }
 
     private void setProvidersSummary(Preference providersPref, String value) {
-        int intVal = Integer.valueOf(value);
+        int intVal = Integer.parseInt(value);
         providersPref.setSummary(providersList.get(intVal-1));
     }
 
