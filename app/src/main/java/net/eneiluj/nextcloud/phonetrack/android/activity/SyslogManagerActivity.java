@@ -62,7 +62,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
 
     private SharedPreferences prefs;
 
-    private final SimpleDateFormat sdfCompleteSimple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss (Z)");
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,6 +103,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "[ACT RESULT]");
         // Check which request we're responding to
         if (requestCode == save_file_cmd && resultCode == Activity.RESULT_OK && data != null) {
@@ -198,7 +199,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
 
     private void addLine(String message, long timestamp) {
         textView.append(
-                Html.fromHtml("<b>[" + sdfCompleteSimple.format(timestamp * 1000) + "]</b> " + message + "<br/>")
+                Html.fromHtml("<b>[" + sdfComplete.format(timestamp * 1000) + "]</b> " + message + "<br/>")
         );
         scrollView.post(new Runnable() {
             @Override
@@ -221,7 +222,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
         String content = "";
         List<DBSyslog> syslogs = db.getSyslogs(null, null);
         for (DBSyslog sl: syslogs) {
-            content += sdfCompleteSimple.format(sl.getTimestamp() * 1000) + " " + sl.getMessage() + "\n";
+            content += "[" + sdfComplete.format(sl.getTimestamp() * 1000) + "] " + sl.getMessage() + "\n";
         }
         return content;
     }
@@ -279,7 +280,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (LoggerService.DEBUG) { Log.e(TAG, "broadcast received " + intent); }
+            //if (LoggerService.DEBUG) { Log.e(TAG, "broadcast received " + intent); }
             if (intent == null || intent.getAction() == null) {
                 return;
             }
