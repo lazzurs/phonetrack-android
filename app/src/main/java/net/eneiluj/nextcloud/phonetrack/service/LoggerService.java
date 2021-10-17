@@ -1352,6 +1352,7 @@ public class LoggerService extends Service {
 
             mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+            mMotionDetected = false;
         }
 
         public void stop() {
