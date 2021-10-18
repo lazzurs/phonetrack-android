@@ -172,7 +172,7 @@ public class LoggerService extends Service {
                 networkLocListeners.put(ljob.getId(), new mLocationListener(ljob, "NETWORK"));
                 logjobs.put(ljob.getId(), ljob);
                 lastLocations.put(ljob.getId(), null);
-                lastUpdateRealtime.put(ljob.getId(), Long.valueOf(0));
+                lastUpdateRealtime.put(ljob.getId(), 0L);
 
                 LogjobWorker jw;
                 if (ljob.useSignificantMotion()) {
@@ -217,11 +217,9 @@ public class LoggerService extends Service {
             // register for battery level
             this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                // track network connectivity changes
-                connectionMonitor = new ConnectionStateMonitor();
-                connectionMonitor.enable(getApplicationContext());
-            }
+            // track network connectivity changes
+            connectionMonitor = new ConnectionStateMonitor();
+            connectionMonitor.enable(getApplicationContext());
 
             // listen to power saving mode change
             powerSaverChangeReceiver = new BroadcastReceiver() {
@@ -308,17 +306,20 @@ public class LoggerService extends Service {
             } else if (getNextPoint) {
                 long jobId = intent.getLongExtra(JOB_ID, 0);
                 if (logjobs.containsKey(jobId)) {
-                    boolean shouldGetPosition = mLogjobWorkers.get(jobId).shouldGetPositionAfterInterval();
-                    if (!shouldGetPosition) {
-                        SystemLogger.d(TAG, "[command] only schedule for " + jobId);
-                        // we just schedule next time to get a point. this happens in sigmotion when no motion has been seen
-                        long intervalTimeMillis = intent.getLongExtra(SCHEDULE_INTERVAL, 0);
-                        mLogjobWorkers.get(jobId).scheduleSampleAfterInterval(intervalTimeMillis);
-                    } else {
-                        SystemLogger.d(TAG, "[command] request location update for " + jobId);
-                        boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
-                        boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
-                        requestLocationUpdates(jobId, startTimeout, firstReqAfterAccepted);
+                    LogjobWorker logjobWorker = mLogjobWorkers.get(jobId);
+                    if (logjobWorker != null) {
+                        boolean shouldGetPosition = logjobWorker.shouldGetPositionAfterInterval();
+                        if (!shouldGetPosition) {
+                            SystemLogger.d(TAG, "[command] only schedule for " + jobId);
+                            // we just schedule next time to get a point. this happens in sigmotion when no motion has been seen
+                            long intervalTimeMillis = intent.getLongExtra(SCHEDULE_INTERVAL, 0);
+                            logjobWorker.scheduleSampleAfterInterval(intervalTimeMillis);
+                        } else {
+                            SystemLogger.d(TAG, "[command] request location update for " + jobId);
+                            boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
+                            boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
+                            requestLocationUpdates(jobId, startTimeout, firstReqAfterAccepted);
+                        }
                     }
                 }
             } else {
@@ -382,7 +383,7 @@ public class LoggerService extends Service {
         // first we check is device is in power saving mode
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         boolean isPowerSaveMode = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && pm != null) {
+        if (pm != null) {
             isPowerSaveMode = pm.isPowerSaveMode();
         }
         if (DEBUG) {
@@ -430,15 +431,15 @@ public class LoggerService extends Service {
         } else {
             providersPref = value;
         }
-        useGps = ((providersPref.equals("1")
-                   || providersPref.equals("3")
-                   || providersPref.equals("5")
-                   || providersPref.equals("7")
+        useGps = ((   "1".equals(providersPref)
+                   || "3".equals(providersPref)
+                   || "5".equals(providersPref)
+                   || "7".equals(providersPref)
                  ) && providerExists(LocationManager.GPS_PROVIDER));
-        useNet = ((providersPref.equals("2")
-                   || providersPref.equals("3")
-                   || providersPref.equals("6")
-                   || providersPref.equals("7")
+        useNet = ((   "2".equals(providersPref)
+                   || "3".equals(providersPref)
+                   || "6".equals(providersPref)
+                   || "7".equals(providersPref)
                  ) && providerExists(LocationManager.NETWORK_PROVIDER));
         if (DEBUG) {
             SystemLogger.d(TAG, "update prefs " + providersPref + ", gps : " + useGps
@@ -458,20 +459,28 @@ public class LoggerService extends Service {
             // new or modified : update logjob
             logjobs.put(ljId, lj);
 
-            mLocationListener ll;
             // this is a new logjob
             if (!gpsLocListeners.containsKey(ljId)) {
                 gpsLocListeners.put(ljId, new mLocationListener(lj, "GPS"));
                 networkLocListeners.put(ljId, new mLocationListener(lj, "NETWORK"));
                 lastLocations.put(ljId, null);
-                lastUpdateRealtime.put(ljId, Long.valueOf(0));
+                lastUpdateRealtime.put(ljId, 0L);
             } else {
                 // Update listener for changed parameters
-                gpsLocListeners.get(ljId).populateFromLogjob(lj);
-                networkLocListeners.get(ljId).populateFromLogjob(lj);
+                mLocationListener gpsLocListener = gpsLocListeners.get(ljId);
+                if (gpsLocListener != null) {
+                    gpsLocListener.populateFromLogjob(lj);
+                }
+                mLocationListener networkLocListener = networkLocListeners.get(ljId);
+                if (networkLocListener != null) {
+                    networkLocListener.populateFromLogjob(lj);
+                }
 
-                mLogjobWorkers.get(ljId).stop();
-                //mLogjobWorkers.get(ljId).populate(lj);
+                LogjobWorker logjobWorker = mLogjobWorkers.get(ljId);
+                if (logjobWorker != null) {
+                    logjobWorker.stop();
+                    //mLogjobWorkers.get(ljId).populate(lj);
+                }
             }
 
             // anyway (new/existing logjob) we instanciate a new one
@@ -520,15 +529,24 @@ public class LoggerService extends Service {
 
     private void stopJob(long jobId) {
         SystemLogger.d(TAG, "stop job " + jobId + " => locManager.removeUpdates()");
-        locManager.removeUpdates(gpsLocListeners.get(jobId));
-        locManager.removeUpdates(networkLocListeners.get(jobId));
+        mLocationListener gpsLocListener = gpsLocListeners.get(jobId);
+        if (gpsLocListener != null) {
+            locManager.removeUpdates(gpsLocListener);
+        }
+        mLocationListener networkLocListener = networkLocListeners.get(jobId);
+        if (networkLocListener != null) {
+            locManager.removeUpdates(networkLocListener);
+        }
 
         // stop any runnables waiting for an interval
         DBLogjob lj = db.getLogjob(jobId);
         SystemLogger.d(TAG, "will stop runnable? job " + jobId);
         if (lj != null) {
             SystemLogger.e(TAG, "YES, stop for job " + jobId);
-            mLogjobWorkers.get(jobId).stop();
+            LogjobWorker logjobWorker = mLogjobWorkers.get(jobId);
+            if (logjobWorker != null) {
+                logjobWorker.stop();
+            }
         }
     }
 
@@ -541,19 +559,20 @@ public class LoggerService extends Service {
         // here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
         SystemLogger.d(TAG, "requestLocationUpdates job " + ljId);
-        // SystemLogger.d(TAG, (new Date()) + " logjobs keys: " + logjobs.keySet());
-        int minTimeMillis = lj.getMinTime() * 1000;
-        int minDistance = lj.getMinDistance();
-        boolean keepGpsOn = lj.keepGpsOnBetweenFixes();
         mLocationListener gpsLocListener = gpsLocListeners.get(ljId);
         mLocationListener networkLocListener = networkLocListeners.get(ljId);
+        LogjobWorker logjobWorker = mLogjobWorkers.get(ljId);
+        if (lj == null || gpsLocListener == null || networkLocListener == null || logjobWorker == null) {
+            SystemLogger.d(TAG, "requestLocationUpdates ERROR for job " + ljId + ". Unexpected null value.");
+            return false;
+        }
         boolean hasLocationUpdates = false;
         if (canAccessLocation()) {
             // update last acquisition start time only if we know
             // we are not in an "accuracy improvement" loop
             // in other words: if we start a timeout
             if (firstRequestAfterAccepted) {
-                mLogjobWorkers.get(ljId).updateLastAcquisitionStart();
+                logjobWorker.updateLastAcquisitionStart();
             }
             if (useNet) {
                 // normal or significant motion based sampling
@@ -576,7 +595,7 @@ public class LoggerService extends Service {
                 // start timeout only if we're not in an "accuracy improvement" loop
                 if (startTimeout) {
                     if (DEBUG) { SystemLogger.d(TAG, "requestLocationUpdates startResultTimeout()"); }
-                    mLogjobWorkers.get(ljId).startResultTimeout();
+                    logjobWorker.startResultTimeout();
                 }
             } else {
                 // no location provider available
@@ -618,10 +637,8 @@ public class LoggerService extends Service {
         }
         thread = null;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (connectionMonitor != null) {
-                connectionMonitor.disable(getApplicationContext());
-            }
+        if (connectionMonitor != null) {
+            connectionMonitor.disable(getApplicationContext());
         }
 
         if (powerSaverChangeReceiver != null) {
@@ -644,22 +661,6 @@ public class LoggerService extends Service {
      */
     public static boolean isRunning() {
         return isRunning;
-    }
-
-    /**
-     * Return realtime of last update in milliseconds
-     *
-     * @return Time or zero if not set
-     */
-    public static long lastUpdateRealtime(long ljId) {
-        return lastUpdateRealtime.get(ljId);
-    }
-
-    /**
-     * Reset realtime of last update
-     */
-    public static void resetUpdateRealtime(long ljId) {
-        lastUpdateRealtime.put(ljId, Long.valueOf(0));
     }
 
     /**
@@ -793,9 +794,12 @@ public class LoggerService extends Service {
 
     private double getBatteryLevelOnce() {
         Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        if (batteryIntent == null) {
+            return 0.0;
+        }
         int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        if(level == -1 || scale == -1) {
+        if (level == -1 || scale == -1) {
             return 0.0;
         }
 
@@ -812,7 +816,6 @@ public class LoggerService extends Service {
         private DBLogjob logjob;
         private String type;
         private long logjobId;
-        private long minTimeTolerance;
         private long maxTimeMillis;
         private long minTimeMillis;
         private boolean keepGpsOn;
@@ -833,8 +836,8 @@ public class LoggerService extends Service {
             this.keepGpsOn = logjob.keepGpsOnBetweenFixes();
             this.useSignificantMotion = logjob.useSignificantMotion();
             // max time tolerance is half min time, but not more that 5 min
-            this.minTimeMillis = logjob.getMinTime() * 1000;
-            minTimeTolerance = Math.min(minTimeMillis / 2, 5 * 60 * 1000);
+            this.minTimeMillis = logjob.getMinTime() * 1000L;
+            long minTimeTolerance = Math.min(minTimeMillis / 2, 5 * 60 * 1000);
             maxTimeMillis = minTimeMillis + minTimeTolerance;
         }
 
