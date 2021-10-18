@@ -43,6 +43,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
+
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -842,14 +844,17 @@ public class LoggerService extends Service {
         }
 
         @Override
-        public void onLocationChanged(Location location) {
+        public void onLocationChanged(@NonNull Location location) {
             CorrectingLocation loc = new CorrectingLocation(location);
             if (DEBUG) {
                 SystemLogger.d(TAG, "location changed [" + type + "]: " + logjobId + "/" + logjob.getTitle() + ", bat : " + battery);
             }
 
             // always pass to the worker (sig motion or not)
-            mLogjobWorkers.get(logjobId).handleLocationChange(loc);
+            LogjobWorker logjobWorker = mLogjobWorkers.get(logjobId);
+            if (logjobWorker != null) {
+                logjobWorker.handleLocationChange(loc);
+            }
         }
 
         /**
@@ -861,7 +866,11 @@ public class LoggerService extends Service {
             // if we keep gps on, we take care of the timing between points
             if (keepGpsOn) {
                 long elapsedMillisSinceLastUpdate;
-                elapsedMillisSinceLastUpdate = (loc.getElapsedRealtimeNanos() / 1000000) - lastUpdateRealtime.get(logjobId);
+                Long ljLastUpdateRealtime = lastUpdateRealtime.get(logjobId);
+                if (ljLastUpdateRealtime == null) {
+                    ljLastUpdateRealtime = 0L;
+                }
+                elapsedMillisSinceLastUpdate = (loc.getElapsedRealtimeNanos() / 1000000) - ljLastUpdateRealtime;
 
                 if (elapsedMillisSinceLastUpdate < minTimeMillis) {
                     if (DEBUG) { SystemLogger.d(TAG,"skip because " + elapsedMillisSinceLastUpdate + " < "+ minTimeMillis); }
@@ -879,13 +888,22 @@ public class LoggerService extends Service {
                 return true;
             }
             // use network provider only if recent gps data is missing
-            if (loc.getProvider().equals(LocationManager.NETWORK_PROVIDER) && lastLocations.get(logjobId) != null) {
-                // we received update from gps provider not later than after maxTime period
-                long elapsedMillis = SystemClock.elapsedRealtime() - lastUpdateRealtime.get(logjobId);
-                if (lastLocations.get(logjobId).getProvider().equals(LocationManager.GPS_PROVIDER) && elapsedMillis < maxTimeMillis) {
-                    // skip network provider
-                    if (DEBUG) { SystemLogger.d(TAG, "[location network provider skipped]"); }
-                    return true;
+            if (loc.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
+                CorrectingLocation lastLocation = lastLocations.get(logjobId);
+                if (lastLocation != null) {
+                    // we received update from gps provider not later than after maxTime period
+                    Long ljLastUpdateRealtime = lastUpdateRealtime.get(logjobId);
+                    if (ljLastUpdateRealtime == null) {
+                        ljLastUpdateRealtime = 0L;
+                    }
+                    long elapsedMillis = SystemClock.elapsedRealtime() - ljLastUpdateRealtime;
+                    if (lastLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && elapsedMillis < maxTimeMillis) {
+                        // skip network provider
+                        if (DEBUG) {
+                            SystemLogger.d(TAG, "[location network provider skipped]");
+                        }
+                        return true;
+                    }
                 }
             }
             return false;
@@ -896,7 +914,7 @@ public class LoggerService extends Service {
          * @param provider Provider
          */
         @Override
-        public void onProviderDisabled(String provider) {
+        public void onProviderDisabled(@NonNull String provider) {
             if (DEBUG) { SystemLogger.d(TAG, "location provider " + provider + " disabled"); }
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
                 sendBroadcast(BROADCAST_LOCATION_GPS_DISABLED);
@@ -910,7 +928,7 @@ public class LoggerService extends Service {
          * @param provider Provider
          */
         @Override
-        public void onProviderEnabled(String provider) {
+        public void onProviderEnabled(@NonNull String provider) {
             if (DEBUG) { SystemLogger.d(TAG, "location provider " + provider + " enabled"); }
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
                 sendBroadcast(BROADCAST_LOCATION_GPS_ENABLED);
@@ -970,7 +988,7 @@ public class LoggerService extends Service {
         }
 
         @Override
-        public void onAvailable(Network network) {
+        public void onAvailable(@NonNull Network network) {
             if (DEBUG) { SystemLogger.d(TAG, "Network is available again: launch sync from loggerservice"); }
             try {
                 // just to be sure the connection is effective
@@ -1102,7 +1120,7 @@ public class LoggerService extends Service {
                 // Create and post
                 mTimeoutRunnable = createSampleTimeoutDelayRunnable();
                 SystemLogger.d(TAG, "Waiting " + mLocationTimeout + " seconds for timeout");
-                mTimeoutHandler.postDelayed(mTimeoutRunnable, mLocationTimeout * 1000);
+                mTimeoutHandler.postDelayed(mTimeoutRunnable, mLocationTimeout * 1000L);
             }
         }
 
@@ -1125,7 +1143,7 @@ public class LoggerService extends Service {
 
         protected Runnable createSampleTimeoutDelayRunnable() {
 
-            Runnable runnable = new Runnable() {
+            return new Runnable() {
                 public void run() {
                     SystemLogger.d(TAG, "Location request timeout hit");
 
@@ -1153,13 +1171,12 @@ public class LoggerService extends Service {
 
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
-                        long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000);
+                        long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000L);
                         SystemLogger.d(TAG, "Schedule next sample in " + (timeToWait / 1000) + " seconds [timeout reached]");
                         scheduleSampleAfterInterval(timeToWait);
                     }
                 }
             };
-            return runnable;
         }
 
         public void scheduleSampleAfterInterval(long millisDelay) {
@@ -1174,7 +1191,7 @@ public class LoggerService extends Service {
             i.putExtra(START_TIMEOUT, true);
             i.putExtra(FIRST_REQ_AFTER_ACCEPTED, true);
             int intJobId = (int) mJobId;
-            nextPointIntent = PendingIntent.getService(LoggerService.this, intJobId, i, 0);
+            nextPointIntent = PendingIntent.getService(LoggerService.this, intJobId, i, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.cancel(nextPointIntent);
 
             if (SupportUtil.isDozing(LoggerService.this)){
@@ -1301,20 +1318,17 @@ public class LoggerService extends Service {
                 boolean minAccuracyOk = isMinAccuracyOk(loc);
                 boolean minTimeOk = isMinTimeOk(loc);
                 long timeSinceLastAccepted = (loc.getElapsedRealtimeNanos() / 1000000000) - (mLastUpdateRealtime / 1000);
-                boolean positionAccepted;
                 if (minDistanceOk && minAccuracyOk && minTimeOk) {
                     // Accept, store and sync location
                     lastLocation = loc;
                     acceptAndSyncLocation(mJobId, loc);
-                    positionAccepted = true;
 
                     mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
 
                     // how much time did it take to get current position?
-                    long cTs = System.currentTimeMillis() / 1000;
-                    long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
+                    //long cTs = System.currentTimeMillis() / 1000;
+                    //long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
                 } else {
-                    positionAccepted = false;
                     SystemLogger.d(TAG, "Not enough DISTANCE ("+minDistanceOk+" min "+mLogJob.getMinDistance()+
                             ") or ACCURACY ("+minAccuracyOk+" min "+mLogJob.getMinAccuracy()+
                             ") or TIME ("+minTimeOk+" "+timeSinceLastAccepted+"/"+mLogJob.getMinTime()+"), we skip this location");
@@ -1346,8 +1360,8 @@ public class LoggerService extends Service {
 
     // this worker can be used for significant motion ones (with or without hybrid mode)
     private class LogjobSignificantMotionWorker extends LogjobWorker {
-        private SensorManager mSensorManager;
-        private Sensor mSensor;
+        private final SensorManager mSensorManager;
+        private final Sensor mSensor;
         private boolean mMotionDetected = false;
 
         LogjobSignificantMotionWorker(DBLogjob logjob) {
@@ -1374,7 +1388,7 @@ public class LoggerService extends Service {
 
         protected Runnable createSampleTimeoutDelayRunnable() {
 
-            Runnable runnable = new Runnable() {
+            return new Runnable() {
                 public void run() {
                     SystemLogger.d(TAG, "Location request timeout hit");
 
@@ -1413,7 +1427,6 @@ public class LoggerService extends Service {
                     }
                 }
             };
-            return runnable;
         }
 
         public void scheduleSampleAfterInterval(long millisDelay) {
@@ -1429,7 +1442,7 @@ public class LoggerService extends Service {
             i.putExtra(FIRST_REQ_AFTER_ACCEPTED, true);
             i.putExtra(SCHEDULE_INTERVAL, mIntervalTimeMillis);
             int intJobId = (int) mJobId;
-            nextPointIntent = PendingIntent.getService(LoggerService.this, intJobId, i, 0);
+            nextPointIntent = PendingIntent.getService(LoggerService.this, intJobId, i, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.cancel(nextPointIntent);
 
             if (SupportUtil.isDozing(LoggerService.this)){
