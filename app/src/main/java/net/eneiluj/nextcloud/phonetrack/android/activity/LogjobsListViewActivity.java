@@ -25,6 +25,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -490,7 +494,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onClick(View v) {
                 Intent settingsIntent = new Intent(that, SettingsActivity.class);
-                startActivityForResult(settingsIntent, server_settings);
+                //startActivityForResult(settingsIntent, server_settings);
+                accountSettingsLauncher.launch(settingsIntent);
             }
         });
 
@@ -836,12 +841,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 if (item == itemSettings) {
                     Intent settingsIntent = new Intent(getApplicationContext(), PreferencesActivity.class);
                     startActivityForResult(settingsIntent, server_settings);
-                }
-                else if (item == itemAbout) {
+                } else if (item == itemAbout) {
                     Intent aboutIntent = new Intent(getApplicationContext(), AboutActivity.class);
                     startActivityForResult(aboutIntent, about);
-                }
-                else if (item == itemMap) {
+                } else if (item == itemMap) {
                     List<DBSession> sessions = db.getSessions();
                     List<String> sessionNameList = new ArrayList<>();
                     final List<Long> sessionIdList = new ArrayList<>();
@@ -920,7 +923,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onClick(View v) {
                 Intent settingsIntent = new Intent(that, SettingsActivity.class);
-                startActivityForResult(settingsIntent, server_settings);
+                //startActivityForResult(settingsIntent, server_settings);
+                accountSettingsLauncher.launch(settingsIntent);
             }
         });
 
@@ -1103,18 +1107,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 }
             }
             listView.scrollToPosition(0);
-        } else if (requestCode == server_settings) {
-            // Create new Instance with new URL and credentials
-            db = PhoneTrackSQLiteOpenHelper.getInstance(this);
-            if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
-                this.updateUsernameInDrawer();
-                adapter.removeAll();
-                //synchronize();
-            } else {
-                if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
-                }
-            }
         } else if (requestCode == save_file_cmd) {
             if (data != null) {
                 Uri savedFile = data.getData();
@@ -1123,6 +1115,25 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         }
     }
+
+    private final ActivityResultLauncher<Intent> accountSettingsLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    SystemLogger.e(TAG, "accountSettingsLauncher result OK");
+                    db = PhoneTrackSQLiteOpenHelper.getInstance(LogjobsListViewActivity.this);
+                    if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
+                        LogjobsListViewActivity.this.updateUsernameInDrawer();
+                        adapter.removeAll();
+                        //synchronize();
+                    } else {
+                        if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_sync, getString(PhoneTrackClientUtil.LoginStatus.NO_NETWORK.str)), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            });
 
     private void updateUsernameInDrawer() {
         if (!SessionServerSyncHelper.isNextcloudAccountConfigured(this)) {
