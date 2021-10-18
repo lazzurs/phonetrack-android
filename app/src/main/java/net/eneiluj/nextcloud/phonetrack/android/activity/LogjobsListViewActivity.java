@@ -1141,6 +1141,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         // Check which request we're responding to
         if (requestCode == create_logjob_cmd) {
             // Make sure the request was successful

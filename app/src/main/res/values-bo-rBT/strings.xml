@@ -62,7 +62,7 @@
     <string name="logjob_info_dialog_title">About %s</string>
     <string name="logjob_info_nbsync">%d locations sent</string>
     <string name="logjob_info_nbnotsync">%d locations pending</string>
-    <string name="logjob_info_lastloc">Last location acquired at\n%s</string>
+    <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
     <string name="logjob_info_lastsync">Last successful sync at\n%s</string>
     <string name="logjob_info_lastsync_error">Last synchronization error at\n%s\n\n%s</string>
     <string name="dialog_title_import_pt_url">Import PhoneTrack logging link</string>
