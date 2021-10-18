@@ -1345,14 +1345,13 @@ public class LoggerService extends Service {
     private class LogjobSignificantMotionWorker extends LogjobWorker {
         private SensorManager mSensorManager;
         private Sensor mSensor;
-        private Boolean mMotionDetected;
+        private boolean mMotionDetected = false;
 
         LogjobSignificantMotionWorker(DBLogjob logjob) {
             super(logjob);
 
             mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
-            mMotionDetected = false;
         }
 
         public void stop() {
