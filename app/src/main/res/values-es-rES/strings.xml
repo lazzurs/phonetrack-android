@@ -10,7 +10,7 @@
     <string name="action_create_share">Importar URL de registro PhTrk</string>
     <string name="action_create_custom_share">Importar URL de registro personalizada</string>
     <string name="action_settings">Configuración</string>
-    <string name="action_syslog">Activity logs</string>
+    <string name="action_syslog">Registro de actividad</string>
     <string name="setting_title">Título</string>
     <string name="setting_title_long">Título largo de la tarea (visible solo en la app)</string>
     <string name="mandatory">(obligatorio)</string>
@@ -96,7 +96,7 @@
     <string name="logjob_info_nbsync">%d posiciones enviadas</string>
     <string name="logjob_info_nbnotsync">%d posiciones pendientes</string>
     <string name="logjob_info_last_activation">Última activación hace \n%s en \n%s</string>
-    <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
+    <string name="logjob_info_lastloc">Última ubicación obtenida hace\n%1$s en \n%2$s</string>
     <string name="logjob_info_lastsync">Última sincronización exitosa hace\n%s a las \n%s</string>
     <string name="logjob_info_lastsync_error">Última sincronización de error\n hace %s a las\n%s\n\n%s</string>
     <string name="logjob_info_distance">Distancia total\n%s</string>
@@ -152,7 +152,7 @@
     <string name="display_map_menu_title">Mapa de sesiones de tareas de registro</string>
     <string name="export_gpx_menu_title">Exportar a GPX</string>
     <string name="file_saved_success">Tarea de registro exportada en %s</string>
-    <string name="syslog_saved_success">Activity log exported in %s</string>
+    <string name="syslog_saved_success">Registro de actividades exportado en %s</string>
     <string name="delete_logjob_menu_title">Borrar tarea de registro</string>
     <string name="action_sorting_method">Orden</string>
     <string name="manage_accounts">Administrar cuentas</string>
@@ -201,7 +201,7 @@
     <string name="settings_logging_category">Registro</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Mapa</string>
-    <string name="settings_debug_category">Debugging</string>
+    <string name="settings_debug_category">Depuración</string>
     <string name="settings_osmdroid_label">Importar archivo de teselas de mapa sin conexión de Mapsforge</string>
     <string name="settings_osmdroid_delete_label">Eliminar archivo de teselas de mapa sin conexión de Mapsforge</string>
     <string name="settings_osmdroid_delete_success">Archivo eliminado</string>
@@ -209,10 +209,10 @@
     <string name="osmdroid_file_load_no_space">No queda espacio en el almacenamiento externo</string>
     <string name="osmdroid_file_load_exception">Error al copiar el archivo de mapa</string>
     <string name="settings_no_osmdroid_files_found">No se encontró el archivo de mapa en los datos de la app</string>
-    <string name="settings_save_syslogs">Save activity logs</string>
-    <string name="settings_share_syslogs">Share activity logs</string>
-    <string name="settings_toggle_syslogs">Enable activity logs</string>
-    <string name="settings_syslog_label">Activity logs</string>
+    <string name="settings_save_syslogs">Guardar registros de actividad</string>
+    <string name="settings_share_syslogs">Compartir registros de actividad</string>
+    <string name="settings_toggle_syslogs">Habilitar registros de actividad</string>
+    <string name="settings_syslog_label">Registro de actividad</string>
     <string name="settings_theming_category">Tema</string>
     <string name="settings_group_sync_title">Enviar puntos por conjuntos de al menos</string>
     <string name="settings_group_sync_long">Esperar hasta que hay al menos N puntos que enviar al servidor. Esto usará mucho uso de datos de red, pero los puntos no siempre se enviarán en tiempo real.</string>
@@ -228,8 +228,8 @@
     <string name="location_disabled">Aviso: ubicación desactivada</string>
     <string name="using_network">Usando ubicación basada en red</string>
     <string name="using_gps">Usando ubicación por gps</string>
-    <string name="background_location_permission_title">Background location permission</string>
-    <string name="background_location_permission_message">To allow PhoneTrack to run in the background, an additional permission must be granted. On the next setting screen please select: </string>
+    <string name="background_location_permission_title">Permiso de ubicación en segundo plano</string>
+    <string name="background_location_permission_message">Para permitir que PhoneTrack se ejecute en segundo plano, se debe conceder un permiso adicional. En la siguiente pantalla de configuración por favor seleccione: </string>
     <string name="location_permission_denied">Permiso de ubicación denegado</string>
     <string name="sessions_sync_success">Sesiones sincronizadas</string>
     <string name="pref_autostart_title">Inicio automático</string>

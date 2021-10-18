@@ -10,7 +10,7 @@
     <string name="action_create_share">PhTrk log adresini içeri aktar</string>
     <string name="action_create_custom_share">Import custom logging URL</string>
     <string name="action_settings">Ayarlar</string>
-    <string name="action_syslog">Activity logs</string>
+    <string name="action_syslog">Aktivite kayıtları</string>
     <string name="setting_title">Title</string>
     <string name="setting_title_long">Log job title (only visible in the app)</string>
     <string name="mandatory">(mandatory)</string>
@@ -212,7 +212,7 @@
     <string name="settings_save_syslogs">Save activity logs</string>
     <string name="settings_share_syslogs">Share activity logs</string>
     <string name="settings_toggle_syslogs">Enable activity logs</string>
-    <string name="settings_syslog_label">Activity logs</string>
+    <string name="settings_syslog_label">Aktivite kayıtları</string>
     <string name="settings_theming_category">Theming</string>
     <string name="settings_group_sync_title">Send points by bunch of at least</string>
     <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>

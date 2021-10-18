@@ -10,7 +10,7 @@
     <string name="action_create_share">Импорт URL журнала PhTrk</string>
     <string name="action_create_custom_share">Импорт URL журнала пользователя</string>
     <string name="action_settings">Настройки</string>
-    <string name="action_syslog">Activity logs</string>
+    <string name="action_syslog">Лог активности</string>
     <string name="setting_title">Название</string>
     <string name="setting_title_long">Название журналирования (в приложении)</string>
     <string name="mandatory">(обязательное)</string>
@@ -201,7 +201,7 @@
     <string name="settings_logging_category">Журналирование</string>
     <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Карта</string>
-    <string name="settings_debug_category">Debugging</string>
+    <string name="settings_debug_category">Отладка</string>
     <string name="settings_osmdroid_label">Импорт файла оффлайн карт Mapsforge</string>
     <string name="settings_osmdroid_delete_label">Удалить файл оффлайн карт Mapsforge</string>
     <string name="settings_osmdroid_delete_success">Файл удален</string>
@@ -209,10 +209,10 @@
     <string name="osmdroid_file_load_no_space">На внешнем накопителе нет места</string>
     <string name="osmdroid_file_load_exception">Ошибка при копировании файла карт</string>
     <string name="settings_no_osmdroid_files_found">Не найден файл карты в данных приложения</string>
-    <string name="settings_save_syslogs">Save activity logs</string>
-    <string name="settings_share_syslogs">Share activity logs</string>
-    <string name="settings_toggle_syslogs">Enable activity logs</string>
-    <string name="settings_syslog_label">Activity logs</string>
+    <string name="settings_save_syslogs">Сохранить лог активности</string>
+    <string name="settings_share_syslogs">Поделиться логом активности</string>
+    <string name="settings_toggle_syslogs">Разрешить лог активности</string>
+    <string name="settings_syslog_label">Лог активности</string>
     <string name="settings_theming_category">Оформление</string>
     <string name="settings_group_sync_title">Отправлять несколько точек за раз</string>
     <string name="settings_group_sync_long">Ждать указанное количество точек для отправки на сервер. Это сэкономит большое количество трафика, но точки не будут отображены в режиме реального времени.</string>
@@ -228,7 +228,7 @@
     <string name="location_disabled">Внимание: Геоданные отключены</string>
     <string name="using_network">Использование сетевого местоположения</string>
     <string name="using_gps">Использование gps</string>
-    <string name="background_location_permission_title">Background location permission</string>
+    <string name="background_location_permission_title">Фоновые разрешения локации</string>
     <string name="background_location_permission_message">To allow PhoneTrack to run in the background, an additional permission must be granted. On the next setting screen please select: </string>
     <string name="location_permission_denied">Приложению запрещен доступ к геоданным</string>
     <string name="sessions_sync_success">Сессия синхронизирована</string>
