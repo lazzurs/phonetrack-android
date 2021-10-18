@@ -307,9 +307,8 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                 notifyLoggerService(logjob.getId());
                 //listener.onLogjobUpdated(logjob);
             }
-        }
-        // this is a new logjob
-        else {
+        } else {
+            // this is a new logjob
             DBLogjob newLogjob = new DBLogjob(
                     0, newTitle, newUrl, newToken, newDevicename,
                     newMinTime, newMinDistance, newMinAccuracy, newKeepGpsOn, newUseSignificantMotion,

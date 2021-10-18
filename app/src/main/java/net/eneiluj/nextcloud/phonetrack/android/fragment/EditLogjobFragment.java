@@ -725,8 +725,7 @@ public abstract class EditLogjobFragment extends Fragment {
     protected void showHideValidationButtons() {
         if (isFormValid()) {
             fabOk.show();
-        }
-        else {
+        } else {
             fabOk.hide();
         }
     }

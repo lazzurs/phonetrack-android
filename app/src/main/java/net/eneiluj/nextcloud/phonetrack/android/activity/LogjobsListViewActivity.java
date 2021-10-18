@@ -667,7 +667,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onClick(View view) {
                 Intent createIntent = new Intent(getApplicationContext(), EditMapsLogjobActivity.class);
-                startActivityForResult(createIntent, create_logjob_cmd);
+                //startActivityForResult(createIntent, create_logjob_cmd);
+                createLogjobLauncher.launch(createIntent);
                 fabMenu.close(false);
             }
         });
@@ -675,7 +676,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onClick(View view) {
                 Intent createIntent = new Intent(getApplicationContext(), EditCustomLogjobActivity.class);
-                startActivityForResult(createIntent, create_logjob_cmd);
+                //startActivityForResult(createIntent, create_logjob_cmd);
+                createLogjobLauncher.launch(createIntent);
                 fabMenu.close(false);
             }
         });
@@ -683,7 +685,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onClick(View view) {
                 Intent createIntent = new Intent(getApplicationContext(), EditPhoneTrackLogjobActivity.class);
-                startActivityForResult(createIntent, create_logjob_cmd);
+                //startActivityForResult(createIntent, create_logjob_cmd);
+                createLogjobLauncher.launch(createIntent);
                 fabMenu.close(false);
             }
         });
@@ -1093,21 +1096,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Check which request we're responding to
-        if (requestCode == create_logjob_cmd) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                //not need because of db.synchronisation in createActivity
-
-                Bundle extras = data.getExtras();
-                if (extras != null) {
-                    DBLogjob createdLogjob = (DBLogjob) extras.getSerializable(CREATED_LOGJOB);
-                    if (createdLogjob != null) {
-                        adapter.add(createdLogjob);
-                    }
-                }
-            }
-            listView.scrollToPosition(0);
-        } else if (requestCode == save_file_cmd) {
+        if (requestCode == save_file_cmd) {
             if (data != null) {
                 Uri savedFile = data.getData();
                 SystemLogger.v(TAG, "Save to " + savedFile);
@@ -1116,12 +1105,22 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     }
 
+    private final ActivityResultLauncher<Intent> createLogjobLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            SystemLogger.d(TAG, "createLogjobLauncher result, is " + result.getResultCode() + " == " + RESULT_OK + " ?");
+                            listView.scrollToPosition(0);
+                        }
+                    });
+
     private final ActivityResultLauncher<Intent> accountSettingsLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    SystemLogger.e(TAG, "accountSettingsLauncher result OK");
+                    SystemLogger.d(TAG, "accountSettingsLauncher result OK");
                     db = PhoneTrackSQLiteOpenHelper.getInstance(LogjobsListViewActivity.this);
                     if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
                         LogjobsListViewActivity.this.updateUsernameInDrawer();
