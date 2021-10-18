@@ -25,11 +25,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 
 import com.codebutchery.androidgpx.data.GPXDocument;
@@ -61,7 +61,6 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -122,8 +121,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     public final static int PERMISSION_LOCATION = 1;
     private final static int PERMISSION_FOREGROUND = 2;
     public final static int PERMISSION_BACKGROUND_LOCATION = 3;
-
-    private final static int PERMISSION_FOREGROUND_SERVICE = 1;
 
     private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
@@ -186,7 +183,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private ActionMode mActionMode;
     private PhoneTrackSQLiteOpenHelper db = null;
     private SearchView searchView = null;
-    private ICallback syncCallBack = new ICallback() {
+    private final ICallback syncCallBack = new ICallback() {
         @Override
         public void onFinish() {
             adapter.clearSelection();
@@ -254,8 +251,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         checkAndRequestPermissions();
 
         Map<String, Integer> enabled = db.getEnabledCount();
-        int nbEnabledLogjobs = enabled.containsKey("1") ? enabled.get("1") : 0;
+        Integer enabledCount = enabled.get("1");
+        int nbEnabledLogjobs = enabledCount != null ? enabledCount : 0;
         if (nbEnabledLogjobs > 0) {
+            SystemLogger.d(TAG, "Found enabled jobs => start loggerservice");
             // start loggerservice !
             Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -290,7 +289,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     @SuppressLint("BatteryLife")
-    private final void checkAndRequestPermissions() {
+    private void checkAndRequestPermissions() {
         // Android 10
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -381,21 +380,19 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
 
         // battery optimization
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                Intent i = new Intent();
-                String packageName = getPackageName();
-                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        try {
+            Intent i = new Intent();
+            String packageName = getPackageName();
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
-                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                    i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    i.setData(Uri.parse("package:" + packageName));
-                    SystemLogger.d(TAG,"request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
-                }
-                startActivity(i);
-            } catch (Exception e) {
-                SystemLogger.d(TAG,"Unable to request ignoring battery optimizations: " + e);
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                i.setData(Uri.parse("package:" + packageName));
+                SystemLogger.d(TAG,"request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
             }
+            startActivity(i);
+        } catch (Exception e) {
+            SystemLogger.d(TAG,"Unable to request ignoring battery optimizations: " + e);
         }
     }
 
@@ -470,7 +467,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(SAVED_STATE_NAVIGATION_SELECTION, navigationSelection);
         outState.putString(SAVED_STATE_NAVIGATION_ADAPTER_SLECTION, adapterCategories.getSelectedItem());
@@ -479,7 +476,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     private void setupToolBar() {
         setSupportActionBar(toolbar);
-        int colors[] = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
+        int[] colors = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
         GradientDrawable gradientDrawable = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT, colors);
         drawerLayout.findViewById(R.id.drawer_top_layout).setBackground(gradientDrawable);
@@ -551,12 +548,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private void updateToolbars(boolean disableSearch) {
         homeToolbar.setVisibility(disableSearch ? VISIBLE : GONE);
         toolbar.setVisibility(disableSearch ? GONE : VISIBLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            appBar.setStateListAnimator(AnimatorInflater.loadStateListAnimator(appBar.getContext(),
-                    disableSearch ? R.animator.appbar_elevation_off : R.animator.appbar_elevation_on));
-        } else {
-            ViewCompat.setElevation(appBar, disableSearch ? 0 : getResources().getDimension(R.dimen.design_appbar_elevation));
-        }
+        appBar.setStateListAnimator(
+                AnimatorInflater.loadStateListAnimator(appBar.getContext(),
+                disableSearch ? R.animator.appbar_elevation_off : R.animator.appbar_elevation_on)
+        );
         if (disableSearch) {
             searchView.setQuery(null, true);
         }
@@ -794,17 +789,18 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             for (DBLogjob lj : ljs) {
                 if (lj.getToken().isEmpty() && lj.getDeviceName().isEmpty()) {
                     nbCU++;
-                }
-                else {
+                } else {
                     nbPT++;
                 }
             }
 
-            Map<String, Integer> favorites = db.getEnabledCount();
-            int numFavorites = favorites.containsKey("1") ? favorites.get("1") : 0;
-            int numNonFavorites = favorites.containsKey("0") ? favorites.get("0") : 0;
-            itemEnabled.count = numFavorites;
-            itemAll.count = numFavorites + numNonFavorites;
+            Map<String, Integer> enabled = db.getEnabledCount();
+            Integer enabledCount = enabled.get("1");
+            Integer disabledCount = enabled.get("0");
+            int numEnabled = enabledCount != null ? enabledCount : 0;
+            int numDisabled = disabledCount != null ? disabledCount : 0;
+            itemEnabled.count = numEnabled;
+            itemAll.count = numEnabled + numDisabled;
             itemPhonetrack.count = nbPT;
             itemCustom.count = nbCU;
 
@@ -813,55 +809,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             items.add(itemEnabled);
             items.add(itemPhonetrack);
             items.add(itemCustom);
-            NavigationAdapter.NavigationItem lastPrimaryCategory = null, lastSecondaryCategory = null;
-            /*for (NavigationAdapter.NavigationItem item : categories) {
-                int slashIndex = item.label.indexOf('/');
-                String currentPrimaryCategory = slashIndex < 0 ? item.label : item.label.substring(0, slashIndex);
-                String currentSecondaryCategory = null;
-                boolean isCategoryOpen = currentPrimaryCategory.equals(navigationOpen);
-
-                if (isCategoryOpen && !currentPrimaryCategory.equals(item.label)) {
-                    String currentCategorySuffix = item.label.substring(navigationOpen.length() + 1);
-                    int subSlashIndex = currentCategorySuffix.indexOf('/');
-                    currentSecondaryCategory = subSlashIndex < 0 ? currentCategorySuffix : currentCategorySuffix.substring(0, subSlashIndex);
-                }
-
-                boolean belongsToLastPrimaryCategory = lastPrimaryCategory != null && currentPrimaryCategory.equals(lastPrimaryCategory.label);
-                boolean belongsToLastSecondaryCategory = belongsToLastPrimaryCategory && lastSecondaryCategory != null && lastSecondaryCategory.label.equals(currentPrimaryCategory + "/" + currentSecondaryCategory);
-
-                if (isCategoryOpen && !belongsToLastPrimaryCategory && currentSecondaryCategory != null) {
-                    lastPrimaryCategory = new NavigationAdapter.NavigationItem("category:" + currentPrimaryCategory, currentPrimaryCategory, 0, NavigationAdapter.ICON_MULTIPLE_OPEN);
-                    items.add(lastPrimaryCategory);
-                    belongsToLastPrimaryCategory = true;
-                }
-
-                if (belongsToLastPrimaryCategory && belongsToLastSecondaryCategory) {
-                    lastSecondaryCategory.count += item.count;
-                    lastSecondaryCategory.icon = NavigationAdapter.ICON_SUB_MULTIPLE;
-                } else if (belongsToLastPrimaryCategory) {
-                    if (isCategoryOpen) {
-                        item.label = currentPrimaryCategory + "/" + currentSecondaryCategory;
-                        item.id = "category:" + item.label;
-                        item.icon = NavigationAdapter.ICON_SUB_FOLDER;
-                        items.add(item);
-                        lastSecondaryCategory = item;
-                    } else {
-                        lastPrimaryCategory.count += item.count;
-                        lastPrimaryCategory.icon = NavigationAdapter.ICON_MULTIPLE;
-                        lastSecondaryCategory = null;
-                    }
-                } else {
-                    if (isCategoryOpen) {
-                        item.icon = NavigationAdapter.ICON_MULTIPLE_OPEN;
-                    } else {
-                        item.label = currentPrimaryCategory;
-                        item.id = "category:" + item.label;
-                    }
-                    items.add(item);
-                    lastPrimaryCategory = item;
-                    lastSecondaryCategory = null;
-                }
-            }*/
             return items;
         }
 
@@ -912,8 +859,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                             Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
                             mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
                             startActivityForResult(mapIntent, map);
-                        }
-                        else {
+                        } else {
                             CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
                             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             long lastSelectedSessionId = preferences.getLong(SettingsActivity.SETTINGS_LAST_SELECTED_SESSION_ID, -1);
@@ -1015,7 +961,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         listView.setLayoutManager(new LinearLayoutManager(this));
         ItemTouchHelper touchHelper = new ItemTouchHelper(new SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
@@ -1027,7 +973,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
              * @return 0 if section, otherwise super()
              */
             @Override
-            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 if (viewHolder instanceof ItemAdapter.SectionViewHolder) return 0;
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
@@ -1039,7 +985,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
              * @param direction  int
              */
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 switch(direction) {
                     case ItemTouchHelper.LEFT: {
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
@@ -1066,7 +1012,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
 
             @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 ItemAdapter.LogjobViewHolder logjobViewHolder = (ItemAdapter.LogjobViewHolder) viewHolder;
                 // show swipe icon on the side
                 logjobViewHolder.showSwipe(dX>0);
@@ -1075,7 +1021,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
 
             @Override
-            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 getDefaultUIUtil().clearView(((ItemAdapter.LogjobViewHolder) viewHolder).logjobSwipeable);
             }
         });
@@ -1089,9 +1035,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         String subtitle;
         if (navigationSelection.favorite != null && navigationSelection.favorite) {
             subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_enabled);
-        } else if (navigationSelection.category == CATEGORY_PHONETRACK) {
+        } else if (CATEGORY_PHONETRACK.equals(navigationSelection.category)) {
             subtitle = getString(R.string.app_name);
-        } else if (navigationSelection.category == CATEGORY_CUSTOM) {
+        } else if (CATEGORY_CUSTOM.equals(navigationSelection.category)) {
             subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_custom);
         } else {
             subtitle = getString(R.string.app_name) + " - " + getString(R.string.label_all_logjobs);
@@ -1148,8 +1094,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             if (resultCode == RESULT_OK) {
                 //not need because of db.synchronisation in createActivity
 
-                DBLogjob createdLogjob = (DBLogjob) data.getExtras().getSerializable(CREATED_LOGJOB);
-                adapter.add(createdLogjob);
+                Bundle extras = data.getExtras();
+                if (extras != null) {
+                    DBLogjob createdLogjob = (DBLogjob) extras.getSerializable(CREATED_LOGJOB);
+                    if (createdLogjob != null) {
+                        adapter.add(createdLogjob);
+                    }
+                }
             }
             listView.scrollToPosition(0);
         } else if (requestCode == server_settings) {
@@ -1191,12 +1142,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     accountUser = "error";
                 }
             } else {
-                accountServerUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
-                        .replaceAll("/+$", "")
-                        .replaceAll("^https?://", "");
+                accountServerUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+                if (accountServerUrl != null) {
+                        accountServerUrl = accountServerUrl
+                                .replaceAll("/+$", "")
+                                .replaceAll("^https?://", "");
+                }
                 accountUser = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
             }
-            account.setText(accountUser + "@" + accountServerUrl);
+            String accountString = accountUser + "@" + accountServerUrl;
+            account.setText(accountString);
             updateAvatarInDrawer(true);
         }
     }
@@ -1222,7 +1177,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         } else {
             avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
-            accountButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_account_circle_grey_24dp));
+            accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_account_circle_grey_24dp));
         }
     }
 
@@ -1236,7 +1191,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 v.setSelected(true);
             }
             int size = adapter.getSelected().size();
-            mActionMode.setTitle(String.valueOf(getResources().getQuantityString(R.plurals.ab_selected, size, size)));
+            mActionMode.setTitle(getResources().getQuantityString(R.plurals.ab_selected, size, size));
             int checkedItemCount = adapter.getSelected().size();
             boolean hasCheckedItems = checkedItemCount > 0;
 
@@ -1393,12 +1348,21 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
             myOutWriter.append(content);
             myOutWriter.close();
-            fOut.flush();
-            fOut.close();
-            showToast(getString(R.string.file_saved_success, fileUri.getLastPathSegment().replace(
-                    Environment.getExternalStorageDirectory().toString(),
-                    ""))
-            );
+            if (fOut != null) {
+                fOut.flush();
+                fOut.close();
+            }
+            String lastPathSegment = fileUri.getLastPathSegment();
+            if (lastPathSegment != null) {
+                showToast(
+                    getString(
+                        R.string.file_saved_success, lastPathSegment.replace(
+                            Environment.getExternalStorageDirectory().toString(),
+                            ""
+                        )
+                    )
+                );
+            }
         } catch (IOException e) {
             SystemLogger.e(TAG, "File write failed: " + e.toString());
             showToast(e.toString());
@@ -1449,7 +1413,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         long tsLastSync = db.getLastSyncTimestamp(ljId);
         long diffLastSync = tsNow - tsLastSync;
         SyncError lastSyncErr = db.getLastSyncError(ljId);
-        long diffLastSyncErr = tsNow - lastSyncErr.getTimestamp();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
@@ -1481,9 +1444,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         String nbsyncText = c.getString(R.string.logjob_info_nbsync, logjob.getNbSync());
         String nbnotsyncText = c.getString(R.string.logjob_info_nbnotsync, db.getLogjobLocationNotSyncedCount(logjob.getId()));
-        String lastLocText = "";
-        String lastSyncText = "";
-        String lastSyncErrText = "";
+        String lastLocText;
+        String lastSyncText;
+        String lastSyncErrText;
 
 
         TextView tv = iView.findViewById(R.id.infoNbsyncText);
@@ -1774,7 +1737,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     updateCurrentInfoDialog();
                     break;
                 case (WebTrackService.BROADCAST_SYNC_FAILED): {
-                    long ljId3 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
+                    //long ljId3 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
                     showToast(getString(R.string.uploading_failed) + "\n" + errorMessage, Toast.LENGTH_LONG);
                     updateCurrentInfoDialog();
@@ -1799,7 +1762,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     im1.setImageResource(R.drawable.ic_pt_error);
 
                     Toast toast1 = new Toast(getApplicationContext());
-                    toast1.setGravity(Gravity.TOP | Gravity.LEFT, 80, 18);
+                    toast1.setGravity(Gravity.TOP | Gravity.END, 65, 16);
                     toast1.setDuration(Toast.LENGTH_SHORT);
                     toast1.setView(layout1);
                     toast1.show();
@@ -1896,7 +1859,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     };
 
-    private ICallback createSessionCallBack = new ICallback() {
+    private final ICallback createSessionCallBack = new ICallback() {
         @Override
         public void onFinish() {
         }
