@@ -131,7 +131,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     public final static String PARAM_SMSINFO_FROM = "net.eneiluj.nextcloud.phonetrack.smsinfoFrom";
     public final static String PARAM_SMSINFO_CONTENT = "net.eneiluj.nextcloud.phonetrack.smsinfoContent";
 
-    public final static String CREATED_LOGJOB = "net.eneiluj.nextcloud.phonetrack.created_logjob";
     public final static String CREDENTIALS_CHANGED = "net.eneiluj.nextcloud.phonetrack.CREDENTIALS_CHANGED";
     public static final String ADAPTER_KEY_ALL = "all";
     public static final String ADAPTER_KEY_ENABLED = "enabled";
@@ -147,11 +146,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private static final String SAVED_STATE_NAVIGATION_ADAPTER_SLECTION = "navigationAdapterSelection";
     private static final String SAVED_STATE_NAVIGATION_OPEN = "navigationOpen";
 
-    private final static int create_logjob_cmd = 0;
     private final static int show_single_logjob_cmd = 1;
-    private final static int server_settings = 2;
-    private final static int about = 3;
-    private final static int map = 4;
     private final static int save_file_cmd = 5;
     private static String contentToExport = "";
 
@@ -210,11 +205,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // First Run Wizard
-        /*if (!SessionServerSyncHelper.isConfigured(this)) {
-            Intent settingsIntent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(settingsIntent, server_settings);
-        }*/
         fixProviders();
         ssoSnackbar = null;
 
@@ -494,7 +484,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onClick(View v) {
                 Intent settingsIntent = new Intent(that, SettingsActivity.class);
-                //startActivityForResult(settingsIntent, server_settings);
                 accountSettingsLauncher.launch(settingsIntent);
             }
         });
@@ -843,10 +832,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             public void onItemClick(NavigationAdapter.NavigationItem item) {
                 if (item == itemSettings) {
                     Intent settingsIntent = new Intent(getApplicationContext(), PreferencesActivity.class);
-                    startActivityForResult(settingsIntent, server_settings);
+                    startActivity(settingsIntent);
                 } else if (item == itemAbout) {
                     Intent aboutIntent = new Intent(getApplicationContext(), AboutActivity.class);
-                    startActivityForResult(aboutIntent, about);
+                    startActivity(aboutIntent);
                 } else if (item == itemMap) {
                     List<DBSession> sessions = db.getSessions();
                     List<String> sessionNameList = new ArrayList<>();
@@ -864,7 +853,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                             long sid = sessionIdList.get(0);
                             Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
                             mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
-                            startActivityForResult(mapIntent, map);
+                            startActivity(mapIntent);
                         } else {
                             CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
                             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -878,7 +867,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                     long sid = sessionIdList.get(which);
                                     Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
                                     mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
-                                    startActivityForResult(mapIntent, map);
+                                    startActivity(mapIntent);
                                     dialog.dismiss();
 
                                     SharedPreferences.Editor editor = preferences.edit();
@@ -896,7 +885,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                         long sid = sessionIdList.get(w);
                                         Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
                                         mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
-                                        startActivityForResult(mapIntent, map);
+                                        startActivity(mapIntent);
                                         dialog.dismiss();
                                     }
                                 }
@@ -926,7 +915,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onClick(View v) {
                 Intent settingsIntent = new Intent(that, SettingsActivity.class);
-                //startActivityForResult(settingsIntent, server_settings);
                 accountSettingsLauncher.launch(settingsIntent);
             }
         });
@@ -1254,7 +1242,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     public void onLogjobMapButtonClick(long sessionId) {
         Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
         mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sessionId);
-        startActivityForResult(mapIntent, map);
+        startActivity(mapIntent);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = preferences.edit();
