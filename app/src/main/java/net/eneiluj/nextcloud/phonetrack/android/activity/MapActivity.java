@@ -30,7 +30,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
@@ -51,13 +50,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
@@ -204,6 +203,7 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "[ACT RESULT]");
         // Check which request we're responding to
         if (requestCode == import_file_cmd && resultCode == Activity.RESULT_OK) {
@@ -223,6 +223,13 @@ public class MapActivity extends AppCompatActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         long sessionid = getIntent().getLongExtra(PARAM_SESSIONID, 0);
+        if (sessionid == 0) {
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, getString(R.string.session_not_found), Toast.LENGTH_LONG);
+            toast.show();
+            finish();
+            return;
+        }
         session = db.getSession(sessionid);
 
         toggleCircle = ContextCompat.getDrawable(ctx, R.drawable.ic_plain_circle_grey_24dp)

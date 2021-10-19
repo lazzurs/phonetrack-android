@@ -61,6 +61,7 @@
     <string name="menu_select_session">Use PhoneTrack session</string>
     <string name="menu_from_url">Use PhoneTrack logging link</string>
     <string name="menu_share">Share</string>
+    <string name="session_not_found">Session not found</string>
     <string name="fab_create_session">Create a session</string>
     <string name="fab_create_phonetrack">New PhoneTrack log job</string>
     <string name="fab_create_custom">New Custom log job</string>
