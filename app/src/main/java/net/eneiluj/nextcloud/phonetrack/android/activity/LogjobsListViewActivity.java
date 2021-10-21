@@ -1160,22 +1160,31 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             String avatarB64 = preferences.getString(getString(R.string.pref_key_avatar), "");
             if (!"".equals(avatarB64)) {
                 try {
+                    SystemLogger.d(TAG, "[Avatar] Try to set avatar from stored data");
                     byte[] decodedString = Base64.decode(avatarB64, Base64.DEFAULT);
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     Bitmap rounded = ThemeUtils.getRoundedBitmap(decodedByte, decodedByte.getWidth() / 2);
                     avatarView.setImageBitmap(rounded);
                     accountButton.setImageBitmap(rounded);
                 } catch (Exception e) {
+                    SystemLogger.d(TAG, "[Avatar] Avatar can't be set: " + e.toString());
                     avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
                     accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+                    accountButton.setColorFilter(Color.GRAY);
+                    SystemLogger.d(TAG, "[Avatar] Default icons have been set");
                 }
             } else {
+                SystemLogger.d(TAG, "[Avatar] Empty avatar");
                 avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
                 accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+                accountButton.setColorFilter(Color.GRAY);
+                SystemLogger.d(TAG, "[Avatar] Default icons have been set");
             }
         } else {
+            SystemLogger.d(TAG, "[Avatar] No account configured");
             avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
             accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_account_circle_grey_24dp));
+            SystemLogger.d(TAG, "[Avatar] Default icons have been set");
         }
     }
 
