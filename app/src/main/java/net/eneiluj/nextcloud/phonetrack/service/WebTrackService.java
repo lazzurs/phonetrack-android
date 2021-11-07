@@ -37,15 +37,12 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.WebTrackHelper;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
-import net.eneiluj.nextcloud.phonetrack.util.ServerResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import at.bitfire.cert4android.CustomCertManager;
-
-import static android.app.PendingIntent.FLAG_ONE_SHOT;
 
 /**
  * Service synchronizing local database positions with remote server.
@@ -128,7 +125,7 @@ public class WebTrackService extends IntentService {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        long groupSync = Long.valueOf(prefs.getString(getString(R.string.pref_key_group_sync), "0"));
+        long groupSync = Long.parseLong(prefs.getString(getString(R.string.pref_key_group_sync), "0"));
 
         for (DBLogjob logjob : logjobs) {
             long ljId = logjob.getId();
@@ -273,7 +270,7 @@ public class WebTrackService extends IntentService {
             if (LoggerService.DEBUG) { Log.d(TAG, "[websync set alarm]"); }
             AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent syncIntent = new Intent(getApplicationContext(), WebTrackService.class);
-            pi = PendingIntent.getService(this, 0, syncIntent, FLAG_ONE_SHOT);
+            pi = PendingIntent.getService(this, 0, syncIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
             if (am != null) {
                 am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + FIVE_MINUTES, pi);
             }
