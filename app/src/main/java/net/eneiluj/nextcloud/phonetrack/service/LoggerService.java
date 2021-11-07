@@ -775,7 +775,7 @@ public class LoggerService extends Service {
         sendBroadcast(intent);
     }
 
-    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
+    private final BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context ctxt, Intent intent) {
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
@@ -816,12 +816,11 @@ public class LoggerService extends Service {
     private class mLocationListener implements LocationListener {
 
         private DBLogjob logjob;
-        private String type;
+        private final String type;
         private long logjobId;
         private long maxTimeMillis;
         private long minTimeMillis;
         private boolean keepGpsOn;
-        private boolean useSignificantMotion;
 
         public mLocationListener(DBLogjob logjob, String type) {
             this.type = type;
@@ -836,7 +835,6 @@ public class LoggerService extends Service {
             this.logjob = logjob;
             this.logjobId = logjob.getId();
             this.keepGpsOn = logjob.keepGpsOnBetweenFixes();
-            this.useSignificantMotion = logjob.useSignificantMotion();
             // max time tolerance is half min time, but not more that 5 min
             this.minTimeMillis = logjob.getMinTime() * 1000L;
             long minTimeTolerance = Math.min(minTimeMillis / 2, 5 * 60 * 1000);

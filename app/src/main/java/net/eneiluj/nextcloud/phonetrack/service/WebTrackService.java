@@ -35,6 +35,7 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.WebTrackHelper;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
 
@@ -125,7 +126,11 @@ public class WebTrackService extends IntentService {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        long groupSync = Long.parseLong(prefs.getString(getString(R.string.pref_key_group_sync), "0"));
+        long groupSync = 0;
+        String groupsyncString = prefs.getString(getString(R.string.pref_key_group_sync), "0");
+        if (groupsyncString != null) {
+            groupSync = Long.parseLong(groupsyncString);
+        }
 
         for (DBLogjob logjob : logjobs) {
             long ljId = logjob.getId();
@@ -134,7 +139,7 @@ public class WebTrackService extends IntentService {
                 if (logjob.getDeviceName().isEmpty() && logjob.getToken().isEmpty() && logjob.getUrl().isEmpty()) {
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
                     if (locations.size() > 0 && locations.size() >= groupSync) {
-                        if (!db.getPhonetrackServerSyncHelper().isConfigured(getApplicationContext())) {
+                        if (!SessionServerSyncHelper.isConfigured(getApplicationContext())) {
                             throw new Exception(getString(R.string.error_no_account_maps));
                         }
                         PhoneTrackClient client = createPhoneTrackClient();
@@ -258,6 +263,9 @@ public class WebTrackService extends IntentService {
                 anyError = true;
                 handleError(e, ljId);
             } catch (JSONException e2) {
+                if (LoggerService.DEBUG) {
+                    Log.d(TAG, "[websync JSON exception: " + e2 + "]");
+                }
                 anyError = true;
                 handleError(e2, ljId);
             } catch (Exception e3) {
@@ -381,11 +389,15 @@ public class WebTrackService extends IntentService {
                 SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(getApplicationContext());
                 NextcloudAPI nextcloudAPI = new NextcloudAPI(getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
                 return new PhoneTrackClient(url, username, password, nextcloudAPI);
-            }
-            catch (NextcloudFilesAppAccountNotFoundException e) {
+            } catch (NextcloudFilesAppAccountNotFoundException e) {
+                if (LoggerService.DEBUG) {
+                    Log.d(TAG, "[NextcloudFilesAppAccountNotFoundException: " + e + "]");
+                }
                 return null;
-            }
-            catch (NoCurrentAccountSelectedException e) {
+            } catch (NoCurrentAccountSelectedException e) {
+                if (LoggerService.DEBUG) {
+                    Log.d(TAG, "[NoCurrentAccountSelectedException: " + e + "]");
+                }
                 return null;
             }
         }
@@ -397,7 +409,7 @@ public class WebTrackService extends IntentService {
         }
     }
 
-    private NextcloudAPI.ApiConnectedListener apiCallback = new NextcloudAPI.ApiConnectedListener() {
+    private final NextcloudAPI.ApiConnectedListener apiCallback = new NextcloudAPI.ApiConnectedListener() {
         @Override
         public void onConnected() {
             // ignore this one..

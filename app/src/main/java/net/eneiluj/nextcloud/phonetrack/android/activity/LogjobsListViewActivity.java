@@ -65,6 +65,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -146,8 +147,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private static final String SAVED_STATE_NAVIGATION_ADAPTER_SLECTION = "navigationAdapterSelection";
     private static final String SAVED_STATE_NAVIGATION_OPEN = "navigationOpen";
 
-    private final static int show_single_logjob_cmd = 1;
-    private final static int save_file_cmd = 5;
     private static String contentToExport = "";
 
 
@@ -855,7 +854,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                             mapIntent.putExtra(MapActivity.PARAM_SESSIONID, sid);
                             startActivity(mapIntent);
                         } else {
-                            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[sessionNameList.size()]);
+                            CharSequence[] entcs = sessionNameList.toArray(new CharSequence[0]);
                             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             long lastSelectedSessionId = preferences.getLong(SettingsActivity.SETTINGS_LAST_SELECTED_SESSION_ID, -1);
 
@@ -983,13 +982,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 switch(direction) {
                     case ItemTouchHelper.LEFT: {
-                        final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
+                        // warning, this could be viewHolder.getAbsoluteAdapterPosition() if we were using ConcatAdapter
+                        final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getBindingAdapterPosition());
                         DBLogjob upToDateLogjob = db.getLogjob(dbLogjob.getId());
                         if (upToDateLogjob.isEnabled()) {
                             showToast(getString(R.string.logjob_delete_active_impossible));
-                            adapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                        }
-                        else {
+                            adapter.notifyItemChanged(viewHolder.getBindingAdapterPosition());
+                        } else {
                             cancelableLogjobDeletion(dbLogjob);
                         }
                         break;
@@ -997,7 +996,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     case ItemTouchHelper.RIGHT: {
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                         boolean resetOnToggle = preferences.getBoolean(getString(R.string.pref_key_reset_stats), false);
-                        final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getAdapterPosition());
+                        final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getBindingAdapterPosition());
                         db.toggleEnabled(dbLogjob, syncCallBack, resetOnToggle);
                         refreshLists();
                         notifyLoggerService(dbLogjob.getId());
@@ -1057,14 +1056,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         new LoadCategoryListTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public ItemAdapter getItemAdapter() {
-        return adapter;
-    }
-
-    public SwipeRefreshLayout getSwipeRefreshLayout() {
-        return swipeRefreshLayout;
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -1084,14 +1075,23 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Check which request we're responding to
-        if (requestCode == save_file_cmd) {
-            if (data != null) {
-                Uri savedFile = data.getData();
-                SystemLogger.v(TAG, "Save to " + savedFile);
-                saveToFileUri(contentToExport, savedFile);
-            }
-        }
+        //if (requestCode == save_file_cmd) {
     }
+
+    private final ActivityResultLauncher<Intent> saveFileLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            SystemLogger.d(TAG, "saveFileLauncher result, is " + result.getResultCode() + " == " + RESULT_OK + " ?");
+                            Intent data = result.getData();
+                            if (result.getResultCode() == RESULT_OK && data != null) {
+                                Uri savedFile = data.getData();
+                                SystemLogger.v(TAG, "Save to " + savedFile);
+                                saveToFileUri(contentToExport, savedFile);
+                            }
+                        }
+                    });
 
     private final ActivityResultLauncher<Intent> createLogjobLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -1220,16 +1220,13 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             Intent intent;
             if (logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty() && logjob.getUrl().isEmpty()) {
                 intent = new Intent(getApplicationContext(), EditMapsLogjobActivity.class);
-            }
-            else if (logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty()) {
+            } else if (logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty()) {
                 intent = new Intent(getApplicationContext(), EditCustomLogjobActivity.class);
-            }
-            else {
+            } else {
                 intent = new Intent(getApplicationContext(), EditPhoneTrackLogjobActivity.class);
             }
             intent.putExtra(EditLogjobActivity.PARAM_LOGJOB_ID, logjob.getId());
-            startActivityForResult(intent, show_single_logjob_cmd);
-
+            startActivity(intent);
         }
     }
 
@@ -1346,7 +1343,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         // the system file picker when your app creates the document.
         //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
-        startActivityForResult(intent, save_file_cmd);
+        //startActivityForResult(intent, save_file_cmd);
+        saveFileLauncher.launch(intent);
     }
 
     private void saveToFileUri(String content, Uri fileUri) {
