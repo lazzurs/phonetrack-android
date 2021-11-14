@@ -1601,8 +1601,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 for (Integer i : selection) {
                     DBLogjob logjob = (DBLogjob) adapter.getItem(i);
                     db.deleteLogjob(logjob.getId());
-                    // Not needed because of dbsync
-                    //adapter.remove(logjob);
+                    adapter.remove(logjob);
                     notifyLoggerService(logjob.getId());
                 }
                 mode.finish(); // Action picked, so close the CAB
