@@ -1,7 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +10,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -40,6 +43,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class SyslogManagerActivity extends AppCompatActivity {
 
@@ -48,12 +52,10 @@ public class SyslogManagerActivity extends AppCompatActivity {
     public static final String BROADCAST_MESSAGE = "net.eneiluj.nextcloud.phonetrack.broadcast.message";
 
     private final static int PERMISSION_WRITE = 3;
-    private final static int save_file_cmd = 123;
     private static final String TAG = SyslogManagerActivity.class.getSimpleName();
 
     private static String contentToExport = "";
 
-    private Context context;
     private PhoneTrackSQLiteOpenHelper db;
 
     Toolbar toolbar;
@@ -63,7 +65,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
 
     private SharedPreferences prefs;
 
-    private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss (Z)");
+    private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss (Z)", Locale.ROOT);
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,49 +77,57 @@ public class SyslogManagerActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_share_logs:
-                shareLogs();
-                return true;
-            case R.id.menu_save_logs:
-                Log.d(TAG, "SAVEEEEEE");
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    requestWritePermissions();
-                } else {
-                    saveLogs();
-                }
-                return true;
-            case R.id.menu_toggle_logs:
-                boolean isSyslogEnabled = SystemLogger.getEnabled();
-                if (!isSyslogEnabled) {
-                    db.clearSyslog();
-                    textView.setText("");
-                }
-                SystemLogger.setEnabled(!isSyslogEnabled);
-                toggleSyslogItem.setChecked(!isSyslogEnabled);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_share_logs) {
+            shareLogs();
+            return true;
+        } else if (itemId == R.id.menu_save_logs) {
+            Log.d(TAG, "SAVEEEEEE");
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestWritePermissions();
+            } else {
+                saveLogs();
+            }
+            return true;
+        } else if (itemId == R.id.menu_toggle_logs) {
+            boolean isSyslogEnabled = SystemLogger.getEnabled();
+            if (!isSyslogEnabled) {
+                db.clearSyslog();
+                textView.setText("");
+            }
+            SystemLogger.setEnabled(!isSyslogEnabled);
+            toggleSyslogItem.setChecked(!isSyslogEnabled);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
+
+    private final ActivityResultLauncher<Intent> saveFileLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            Log.d(TAG, "saveFileLauncher result, is " + result.getResultCode() + " == " + RESULT_OK + " ?");
+                            Intent data = result.getData();
+                            if (result.getResultCode() == RESULT_OK && data != null) {
+                                Uri savedFile = data.getData();
+                                Log.v(TAG, "Save to " + savedFile);
+                                saveToFileUri(contentToExport, savedFile);
+                            }
+                        }
+                    });
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "[ACT RESULT]");
-        // Check which request we're responding to
-        if (requestCode == save_file_cmd && resultCode == Activity.RESULT_OK && data != null) {
-            Uri selectedFile = data.getData();
-            saveToFileUri(contentToExport, selectedFile);
-        }
     }
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getApplicationContext();
-        db = PhoneTrackSQLiteOpenHelper.getInstance(context);
+        db = PhoneTrackSQLiteOpenHelper.getInstance(this);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         setContentView(R.layout.activity_syslog);
@@ -144,25 +154,23 @@ public class SyslogManagerActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSION_WRITE:
-                if (grantResults.length > 0) {
-                    Log.d(TAG, "[permission STORAGE result] " + grantResults[0]);
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Log.d(TAG, "write permission granted");
-                        saveLogs();
-                    } else {
-                        Log.e(TAG, "write permission refused");
-                    }
+        if (requestCode == PERMISSION_WRITE) {
+            if (grantResults.length > 0) {
+                Log.d(TAG, "[permission STORAGE result] " + grantResults[0]);
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "write permission granted");
+                    saveLogs();
+                } else {
+                    Log.e(TAG, "write permission refused");
                 }
-                break;
+            }
         }
     }
 
     @Override
-    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull android.content.res.Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
@@ -225,12 +233,16 @@ public class SyslogManagerActivity extends AppCompatActivity {
         // get settings
         String providersPref = prefs.getString(getString(R.string.pref_key_providers), "1");
         String providerName = "unknown";
-        if (providersPref.equals("1")) {
-            providerName = "GPS";
-        } else if (providersPref.equals("2")) {
-            providerName = "Network";
-        } else if (providersPref.equals("3")) {
-            providerName = "GPS and Network";
+        switch (providersPref != null ? providersPref : "") {
+            case "1":
+                providerName = "GPS";
+                break;
+            case "2":
+                providerName = "Network";
+                break;
+            case "3":
+                providerName = "GPS and Network";
+                break;
         }
         content += "Location provider: " + providerName + "\n";
         boolean respectPowerSaveMode = prefs.getBoolean(getString(R.string.pref_key_power_saving_awareness), false);
@@ -269,7 +281,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
         // the system file picker when your app creates the document.
         //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
-        startActivityForResult(intent, save_file_cmd);
+        saveFileLauncher.launch(intent);
     }
 
     private void saveToFileUri(String content, Uri fileUri) {
@@ -278,16 +290,21 @@ public class SyslogManagerActivity extends AppCompatActivity {
             OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
             myOutWriter.append(content);
             myOutWriter.close();
-            fOut.flush();
-            fOut.close();
+            if (fOut != null) {
+                fOut.flush();
+                fOut.close();
+            }
+            String savedFileName = fileUri.getLastPathSegment();
+            if (savedFileName != null) {
+                savedFileName = savedFileName.replace(
+                        Environment.getExternalStorageDirectory().toString(),
+                        ""
+                );
+            }
             showToast(
                 getString(
                     R.string.syslog_saved_success,
-                    fileUri.getLastPathSegment()
-                        .replace(
-                            Environment.getExternalStorageDirectory().toString(),
-                            ""
-                        )
+                    savedFileName
                 ),
                 Toast.LENGTH_LONG
             );
@@ -319,6 +336,9 @@ public class SyslogManagerActivity extends AppCompatActivity {
                     String message = intent.getStringExtra(BROADCAST_MESSAGE);
                     if (LoggerService.DEBUG) { Log.d(TAG, "[inSyslog broadcast new syslog " + message + "]"); }
                     addLine(message, timestamp);
+                    break;
+                default:
+                    Log.d(TAG, "Unknown intent action in mBroadcastReceiver::onReceive");
                     break;
             }
         }
