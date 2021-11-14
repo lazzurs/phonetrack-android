@@ -65,13 +65,11 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -92,6 +90,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.BuildConfig;
@@ -1419,7 +1418,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         long diffLastSync = tsNow - tsLastSync;
         SyncError lastSyncErr = db.getLastSyncError(ljId);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.ROOT);
 
         if (LoggerService.DEBUG) { SystemLogger.d(TAG, "updateInfoDialogContent " + tsLastLoc + " " + tsLastSync); }
 
@@ -1597,24 +1596,22 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
          */
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.menu_delete:
-                    List<Integer> selection = adapter.getSelected();
-                    for (Integer i : selection) {
-                        DBLogjob logjob = (DBLogjob) adapter.getItem(i);
-                        db.deleteLogjob(logjob.getId());
-                        // Not needed because of dbsync
-                        //adapter.remove(logjob);
-                        notifyLoggerService(logjob.getId());
-                    }
-                    mode.finish(); // Action picked, so close the CAB
-                    //after delete selection has to be cleared
-                    searchView.setIconified(true);
-                    refreshLists();
-                    return true;
-                default:
-                    return false;
+            if (item.getItemId() == R.id.menu_delete) {
+                List<Integer> selection = adapter.getSelected();
+                for (Integer i : selection) {
+                    DBLogjob logjob = (DBLogjob) adapter.getItem(i);
+                    db.deleteLogjob(logjob.getId());
+                    // Not needed because of dbsync
+                    //adapter.remove(logjob);
+                    notifyLoggerService(logjob.getId());
+                }
+                mode.finish(); // Action picked, so close the CAB
+                //after delete selection has to be cleared
+                searchView.setIconified(true);
+                refreshLists();
+                return true;
             }
+            return false;
         }
 
         @Override
@@ -1757,11 +1754,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     // show sessions sync error toast
                     LayoutInflater inflater1 = getLayoutInflater();
                     View layout1 = inflater1.inflate(R.layout.sync_success_toast,
-                            (ViewGroup) findViewById(R.id.custom_toast_container));
+                            findViewById(R.id.custom_toast_container));
 
                     LinearLayout ll1 = layout1.findViewById(R.id.custom_toast_container);
                     ll1.setBackgroundColor(Color.TRANSPARENT);
-                    TextView text1 = (TextView) layout1.findViewById(R.id.text);
+                    TextView text1 = layout1.findViewById(R.id.text);
                     text1.setText("");
                     ImageView im1 = layout1.findViewById(R.id.toast_icon);
                     im1.setImageResource(R.drawable.ic_pt_error);
@@ -1783,11 +1780,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     // show sessions sync success toast
                     LayoutInflater inflater2 = getLayoutInflater();
                     View layout2 = inflater2.inflate(R.layout.sync_success_toast,
-                            (ViewGroup) findViewById(R.id.custom_toast_container));
+                            findViewById(R.id.custom_toast_container));
 
                     LinearLayout ll2 = layout2.findViewById(R.id.custom_toast_container);
                     ll2.setBackgroundColor(Color.TRANSPARENT);
-                    TextView text2 = (TextView) layout2.findViewById(R.id.text);
+                    TextView text2 = layout2.findViewById(R.id.text);
                     text2.setText("");
                     ImageView im2 = layout2.findViewById(R.id.toast_icon);
                     im2.setImageResource(R.drawable.ic_nextcloud_logo_white);

@@ -124,8 +124,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 nvHolder.logjobSubtitle.setText(Html.fromHtml(
                         logjob.getDeviceName() + " => " + logjob.getUrl())
                 );
-            }
-            else {
+            } else {
                 nvHolder.logjobSubtitle.setText(Html.fromHtml(logjob.getUrl()));
             }
 
@@ -134,8 +133,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (nvHolder.logjobEnabled.isChecked()) {
                 nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ThemeUtils.primaryDarkColor(db.getContext()), PorterDuff.Mode.SRC_IN);
                 nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ThemeUtils.primaryColor(db.getContext()), PorterDuff.Mode.MULTIPLY);
-            }
-            else {
+            } else {
                 nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
                 nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_high), PorterDuff.Mode.MULTIPLY);
             }

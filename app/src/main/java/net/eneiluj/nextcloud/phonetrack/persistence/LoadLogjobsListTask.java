@@ -110,14 +110,11 @@ public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
         for (DBLogjob logjob : logjobList) {
             if (category.favorite != null && category.favorite && logjob.isEnabled()) {
                 itemList.add(colorTheLogjob(logjob));
-            }
-            else if (category.category == LogjobsListViewActivity.CATEGORY_PHONETRACK && !logjob.getToken().isEmpty() && !logjob.getDeviceName().isEmpty()) {
+            } else if (LogjobsListViewActivity.CATEGORY_PHONETRACK.equals(category.category) && !logjob.getToken().isEmpty() && !logjob.getDeviceName().isEmpty()) {
                 itemList.add(colorTheLogjob(logjob));
-            }
-            else if (category.category == LogjobsListViewActivity.CATEGORY_CUSTOM && logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty()) {
+            } else if (LogjobsListViewActivity.CATEGORY_CUSTOM.equals(category.category) && logjob.getToken().isEmpty() && logjob.getDeviceName().isEmpty()) {
                 itemList.add(colorTheLogjob(logjob));
-            }
-            else if (category.favorite == null && category.category == null) {
+            } else if (category.favorite == null && category.category == null) {
                 itemList.add(colorTheLogjob(logjob));
             }
         }

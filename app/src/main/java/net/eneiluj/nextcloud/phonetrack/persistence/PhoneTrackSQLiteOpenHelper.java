@@ -125,10 +125,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static PhoneTrackSQLiteOpenHelper instance;
 
-    private SessionServerSyncHelper serverSyncHelper;
-    private Context context;
+    private final SessionServerSyncHelper serverSyncHelper;
+    private final Context context;
 
-    private String userAgent;
+    private final String userAgent;
 
     private PhoneTrackSQLiteOpenHelper(Context context) {
         super(context, database_name, null, database_version);
@@ -366,18 +366,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         //getPhonetrackServerSyncHelper().scheduleSync(true);
         return id;
     }
-
-    /**
-     * Creates a new logjob in the Database and adds a Synchronization Flag.
-     */
-    /*@SuppressWarnings("UnusedReturnValue")
-    public long addLogjobAndSync(String title, String url, String token, String deviceName, int minTime, int minDistance, int minAccuracy, boolean keepGpsOn, boolean useSignificantMotion, int locationTimeout, int nbSync, boolean post) {
-        // TODO there is an 'enabled' field
-        DBLogjob dblj = new DBLogjob(0, title, url, token, deviceName, minTime, minDistance, minAccuracy, keepGpsOn, useSignificantMotion, locationTimeout, post,false, nbSync);
-        long id = addLogjob(dblj);
-        //getPhonetrackServerSyncHelper().scheduleSync(true);
-        return id;
-    }*/
 
     /**
      * Inserts a logjob directly into the Database.
@@ -622,8 +610,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             //args.add(enabled ? "1" : "0");
         }
 
-        String order = key_title;
-        return getLogjobsCustom(TextUtils.join(" AND ", where), args.toArray(new String[]{}), order);
+        return getLogjobsCustom(TextUtils.join(" AND ", where), args.toArray(new String[]{}), key_title);
     }
 
 
@@ -679,6 +666,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         if (logjob.isEnabled()) {
             long ts = System.currentTimeMillis() / 1000;
             setLastActivationSystemTimestamp(logjob.getId(), ts);
+            // TODO check that (why not using tss?)
             // this way we're sure the comparison between last activation and last location will be correct
             long tss = getLastLocTimestamp(logjob.getId()) + 1;
             setLastActivationGpsTimestamp(logjob.getId(), ts);
@@ -800,8 +788,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     /**
      * key_lat, key_lon, key_time, key_bearing, key_altitude, key_speed, key_accuracy, key_satellites, key_battery
      *
-     * @param ljId
-     * @param loc
      */
     public void addLocation(long ljId, CorrectingLocation loc, double battery) {
         if (LoggerService.DEBUG) { Log.d(TAG, "[writeLocation from ljid, loc, battery]"); }
@@ -863,30 +849,27 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * @return requested locations
      */
     public List<DBLogjobLocation> getLocationsOfLogjob(long ljId) {
-        List<DBLogjobLocation> locations = getLocationsCustom(
+        return getLocationsCustom(
                 key_logjobid + " = ?",
                 new String[]{String.valueOf(ljId)},
                 key_time + " ASC"
         );
-        return locations;
     }
 
     public List<DBLogjobLocation> getLocationsToSyncOfLogjob(long ljId) {
-        List<DBLogjobLocation> locations = getLocationsCustom(
+        return getLocationsCustom(
                 key_logjobid + " = ? AND " + key_synced + " = 0",
                 new String[]{String.valueOf(ljId)},
                 key_time + " ASC"
         );
-        return locations;
     }
 
     public List<DBLogjobLocation> getCurrentRunLocationsOfLogjob(long ljId) {
-        List<DBLogjobLocation> locations = getLocationsCustom(
+        return getLocationsCustom(
                 key_logjobid + " = ? AND " + key_currentRun + " = 1",
                 new String[]{String.valueOf(ljId)},
                 key_time + " ASC"
         );
-        return locations;
     }
 
     public DBLogjobLocation getLocation(long id) {
@@ -947,7 +930,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         );
     }
 
-    @NonNull
     @WorkerThread
     public int getLogjobLocationCurrentRunCount(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
@@ -968,7 +950,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    @NonNull
     @WorkerThread
     public int getLogjobLocationNotSyncedCount(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
@@ -989,7 +970,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    @NonNull
     @WorkerThread
     public int getLocationNotSyncedCount() {
         SQLiteDatabase db = getReadableDatabase();
@@ -1013,7 +993,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     /**
      * location is now synced with success
      * it can be deleted if it's not a location of the "current run"
-     * @param id
      */
     public void setLocationSynced(long id) {
         SQLiteDatabase db = this.getWritableDatabase();

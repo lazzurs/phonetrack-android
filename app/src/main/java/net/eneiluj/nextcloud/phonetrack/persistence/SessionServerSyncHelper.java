@@ -15,7 +15,8 @@ import android.net.NetworkRequest;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
-//import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import android.os.RemoteException;
@@ -47,7 +48,6 @@ import at.bitfire.cert4android.IOnCertificateDecision;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
-import net.eneiluj.nextcloud.phonetrack.model.ColoredLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -125,7 +125,7 @@ public class SessionServerSyncHelper {
     private List<ICallback> callbacksPush = new ArrayList<>();
     private List<ICallback> callbacksPull = new ArrayList<>();
 
-    private ConnectionStateMonitor connectionMonitor;
+    private final ConnectionStateMonitor connectionMonitor;
 
     private SessionServerSyncHelper(PhoneTrackSQLiteOpenHelper db) {
         this.dbHelper = db;
@@ -137,11 +137,9 @@ public class SessionServerSyncHelper {
             }
         }.start();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // track network connectivity changes
-            connectionMonitor = new ConnectionStateMonitor();
-            connectionMonitor.enable(appContext);
-        }
+        // track network connectivity changes
+        connectionMonitor = new ConnectionStateMonitor();
+        connectionMonitor.enable(appContext);
         updateNetworkStatus();
         // bind to certifciate service to block sync attempts if service is not ready
         appContext.bindService(new Intent(appContext, CustomCertService.class), certService, Context.BIND_AUTO_CREATE);
@@ -149,9 +147,7 @@ public class SessionServerSyncHelper {
 
     @Override
     protected void finalize() throws Throwable {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            connectionMonitor.disable(appContext);
-        }
+        connectionMonitor.disable(appContext);
         appContext.unbindService(certService);
         if (customCertManager != null) {
             customCertManager.close();
@@ -161,7 +157,9 @@ public class SessionServerSyncHelper {
 
     public static boolean isNextcloudAccountConfigured(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return !preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS).isEmpty() ||
+        String settingsUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+        boolean settingsUrlIsEmpty = (settingsUrl == null || settingsUrl.isEmpty());
+        return !settingsUrlIsEmpty ||
                 preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
     }
 
@@ -187,7 +185,7 @@ public class SessionServerSyncHelper {
         }
 
         @Override
-        public void onAvailable(Network network) {
+        public void onAvailable(@NonNull Network network) {
             if (LoggerService.DEBUG) { Log.d(TAG, "NETWORK AVAILABLE : SYNC SESSIONS from synchelper"); }
             updateNetworkStatus();
             if (isSyncPossible()) {
@@ -198,7 +196,7 @@ public class SessionServerSyncHelper {
         }
 
         @Override
-        public void onLost(Network network) {
+        public void onLost(@NonNull Network network) {
             if (!isSyncPossible()) {
                 Intent intent2 = new Intent(BROADCAST_NETWORK_UNAVAILABLE);
                 appContext.sendBroadcast(intent2);
@@ -208,9 +206,10 @@ public class SessionServerSyncHelper {
 
     public static boolean isConfigured(Context context) {
         boolean useSSO = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
-        boolean classicURLConfigured = !PreferenceManager.getDefaultSharedPreferences(context).getString(
+        String classicUrl = PreferenceManager.getDefaultSharedPreferences(context).getString(
                 SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS
-        ).equals(SettingsActivity.DEFAULT_SETTINGS);
+        );
+        boolean classicURLConfigured = !SettingsActivity.DEFAULT_SETTINGS.equals(classicUrl);
         return useSSO || classicURLConfigured;
     }
 
@@ -268,10 +267,10 @@ public class SessionServerSyncHelper {
      * @param onlyLocalChanges Whether to only push local changes to the server or to also load the whole list of sessions from the server.
      */
     public void scheduleSync(boolean onlyLocalChanges) {
-        Log.d(getClass().getSimpleName(), "Sync requested (" + (onlyLocalChanges ? "onlyLocalChanges" : "full") + "; " + (syncActive ? "sync active" : "sync NOT active") + ") ...");
-        Log.d(getClass().getSimpleName(), "(network:" + networkConnected + "; conf:" + isConfigured(appContext) + "; cert4android:" + cert4androidReady + ")");
+        Log.d(TAG, "Sync requested (" + (onlyLocalChanges ? "onlyLocalChanges" : "full") + "; " + (syncActive ? "sync active" : "sync NOT active") + ") ...");
+        Log.d(TAG, "(network:" + networkConnected + "; conf:" + isConfigured(appContext) + "; cert4android:" + cert4androidReady + ")");
         if (isSyncPossible() && (!syncActive || onlyLocalChanges)) {
-            Log.d(getClass().getSimpleName(), "... starting now");
+            Log.d(TAG, "... starting now");
             SyncTask syncTask = new SyncTask(onlyLocalChanges);
             syncTask.addCallbacks(callbacksPush);
             callbacksPush = new ArrayList<>();
@@ -290,13 +289,13 @@ public class SessionServerSyncHelper {
             GetNCUserAvatarTask getAvatarTask = new GetNCUserAvatarTask();
             getAvatarTask.execute();
         } else if (!onlyLocalChanges) {
-            Log.d(getClass().getSimpleName(), "... scheduled");
+            Log.d(TAG, "... scheduled");
             syncScheduled = true;
             for (ICallback callback : callbacksPush) {
                 callback.onScheduled();
             }
         } else {
-            Log.d(getClass().getSimpleName(), "... do nothing");
+            Log.d(TAG, "... do nothing");
             for (ICallback callback : callbacksPush) {
                 callback.onScheduled();
             }
@@ -323,7 +322,7 @@ public class SessionServerSyncHelper {
         private final boolean onlyLocalChanges;
         private final List<ICallback> callbacks = new ArrayList<>();
         private PhoneTrackClient client;
-        private List<Throwable> exceptions = new ArrayList<>();
+        private final List<Throwable> exceptions = new ArrayList<>();
 
         public SyncTask(boolean onlyLocalChanges) {
             this.onlyLocalChanges = onlyLocalChanges;
@@ -345,21 +344,20 @@ public class SessionServerSyncHelper {
         @Override
         protected LoginStatus doInBackground(Void... voids) {
             client = createPhoneTrackClient(); // recreate PhoneTrackClients on every sync in case the connection settings was changed
-            Log.i(getClass().getSimpleName(), "STARTING SYNCHRONIZATION");
+            Log.i(TAG, "STARTING SYNCHRONIZATION");
             //dbHelper.debugPrintFullDB();
-            LoginStatus status = LoginStatus.OK;
+            LoginStatus status;
             // TODO avoid doing getsessions everytime
             //pushLocalChanges();
             //if (!onlyLocalChanges) {
             if (client != null) {
                 status = pullRemoteChanges();
-            }
-            else {
+            } else {
                 status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
             //}
             //dbHelper.debugPrintFullDB();
-            Log.i(getClass().getSimpleName(), "SYNCHRONIZATION FINISHED");
+            Log.i(TAG, "SYNCHRONIZATION FINISHED");
             return status;
         }
 
@@ -368,7 +366,7 @@ public class SessionServerSyncHelper {
          */
         private LoginStatus pullRemoteChanges() {
             // TODO add/remove sessions
-            Log.d(getClass().getSimpleName(), "pullRemoteChanges()");
+            Log.d(TAG, "pullRemoteChanges()");
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
             String lastETag = preferences.getString(SettingsActivity.SETTINGS_KEY_ETAG, null);
             long lastModified = preferences.getLong(SettingsActivity.SETTINGS_KEY_LAST_MODIFIED, 0);
@@ -380,38 +378,42 @@ public class SessionServerSyncHelper {
                 Set<String> remoteTokens = new HashSet<>();
                 // pull remote changes: update or create each remote session
                 for (DBSession remoteSession : remoteSessions) {
-                    //Log.v(getClass().getSimpleName(), "   Process Remote Session: " + remoteSession);
+                    //Log.v(TAG, "   Process Remote Session: " + remoteSession);
                     remoteTokens.add(remoteSession.getToken());
                     if (localTokenToSession.containsKey(remoteSession.getToken())) {
 
                         DBSession localSession = localTokenToSession.get(remoteSession.getToken());
-                        // TODO
-                        if (!localSession.getName().equals(remoteSession.getName())
-                                || !localSession.getNextURL().equals(remoteSession.getNextURL())
-                                || !localSession.getToken().equals(remoteSession.getToken())
-                                || localSession.getPublicToken() == null
-                                || !localSession.getPublicToken().equals(remoteSession.getPublicToken())
-                                || localSession.isFromShare() != remoteSession.isFromShare()
-                                || localSession.isPublic() != remoteSession.isPublic()
-                        ) {
-                            Log.v(getClass().getSimpleName(), "session "+localSession.getName()+" found locally -> needs update");
-                            dbHelper.updateSession(localSession.getId(), remoteSession);
-                        }
-                        else {
-                            Log.v(getClass().getSimpleName(), "session "+localSession.getName()+" found locally -> does not need update");
+                        if (localSession != null) {
+                            if (!localSession.getName().equals(remoteSession.getName())
+                                    || !localSession.getNextURL().equals(remoteSession.getNextURL())
+                                    || !localSession.getToken().equals(remoteSession.getToken())
+                                    || localSession.getPublicToken() == null
+                                    || !localSession.getPublicToken().equals(remoteSession.getPublicToken())
+                                    || localSession.isFromShare() != remoteSession.isFromShare()
+                                    || localSession.isPublic() != remoteSession.isPublic()
+                            ) {
+                                Log.v(TAG, "session " + localSession.getName() + " found locally -> needs update");
+                                dbHelper.updateSession(localSession.getId(), remoteSession);
+                            } else {
+                                Log.v(TAG, "session " + localSession.getName() + " found locally -> does not need update");
+                            }
+                        } else {
+                            Log.e(TAG, "session with token " + remoteSession.getToken() + " NOT found locally");
                         }
                     } else {
-                        Log.v(getClass().getSimpleName(), "create session");
+                        Log.v(TAG, "create session");
                         dbHelper.addSession(remoteSession);
                     }
                 }
-                Log.d(getClass().getSimpleName(), "Remove remotely deleted Sessions");
+                Log.d(TAG, "Remove remotely deleted Sessions");
                 // remove remotely deleted sessions
                 for (String localToken : localTokenToSession.keySet()) {
                     if (!remoteTokens.contains(localToken)) {
                         DBSession s = localTokenToSession.get(localToken);
-                        Log.v(getClass().getSimpleName(), "   ... remove " + s.getName());
-                        dbHelper.deleteSession(s.getId());
+                        if (s != null) {
+                            Log.v(TAG, "   ... remove " + s.getName());
+                            dbHelper.deleteSession(s.getId());
+                        }
                     }
                 }
                 status = LoginStatus.OK;
@@ -432,18 +434,18 @@ public class SessionServerSyncHelper {
                 }
                 editor.apply();
             } catch (ServerResponse.NotModifiedException e) {
-                Log.d(getClass().getSimpleName(), "No changes, nothing to do.");
+                Log.d(TAG, "No changes, nothing to do.");
                 status = LoginStatus.OK;
             } catch (IOException e) {
-                Log.e(getClass().getSimpleName(), "Exception", e);
+                Log.e(TAG, "Exception", e);
                 exceptions.add(e);
                 status = LoginStatus.CONNECTION_FAILED;
             } catch (JSONException e) {
-                Log.e(getClass().getSimpleName(), "Exception", e);
+                Log.e(TAG, "Exception", e);
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
             } catch (TokenMismatchException e) {
-                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                Log.e(TAG, "Catch MISMATCHTOKEN", e);
                 status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
 
@@ -498,7 +500,7 @@ public class SessionServerSyncHelper {
 
         private final List<ICallback> callbacks = new ArrayList<>();
         private PhoneTrackClient client;
-        private List<Throwable> exceptions = new ArrayList<>();
+        private final List<Throwable> exceptions = new ArrayList<>();
 
         public GetNCColorTask() {
 
@@ -516,7 +518,7 @@ public class SessionServerSyncHelper {
         @Override
         protected LoginStatus doInBackground(Void... voids) {
             client = createPhoneTrackClient(); // recreate PhoneTrackClients on every sync in case the connection settings was changed
-            Log.i(getClass().getSimpleName(), "STARTING get color");
+            Log.i(TAG, "STARTING get color");
 
             LoginStatus status = LoginStatus.OK;
 
@@ -527,7 +529,7 @@ public class SessionServerSyncHelper {
                 status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
 
-            Log.i(getClass().getSimpleName(), "Get color FINISHED");
+            Log.i(TAG, "Get color FINISHED");
             return status;
         }
 
@@ -535,7 +537,7 @@ public class SessionServerSyncHelper {
          * Pull remote Changes: update or create each remote session and remove remotely deleted sessions.
          */
         private LoginStatus getNextcloudColor() {
-            Log.d(getClass().getSimpleName(), "getNextcloudColor()");
+            Log.d(TAG, "getNextcloudColor()");
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
             String lastETag = preferences.getString(SettingsActivity.SETTINGS_KEY_ETAG, null);
             long lastModified = preferences.getLong(SettingsActivity.SETTINGS_KEY_LAST_MODIFIED, 0);
@@ -557,7 +559,7 @@ public class SessionServerSyncHelper {
                                     + color.charAt(3) + color.charAt(3);
                     }
                     int intColor = Color.parseColor(color);
-                    Log.d(getClass().getSimpleName(), "COLOR from server is "+color);
+                    Log.d(TAG, "COLOR from server is "+color);
                     editor.putInt(appContext.getString(R.string.pref_key_color), intColor);
                 }
                 else {
@@ -566,18 +568,18 @@ public class SessionServerSyncHelper {
 
                 editor.apply();
             } catch (ServerResponse.NotModifiedException e) {
-                Log.d(getClass().getSimpleName(), "No changes, nothing to do.");
+                Log.d(TAG, "No changes, nothing to do.");
                 status = LoginStatus.OK;
             } catch (IOException e) {
-                Log.e(getClass().getSimpleName(), "Exception", e);
+                Log.e(TAG, "Exception", e);
                 exceptions.add(e);
                 status = LoginStatus.CONNECTION_FAILED;
             } catch (JSONException e) {
-                Log.e(getClass().getSimpleName(), "Exception", e);
+                Log.e(TAG, "Exception", e);
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
             } catch (TokenMismatchException e) {
-                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                Log.e(TAG, "Catch MISMATCHTOKEN", e);
                 status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
 
@@ -591,11 +593,11 @@ public class SessionServerSyncHelper {
     }
 
 
-    private NextcloudAPI.ApiConnectedListener apiCallback = new NextcloudAPI.ApiConnectedListener() {
+    private final NextcloudAPI.ApiConnectedListener apiCallback = new NextcloudAPI.ApiConnectedListener() {
         @Override
         public void onConnected() {
             // ignore this one..
-            Log.d(getClass().getSimpleName(), "API connected!!!!");
+            Log.d(TAG, "API connected!!!!");
         }
 
         @Override
@@ -607,7 +609,6 @@ public class SessionServerSyncHelper {
     private PhoneTrackClient createPhoneTrackClient() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext.getApplicationContext());
         String url = "";
-        String username = "";
         String password = "";
         boolean useSSO = preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
         if (useSSO) {
@@ -615,17 +616,16 @@ public class SessionServerSyncHelper {
                 SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(appContext.getApplicationContext());
                 NextcloudAPI nextcloudAPI = new NextcloudAPI(appContext.getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
                 return new PhoneTrackClient(url, ssoAccount.userId, password, nextcloudAPI);
-            }
-            catch (NextcloudFilesAppAccountNotFoundException e) {
+            } catch (NextcloudFilesAppAccountNotFoundException e) {
+                Log.e(TAG, "NextcloudFilesAppAccountNotFoundException");
+                return null;
+            } catch (NoCurrentAccountSelectedException e) {
+                Log.e(TAG, "NoCurrentAccountSelectedException");
                 return null;
             }
-            catch (NoCurrentAccountSelectedException e) {
-                return null;
-            }
-        }
-        else {
+        } else {
             url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
-            username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
+            String username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
             password = preferences.getString(SettingsActivity.SETTINGS_PASSWORD, SettingsActivity.DEFAULT_SETTINGS);
             return new PhoneTrackClient(url, username, password, null);
         }
@@ -639,17 +639,20 @@ public class SessionServerSyncHelper {
                 SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(appContext.getApplicationContext());
                 String accountUrl = ssoAccount.url;
                 return accountUrl.replaceAll("/$", "").equals(url.replaceAll("/$", ""));
-            }
-            catch (NextcloudFilesAppAccountNotFoundException e) {
+            } catch (NextcloudFilesAppAccountNotFoundException e) {
+                Log.e(TAG, "NextcloudFilesAppAccountNotFoundException");
+                return false;
+            } catch (NoCurrentAccountSelectedException e) {
+                Log.e(TAG, "NoCurrentAccountSelectedException");
                 return false;
             }
-            catch (NoCurrentAccountSelectedException e) {
-                return false;
-            }
-        }
-        else {
+        } else {
             String accountUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
-            return accountUrl.replaceAll("/$", "").equals(url.replaceAll("/$", ""));
+            if (accountUrl == null) {
+                return false;
+            } else {
+                return accountUrl.replaceAll("/$", "").equals(url.replaceAll("/$", ""));
+            }
         }
     }
 
@@ -669,11 +672,11 @@ public class SessionServerSyncHelper {
      */
     private class ShareDeviceTask extends AsyncTask<Void, Void, LoginStatus> {
         private PhoneTrackClient client;
-        private String token;
-        private String deviceName;
+        private final String token;
+        private final String deviceName;
         private String publicUrl = null;
-        private ICallback callback;
-        private List<Throwable> exceptions = new ArrayList<>();
+        private final ICallback callback;
+        private final List<Throwable> exceptions = new ArrayList<>();
 
         public ShareDeviceTask(String token, String deviceName, ICallback callback) {
             this.token = token;
@@ -690,43 +693,46 @@ public class SessionServerSyncHelper {
         protected LoginStatus doInBackground(Void... voids) {
             client = createPhoneTrackClient();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-            if (LoggerService.DEBUG) { Log.i(getClass().getSimpleName(), "STARTING share device"); }
+            if (LoggerService.DEBUG) { Log.i(TAG, "STARTING share device"); }
             LoginStatus status = LoginStatus.OK;
             String sharetoken;
             try {
                 ServerResponse.ShareDeviceResponse response = client.shareDevice(customCertManager, token, deviceName);
                 sharetoken = response.getPublicToken();
                 if (LoggerService.DEBUG) {
-                    Log.i(getClass().getSimpleName(), "HERE IS THE TOKEN BIIIITCH "+sharetoken);
+                    Log.i(TAG, "HERE IS THE TOKEN "+sharetoken);
                 }
                 if (prefs.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
-                    publicUrl = prefs.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS)
+                    String settingsSsoUrl = prefs.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS);
+                    settingsSsoUrl = settingsSsoUrl == null ? SettingsActivity.DEFAULT_SETTINGS : settingsSsoUrl;
+                    publicUrl = settingsSsoUrl
                             .replaceAll("/+$", "")
                             + "/index.php/apps/phonetrack/publicSessionWatch/" + sharetoken;
-                }
-                else {
-                    publicUrl = prefs.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
+                } else {
+                    String settingsUrl = prefs.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
+                    settingsUrl = settingsUrl == null ? SettingsActivity.DEFAULT_SETTINGS : settingsUrl;
+                    publicUrl = settingsUrl
                             .replaceAll("/+$", "")
                             + "/index.php/apps/phonetrack/publicSessionWatch/" + sharetoken;
                 }
             } catch (IOException e) {
                 if (LoggerService.DEBUG) {
-                    Log.e(getClass().getSimpleName(), "Exception", e);
+                    Log.e(TAG, "Exception", e);
                 }
                 exceptions.add(e);
                 status = LoginStatus.CONNECTION_FAILED;
             } catch (JSONException e) {
                 if (LoggerService.DEBUG) {
-                    Log.e(getClass().getSimpleName(), "Exception", e);
+                    Log.e(TAG, "Exception", e);
                 }
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
             } catch (TokenMismatchException e) {
-                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                Log.e(TAG, "Catch MISMATCHTOKEN", e);
                 status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
             if (LoggerService.DEBUG) {
-                Log.i(getClass().getSimpleName(), "FINISHED share device");
+                Log.i(TAG, "FINISHED share device");
             }
             return status;
         }
@@ -760,11 +766,11 @@ public class SessionServerSyncHelper {
 
     private class GetSessionPositionsTask extends AsyncTask<Void, Void, LoginStatus> {
         private PhoneTrackClient client;
-        private DBSession session;
-        private Long lastTimestamp;
-        private Long limit;
-        private IGetLastPosCallback callback;
-        private List<Throwable> exceptions = new ArrayList<>();
+        private final DBSession session;
+        private final Long lastTimestamp;
+        private final Long limit;
+        private final IGetLastPosCallback callback;
+        private final List<Throwable> exceptions = new ArrayList<>();
         private Map<String, List<BasicLocation>> locations;
         private Map<String, String> colors;
 
@@ -783,8 +789,7 @@ public class SessionServerSyncHelper {
         @Override
         protected LoginStatus doInBackground(Void... voids) {
             client = createPhoneTrackClient();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-            if (LoggerService.DEBUG) { Log.i(getClass().getSimpleName(), "STARTING get positions"); }
+            if (LoggerService.DEBUG) { Log.i(TAG, "STARTING get positions"); }
             LoginStatus status = LoginStatus.OK;
             locations = new HashMap<>();
             try {
@@ -792,26 +797,26 @@ public class SessionServerSyncHelper {
                 locations = response.getPositions(session);
                 colors = response.getColors(session);
                 if (LoggerService.DEBUG) {
-                    Log.i(getClass().getSimpleName(), "HERE ARE THE positions and colors "+locations.keySet().size());
+                    Log.i(TAG, "HERE ARE THE positions and colors "+locations.keySet().size());
                 }
             } catch (IOException e) {
                 if (LoggerService.DEBUG) {
-                    Log.e(getClass().getSimpleName(), "Exception", e);
+                    Log.e(TAG, "Exception", e);
                 }
                 exceptions.add(e);
                 status = LoginStatus.CONNECTION_FAILED;
             } catch (JSONException e) {
                 if (LoggerService.DEBUG) {
-                    Log.e(getClass().getSimpleName(), "Exception", e);
+                    Log.e(TAG, "Exception", e);
                 }
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
             } catch (TokenMismatchException e) {
-                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                Log.e(TAG, "Catch MISMATCHTOKEN", e);
                 status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
             if (LoggerService.DEBUG) {
-                Log.i(getClass().getSimpleName(), "FINISHED share device");
+                Log.i(TAG, "FINISHED share device");
             }
             return status;
         }
@@ -849,10 +854,10 @@ public class SessionServerSyncHelper {
      */
     private class CreateSessionTask extends AsyncTask<Void, Void, LoginStatus> {
         private PhoneTrackClient client;
-        private String sessionName;
+        private final String sessionName;
         private String sessionId = null;
-        private ICallback callback;
-        private List<Throwable> exceptions = new ArrayList<>();
+        private final ICallback callback;
+        private final List<Throwable> exceptions = new ArrayList<>();
 
         public CreateSessionTask(String sessionName, ICallback callback) {
             this.sessionName = sessionName;
@@ -867,24 +872,23 @@ public class SessionServerSyncHelper {
         @Override
         protected LoginStatus doInBackground(Void... voids) {
             client = createPhoneTrackClient();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-            if (LoggerService.DEBUG) { Log.i(getClass().getSimpleName(), "STARTING share device"); }
+            if (LoggerService.DEBUG) { Log.i(TAG, "STARTING share device"); }
             LoginStatus status = LoginStatus.OK;
             try {
                 ServerResponse.CreateSessionResponse response = client.createSession(customCertManager, sessionName);
                 sessionId = response.getSessionId();
                 if (LoggerService.DEBUG) {
-                    Log.i(getClass().getSimpleName(), "HERE IS THE ID BIIIITCH "+sessionId);
+                    Log.i(TAG, "HERE IS THE ID "+sessionId);
                 }
             } catch (IOException e) {
                 if (LoggerService.DEBUG) {
-                    Log.e(getClass().getSimpleName(), "Exception", e);
+                    Log.e(TAG, "Exception", e);
                 }
                 exceptions.add(e);
                 status = LoginStatus.CONNECTION_FAILED;
             } catch (JSONException e) {
                 if (LoggerService.DEBUG) {
-                    Log.e(getClass().getSimpleName(), "Exception", e);
+                    Log.e(TAG, "Exception", e);
                 }
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
@@ -892,7 +896,7 @@ public class SessionServerSyncHelper {
                 exceptions.add(new Exception(appContext.getString(R.string.error_create_session_exists)));
             }
             if (LoggerService.DEBUG) {
-                Log.i(getClass().getSimpleName(), "FINISHED create session task");
+                Log.i(TAG, "FINISHED create session task");
             }
             return status;
         }
@@ -919,7 +923,7 @@ public class SessionServerSyncHelper {
 
         private final List<ICallback> callbacks = new ArrayList<>();
         private PhoneTrackClient client;
-        private List<Throwable> exceptions = new ArrayList<>();
+        private final List<Throwable> exceptions = new ArrayList<>();
 
         public GetNCUserAvatarTask() {
 
@@ -937,21 +941,19 @@ public class SessionServerSyncHelper {
         @Override
         protected LoginStatus doInBackground(Void... voids) {
             client = createPhoneTrackClient();
-            Log.i(getClass().getSimpleName(), "STARTING get account avatar");
+            Log.i(TAG, "STARTING get account avatar");
 
-            LoginStatus status = LoginStatus.OK;
-
+            LoginStatus status;
             if (client != null) {
                 status = getNextcloudUserAvatar();
-            }
-            else {
+            } else {
                 status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
             return status;
         }
 
         private LoginStatus getNextcloudUserAvatar() {
-            Log.d(getClass().getSimpleName(), "getNextcloudUserAvatar()");
+            Log.d(TAG, "getNextcloudUserAvatar()");
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
             LoginStatus status;
             try {
@@ -962,23 +964,23 @@ public class SessionServerSyncHelper {
                 status = LoginStatus.OK;
                 SharedPreferences.Editor editor = preferences.edit();
                 if (avatar != null && !avatar.isEmpty()) {
-                    Log.d(getClass().getSimpleName(), "avatar from server is "+avatar);
+                    Log.d(TAG, "avatar from server is "+avatar);
                     editor.putString(appContext.getString(R.string.pref_key_avatar), avatar);
                 }
                 editor.apply();
             } catch (ServerResponse.NotModifiedException e) {
-                Log.d(getClass().getSimpleName(), "No changes, nothing to do.");
+                Log.d(TAG, "No changes, nothing to do.");
                 status = LoginStatus.OK;
             } catch (IOException e) {
-                Log.e(getClass().getSimpleName(), "Exception", e);
+                Log.e(TAG, "Exception", e);
                 exceptions.add(e);
                 status = LoginStatus.CONNECTION_FAILED;
             } catch (JSONException e) {
-                Log.e(getClass().getSimpleName(), "Exception", e);
+                Log.e(TAG, "Exception", e);
                 exceptions.add(e);
                 status = LoginStatus.JSON_FAILED;
             } catch (TokenMismatchException e) {
-                Log.e(getClass().getSimpleName(), "Catch MISMATCHTOKEN", e);
+                Log.e(TAG, "Catch MISMATCHTOKEN", e);
                 status = LoginStatus.SSO_TOKEN_MISMATCH;
             }
 

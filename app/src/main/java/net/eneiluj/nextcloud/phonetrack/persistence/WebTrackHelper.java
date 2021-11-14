@@ -1,10 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.persistence;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-//import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
 
 import android.os.Build;
 import android.util.Base64;
@@ -26,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,9 +46,6 @@ import at.bitfire.cert4android.CustomCertManager;
 public class WebTrackHelper {
     private static final String TAG = WebTrackService.class.getSimpleName();
 
-    private static final String CLIENT_SCRIPT = "client/index.php";
-    private static final String PARAM_ACTION = "action";
-
     // addpos
     public static final String PARAM_TIME = "timestamp";
     public static final String PARAM_LAT = "lat";
@@ -67,11 +62,10 @@ public class WebTrackHelper {
     private final String webUserAgent;
     private final Context context;
 
-    private static boolean tlsSocketInitialized = false;
     // Socket timeout in milliseconds
     static final int SOCKET_TIMEOUT = 30 * 1000;
 
-    private CustomCertManager certManager;
+    private final CustomCertManager certManager;
 
 
     /**
@@ -81,12 +75,10 @@ public class WebTrackHelper {
     public WebTrackHelper(Context ctx, CustomCertManager certManager) {
         context = ctx;
         this.certManager = certManager;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         webUserAgent = context.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME + "; " + System.getProperty("http.agent");
     }
 
-    @SuppressWarnings("StringConcatenationInLoop")
     private String postMultiple(URL url, JSONObject params) throws IOException {
 
         if (LoggerService.DEBUG) { Log.d(TAG, "[postMultiple: " + url + " : " + params + "]"); }
@@ -110,9 +102,8 @@ public class WebTrackHelper {
                 connection.setReadTimeout(SOCKET_TIMEOUT);
                 connection.setUseCaches(true);
 
-                byte[] paramData = null;
                 if (params != null) {
-                    paramData = params.toString().getBytes();
+                    byte[] paramData = params.toString().getBytes();
                     Log.d(getClass().getSimpleName(), "Params: " + params);
                     connection.setFixedLengthStreamingMode(paramData.length);
                     connection.setRequestProperty("Content-Type", application_json);
@@ -305,7 +296,7 @@ public class WebTrackHelper {
         if (LoggerService.DEBUG) { Log.d(TAG, "[postJSON: " + url + " : " + jsonParams + "]"); }
         String response;
 
-        byte[] jsonBytes = jsonParams.toString().getBytes("UTF-8");
+        byte[] jsonBytes = jsonParams.toString().getBytes(StandardCharsets.UTF_8);
 
         HttpURLConnection connection = null;
         InputStream in = null;
@@ -407,14 +398,13 @@ public class WebTrackHelper {
         int deviceId = 0;
         try {
             ServerResponse.MapsAddPointResponse response = client.mapsAddPoint(certManager, params);
-
             deviceId = response.getDeviceId();
         } catch (JSONException e) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed: " + e + "]"); }
+            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed, JSONException: " + e + "]"); }
         } catch (TokenMismatchException e) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed: " + e + "]"); }
+            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed, TokenMismatchException: " + e + "]"); }
         } catch (Exception e) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed: " + e + "]"); }
+            if (LoggerService.DEBUG) { Log.d(TAG, "[postPositionToMaps json failed, Exception: " + e + "]"); }
         }
         if (deviceId == 0) {
             throw new IOException(context.getString(R.string.e_server_response));
@@ -443,9 +433,6 @@ public class WebTrackHelper {
 
     /**
      * post multiple positions in one request, build the JSON parameters
-     * @param url
-     * @param params
-     * @throws IOException
      */
     public void postMultiplePositionsToPhoneTrack(URL url, JSONObject params) throws IOException {
         if (LoggerService.DEBUG) { Log.d(TAG, "[postMultiplePositionsToPhoneTrack]"); }
@@ -519,10 +506,11 @@ public class WebTrackHelper {
             jsonParams.put("lat", params.get(PARAM_LAT));
             jsonParams.put("lon", params.get(PARAM_LON));
             jsonParams.put("tst", Integer.valueOf(params.get(PARAM_TIME)));
-            if (params.get(PARAM_SPEED) != null && !params.get(PARAM_SPEED).equals("") && !params.get(PARAM_SPEED).equals("0")) {
-                Double speed = Double.valueOf(params.get(PARAM_SPEED));
-                Double kphD = speed * 3.6;
-                int kph = kphD.intValue();
+            String paramSpeed = params.get(PARAM_SPEED);
+            if (paramSpeed != null && !paramSpeed.equals("") && !paramSpeed.equals("0")) {
+                double speed = Double.parseDouble(paramSpeed);
+                double kphD = speed * 3.6;
+                int kph = (int) kphD;
                 jsonParams.put("vel", kph);
             }
             String tid = Build.MODEL
@@ -565,7 +553,7 @@ public class WebTrackHelper {
                     postWithParams(new URL(baseUrl), paramsToSend, login, password);
                 } else {
                     if (LoggerService.DEBUG) {
-                        Log.d(TAG, "[POST URL ERROR " + urlSplit + "]");
+                        Log.d(TAG, "[POST URL ERROR " + urlWithValues + "]");
                     }
                     throw new IOException(context.getString(R.string.malformed_post_url));
                 }
@@ -584,8 +572,8 @@ public class WebTrackHelper {
         String encodedDeviceName = cleanDeviceName;
         try {
             encodedDeviceName = URLEncoder.encode(cleanDeviceName, "UTF-8").replaceAll("\\+", "%20");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
+            Log.e(TAG, "[Encode error] Unknown exception: " + e);
         }
         return new URL(
                 lj.getUrl().replaceAll("/+$", "") +

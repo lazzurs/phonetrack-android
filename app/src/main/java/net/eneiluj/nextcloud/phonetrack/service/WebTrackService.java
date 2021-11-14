@@ -239,8 +239,7 @@ public class WebTrackService extends IntentService {
                         Map<String, String> params = dbLocationToMap(loc);
                         if (logjob.getPost()) {
                             web.sendPOSTPositionToCustom(destUrl, params, login, password, sendJsonPayload);
-                        }
-                        else {
+                        } else {
                             web.sendGETPositionToCustom(destUrl, params, login, password);
                         }
 
