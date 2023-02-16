@@ -719,6 +719,7 @@ public class LoggerService extends Service {
                         .setContentTitle(getString(R.string.app_name))
                         .setPriority(priority)
                         .setOnlyAlertOnce(true)
+                        .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
                         .setContentText(String.format(getString(R.string.is_running), nbLocations, nbSent));
                         //.setSmallIcon(R.drawable.ic_stat_notify_24dp)
                         //.setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name)));
