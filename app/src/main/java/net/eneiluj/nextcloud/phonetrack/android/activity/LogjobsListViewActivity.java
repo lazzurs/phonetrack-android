@@ -125,6 +125,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     public final static int PERMISSION_LOCATION = 1;
     private final static int PERMISSION_FOREGROUND = 2;
     public final static int PERMISSION_BACKGROUND_LOCATION = 3;
+    private final static int PERMISSION_NOTIFICATIONS = 4;
 
     private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
@@ -367,6 +368,23 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         this,
                         new String[]{Manifest.permission.FOREGROUND_SERVICE},
                         PERMISSION_FOREGROUND
+                );
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (LoggerService.DEBUG) {
+                    SystemLogger.d(TAG, "request POST_NOTIFICATIONS permissions");
+                }
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{
+                                Manifest.permission.POST_NOTIFICATIONS,
+                        },
+                        PERMISSION_NOTIFICATIONS
                 );
             }
         }
