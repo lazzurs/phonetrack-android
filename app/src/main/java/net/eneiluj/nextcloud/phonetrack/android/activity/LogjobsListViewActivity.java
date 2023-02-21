@@ -391,16 +391,17 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         // battery optimization
         try {
-            Intent i = new Intent();
             String packageName = getPackageName();
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
+            SystemLogger.d(TAG,"check if we need to request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
             if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                Intent i = new Intent();
                 i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 i.setData(Uri.parse("package:" + packageName));
                 SystemLogger.d(TAG,"request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
+                startActivity(i);
             }
-            startActivity(i);
         } catch (Exception e) {
             SystemLogger.d(TAG,"Unable to request ignoring battery optimizations: " + e);
         }
