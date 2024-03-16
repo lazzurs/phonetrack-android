@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
@@ -31,6 +30,7 @@ import net.eneiluj.nextcloud.phonetrack.model.SyncError;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
+import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 
 /**
  * Helps to add, get, update and delete log jobs, sessions, locations with the option to trigger a session Resync with the Server.
@@ -133,7 +133,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private PhoneTrackSQLiteOpenHelper(Context context) {
         super(context, database_name, null, database_version);
         this.context = context.getApplicationContext();
-        userAgent = context.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME;
+        userAgent = context.getString(R.string.app_name) + "/" + SupportUtil.getAppVersionName(context);
         serverSyncHelper = SessionServerSyncHelper.getInstance(this);
         //recreateDatabase(getWritableDatabase());
     }

@@ -15,8 +15,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!-- For osmdroid -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <!-- For SSO account import -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <!-- For SMS logjob activation -->
@@ -26,6 +25,9 @@
     <!-- Needed if app targets API >= 21 -->
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature android:name="android.hardware.location.network" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
     <!-- To let the user disable battery optimization from the app -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
@@ -157,7 +159,8 @@
         <service
             android:name="net.eneiluj.nextcloud.phonetrack.service.LoggerService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <service
             android:name="net.eneiluj.nextcloud.phonetrack.service.WebTrackService"

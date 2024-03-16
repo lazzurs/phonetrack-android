@@ -93,7 +93,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -250,11 +249,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             SystemLogger.d(TAG, "Found enabled jobs => start loggerservice");
             // start loggerservice !
             Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                startService(intent);
-            } else {
-                startForegroundService(intent);
-            }
+            startForegroundService(intent);
         }
 
         String smsInfoContent = getIntent().getStringExtra(PARAM_SMSINFO_CONTENT);
@@ -377,7 +372,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     != PackageManager.PERMISSION_GRANTED) {
 
                 if (LoggerService.DEBUG) {
-                    SystemLogger.d(TAG, "request POST_NOTIFICATIONS permissions");
+                    SystemLogger.d(TAG, "requesting POST_NOTIFICATIONS permissions");
                 }
                 ActivityCompat.requestPermissions(
                         this,
@@ -1349,7 +1344,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         } catch (UnsupportedEncodingException e) {
 
         }
-        String userAgent = getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME;
+        String userAgent = getString(R.string.app_name) + "/" + SupportUtil.getAppVersionName(this);
         contentToExport = contentToExport.replace("AndroidGPX ( http://codebutchery.wordpress.com )", userAgent);
 
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
@@ -1693,7 +1688,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(SessionServerSyncHelper.BROADCAST_NETWORK_AVAILABLE);
         filter.addAction(SessionServerSyncHelper.BROADCAST_NETWORK_UNAVAILABLE);
         filter.addAction(SessionServerSyncHelper.BROADCAST_AVATAR_UPDATED);
-        registerReceiver(mBroadcastReceiver, filter);
+        registerReceiver(mBroadcastReceiver, filter, Context.RECEIVER_EXPORTED);
     }
 
     /**

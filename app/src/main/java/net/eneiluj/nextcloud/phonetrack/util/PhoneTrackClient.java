@@ -1,20 +1,21 @@
 package net.eneiluj.nextcloud.phonetrack.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.util.ArrayMap;
 import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.nextcloud.android.sso.QueryParam;
 import com.nextcloud.android.sso.aidl.NextcloudRequest;
 import com.nextcloud.android.sso.api.NextcloudAPI;
+import com.nextcloud.android.sso.api.Response;
 import com.nextcloud.android.sso.exceptions.TokenMismatchException;
 
-import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.WebTrackHelper;
 
@@ -29,9 +30,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import at.bitfire.cert4android.CustomCertManager;
@@ -77,12 +80,14 @@ public class PhoneTrackClient {
     private String username;
     private String password;
     private NextcloudAPI nextcloudAPI;
+    private Context context;
 
-    public PhoneTrackClient(String url, String username, String password, @Nullable NextcloudAPI nextcloudAPI) {
+    public PhoneTrackClient(String url, String username, String password, @Nullable NextcloudAPI nextcloudAPI, Context context) {
         this.url = url;
         this.username = username;
         this.password = password;
         this.nextcloudAPI = nextcloudAPI;
+        this.context = context;
     }
 
     public ServerResponse.MapsAddPointResponse mapsAddPoint(CustomCertManager ccm, Map<String, String> params) throws JSONException, IOException, TokenMismatchException {
@@ -91,19 +96,26 @@ public class PhoneTrackClient {
                 .replaceAll(" ", "")
                 .replaceAll("/", "");
         userAgent += " (PhoneTrack/Android)";
-        Map<String, String> mapsParams = new HashMap<>();
-        mapsParams.put("lat", params.get(WebTrackHelper.PARAM_LAT));
-        mapsParams.put("lng", params.get(WebTrackHelper.PARAM_LON));
-        mapsParams.put("timestamp", params.get(WebTrackHelper.PARAM_TIME));
-        mapsParams.put("user_agent", userAgent);
-        mapsParams.put("altitude", params.get(WebTrackHelper.PARAM_ALT));
-        mapsParams.put("battery", params.get(WebTrackHelper.PARAM_BATTERY));
-        mapsParams.put("accuracy", params.get(WebTrackHelper.PARAM_ACCURACY));
         if (nextcloudAPI != null) {
             Log.d(getClass().getSimpleName(), "using SSO to add point to Maps");
+            List<QueryParam> mapsParams = new ArrayList<>();
+            mapsParams.add(new QueryParam("lat", params.get(WebTrackHelper.PARAM_LAT)));
+            mapsParams.add(new QueryParam("lng", params.get(WebTrackHelper.PARAM_LON)));
+            mapsParams.add(new QueryParam("timestamp", params.get(WebTrackHelper.PARAM_TIME)));
+            mapsParams.add(new QueryParam("user_agent", userAgent));
+            mapsParams.add(new QueryParam("altitude", params.get(WebTrackHelper.PARAM_ALT)));
+            mapsParams.add(new QueryParam("battery", params.get(WebTrackHelper.PARAM_BATTERY)));
+            mapsParams.add(new QueryParam("accuracy", params.get(WebTrackHelper.PARAM_ACCURACY)));
             return new ServerResponse.MapsAddPointResponse(requestServerWithSSO(nextcloudAPI, target, METHOD_POST, mapsParams));
-        }
-        else {
+        } else {
+            Map<String, String> mapsParams = new HashMap<>();
+            mapsParams.put("lat", params.get(WebTrackHelper.PARAM_LAT));
+            mapsParams.put("lng", params.get(WebTrackHelper.PARAM_LON));
+            mapsParams.put("timestamp", params.get(WebTrackHelper.PARAM_TIME));
+            mapsParams.put("user_agent", userAgent);
+            mapsParams.put("altitude", params.get(WebTrackHelper.PARAM_ALT));
+            mapsParams.put("battery", params.get(WebTrackHelper.PARAM_BATTERY));
+            mapsParams.put("accuracy", params.get(WebTrackHelper.PARAM_ACCURACY));
             return new ServerResponse.MapsAddPointResponse(requestServer(ccm, target, METHOD_POST, new JSONObject(mapsParams), null, true, false));
         }
     }
@@ -205,7 +217,7 @@ public class PhoneTrackClient {
         }
     }
 
-    private ResponseData requestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, Map<String, String> params) throws TokenMismatchException{
+    private ResponseData requestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, Collection<QueryParam> params) throws TokenMismatchException{
         StringBuffer result = new StringBuffer();
 
         NextcloudRequest nextcloudRequest;
@@ -224,7 +236,8 @@ public class PhoneTrackClient {
 
         try {
             Log.d(getClass().getSimpleName(), "BEGGGGGGGGGGG ");
-            InputStream inputStream = nextcloudAPI.performNetworkRequest(nextcloudRequest);
+            Response response = nextcloudAPI.performNetworkRequestV2(nextcloudRequest);
+            InputStream inputStream = response.getBody();
 
             BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
             String line;
@@ -278,7 +291,7 @@ public class PhoneTrackClient {
         }
         // https://github.com/square/retrofit/issues/805#issuecomment-93426183
         con.setRequestProperty( "Connection", "Close");
-        con.setRequestProperty("User-Agent", "phonetrack-android/" + BuildConfig.VERSION_NAME);
+        con.setRequestProperty("User-Agent", "phonetrack-android/" + SupportUtil.getAppVersionName(context));
         if (lastETag != null && METHOD_GET.equals(method)) {
             con.setRequestProperty("If-None-Match", lastETag);
         }
@@ -323,7 +336,7 @@ public class PhoneTrackClient {
         return new ResponseData(result.toString(), etag, lastModified);
     }
 
-    private ResponseData imageRequestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, Map<String, String> params) throws TokenMismatchException{
+    private ResponseData imageRequestServerWithSSO(NextcloudAPI nextcloudAPI, String target, String method, Collection<QueryParam> params) throws TokenMismatchException{
         StringBuffer result = new StringBuffer();
         String strBase64 = "";
 
@@ -342,7 +355,8 @@ public class PhoneTrackClient {
         }
 
         try {
-            InputStream inputStream = nextcloudAPI.performNetworkRequest(nextcloudRequest);
+            Response response = nextcloudAPI.performNetworkRequestV2(nextcloudRequest);
+            InputStream inputStream = response.getBody();
 
             Bitmap selectedImage = BitmapFactory.decodeStream(inputStream);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -380,7 +394,7 @@ public class PhoneTrackClient {
         }
         // https://github.com/square/retrofit/issues/805#issuecomment-93426183
         con.setRequestProperty( "Connection", "Close");
-        con.setRequestProperty("User-Agent", "phonetrack-android/" + BuildConfig.VERSION_NAME);
+        con.setRequestProperty("User-Agent", "phonetrack-android/" + SupportUtil.getAppVersionName(context));
         if (lastETag != null && METHOD_GET.equals(method)) {
             con.setRequestProperty("If-None-Match", lastETag);
         }

@@ -387,7 +387,7 @@ public class WebTrackService extends IntentService {
             try {
                 SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(getApplicationContext());
                 NextcloudAPI nextcloudAPI = new NextcloudAPI(getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
-                return new PhoneTrackClient(url, username, password, nextcloudAPI);
+                return new PhoneTrackClient(url, username, password, nextcloudAPI, getApplicationContext());
             } catch (NextcloudFilesAppAccountNotFoundException e) {
                 if (LoggerService.DEBUG) {
                     Log.d(TAG, "[NextcloudFilesAppAccountNotFoundException: " + e + "]");
@@ -404,7 +404,7 @@ public class WebTrackService extends IntentService {
             url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
             username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
             password = preferences.getString(SettingsActivity.SETTINGS_PASSWORD, SettingsActivity.DEFAULT_SETTINGS);
-            return new PhoneTrackClient(url, username, password, null);
+            return new PhoneTrackClient(url, username, password, null, getApplicationContext());
         }
     }
 

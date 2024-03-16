@@ -615,7 +615,7 @@ public class SessionServerSyncHelper {
             try {
                 SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(appContext.getApplicationContext());
                 NextcloudAPI nextcloudAPI = new NextcloudAPI(appContext.getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
-                return new PhoneTrackClient(url, ssoAccount.userId, password, nextcloudAPI);
+                return new PhoneTrackClient(url, ssoAccount.userId, password, nextcloudAPI, appContext);
             } catch (NextcloudFilesAppAccountNotFoundException e) {
                 Log.e(TAG, "NextcloudFilesAppAccountNotFoundException");
                 return null;
@@ -627,7 +627,7 @@ public class SessionServerSyncHelper {
             url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
             String username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
             password = preferences.getString(SettingsActivity.SETTINGS_PASSWORD, SettingsActivity.DEFAULT_SETTINGS);
-            return new PhoneTrackClient(url, username, password, null);
+            return new PhoneTrackClient(url, username, password, null, appContext);
         }
     }
 

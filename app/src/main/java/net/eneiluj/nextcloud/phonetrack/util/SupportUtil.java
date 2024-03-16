@@ -3,6 +3,8 @@ package net.eneiluj.nextcloud.phonetrack.util;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 //import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
@@ -180,5 +182,18 @@ public class SupportUtil {
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         return powerManager.isDeviceIdleMode() &&
                 !powerManager.isIgnoringBatteryOptimizations(context.getPackageName());
+    }
+
+    public static String getAppVersionName(Context context) {
+        String versionName = "???";
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            versionName = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(SupportUtil.class.getSimpleName(), "Failed to get app version name", e);
+            e.printStackTrace();
+        }
+        Log.d(SupportUtil.class.getSimpleName(), "app version name is " + versionName);
+        return versionName;
     }
 }

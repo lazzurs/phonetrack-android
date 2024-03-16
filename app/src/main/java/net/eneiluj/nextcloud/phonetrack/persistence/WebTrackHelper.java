@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
@@ -76,7 +75,7 @@ public class WebTrackHelper {
         context = ctx;
         this.certManager = certManager;
 
-        webUserAgent = context.getString(R.string.app_name) + "/" + BuildConfig.VERSION_NAME + "; " + System.getProperty("http.agent");
+        webUserAgent = context.getString(R.string.app_name) + "/" + SupportUtil.getAppVersionName(context) + "; " + System.getProperty("http.agent");
     }
 
     private String postMultiple(URL url, JSONObject params) throws IOException {

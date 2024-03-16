@@ -1,26 +1,19 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment.about;
 
 import android.os.Bundle;
-//import android.support.v4.app.Fragment;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-//import butterknife.BindView;
-//import butterknife.ButterKnife;
-import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 
 public class AboutFragmentCreditsTab extends Fragment {
 
-    //@BindView(R.id.about_version)
     TextView aboutVersion;
-    //@BindView(R.id.about_maintainer)
     TextView aboutMaintainer;
-    //@BindView(R.id.about_translators)
     TextView aboutTranslators;
 
     @Override
@@ -29,8 +22,7 @@ public class AboutFragmentCreditsTab extends Fragment {
         aboutVersion = v.findViewById(R.id.about_version);
         aboutMaintainer = v.findViewById(R.id.about_maintainer);
         aboutTranslators = v.findViewById(R.id.about_translators);
-        //ButterKnife.bind(this, v);
-        SupportUtil.setHtml(aboutVersion, R.string.about_version, "v" + BuildConfig.VERSION_NAME);
+        SupportUtil.setHtml(aboutVersion, R.string.about_version, "v" + SupportUtil.getAppVersionName(getActivity()));
         SupportUtil.setHtml(aboutMaintainer, R.string.about_maintainer);
         SupportUtil.setHtml(aboutTranslators, R.string.about_translators_crowdin, getString(R.string.url_translations));
         return v;

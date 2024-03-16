@@ -652,7 +652,7 @@ public class SettingsActivity extends AppCompatActivity {
         urlWarnHttp.setVisibility(View.GONE);
         btn_submit.setVisibility(View.INVISIBLE);
 
-        SingleAccountHelper.setCurrentAccount(this, account.name);
+        SingleAccountHelper.applyCurrentAccount(this, account.name);
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(SETTINGS_USE_SSO, true);
