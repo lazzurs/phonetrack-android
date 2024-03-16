@@ -51,7 +51,9 @@ android {
 }
 
 dependencies {
-    implementation project(':cert4android')
+    // implementation project(':cert4android')
+    implementation 'com.github.bitfireAT:cert4android:7814052'
+
     implementation 'com.github.clans:fab:1.6.4'
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "com.google.android.material:material:1.8.0"
