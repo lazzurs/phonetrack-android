@@ -225,16 +225,22 @@ public class SmsLocationSendService extends IntentService {
         String latStr = String.format(Locale.ENGLISH,"%.7f", loc.getLatitude());
         String lonStr = String.format(Locale.ENGLISH,"%.7f", loc.getLongitude());
 
-        String smsContent1 = "* "+getString(R.string.popup_battery_value, battery);
+        String smsContent1 = "* " + getString(R.string.popup_battery_value, battery);
         if (loc.hasAltitude()) {
-            smsContent1 += "\n* "+getString(R.string.popup_altitude_value, loc.getAltitude());
+            smsContent1 += "\n* " + getString(R.string.popup_altitude_value, loc.getAltitude());
         }
         if (loc.hasAccuracy()) {
-            smsContent1 += "\n* "+getString(R.string.popup_accuracy_value, loc.getAccuracy());
+            smsContent1 += "\n* " + getString(R.string.popup_accuracy_value, loc.getAccuracy());
         }
-        smsContent1 += "\n* "+getString(R.string.sms_geo_link)+":\ngeo:"+latStr+","+lonStr+"?z=14\n";
-        String smsContent2 = "* "+getString(R.string.sms_osm_link)+":\nhttps://www.openstreetmap.org/?mlat="+latStr+"&mlon="+lonStr;
-        smsContent2 += "#map=14/"+latStr+"/"+lonStr;
+        if (loc.hasSpeed()) {
+            smsContent1 += "\n* " + getString(R.string.popup_speed_value, loc.getSpeed() * 3.6);
+        }
+        if (loc.hasBearing()) {
+            smsContent1 += "\n* " + getString(R.string.sms_bearing_value, loc.getBearing());
+        }
+        String smsContent2 = "\n* "+getString(R.string.sms_geo_link) + ":\ngeo:"+latStr+","+lonStr+"?z=14\n";
+        String smsContent3 = "* " + getString(R.string.sms_osm_link) + ":\nhttps://www.openstreetmap.org/?mlat=" + latStr + "&mlon=" + lonStr;
+        smsContent3 += "#map=14/" + latStr + "/" + lonStr;
         Log.d("Location1", "SMS content '" + smsContent1 + "' length:" + smsContent1.length());
 
         if (ActivityCompat.checkSelfPermission(
@@ -247,17 +253,26 @@ public class SmsLocationSendService extends IntentService {
             // delay second SMS sending
             final String smsContent1f = smsContent1;
             final String smsContent2f = smsContent2;
+            final String smsContent3f = smsContent3;
             Handler handler2 = new Handler();
             handler2.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Log.d("Location2", "SMS content 2 '" + smsContent2f + "' length:" + smsContent2f.length());
                     smsManager.sendTextMessage(from, null, smsContent2f, null, null);
-                    String notificationContent = getString(R.string.sms_position_notification, fromNotification);
-                    notifySmsWasSent(smsContent1f + "\n" + smsContent2f, notificationContent);
-                    isRunning.put(from, false);
                 }
             }, 1000);
+            Handler handler3 = new Handler();
+            handler3.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("Location3", "SMS content 3 '" + smsContent3f + "' length:" + smsContent3f.length());
+                    smsManager.sendTextMessage(from, null, smsContent3f, null, null);
+                    String notificationContent = getString(R.string.sms_position_notification, fromNotification);
+                    notifySmsWasSent(smsContent1f + "\n" + smsContent2f + "\n" + smsContent3f, notificationContent);
+                    isRunning.put(from, false);
+                }
+            }, 2000);
         } else {
             Log.d("SMS", "no permissionnnnnnnnnn to send");
         }
