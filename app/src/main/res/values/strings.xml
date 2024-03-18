@@ -123,7 +123,7 @@
     <string name="map_choose_last_min_dialog_title">Choose number of last minutes to display</string>
     <string name="map_choose_last_min_dialog_message">Points that are more recent than N minutes in the past will be displayed. Set it to 0 to disable.</string>
     <string name="item_all_devices_label">All devices</string>
-    <string name="popup_battery_value">Battery level : %.2f% %</string>
+    <string name="popup_battery_value">Battery level : %.2f %%</string>
     <string name="popup_altitude_value">Altitude: %.2f m</string>
     <string name="popup_accuracy_value">Accuracy: %.2f m</string>
     <string name="popup_satellites">Satellites: %d</string>
