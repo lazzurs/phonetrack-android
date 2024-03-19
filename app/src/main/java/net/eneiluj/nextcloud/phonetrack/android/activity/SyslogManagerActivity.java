@@ -317,7 +317,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
     private void registerBroadcastReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(BROADCAST_NEW_SYSLOG);
-        registerReceiver(mBroadcastReceiver, filter);
+        registerReceiver(mBroadcastReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
     }
 
     /**

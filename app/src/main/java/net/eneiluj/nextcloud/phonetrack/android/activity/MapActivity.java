@@ -1685,7 +1685,7 @@ public class MapActivity extends AppCompatActivity {
     private void registerBroadcastReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(LoggerService.BROADCAST_LOCATION_UPDATED);
-        registerReceiver(mBroadcastReceiver, filter);
+        registerReceiver(mBroadcastReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
     }
 
     /**
