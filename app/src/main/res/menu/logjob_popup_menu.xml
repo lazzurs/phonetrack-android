@@ -12,10 +12,10 @@
     android:icon="@drawable/ic_map_grey_24dp"
     />
 
-<item
+<!--item
     android:id="@+id/menuExportToGpx"
     android:title="@string/export_gpx_menu_title"
-    android:icon="@drawable/ic_folder_open_grey600_24dp"/>
+    android:icon="@drawable/ic_folder_open_grey600_24dp"/-->
 
 <item
     android:id="@+id/menuDeleteLogjob"

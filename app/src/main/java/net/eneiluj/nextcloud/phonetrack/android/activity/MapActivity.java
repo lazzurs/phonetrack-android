@@ -461,7 +461,7 @@ public class MapActivity extends AppCompatActivity {
         } else {
             XmlRenderTheme theme = null;
             try {
-                theme = new AssetsRenderTheme(map.getContext().getApplicationContext(), "renderthemes/", "rendertheme-v4.xml");
+                theme = new AssetsRenderTheme(map.getContext().getAssets(), "renderthemes/", "rendertheme-v4.xml");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

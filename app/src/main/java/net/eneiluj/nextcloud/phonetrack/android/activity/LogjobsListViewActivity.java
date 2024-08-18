@@ -36,10 +36,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.preference.PreferenceManager;
 
+/*
 import com.codebutchery.androidgpx.data.GPXDocument;
 import com.codebutchery.androidgpx.data.GPXSegment;
 import com.codebutchery.androidgpx.data.GPXTrack;
 import com.codebutchery.androidgpx.data.GPXTrackPoint;
+*/
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
@@ -1311,8 +1313,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         } else {
                             cancelableLogjobDeletion(logjobItem);
                         }
-                    } else if (item.getItemId() == R.id.menuExportToGpx) {
-                        exportLogjobToGPX(logjobMenu);
+                    // } else if (item.getItemId() == R.id.menuExportToGpx) {
+                        // exportLogjobToGPX(logjobMenu);
                     }
                     return true;
                 }
@@ -1321,6 +1323,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     }
 
+    /*
     public void exportLogjobToGPX(DBLogjob logjob) {
         List<DBLogjobLocation> locs = db.getLocationsOfLogjob(logjob.getId());
 
@@ -1359,6 +1362,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         //startActivityForResult(intent, save_file_cmd);
         saveFileLauncher.launch(intent);
     }
+    */
 
     private void saveToFileUri(String content, Uri fileUri) {
         try {
