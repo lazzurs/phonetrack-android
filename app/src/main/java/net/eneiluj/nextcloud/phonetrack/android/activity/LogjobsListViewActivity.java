@@ -111,6 +111,7 @@ import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
@@ -224,6 +225,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
 
         setContentView(R.layout.drawer_layout);
+        EdgeToEdgeUtil.enable(this);
         toolbar = findViewById(R.id.logjobsListActivityActionBar);
         drawerLayout = findViewById(R.id.drawerLayout);
         account = findViewById(R.id.account);

@@ -66,6 +66,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
@@ -252,6 +253,7 @@ public class MapActivity extends AppCompatActivity {
         );
 
         setContentView(R.layout.drawer_layout_map);
+        EdgeToEdgeUtil.enable(this);
 
         toolbar = findViewById(R.id.mapActivityActionBar);
         drawerLayoutMap = findViewById(R.id.drawerLayoutMap);

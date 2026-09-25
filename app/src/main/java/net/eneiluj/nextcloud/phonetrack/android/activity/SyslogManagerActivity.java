@@ -34,6 +34,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSyslog;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -123,6 +124,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         setContentView(R.layout.activity_syslog);
+        EdgeToEdgeUtil.enable(this);
 
         toolbar = findViewById(R.id.syslog_toolbar);
         textView = findViewById(R.id.syslog_text);

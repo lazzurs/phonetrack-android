@@ -11,6 +11,9 @@
         <item name="actionModeStyle">@style/actionModeStyle</item>
         <item name="appBarLayoutStyle">@style/appBarLayoutStyle</item>
         <item name="toolbarStyle">@style/toolbarStyle</item>
+        <!-- The app is drawn edge-to-edge (targetSdk 35+), so the window background shows
+             behind the transparent status/navigation bars: match the toolbars. -->
+        <item name="android:windowBackground">@color/bg_normal</item>
     </style>
 
     <style name="AppTheme" parent="BaseTheme" />
@@ -44,10 +47,6 @@
     <style name="Preferences" parent="AppTheme">
         <item name="android:textColor">@color/fg_default</item>
         <item name="android:textColorSecondary">@color/fg_default_low</item>
-    </style>
-
-    <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/splashscreen</item>
     </style>
 
     <style name="NavigationItem">

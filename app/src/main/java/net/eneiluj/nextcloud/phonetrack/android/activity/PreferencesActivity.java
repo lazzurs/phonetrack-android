@@ -25,6 +25,7 @@ import android.view.Window;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import java.security.Permission;
@@ -42,6 +43,7 @@ public class PreferencesActivity extends AppCompatActivity {
         setResult(RESULT_CANCELED);
         View view = LayoutInflater.from(this).inflate(R.layout.activity_preferences, null);
         setContentView(view);
+        EdgeToEdgeUtil.enable(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

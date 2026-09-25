@@ -27,6 +27,7 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.about.AboutFragmentContributingTab;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.about.AboutFragmentCreditsTab;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.about.AboutFragmentLicenseTab;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public class AboutActivity extends AppCompatActivity {
@@ -41,6 +42,7 @@ public class AboutActivity extends AppCompatActivity {
 
         //setContentView(R.layout.activity_about);
         setContentView(view);
+        EdgeToEdgeUtil.enable(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mViewPager = findViewById(R.id.pager);
