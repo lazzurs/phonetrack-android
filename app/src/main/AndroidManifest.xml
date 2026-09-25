@@ -164,9 +164,11 @@
             android:exported="false"
             android:foregroundServiceType="location" />
 
+        <!-- short-lived: gets a GPS fix to answer an SMS position request -->
         <service
             android:name="net.eneiluj.nextcloud.phonetrack.service.SmsLocationSendService"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
         <!-- BOOT_COMPLETED is sent by the system, which may deliver to
              non-exported receivers; nothing else should be able to trigger it.

@@ -142,8 +142,13 @@ public class SmsListener extends BroadcastReceiver {
             if (!SmsLocationSendService.isRunning.containsKey(from) || !SmsLocationSendService.isRunning.get(from)) {
                 // send location information
                 Intent serviceIntent = new Intent(context, SmsLocationSendService.class);
-                serviceIntent.putExtra("from", from);
-                context.startService(serviceIntent);
+                serviceIntent.putExtra(SmsLocationSendService.EXTRA_FROM, from);
+                try {
+                    // allowed from here: SMS_RECEIVED temporarily exempts the app from background limits
+                    context.startService(serviceIntent);
+                } catch (IllegalStateException e) {
+                    Log.w(TAG, "Unable to start the SMS position reply: " + e);
+                }
             }
             else {
                 Log.d(TAG, "Sms location service already running for "+from);
