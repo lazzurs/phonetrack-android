@@ -39,8 +39,9 @@ jobs:
       - name: Lint (dev flavor)
         run: ./gradlew -Pci --console=plain :app:lintDevDebug
 
-      - name: Unit tests (dev flavor)
-        run: ./gradlew -Pci --console=plain :app:testDevDebugUnitTest
+      # every flavor: some resources (e.g. launcher shortcuts) differ per flavor
+      - name: Unit tests (all flavors)
+        run: ./gradlew -Pci --console=plain :app:testDevDebugUnitTest :app:testNormalDebugUnitTest :app:testPlayDebugUnitTest
 
       - name: Assemble debug APK (dev flavor)
         run: ./gradlew -Pci --console=plain assembleDevDebug
@@ -65,5 +66,5 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: test-report
-          path: app/build/reports/tests/testDevDebugUnitTest
+          path: app/build/reports/tests/
           if-no-files-found: ignore

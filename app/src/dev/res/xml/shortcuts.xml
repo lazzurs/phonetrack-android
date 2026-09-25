@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- For the normal flavor (applicationId = this package). The dev and play flavors have
-     their own copy in src/<flavor>/res/xml: resource XML gets no ${applicationId} placeholder. -->
+<!-- Copy of main/res/xml/shortcuts.xml for the dev flavor: targetPackage must be this
+     flavor's applicationId (resource XML gets no ${applicationId} placeholder).
+     ShortcutsTest checks every variant. -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:shortcutId="net.eneiluj.nextcloud.phonetrack"
@@ -10,7 +11,7 @@
         android:shortcutLongLabel="@string/shortcut_create_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="net.eneiluj.nextcloud.phonetrack"
+            android:targetPackage="net.eneiluj.nextcloud.phonetrack.dev"
             android:targetClass="net.eneiluj.nextcloud.phonetrack.android.activity.EditPhoneTrackLogjobActivity" />
     </shortcut>
 </shortcuts>
