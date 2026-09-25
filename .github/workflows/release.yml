@@ -51,11 +51,12 @@ jobs:
             echo "::warning::RELEASE_KEYSTORE_BASE64 secret not set; release APKs will be debug-signed."
           fi
 
-      - name: DEBUG list tasks
-        run: ./gradlew -Pci --console=plain :app:tasks --all | grep -i unittest || true
-
       - name: Run unit tests
-        run: ./gradlew -Pci --console=plain :app:testNormalReleaseUnitTest
+        # AGP 9 only wires up unit test tasks for the Debug build type (its
+        # testBuildType default) across all flavors - there's no
+        # testNormalReleaseUnitTest task any more. Same test source, so
+        # testing the normal flavor's Debug variant is an equivalent check.
+        run: ./gradlew -Pci --console=plain :app:testNormalDebugUnitTest
 
       - name: Assemble release APKs
         run: ./gradlew -Pci --console=plain assembleNormalRelease assemblePlayRelease
