@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
@@ -53,6 +52,7 @@ import net.eneiluj.nextcloud.phonetrack.android.fragment.LoginDialogFragment;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
@@ -234,7 +234,7 @@ public class SettingsActivity extends AppCompatActivity {
         field_url.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                new URLValidatorAsyncTask().execute(PhoneTrackClientUtil.formatURL(field_url.getText().toString()));
+                new URLValidatorTask().execute(PhoneTrackClientUtil.formatURL(field_url.getText().toString()));
             }
         });
 
@@ -252,7 +252,7 @@ public class SettingsActivity extends AppCompatActivity {
                 } else {
                     urlWarnHttp.setVisibility(View.GONE);
                 }
-                new URLValidatorAsyncTask().execute(PhoneTrackClientUtil.formatURL(field_url.getText().toString()));
+                new URLValidatorTask().execute(PhoneTrackClientUtil.formatURL(field_url.getText().toString()));
                 //handleSubmitButtonEnabled();
             }
 
@@ -316,7 +316,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         url = PhoneTrackClientUtil.formatURL(url);
 
-        new LoginValidatorAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, username, password);
+        new LoginValidatorTask().executeInParallel(url, username, password);
     }
 
     private void login() {
@@ -451,7 +451,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (loginUrlInfo != null) {
             String url = normalizeUrlSuffix(loginUrlInfo.serverAddress);
 
-            new LoginValidatorAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, loginUrlInfo.username,
+            new LoginValidatorTask().executeInParallel(url, loginUrlInfo.username,
                     loginUrlInfo.password);
         }
     }
@@ -526,7 +526,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void handleSubmitButtonEnabled() {
-        // drawable[2] is not null if url is valid, see URLValidatorAsyncTask::onPostExecute
+        // drawable[2] is not null if url is valid, see URLValidatorTask::onPostExecute
         if (field_url.getCompoundDrawables()[2] != null && (username_wrapper.getVisibility() == View.GONE ||
                 (username_wrapper.getVisibility() == View.VISIBLE && field_username.getText().length() > 0))) {
             btn_submit.setEnabled(true);
@@ -540,7 +540,7 @@ public class SettingsActivity extends AppCompatActivity {
     /**
      * Checks if the given URL returns a valid status code and sets the Check next to the URL-Input Field to visible.
      */
-    private class URLValidatorAsyncTask extends AsyncTask<String, Void, Boolean> {
+    private class URLValidatorTask extends BackgroundTask<String, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -572,7 +572,7 @@ public class SettingsActivity extends AppCompatActivity {
     /**
      * If Log-In-Credentials are correct, save Credentials to Shared Preferences and finish First Run Wizard.
      */
-    private class LoginValidatorAsyncTask extends AsyncTask<String, Void, LoginStatus> {
+    private class LoginValidatorTask extends BackgroundTask<String, LoginStatus> {
         String url, username, password;
 
         @Override
