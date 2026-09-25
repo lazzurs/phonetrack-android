@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 //import android.preference.EditTextPreference;
+import androidx.core.os.BundleCompat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -160,7 +161,7 @@ public abstract class EditLogjobFragment extends Fragment {
             if (id > 0) {
                 logjob = db.getLogjob(id);
             } else {
-                DBLogjob newLogjob = (DBLogjob) getArguments().getSerializable(PARAM_NEWLOGJOB);
+                DBLogjob newLogjob = BundleCompat.getSerializable(getArguments(), PARAM_NEWLOGJOB, DBLogjob.class);
                 if (newLogjob == null) {
                     throw new IllegalArgumentException(PARAM_LOGJOB_ID + " is not given and argument " + PARAM_NEWLOGJOB + " is missing.");
                 }
@@ -168,7 +169,7 @@ public abstract class EditLogjobFragment extends Fragment {
                 logjob = newLogjob;
             }
         } else {
-            logjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_LOGJOB);
+            logjob = BundleCompat.getSerializable(savedInstanceState, SAVEDKEY_LOGJOB, DBLogjob.class);
             //originalLogjob = (DBLogjob) savedInstanceState.getSerializable(SAVEDKEY_ORIGINAL_LOGJOB);
         }
         setHasOptionsMenu(true);

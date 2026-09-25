@@ -106,6 +106,7 @@ public class SessionServerSyncHelper {
             if (isSyncPossible()) {
                 scheduleSync(false);
                 Intent intent2 = new Intent(BROADCAST_NETWORK_AVAILABLE);
+                intent2.setPackage(appContext.getPackageName());
                 appContext.sendBroadcast(intent2);
             }
         }
@@ -191,6 +192,7 @@ public class SessionServerSyncHelper {
             if (isSyncPossible()) {
                 scheduleSync(false);
                 Intent intent2 = new Intent(BROADCAST_NETWORK_AVAILABLE);
+                intent2.setPackage(appContext.getPackageName());
                 appContext.sendBroadcast(intent2);
             }
         }
@@ -199,6 +201,7 @@ public class SessionServerSyncHelper {
         public void onLost(@NonNull Network network) {
             if (!isSyncPossible()) {
                 Intent intent2 = new Intent(BROADCAST_NETWORK_UNAVAILABLE);
+                intent2.setPackage(appContext.getPackageName());
                 appContext.sendBroadcast(intent2);
             }
         }
@@ -473,14 +476,17 @@ public class SessionServerSyncHelper {
                 else {
                     Log.e(TAG, "Error while retrieving sessions: "+errorString);
                 }
+                intent.setPackage(appContext.getPackageName());
                 appContext.sendBroadcast(intent);
                 if (status == LoginStatus.SSO_TOKEN_MISMATCH) {
                     Intent intent2 = new Intent(BROADCAST_SSO_TOKEN_MISMATCH);
+                    intent2.setPackage(appContext.getPackageName());
                     appContext.sendBroadcast(intent2);
                 }
             }
             else {
                 Intent intent = new Intent(BROADCAST_SESSIONS_SYNCED);
+                intent.setPackage(appContext.getPackageName());
                 appContext.sendBroadcast(intent);
             }
             syncActive = false;
@@ -992,6 +998,7 @@ public class SessionServerSyncHelper {
             super.onPostExecute(status);
             if (status == LoginStatus.OK) {
                 Intent intent = new Intent(BROADCAST_AVATAR_UPDATED);
+                intent.setPackage(appContext.getPackageName());
                 appContext.sendBroadcast(intent);
             }
         }

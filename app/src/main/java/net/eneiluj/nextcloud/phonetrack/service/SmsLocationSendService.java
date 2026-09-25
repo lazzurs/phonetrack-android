@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
@@ -145,7 +146,7 @@ public class SmsLocationSendService extends IntentService {
     }
 
     private void sendSmsTimeout() {
-        SmsManager smsManager = SmsManager.getDefault();
+        SmsManager smsManager = SupportUtil.getSmsManager(this);
         String smsFailureContent = getString(R.string.sms_failure_timeout_sms, TIMEOUT_SECONDS);
         double battery = getBatteryLevelOnce();
         smsFailureContent += "\n\n* "+getString(R.string.popup_battery_value, battery);
@@ -159,7 +160,7 @@ public class SmsLocationSendService extends IntentService {
     }
 
     private void sendSmsPermissionFailure() {
-        SmsManager smsManager = SmsManager.getDefault();
+        SmsManager smsManager = SupportUtil.getSmsManager(this);
         String smsFailureContent = getString(R.string.sms_failure_permission_sms);
         double battery = getBatteryLevelOnce();
         smsFailureContent += "\n\n* "+getString(R.string.popup_battery_value, battery);
@@ -172,7 +173,7 @@ public class SmsLocationSendService extends IntentService {
     }
 
     private void sendSmsNoProviderFailure() {
-        SmsManager smsManager = SmsManager.getDefault();
+        SmsManager smsManager = SupportUtil.getSmsManager(this);
         String smsFailureContent = getString(R.string.sms_failure_provider_sms);
         double battery = getBatteryLevelOnce();
         smsFailureContent += "\n\n* "+getString(R.string.popup_battery_value, battery);
@@ -248,7 +249,7 @@ public class SmsLocationSendService extends IntentService {
                 Manifest.permission.SEND_SMS
         ) == PackageManager.PERMISSION_GRANTED
         ) {
-            SmsManager smsManager = SmsManager.getDefault();
+            SmsManager smsManager = SupportUtil.getSmsManager(this);
             smsManager.sendTextMessage(from, null, smsContent1, null, null);
             // delay second SMS sending
             final String smsContent1f = smsContent1;

@@ -53,6 +53,7 @@ import net.eneiluj.nextcloud.phonetrack.android.fragment.LoginDialogFragment;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil.LoginStatus;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
@@ -116,6 +117,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         View view = LayoutInflater.from(this).inflate(R.layout.activity_settings, null);
         setContentView(view);
+        EdgeToEdgeUtil.enable(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -295,16 +297,6 @@ public class SettingsActivity extends AppCompatActivity {
         /*if ((first_run) && (SessionServerSyncHelper.isConfigured(this))) {
             finish();
         }*/
-    }
-
-    /**
-     * Prevent pressing back button on first run
-     */
-    @Override
-    public void onBackPressed() {
-        //if (!first_run) {
-            super.onBackPressed();
-        //}
     }
 
     protected boolean isValidUrl(String url) {

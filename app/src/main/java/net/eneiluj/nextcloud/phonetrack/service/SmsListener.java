@@ -10,8 +10,8 @@ import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
@@ -47,16 +48,14 @@ public class SmsListener extends BroadcastReceiver {
         String keyword = prefs.getString(context.getString(R.string.pref_key_sms_keyword), "phonetrack");
 
         Log.d(TAG, "we received an SMS ");
-        Bundle bundle = intent.getExtras();
-        SmsMessage[] msgs = null;
         String msg_from = "";
-        if (bundle != null && listenToSms && keyword != null && !keyword.equals("")) {
+        if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())
+                && listenToSms && keyword != null && !keyword.equals("")) {
             try {
-                Object[] pdus = (Object[]) bundle.get("pdus");
-                msgs = new SmsMessage[pdus.length];
+                // handles the PDU format and multipart messages (createFromPdu(byte[]) is deprecated)
+                SmsMessage[] msgs = Telephony.Sms.Intents.getMessagesFromIntent(intent);
                 String msgContent = "";
                 for (int i = 0; i < msgs.length; i++) {
-                    msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                     msg_from = msgs[i].getOriginatingAddress();
                     String msgBody = msgs[i].getMessageBody();
                     msgContent += msgBody;
@@ -146,7 +145,7 @@ public class SmsListener extends BroadcastReceiver {
     }
 
     private void startAlarm(Context context, String from, int duration) {
-        SmsManager smsManager = SmsManager.getDefault();
+        SmsManager smsManager = SupportUtil.getSmsManager(context);
         AudioManager am;
         am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
@@ -211,7 +210,7 @@ public class SmsListener extends BroadcastReceiver {
     }
 
     private void startOrStopLogjobs(Context context, boolean start, String from, @Nullable String logjobName) {
-        SmsManager smsManager = SmsManager.getDefault();
+        SmsManager smsManager = SupportUtil.getSmsManager(context);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean resetOnToggle = prefs.getBoolean(context.getString(R.string.pref_key_reset_stats), false);
         PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
@@ -232,11 +231,12 @@ public class SmsListener extends BroadcastReceiver {
                     Intent intent = new Intent(context, LoggerService.class);
                     intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
                     intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
-                    context.startService(intent);
+                    startLoggerService(context, intent);
 
                     // update potential logjob list view
                     Intent broadcastIntent = new Intent(BROADCAST_LOCATION_UPDATED);
                     broadcastIntent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, lj.getId());
+                    broadcastIntent.setPackage(context.getPackageName());
                     context.sendBroadcast(broadcastIntent);
 
                     nbLogjobToggled++;
@@ -259,9 +259,26 @@ public class SmsListener extends BroadcastReceiver {
         }
     }
 
+    /**
+     * SMS_RECEIVED grants a short foreground-service start allowance, but a plain
+     * startService() of a stopped service from here is a background start. Use
+     * startForegroundService() when LoggerService will have to promote itself.
+     */
+    private static void startLoggerService(Context context, Intent intent) {
+        try {
+            if (!LoggerService.isRunning() && SupportUtil.hasBackgroundLocationPermission(context)) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } catch (IllegalStateException e) {
+            Log.w(TAG, "Unable to notify LoggerService: " + e);
+        }
+    }
+
     private void createLogjob(Context context, String from, int minTime) {
         Log.d(TAG, "CREATE LOGJOB YO");
-        SmsManager smsManager = SmsManager.getDefault();
+        SmsManager smsManager = SupportUtil.getSmsManager(context);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean resetOnToggle = prefs.getBoolean(context.getString(R.string.pref_key_reset_stats), false);
         PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(context);
@@ -279,10 +296,11 @@ public class SmsListener extends BroadcastReceiver {
             Intent intent = new Intent(context, LoggerService.class);
             intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
             intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, newLjId);
-            context.startService(intent);
+            startLoggerService(context, intent);
 
             // update potential logjob list view
             Intent broadcastIntent = new Intent(BROADCAST_LOGJOB_LIST_UPDATED);
+            broadcastIntent.setPackage(context.getPackageName());
             context.sendBroadcast(broadcastIntent);
 
             String sessionName = s.getName();

@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.util;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,9 +11,11 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.WorkerThread;
+import androidx.core.content.ContextCompat;
 
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.telephony.SmsManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -40,6 +43,35 @@ import net.eneiluj.nextcloud.phonetrack.R;
  * Currently, it offers methods for working with HTML string resources.
  */
 public class SupportUtil {
+
+    /**
+     * SmsManager.getDefault() is deprecated since API 31 in favour of the system service.
+     */
+    public static SmsManager getSmsManager(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return context.getSystemService(SmsManager.class);
+        }
+        return SmsManager.getDefault();
+    }
+
+    /**
+     * @return true if precise or approximate location has been granted.
+     * This is what Android 14+ requires before a location-type foreground service may start.
+     */
+    public static boolean hasForegroundLocationPermission(Context context) {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * @return true if location may be accessed while no app UI is visible
+     * (e.g. when tracking is started at boot).
+     */
+    public static boolean hasBackgroundLocationPermission(Context context) {
+        return hasForegroundLocationPermission(context)
+                && (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+                    || ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED);
+    }
 
     /**
      * Creates a {@link Spanned} from a HTML string on all SDK versions.

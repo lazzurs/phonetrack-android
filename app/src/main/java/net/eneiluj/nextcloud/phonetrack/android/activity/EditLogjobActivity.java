@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 public abstract class EditLogjobActivity extends AppCompatActivity implements EditLogjobFragment.LogjobFragmentListener {
@@ -26,6 +28,17 @@ public abstract class EditLogjobActivity extends AppCompatActivity implements Ed
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // the fragment is added straight into android.R.id.content
+        EdgeToEdgeUtil.enable(this);
+
+        // Back saves the logjob (see close()). onBackPressed() is no longer called
+        // with predictive back, which is on by default from targetSdk 36.
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                close();
+            }
+        });
 
         if (savedInstanceState == null) {
             launchLogjobFragment();
@@ -75,11 +88,6 @@ public abstract class EditLogjobActivity extends AppCompatActivity implements Ed
      *
      */
     protected abstract void launchNewLogjob();
-
-    @Override
-    public void onBackPressed() {
-        close();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

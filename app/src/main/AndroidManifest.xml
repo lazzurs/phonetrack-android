@@ -15,7 +15,8 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <!-- LoggerService records location for as long as tracking is enabled -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <!-- For SSO account import -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <!-- For SMS logjob activation -->
@@ -160,7 +161,7 @@
             android:name="net.eneiluj.nextcloud.phonetrack.service.LoggerService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="dataSync" />
+            android:foregroundServiceType="location" />
 
         <service
             android:name="net.eneiluj.nextcloud.phonetrack.service.WebTrackService"
@@ -170,21 +171,26 @@
             android:name="net.eneiluj.nextcloud.phonetrack.service.SmsLocationSendService"
             android:exported="false" />
 
+        <!-- BOOT_COMPLETED is sent by the system, which may deliver to
+             non-exported receivers; nothing else should be able to trigger it.
+             (QUICKBOOT_POWERON was dropped: onReceive only acts on BOOT_COMPLETED.) -->
         <receiver
             android:name="net.eneiluj.nextcloud.phonetrack.service.BootCompletedReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
+        <!-- Must stay exported to receive SMS_RECEIVED, so require the permission
+             only the telephony stack holds. Without it any installed app could send
+             a forged SMS and trigger the remote commands (start tracking, send position). -->
         <receiver
             android:name="net.eneiluj.nextcloud.phonetrack.service.SmsListener"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>

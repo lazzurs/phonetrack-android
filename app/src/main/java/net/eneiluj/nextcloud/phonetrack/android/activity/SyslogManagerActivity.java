@@ -1,12 +1,10 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -16,7 +14,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
@@ -37,6 +34,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSyslog;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -51,7 +49,6 @@ public class SyslogManagerActivity extends AppCompatActivity {
     public static final String BROADCAST_NEW_SYSLOG = "net.eneiluj.nextcloud.phonetrack.broadcast.new_syslog";
     public static final String BROADCAST_MESSAGE = "net.eneiluj.nextcloud.phonetrack.broadcast.message";
 
-    private final static int PERMISSION_WRITE = 3;
     private static final String TAG = SyslogManagerActivity.class.getSimpleName();
 
     private static String contentToExport = "";
@@ -82,13 +79,9 @@ public class SyslogManagerActivity extends AppCompatActivity {
             shareLogs();
             return true;
         } else if (itemId == R.id.menu_save_logs) {
-            Log.d(TAG, "SAVEEEEEE");
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestWritePermissions();
-            } else {
-                saveLogs();
-            }
+            // The Storage Access Framework picker grants access to the chosen file,
+            // no storage permission needed (and WRITE_EXTERNAL_STORAGE is not declared).
+            saveLogs();
             return true;
         } else if (itemId == R.id.menu_toggle_logs) {
             boolean isSyslogEnabled = SystemLogger.getEnabled();
@@ -131,6 +124,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         setContentView(R.layout.activity_syslog);
+        EdgeToEdgeUtil.enable(this);
 
         toolbar = findViewById(R.id.syslog_toolbar);
         textView = findViewById(R.id.syslog_text);
@@ -140,33 +134,9 @@ public class SyslogManagerActivity extends AppCompatActivity {
         setupActionBar();
     }
 
-    private void requestWritePermissions() {
-        ActivityCompat.requestPermissions(
-                SyslogManagerActivity.this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                PERMISSION_WRITE
-        );
-    }
-
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_WRITE) {
-            if (grantResults.length > 0) {
-                Log.d(TAG, "[permission STORAGE result] " + grantResults[0]);
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "write permission granted");
-                    saveLogs();
-                } else {
-                    Log.e(TAG, "write permission refused");
-                }
-            }
-        }
     }
 
     @Override
@@ -317,7 +287,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
     private void registerBroadcastReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(BROADCAST_NEW_SYSLOG);
-        registerReceiver(mBroadcastReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        ContextCompat.registerReceiver(this, mBroadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     /**

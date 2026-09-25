@@ -1164,6 +1164,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         Intent intent = new Intent(SyslogManagerActivity.BROADCAST_NEW_SYSLOG);
         intent.putExtra(SyslogManagerActivity.BROADCAST_MESSAGE, message);
         intent.putExtra(SyslogManagerActivity.BROADCAST_TIMESTAMP, timestamp);
+        intent.setPackage(context.getPackageName());
         context.sendBroadcast(intent);
 
         return db.insert(table_syslog, null, values);

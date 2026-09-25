@@ -8,6 +8,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -24,6 +25,7 @@ import android.view.Window;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
+import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import java.security.Permission;
@@ -41,18 +43,21 @@ public class PreferencesActivity extends AppCompatActivity {
         setResult(RESULT_CANCELED);
         View view = LayoutInflater.from(this).inflate(R.layout.activity_preferences, null);
         setContentView(view);
+        EdgeToEdgeUtil.enable(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container_view, new PreferencesFragment(), "preftag")
                 .commit();
-    }
 
-    @Override
-    public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
-        //finish();
+        // onBackPressed() is no longer called with predictive back (default from targetSdk 36)
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                NavUtils.navigateUpFromSameTask(PreferencesActivity.this);
+            }
+        });
     }
 
     @Override
