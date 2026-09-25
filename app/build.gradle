@@ -41,6 +41,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    buildFeatures {
+        // AGP 9 defaults this to false; defaultConfig/flavors below use resValue
+        resValues true
+    }
     productFlavors {
         normal {
             // yes this is repeated
