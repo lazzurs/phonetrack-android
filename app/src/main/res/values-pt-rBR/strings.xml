@@ -97,13 +97,13 @@
   <string name="logjob_info_dialog_title">Sobre %s</string>
   <string name="logjob_info_nbsync">%d locais enviados</string>
   <string name="logjob_info_nbnotsync">%d locais pendentes</string>
-  <string name="logjob_info_last_activation">Última ativação\n%s atrás em\n%s</string>
+  <string name="logjob_info_last_activation">Última ativação\n%1$s atrás em\n%2$s</string>
   <string name="logjob_info_lastloc">Última localização adquirida\n%1$s atrás em\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
-  <string name="logjob_info_distance">Distância total</string>
-  <string name="logjob_info_duration">Duração Total</string>
-  <string name="logjob_info_nbpoints">Pontos</string>
+  <string name="logjob_info_distance">Distância total\n%s</string>
+  <string name="logjob_info_duration">Duração total\n%s</string>
+  <string name="logjob_info_nbpoints">%d pontos</string>
   <string name="reset_current_run">Redefinir estatísticas </string>
   <string name="duration_days">dias</string>
   <string name="dialog_title_import_pt_url">Importar link de registro do PhoneTrack</string>
@@ -139,9 +139,9 @@
   <string name="sms_osm_link">OSM link</string>
   <string name="sms_alarm_started">O alarme tocará por %d segundos</string>
   <string name="sms_alarm_stopped">O Alarme foi pausado</string>
-  <string name="sms_logjobs_started">Registros de trabalhos foram iniciados </string>
-  <string name="sms_logjobs_stopped">Registros de trabalhos foram pausados</string>
-  <string name="sms_logjob_created">Um registro do trabalho com %d segundos de frequência foi criado na sessão %s</string>
+  <string name="sms_logjobs_started">%d registros de trabalho foram iniciados</string>
+  <string name="sms_logjobs_stopped">%d registros de trabalho foram pausados</string>
+  <string name="sms_logjob_created">Um registro do trabalho com %1$d segundos de frequência foi criado na sessão %2$s</string>
   <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
   <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
   <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>
@@ -160,7 +160,7 @@
   <string name="delete_logjob_menu_title">Excluir o registro logjob</string>
   <string name="action_sorting_method">Método de classificação</string>
   <string name="manage_accounts">Gerenciar contas</string>
-  <string name="is_running">execução (%s pendente, %s enviado)</string>
+  <string name="is_running">execução (%1$s pendente, %2$s enviado)</string>
   <string name="settings_server_settings">Conta</string>
   <string name="settings_url">Endereço do servidor</string>
   <string name="settings_url_warn_http">AVISO: \"http\" é inseguro. Por favor, use \"https\".</string>
@@ -179,7 +179,7 @@
   <string name="settings_sms_keyword_title">Palavra-chave SMS</string>
   <string name="settings_sms_keyword_long">Se este telefone receber um SMS que contém apenas esta palavra-chave, as informações de localização serão enviadas de volta.</string>
   <string name="settings_sms_keyword_long2">Você também pode enviar comandos com esta sintaxe: COMANDO PALAVRA-CHAVE</string>
-  <string name="settings_sms_keyword_long3">Comandos disponíveis:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Comandos disponíveis:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Use a cor do servidor</string>
   <string name="settings_use_server_color_subtitle">Obtenha a cor do servidor ao sincronizar e use como cor principal do aplicativo</string>
   <string name="settings_providers_title">Provedores de localização</string>
@@ -297,7 +297,7 @@
   <string name="about_testers_title">Testadores</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Código-Fonte</string>
-  <string name="about_source">Este projeto está hospedado no Gitlab: &lt;a href=\"%1$s\"&gt;&lt;a href=\"%1$s\"&gt;&lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
+  <string name="about_source">Este projeto está hospedado no Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Questões</string>
   <string name="about_issues">Você pode relatar problemas, propostas de aprimoramento e recursos solicitados no rastreador de problemas do Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Tradutor</string>

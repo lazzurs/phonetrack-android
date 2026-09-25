@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">Sobre %s</string>
   <string name="logjob_info_nbsync">%d posicions enviades</string>
   <string name="logjob_info_nbnotsync">%d posicions en espera</string>
-  <string name="logjob_info_last_activation">Última activació fa\n%s a\n%s</string>
+  <string name="logjob_info_last_activation">Última activació fa\n%1$s a\n%2$s</string>
   <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">S\'ha aturat l\'alarma</string>
   <string name="sms_logjobs_started">s\'han iniciat %d enregistraments</string>
   <string name="sms_logjobs_stopped">s\'han aturat %d enregistraments</string>
-  <string name="sms_logjob_created">Un enregistrament amb %d de segons de freqüència s\'ha creat a la sessió %s</string>
+  <string name="sms_logjob_created">Un enregistrament amb %1$d de segons de freqüència s\'ha creat a la sessió %2$s</string>
   <string name="sms_logjob_creation_impossible">Impossible crear un enregistrament, no s\'ha trobat cap sessió</string>
   <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
   <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Delete logjob</string>
   <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
-  <string name="is_running">corrent (%s pendent, %s enviat)</string>
+  <string name="is_running">corrent (%1$s pendent, %2$s enviat)</string>
   <string name="settings_server_settings">Compte</string>
   <string name="settings_url">Adreça del servidor</string>
   <string name="settings_url_warn_http">ATENCIÓ: \"http\" no és segur. Si us plau, feu servir \"https\".</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">Paraula clau SMS</string>
   <string name="settings_sms_keyword_long">Si aquest telèfon rep un SMS que precisament conté aquesta paraula clau, la informació de locacització serà reenviada.</string>
   <string name="settings_sms_keyword_long2">També podeu enviar instruccions amb aquesta sintaxy: KEYWORD COMMAND</string>
-  <string name="settings_sms_keyword_long3">Instruccions disponibles:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Instruccions disponibles:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Fer servir color de servidor</string>
   <string name="settings_use_server_color_subtitle">Obteniu el color del servidor quan sincronitzeu i utilitzeu-lo com a color principal de l\'aplicació</string>
   <string name="settings_providers_title">Proveidors de localització</string>

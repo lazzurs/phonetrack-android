@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">О %s</string>
   <string name="logjob_info_nbsync">%d положений передано</string>
   <string name="logjob_info_nbnotsync">%d положений ожидает</string>
-  <string name="logjob_info_last_activation">Последняя активность \n%s назад в \n%s</string>
+  <string name="logjob_info_last_activation">Последняя активность \n%1$s назад в \n%2$s</string>
   <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">Будильник остановлен</string>
   <string name="sms_logjobs_started">%d журналов запущено</string>
   <string name="sms_logjobs_stopped">%d журналов остановлено</string>
-  <string name="sms_logjob_created">В сессии %s был создан журнал с частотой записи %d секунд</string>
+  <string name="sms_logjob_created">В сессии %2$s был создан журнал с частотой записи %1$d секунд</string>
   <string name="sms_logjob_creation_impossible">Невозможно создать журнал, сессия не найдена</string>
   <string name="sms_failure_timeout_sms">Не удалось получить позицию в течении %d секунд</string>
   <string name="sms_failure_timeout_notification">Достигнут таймаут %1$d сек, было отправлено SMS сообщение об ошибке %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Удалить задание журнала</string>
   <string name="action_sorting_method">Метод сортировки</string>
   <string name="manage_accounts">Управление аккаунтами</string>
-  <string name="is_running">выполнение (ожидает %s, отправлено %s)</string>
+  <string name="is_running">выполнение (ожидает %1$s, отправлено %2$s)</string>
   <string name="settings_server_settings">Учетная запись</string>
   <string name="settings_url">Адрес сервера</string>
   <string name="settings_url_warn_http">Предупреждение: Для безопасности вместо протокола «http» используйте «https».</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">SMS-ключевое слово</string>
   <string name="settings_sms_keyword_long">Если этот телефон получает SMS, которое только что содержит это ключевое слово, информация о местоположении будет отправлена обратно.</string>
   <string name="settings_sms_keyword_long2">Вы также можете отправить команды с помощью этого синтаксиса: KEYWORD COMMAND</string>
-  <string name="settings_sms_keyword_long3">Доступные команды:\n- %s [СЕКУНД(по умолчанию=60)]\n- %s [ИМЯ ЗАДАНИЯ ЖУРНАЛА]\n- %s [ИМЯ ЗАДАНИЯ ЖУРНАЛА]\n- %s ВРЕМЯ_В_МИНУТАХ</string>
+  <string name="settings_sms_keyword_long3">Доступные команды:\n- %1$s [СЕКУНД(по умолчанию=60)]\n- %2$s [ИМЯ ЗАДАНИЯ ЖУРНАЛА]\n- %3$s [ИМЯ ЗАДАНИЯ ЖУРНАЛА]\n- %4$s ВРЕМЯ_В_МИНУТАХ</string>
   <string name="settings_use_server_color_title">Использовать цвет сервера</string>
   <string name="settings_use_server_color_subtitle">Получить цветовую схему сервера при синхронизации и использовать её в качестве основного цвета приложения</string>
   <string name="settings_providers_title">Поставщик местоположения</string>

@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">Sobre %s</string>
   <string name="logjob_info_nbsync">%d localizações enviadas</string>
   <string name="logjob_info_nbnotsync">%d localizações pendentes</string>
-  <string name="logjob_info_last_activation">Última ativação foi há \n%s,\n%s</string>
+  <string name="logjob_info_last_activation">Última ativação foi há \n%1$s,\n%2$s</string>
   <string name="logjob_info_lastloc">Última localização obtida foi há\n%1$s,\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">O alarme foi interrompido</string>
   <string name="sms_logjobs_started">Foram iniciadas %d tarefas de registo</string>
   <string name="sms_logjobs_stopped">Foram interrompidas %d tarefas de registo</string>
-  <string name="sms_logjob_created">Uma tarefa de registo com uma frequência de %d segundos foi criada na sessão %s</string>
+  <string name="sms_logjob_created">Uma tarefa de registo com uma frequência de %1$d segundos foi criada na sessão %2$s</string>
   <string name="sms_logjob_creation_impossible">Impossível criar tarefa. Nenhuma sessão encontrada.</string>
   <string name="sms_failure_timeout_sms">PhoneTrack não conseguiu obter posição após %d segundos</string>
   <string name="sms_failure_timeout_notification">O tempo limite de %1$d seg foi atingido. Uma SMS de erro foi enviada para %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Eliminar tarefa</string>
   <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Gerir contas</string>
-  <string name="is_running">a correr (%s pendentes, %s enviados)</string>
+  <string name="is_running">a correr (%1$s pendentes, %2$s enviados)</string>
   <string name="settings_server_settings">Conta</string>
   <string name="settings_url">Endereço do servidor</string>
   <string name="settings_url_warn_http">AVISO: \"http\" não é seguro. Por favor use \"https\".</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">Termo SMS</string>
   <string name="settings_sms_keyword_long">Caso este telemóvel uma SMS contendo apenas este termo, a localização será enviada de volta.</string>
   <string name="settings_sms_keyword_long2">Também é possível enviar comandos com a seguinte sintaxe: TERMO COMANDO</string>
-  <string name="settings_sms_keyword_long3">Comandos disponíveis:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Comandos disponíveis:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Utilizar cor do servidor</string>
   <string name="settings_use_server_color_subtitle">Obtém a cor do servidor ao sincronizar e usa-a como cor principal da aplicação</string>
   <string name="settings_providers_title">Serviços de localização</string>

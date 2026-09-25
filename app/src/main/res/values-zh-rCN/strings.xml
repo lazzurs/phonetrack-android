@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">关于 %s</string>
   <string name="logjob_info_nbsync">%d 个位置点已发送</string>
   <string name="logjob_info_nbnotsync">%d 个位置点等待发送</string>
-  <string name="logjob_info_last_activation">Last activation\n%s ago at\n%s</string>
+  <string name="logjob_info_last_activation">Last activation\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">闹钟已停止</string>
   <string name="sms_logjobs_started">%d 个日志任务已经开始</string>
   <string name="sms_logjobs_stopped">%d 个日志任务已经开始</string>
-  <string name="sms_logjob_created">在会话 %s 中创建了一个 %d 秒频率的日志任务</string>
+  <string name="sms_logjob_created">在会话 %2$s 中创建了一个 %1$d 秒频率的日志任务</string>
   <string name="sms_logjob_creation_impossible">无法创建日志作业，找不到会话</string>
   <string name="sms_failure_timeout_sms">PhoneTrack 在 %d 秒后无法获得位置</string>
   <string name="sms_failure_timeout_notification">%1$d 秒超时已达到，错误短信已发送至 %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">删除日志</string>
   <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
-  <string name="is_running">正在运行(%s 待定, %s 已发送)</string>
+  <string name="is_running">正在运行(%1$s 待定, %2$s 已发送)</string>
   <string name="settings_server_settings">账户</string>
   <string name="settings_url">Server address</string>
   <string name="settings_url_warn_http">警告：“http” 不安全。请使用 “https”。</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">SMS keyword</string>
   <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
   <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
-  <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Available commands:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">使用服务器的颜色设置</string>
   <string name="settings_use_server_color_subtitle">在同步时获取服务器颜色设置并将其用作主应用程序颜色</string>
   <string name="settings_providers_title">定位方式</string>

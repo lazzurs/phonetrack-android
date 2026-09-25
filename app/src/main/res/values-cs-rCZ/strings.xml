@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">O aplikaci %s</string>
   <string name="logjob_info_nbsync">odesláno %d pozic</string>
   <string name="logjob_info_nbnotsync">%d pozic čeká</string>
-  <string name="logjob_info_last_activation">Poslední aktivace\n před %s v\n%s</string>
+  <string name="logjob_info_last_activation">Poslední aktivace\n před %1$s v\n%2$s</string>
   <string name="logjob_info_lastloc">Poslední poloha získána\n%1$s před\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">Výstraha byla zastavena</string>
   <string name="sms_logjobs_started">%d úloh zaznamenávání bylo spuštěno</string>
   <string name="sms_logjobs_stopped">%d úloh zaznamenávání bylo zastaveno</string>
-  <string name="sms_logjob_created">Úloha zaznamenávání s frekvencí %d sekund byla vytvořena v relaci %s</string>
+  <string name="sms_logjob_created">Úloha zaznamenávání s frekvencí %1$d sekund byla vytvořena v relaci %2$s</string>
   <string name="sms_logjob_creation_impossible">Není možné vytvořit úlohu zaznamenávání, nenalezena žádná relace</string>
   <string name="sms_failure_timeout_sms">PhoneTrack se nepodařilo získat pozici ani po %d sekundách</string>
   <string name="sms_failure_timeout_notification">Byl dosažen časový limit %1$d sekund, SMS s hlášením chyby byla odeslána na %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Smazat úlohu zaznamenávání</string>
   <string name="action_sorting_method">Způsob řazení</string>
   <string name="manage_accounts">Spravovat účty</string>
-  <string name="is_running">spuštěné (%s čeká, %s odesláno)</string>
+  <string name="is_running">spuštěné (%1$s čeká, %2$s odesláno)</string>
   <string name="settings_server_settings">Účet</string>
   <string name="settings_url">Adresa serveru</string>
   <string name="settings_url_warn_http">VAROVÁNÍ: „http“ není bezpečné. Použijte „https://“.</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">Klíčové slovo v SMS</string>
   <string name="settings_sms_keyword_long">Pokud tento telefon obdrží SMS, která obsahuje pouze toto klíčové slovo, odešle nazpět informaci o poloze.</string>
   <string name="settings_sms_keyword_long2">Je také možné posílat příkazy a to pomocí zápisu: KLICOVESLOVO PRIKAZ</string>
-  <string name="settings_sms_keyword_long3">Příkazy k dispozici:\n- %s [POČETSEKUND(výchozí=60)]\n- %s [NÁZEV ZAZNAM ÚLOHY]\n- %s [NÁZEV ZAZNAM ÚLOHY]\n- %s MINČAS</string>
+  <string name="settings_sms_keyword_long3">Příkazy k dispozici:\n- %1$s [POČETSEKUND(výchozí=60)]\n- %2$s [NÁZEV ZAZNAM ÚLOHY]\n- %3$s [NÁZEV ZAZNAM ÚLOHY]\n- %4$s MINČAS</string>
   <string name="settings_use_server_color_title">Použít stejnou barvu, jako na serveru</string>
   <string name="settings_use_server_color_subtitle">V rámci synchronizace zjistit barvu uživatelského rozhraní, používanou na serveru a použít jí jako hlavní barvu v rozhraní této aplikace</string>
   <string name="settings_providers_title">Poskytovatelé určování polohy</string>
