@@ -20,8 +20,6 @@
 #   cert4android: custom certificate trust, data binding UI, Conscrypt provider setup
 -keep class at.bitfire.cert4android.** { *; }
 -dontwarn at.bitfire.cert4android.**
-#   Floating action button menu (custom views and their attributes)
--keep class com.github.clans.fab.** { *; }
 
 # Stored in Bundles / saved instance state (Serializable): field names must not change
 # between the writer and the reader.

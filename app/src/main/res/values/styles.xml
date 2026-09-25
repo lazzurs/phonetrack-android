@@ -55,6 +55,39 @@
         <item name="android:textColor">#de000000</item>
     </style>
 
+    <!-- speed-dial menu of the logjob list (activity_logjobs_list_view.xml) -->
+    <style name="FabMenuRow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="FabMenuLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:background">@drawable/fab_menu_label_background</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+        <!-- the button next to it carries the same text for accessibility -->
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="FabMenuAction">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="fabSize">mini</item>
+        <item name="tint">@android:color/white</item>
+    </style>
+
     <style name="fab">
         <item name="android:layout_margin">16dp</item>
         <item name="android:layout_marginTop">0dp</item>
