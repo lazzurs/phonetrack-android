@@ -1,6 +1,5 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -9,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -33,7 +31,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
@@ -120,7 +117,6 @@ import static android.text.format.DateUtils.isToday;
 public class MapActivity extends AppCompatActivity {
     MapView map = null;
 
-    private final static int PERMISSION_WRITE = 3;
     private static final String TAG = MapActivity.class.getSimpleName();
 
     public static final String PARAM_SESSIONID = "net.eneiluj.nextcloud.phonetrack.mapSessionId";
@@ -285,16 +281,6 @@ public class MapActivity extends AppCompatActivity {
         // if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
         // see also StorageUtils
         // note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(
-                    MapActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_WRITE
-            );
-        }
-
         Log.i(TAG, "CREATE map : session : "+session);
 
         //inflate and create the map (already done upper ;-) )
@@ -353,23 +339,6 @@ public class MapActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSION_WRITE:
-                if (grantResults.length > 0) {
-                    Log.d(TAG, "[permission STORAGE result] " + grantResults[0]);
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        declareMapsForgeProvider();
-                    } else {
-
-                    }
-                }
-                break;
-        }
     }
 
     @Override
@@ -432,10 +401,10 @@ public class MapActivity extends AppCompatActivity {
         );
 
         // MAPSFORGE
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            declareMapsForgeProvider();
-        }
+        // Imported .map files live in the app-specific external files dir, which needs
+        // no permission. This used to be gated on WRITE_EXTERNAL_STORAGE, which the
+        // manifest no longer declares, so offline maps were never loaded.
+        declareMapsForgeProvider();
 
     }
 
