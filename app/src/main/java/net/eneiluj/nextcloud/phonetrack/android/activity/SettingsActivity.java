@@ -53,6 +53,7 @@ import net.eneiluj.nextcloud.phonetrack.android.fragment.LoginDialogFragment;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil.LoginStatus;
@@ -82,6 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String SETTINGS_SSO_USERNAME = "settingsSSOUsername";
     public static final String SETTINGS_URL = "settingsUrl";
     public static final String SETTINGS_USERNAME = "settingsUsername";
+    /** Legacy location of the account password, see {@link CredentialStore#migrate} */
     public static final String SETTINGS_PASSWORD = "settingsPassword";
     public static final String SETTINGS_KEY_ETAG = "sessions_last_etag";
     public static final String SETTINGS_KEY_LAST_MODIFIED = "sessions_last_modified";
@@ -171,7 +173,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
         field_url.setText(preferences.getString(SETTINGS_URL, DEFAULT_SETTINGS));
         field_username.setText(preferences.getString(SETTINGS_USERNAME, DEFAULT_SETTINGS));
-        old_password = preferences.getString(SETTINGS_PASSWORD, DEFAULT_SETTINGS);
+        old_password = CredentialStore.getAccountPassword(this);
 
         field_password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -598,10 +600,10 @@ public class SettingsActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString(SETTINGS_URL, url);
                 editor.putString(SETTINGS_USERNAME, username);
-                editor.putString(SETTINGS_PASSWORD, password);
                 editor.remove(SETTINGS_KEY_ETAG);
                 editor.remove(SETTINGS_KEY_LAST_MODIFIED);
                 editor.apply();
+                CredentialStore.setAccountPassword(getApplicationContext(), password);
 
                 final Intent data = new Intent();
                 data.putExtra(LogjobsListViewActivity.CREDENTIALS_CHANGED, CREDENTIALS_CHANGED);

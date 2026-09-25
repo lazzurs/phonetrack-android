@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+. Passwords (CredentialStore.FILE_NAME) never go to the cloud backup.
+     No <device-transfer> section: a direct device-to-device transfer, started by the
+     owner, keeps everything (the platform default). -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="sharedpref" path="credentials.xml" />
+    </cloud-backup>
+</data-extraction-rules>
