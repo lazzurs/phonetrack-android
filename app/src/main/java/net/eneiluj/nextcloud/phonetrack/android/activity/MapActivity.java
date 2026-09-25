@@ -186,20 +186,22 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_import_map:
-                Intent intent = new Intent()
-                        .setType("*/*")
-                        .setAction(Intent.ACTION_GET_CONTENT);
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_import_map) {
+            Intent intent = new Intent()
+                    .setType("*/*")
+                    .setAction(Intent.ACTION_GET_CONTENT);
 
-                //startActivityForResult(Intent.createChooser(intent, "Select a file"), import_file_cmd);
-                importMapFileLauncher.launch(Intent.createChooser(intent, "Select a file"));
-                return true;
-            case R.id.menu_delete_map:
-                MapUtils.showDeleteMapFileDialog(this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            //startActivityForResult(Intent.createChooser(intent, "Select a file"), import_file_cmd);
+            importMapFileLauncher.launch(Intent.createChooser(intent, "Select a file"));
+            return true;
+        }
+        else if (itemId == R.id.menu_delete_map) {
+            MapUtils.showDeleteMapFileDialog(this);
+            return true;
+        }
+        else {
+            return super.onOptionsItemSelected(item);
         }
     }
 

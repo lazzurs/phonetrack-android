@@ -370,51 +370,54 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_fromLogUrl:
-                fromUrlDialog.show();
-                fromUrlEdit.setSelectAllOnFocus(true);
-                fromUrlEdit.requestFocus();
-                // show keyboard
-                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                return true;
-            case R.id.menu_selectSession:
-                selectDialog.show();
-                return true;
-            case R.id.menu_share:
-                String token = getToken();
-                String devicename = getDevicename();
-                String nextURL = getURL().replaceAll("/+$", "");
-                SessionServerSyncHelper syncHelper = db.getPhonetrackServerSyncHelper();
-                if (syncHelper.isConfigured(this.getActivity())) {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-                    String configUrl;
-                    if (preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
-                        configUrl = preferences.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS)
-                                .replaceAll("/+$", "");
-                    }
-                    else {
-                        configUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
-                                .replaceAll("/+$", "");
-                    }
-                    if (nextURL.equals(configUrl)) {
-                        if (!syncHelper.shareDevice(token, devicename, shareCallBack)) {
-                            showToast(getString(R.string.error_share_dev_network), Toast.LENGTH_LONG);
-                        }
-                    }
-                    else {
-                        Log.d(getClass().getSimpleName(), "NOT THE SAME NEXTCLOUD URL");
-                        showToast(getString(R.string.error_share_dev_same_url), Toast.LENGTH_LONG);
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_fromLogUrl) {
+            fromUrlDialog.show();
+            fromUrlEdit.setSelectAllOnFocus(true);
+            fromUrlEdit.requestFocus();
+            // show keyboard
+            InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            return true;
+        }
+        else if (itemId == R.id.menu_selectSession) {
+            selectDialog.show();
+            return true;
+        }
+        else if (itemId == R.id.menu_share) {
+            String token = getToken();
+            String devicename = getDevicename();
+            String nextURL = getURL().replaceAll("/+$", "");
+            SessionServerSyncHelper syncHelper = db.getPhonetrackServerSyncHelper();
+            if (syncHelper.isConfigured(this.getActivity())) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+                String configUrl;
+                if (preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
+                    configUrl = preferences.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS)
+                            .replaceAll("/+$", "");
+                }
+                else {
+                    configUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS)
+                            .replaceAll("/+$", "");
+                }
+                if (nextURL.equals(configUrl)) {
+                    if (!syncHelper.shareDevice(token, devicename, shareCallBack)) {
+                        showToast(getString(R.string.error_share_dev_network), Toast.LENGTH_LONG);
                     }
                 }
                 else {
-                    showToast(getString(R.string.error_share_dev_configured), Toast.LENGTH_LONG);
+                    Log.d(getClass().getSimpleName(), "NOT THE SAME NEXTCLOUD URL");
+                    showToast(getString(R.string.error_share_dev_same_url), Toast.LENGTH_LONG);
                 }
+            }
+            else {
+                showToast(getString(R.string.error_share_dev_configured), Toast.LENGTH_LONG);
+            }
 
-                return false;
-            default:
-                return super.onOptionsItemSelected(item);
+            return false;
+        }
+        else {
+            return super.onOptionsItemSelected(item);
         }
     }
 

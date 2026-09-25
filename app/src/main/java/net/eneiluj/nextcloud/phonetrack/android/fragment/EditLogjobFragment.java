@@ -562,52 +562,59 @@ public abstract class EditLogjobFragment extends Fragment {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_delete:
-                if (logjob.getId() != 0) {
-                    confirmDeleteAlertBuilder.show();
-                }
-                else {
-                    listener.close();
-                }
-                return true;
-            case R.id.menu_share:
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getTitle());
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, getURL());
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_delete) {
+            if (logjob.getId() != 0) {
+                confirmDeleteAlertBuilder.show();
+            }
+            else {
+                listener.close();
+            }
+            return true;
+        }
+        else if (itemId == R.id.menu_share) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getTitle());
+            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, getURL());
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(Intent.createChooser(shareIntent, logjob.getTitle()));
-                } else {
-                    ShareActionProvider actionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-                    actionProvider.setShareIntent(shareIntent);
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                startActivity(Intent.createChooser(shareIntent, logjob.getTitle()));
+            } else {
+                ShareActionProvider actionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+                actionProvider.setShareIntent(shareIntent);
+            }
 
-                return false;
-            case R.id.menu_bike:
-                applyBikePreset();
-                showPresetHint();
-                return true;
-            case R.id.menu_walk:
-                applyWalkPreset();
-                showPresetHint();
-                return true;
-            case R.id.menu_drive:
-                applyDrivePreset();
-                showPresetHint();
-                return true;
-            case R.id.menu_battery:
-                applyBatteryPreset();
-                showPresetHint();
-                return true;
-            case R.id.menu_precision:
-                applyPrecisionPreset();
-                showPresetHint();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            return false;
+        }
+        else if (itemId == R.id.menu_bike) {
+            applyBikePreset();
+            showPresetHint();
+            return true;
+        }
+        else if (itemId == R.id.menu_walk) {
+            applyWalkPreset();
+            showPresetHint();
+            return true;
+        }
+        else if (itemId == R.id.menu_drive) {
+            applyDrivePreset();
+            showPresetHint();
+            return true;
+        }
+        else if (itemId == R.id.menu_battery) {
+            applyBatteryPreset();
+            showPresetHint();
+            return true;
+        }
+        else if (itemId == R.id.menu_precision) {
+            applyPrecisionPreset();
+            showPresetHint();
+            return true;
+        }
+        else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
