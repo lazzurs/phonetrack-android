@@ -132,6 +132,7 @@
     <string name="popup_speed_value">Speed: %.2f km/h</string>
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">Your position was sent by SMS to %s</string>
+    <string name="sms_position_in_progress_notification">Getting the position requested by SMS by %s</string>
     <string name="sms_notif_info_dialog_title">Sms information</string>
     <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
     <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>

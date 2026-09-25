@@ -30,7 +30,6 @@ import java.util.Map;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
-import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
 import net.eneiluj.nextcloud.phonetrack.util.ServerResponse;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
@@ -43,7 +42,7 @@ import at.bitfire.cert4android.CustomCertManager;
  */
 
 public class WebTrackHelper {
-    private static final String TAG = WebTrackService.class.getSimpleName();
+    private static final String TAG = WebTrackHelper.class.getSimpleName();
 
     // addpos
     public static final String PARAM_TIME = "timestamp";
