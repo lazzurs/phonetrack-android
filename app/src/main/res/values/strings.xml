@@ -140,6 +140,9 @@
     <string name="sms_osm_link">OSM link</string>
     <string name="sms_alarm_started">Alarm will ring for %d seconds</string>
     <string name="sms_alarm_stopped">Alarm has been stopped</string>
+    <string name="sms_alarm_notification">Alarm requested by SMS is ringing</string>
+    <string name="sms_alarm_notification_stop">Stop</string>
+    <string name="sms_alarm_notification_channel">SMS alarm</string>
     <string name="sms_logjobs_started">%d logjobs have been started</string>
     <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
     <string name="sms_logjob_created">A logjob with %1$d seconds frequency has been created in session %2$s</string>

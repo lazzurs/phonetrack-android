@@ -19,6 +19,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- LoggerService records location for as long as tracking is enabled -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <!-- SmsAlarmService rings the alarm requested by the "alarm" SMS command -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <!-- For SSO account import -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <!-- For SMS logjob activation -->
@@ -165,6 +167,12 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
+
+        <!-- short-lived: rings the alarm requested by the "alarm" SMS command -->
+        <service
+            android:name="net.eneiluj.nextcloud.phonetrack.service.SmsAlarmService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
 
         <!-- short-lived: gets a GPS fix to answer an SMS position request -->
         <service

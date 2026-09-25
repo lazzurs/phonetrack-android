@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import net.eneiluj.nextcloud.phonetrack.service.SmsAlarmService;
+
 public class PhoneTrack extends Application {
     private static final String DARK_THEME = "darkTheme";
 
@@ -16,6 +18,8 @@ public class PhoneTrack extends Application {
         super.onCreate();
         // before anything is backed up again: passwords leave the default preferences
         CredentialStore.migrate(this);
+        // if the process died while an SMS alarm was ringing, put the alarm volume back
+        SmsAlarmService.restoreVolumeAfterInterruptedAlarm(this);
         SystemLogger.getDb(getApplicationContext());
     }
 
