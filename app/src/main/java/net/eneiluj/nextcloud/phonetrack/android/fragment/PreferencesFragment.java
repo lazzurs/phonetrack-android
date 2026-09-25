@@ -14,7 +14,9 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -43,16 +45,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.Toast;
 
-import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
-import com.larswerkman.lobsterpicker.LobsterPicker;
-import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 
 import at.bitfire.cert4android.CustomCertManager;
 import net.eneiluj.nextcloud.phonetrack.R;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.EditMapsLogjobActivity;
+import net.eneiluj.nextcloud.phonetrack.android.preference.ColorPreference;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.android.activity.MapActivity;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity;
@@ -415,35 +417,77 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         providersPref.setSummary(providersList.get(intVal-1));
     }
 
+    // Material 500 colors, plus the Nextcloud blue the app uses by default
+    private static final int[] PRESET_COLORS = {
+            0xFF0082C9, 0xFFF44336, 0xFFE91E63, 0xFF9C27B0, 0xFF673AB7,
+            0xFF3F51B5, 0xFF2196F3, 0xFF03A9F4, 0xFF00BCD4, 0xFF009688,
+            0xFF4CAF50, 0xFF8BC34A, 0xFFCDDC39, 0xFFFFC107, 0xFFFF9800,
+            0xFFFF5722, 0xFF795548, 0xFF9E9E9E, 0xFF607D8B, 0xFF000000,
+    };
+
     private void showColorDialog(final Preference preference) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View colorView = inflater.inflate(R.layout.dialog_color, null);
+        final ColorPreference colorPref = (ColorPreference) preference;
+        View colorView = getLayoutInflater().inflate(R.layout.dialog_color, null);
+        GridLayout grid = colorView.findViewById(R.id.colorGrid);
+        final View preview = colorView.findViewById(R.id.colorPreview);
+        final EditText hexField = colorView.findViewById(R.id.colorHex);
+        final int[] chosen = {colorPref.getValue()};
 
-        int color = PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .getInt(getString(R.string.pref_key_color), Color.BLUE);
-        final LobsterPicker lobsterPicker = colorView.findViewById(R.id.lobsterPicker);
-        LobsterShadeSlider shadeSlider = colorView.findViewById(R.id.shadeSlider);
+        preview.setBackground(ColorPreference.circle(chosen[0]));
+        hexField.setText(ColorPreference.toHex(chosen[0]));
 
-        lobsterPicker.addDecorator(shadeSlider);
-        lobsterPicker.setColorHistoryEnabled(true);
-        lobsterPicker.setHistory(color);
-        lobsterPicker.setColor(color);
+        int size = (int) (40 * getResources().getDisplayMetrics().density);
+        int margin = (int) (6 * getResources().getDisplayMetrics().density);
+        for (final int color : PRESET_COLORS) {
+            View swatch = new View(requireContext());
+            GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+            lp.width = size;
+            lp.height = size;
+            lp.setMargins(margin, margin, margin, margin);
+            swatch.setLayoutParams(lp);
+            swatch.setBackground(ColorPreference.circle(color));
+            swatch.setContentDescription(ColorPreference.toHex(color));
+            swatch.setOnClickListener(v -> {
+                chosen[0] = color;
+                preview.setBackground(ColorPreference.circle(color));
+                // updates the field; the watcher below accepts the same value
+                hexField.setText(ColorPreference.toHex(color));
+            });
+            grid.addView(swatch);
+        }
 
-        new AlertDialog.Builder(getActivity())
+        hexField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Integer parsed = ColorPreference.parseHex(s.toString());
+                if (parsed != null) {
+                    chosen[0] = parsed;
+                    preview.setBackground(ColorPreference.circle(parsed));
+                }
+            }
+        });
+
+        new AlertDialog.Builder(requireActivity())
                 .setView(colorView)
                 .setTitle(getString(R.string.settings_colorpicker_title))
-                .setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ((ColorPreferenceCompat) preference).setValue(lobsterPicker.getColor());
-                        if (getActivity() != null) {
-                            getActivity().recreate();
-                        }
+                .setPositiveButton(getString(R.string.simple_ok), (dialogInterface, i) -> {
+                    colorPref.setValue(chosen[0]);
+                    if (getActivity() != null) {
+                        getActivity().recreate();
                     }
                 })
                 .setNegativeButton(getString(R.string.simple_cancel), null)
                 .show();
     }
+
     private final ActivityResultLauncher<Intent> pickSmsSenderLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 Intent data = result.getData();
