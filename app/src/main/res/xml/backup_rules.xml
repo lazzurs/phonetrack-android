@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 and older, where one set of rules covers every kind of backup:
+     passwords (CredentialStore.FILE_NAME) are never backed up. -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="credentials.xml" />
+</full-backup-content>

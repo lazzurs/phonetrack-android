@@ -14,6 +14,8 @@ public class PhoneTrack extends Application {
     public void onCreate() {
         setAppTheme(getAppTheme(getApplicationContext()));
         super.onCreate();
+        // before anything is backed up again: passwords leave the default preferences
+        CredentialStore.migrate(this);
         SystemLogger.getDb(getApplicationContext());
     }
 

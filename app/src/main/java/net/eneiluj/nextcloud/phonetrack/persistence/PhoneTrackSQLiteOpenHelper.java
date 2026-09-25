@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -28,6 +29,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSyslog;
 import net.eneiluj.nextcloud.phonetrack.model.SyncError;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
@@ -39,7 +41,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 19;
+    private static final int database_version = 20;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -143,6 +145,15 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             return instance = new PhoneTrackSQLiteOpenHelper(context.getApplicationContext());
         else
             return instance;
+    }
+
+    /** Robolectric gives every test a new Application; don't keep a helper bound to an old one. */
+    @VisibleForTesting
+    static void resetInstanceForTesting() {
+        if (instance != null) {
+            instance.close();
+            instance = null;
+        }
     }
 
     public SessionServerSyncHelper getPhonetrackServerSyncHelper() {
@@ -275,6 +286,30 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         if (oldVersion < 19) {
             createTableSyslog(db, table_syslog);
         }
+        if (oldVersion < 20) {
+            moveLogjobPasswordsToCredentialStore(db, context);
+        }
+    }
+
+    /**
+     * Custom logjob passwords used to be stored in the database, which is part of the cloud
+     * backup. Move them to {@link CredentialStore} (excluded from it) and blank the column,
+     * with secure_delete so the old values are overwritten in the file.
+     */
+    @VisibleForTesting
+    static void moveLogjobPasswordsToCredentialStore(SQLiteDatabase db, Context context) {
+        try (Cursor pragma = db.rawQuery("PRAGMA secure_delete = ON", null)) {
+            pragma.moveToFirst();
+        }
+        try (Cursor cursor = db.query(table_logjobs, new String[]{key_id, key_password},
+                key_password + " IS NOT NULL", null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                CredentialStore.setLogjobPassword(context, cursor.getLong(0), cursor.getString(1));
+            }
+        }
+        ContentValues values = new ContentValues();
+        values.putNull(key_password);
+        db.update(table_logjobs, values, key_password + " IS NOT NULL", null);
     }
 
     /*@Override
@@ -394,8 +429,13 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_useSignificantMotionMixed, logjob.useSignificantMotionMixed() ? "1" : "0");
         values.put(key_locationTimeout, logjob.getLocationRequestTimeout());
         values.put(key_login, logjob.getLogin());
-        values.put(key_password, logjob.getPassword());
-        return db.insert(table_logjobs, null, values);
+        // the password lives in CredentialStore, not in the (backed up) database
+        values.putNull(key_password);
+        long id = db.insert(table_logjobs, null, values);
+        if (id != -1) {
+            CredentialStore.setLogjobPassword(context, id, logjob.getPassword());
+        }
+        return id;
     }
 
     long addSession(DBSession session) {
@@ -474,7 +514,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 cursor.getInt(10) == 1,
                 cursor.getInt(11),
                 cursor.isNull(21) ? null : cursor.getString(21),
-                cursor.isNull(22) ? null : cursor.getString(22),
+                CredentialStore.getLogjobPassword(context, cursor.getLong(0)),
                 cursor.getInt(23) == 1
         );
     }
@@ -720,8 +760,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_useSignificantMotionMixed, newLogjob.useSignificantMotionMixed() ? 1 : 0);
         values.put(key_locationTimeout, newLogjob.getLocationRequestTimeout());
         values.put(key_login, newLogjob.getLogin());
-        values.put(key_password, newLogjob.getPassword());
+        values.putNull(key_password);
         int rows = db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(newLogjob.getId())});
+        if (rows > 0) {
+            CredentialStore.setLogjobPassword(context, newLogjob.getId(), newLogjob.getPassword());
+        }
         // if data was changed, set new status and schedule sync (with callback); otherwise invoke callback directly.
         if (rows > 0) {
             return newLogjob;
@@ -776,6 +819,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         db.delete(table_logjobs,
                 key_id + " = ?",
                 new String[]{String.valueOf(id)});
+        CredentialStore.removeLogjobPassword(context, id);
     }
 
     void deleteSession(long id) {
