@@ -10,12 +10,15 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
+import android.os.Build;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +33,12 @@ public class ManifestHardeningTest {
     private final PackageManager pm = context.getPackageManager();
 
     @Test
+    public void testsEmulateTheTargetSdk() {
+        // raise sdk= in src/test/resources/robolectric.properties together with targetSdk
+        assertEquals(context.getApplicationInfo().targetSdkVersion, Build.VERSION.SDK_INT);
+    }
+
+    @Test
     public void loggerServiceIsALocationForegroundService() throws Exception {
         // dataSync is capped at 6h/day on Android 15+ and can't start from BOOT_COMPLETED
         ServiceInfo info = pm.getServiceInfo(new ComponentName(context, LoggerService.class), 0);
@@ -39,6 +48,12 @@ public class ManifestHardeningTest {
         List<String> requested = Arrays.asList(pkg.requestedPermissions);
         assertTrue(requested.contains(Manifest.permission.FOREGROUND_SERVICE_LOCATION));
         assertFalse(requested.contains(Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC));
+    }
+
+    @Test
+    public void declaresLocalNetworkAccessForAndroid17() throws Exception {
+        PackageInfo pkg = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
+        assertTrue(Arrays.asList(pkg.requestedPermissions).contains(LocalNetworkAccess.PERMISSION));
     }
 
     @Test

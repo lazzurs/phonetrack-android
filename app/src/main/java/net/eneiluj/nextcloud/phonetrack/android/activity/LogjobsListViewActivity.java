@@ -112,6 +112,7 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackSync;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackWorker;
+import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
 import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -133,6 +134,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private boolean locationPermissionAsked = false;
     private boolean notificationPermissionAsked = false;
     private boolean backgroundLocationPermissionAsked = false;
+    private boolean localNetworkAsked = false;
     private boolean batteryOptimizationAsked = false;
 
     private final ActivityResultLauncher<String[]> permissionLauncher =
@@ -349,6 +351,33 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         }
 
+        if (!localNetworkAsked) {
+            localNetworkAsked = true;
+            // Android 17: reaching a server on the LAN needs the "Nearby devices" permission
+            if (LocalNetworkAccess.isEnforced(this) && !LocalNetworkAccess.isGranted(this)) {
+                new BackgroundTask<Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        Context context = getApplicationContext();
+                        return LocalNetworkAccess.isNeededFor(context, LocalNetworkAccess.configuredServerUrls(context));
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean needed) {
+                        if (isDestroyed()) {
+                            return;
+                        }
+                        if (needed) {
+                            showLocalNetworkPermissionRationale();
+                        } else {
+                            requestNextPermission();
+                        }
+                    }
+                }.executeInParallel();
+                return;
+            }
+        }
+
         if (!batteryOptimizationAsked) {
             batteryOptimizationAsked = true;
             try {
@@ -366,6 +395,17 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 SystemLogger.d(TAG, "Unable to request ignoring battery optimizations: " + e);
             }
         }
+    }
+
+    private void showLocalNetworkPermissionRationale() {
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog))
+                .setTitle(R.string.local_network_permission_title)
+                .setMessage(R.string.local_network_permission_message)
+                .setPositiveButton(R.string.simple_yes, (dialog, which) ->
+                        permissionLauncher.launch(new String[]{LocalNetworkAccess.PERMISSION}))
+                .setNegativeButton(R.string.simple_no, (dialog, which) -> requestNextPermission())
+                .setOnCancelListener(dialog -> requestNextPermission())
+                .show();
     }
 
     private void fixProviders() {

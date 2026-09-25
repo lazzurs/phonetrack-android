@@ -98,6 +98,19 @@ android {
     }
 }
 
+// Robolectric needs Java 21 to emulate SDK 35+. Only the unit tests run on it: the build
+// (and the bytecode target, see compileOptions) stays on JDK 17.
+tasks.withType<Test>().configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    // Robolectric's SDK 36 sandbox sets up shared memory through FileDescriptor internals
+    jvmArgs(
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED",
+    )
+}
+
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 

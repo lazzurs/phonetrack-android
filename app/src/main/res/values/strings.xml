@@ -239,6 +239,8 @@
     <string name="using_gps">Using gps location</string>
     <string name="background_location_permission_title">Background location permission</string>
     <string name="background_location_permission_message">To allow PhoneTrack to run in the background, an additional permission must be granted. On the next setting screen please select: </string>
+    <string name="local_network_permission_title">Local network access</string>
+    <string name="local_network_permission_message">Your server is on the local network. Android only lets PhoneTrack reach it with the \"Nearby devices\" permission, which is asked for next.</string>
     <string name="location_permission_denied">Location permission denied</string>
     <string name="sessions_sync_success">Sessions synchronized</string>
     <string name="pref_autostart_title">Auto start</string>

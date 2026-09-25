@@ -12,6 +12,8 @@ import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -52,6 +54,7 @@ import net.eneiluj.nextcloud.phonetrack.android.fragment.LoginDialogFragment;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
 import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
@@ -319,7 +322,42 @@ public class SettingsActivity extends AppCompatActivity {
         new LoginValidatorTask().executeInParallel(url, username, password);
     }
 
+    private final ActivityResultLauncher<String> localNetworkPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+                    // go on either way: a refusal shows up as a connection error
+                    granted -> startLogin());
+
+    /**
+     * Android 17: a server on the local network can only be reached with the "Nearby devices"
+     * permission, so ask for it first when the server URL is local.
+     */
     private void login() {
+        if (!LocalNetworkAccess.isEnforced(this) || LocalNetworkAccess.isGranted(this)) {
+            startLogin();
+            return;
+        }
+        final String url = PhoneTrackClientUtil.formatURL(field_url.getText().toString().trim());
+        new BackgroundTask<Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                return LocalNetworkAccess.isLocalNetworkUrl(url);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean local) {
+                if (isDestroyed()) {
+                    return;
+                }
+                if (local) {
+                    localNetworkPermissionLauncher.launch(LocalNetworkAccess.PERMISSION);
+                } else {
+                    startLogin();
+                }
+            }
+        }.executeInParallel();
+    }
+
+    private void startLogin() {
         if (useWebLogin) {
             webLogin();
         } else {
