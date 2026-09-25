@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 
+import androidx.core.os.BundleCompat;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -219,7 +220,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         String categoryAdapterSelectedItem = ADAPTER_KEY_ALL;
         if (savedInstanceState != null) {
-            navigationSelection = (Category) savedInstanceState.getSerializable(SAVED_STATE_NAVIGATION_SELECTION);
+            navigationSelection = BundleCompat.getSerializable(savedInstanceState, SAVED_STATE_NAVIGATION_SELECTION, Category.class);
             navigationOpen = savedInstanceState.getString(SAVED_STATE_NAVIGATION_OPEN);
             categoryAdapterSelectedItem = savedInstanceState.getString(SAVED_STATE_NAVIGATION_ADAPTER_SLECTION);
         }
