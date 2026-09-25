@@ -104,6 +104,7 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.work.runtime)
     // needed for cert4android (conflict resolution)
     implementation(libs.androidx.cardview)
     implementation(libs.material)
@@ -123,6 +124,7 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.work.testing)
 
     androidTestImplementation(libs.junit)
 }

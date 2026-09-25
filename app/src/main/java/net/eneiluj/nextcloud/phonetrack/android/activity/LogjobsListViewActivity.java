@@ -111,7 +111,8 @@ import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
-import net.eneiluj.nextcloud.phonetrack.service.WebTrackService;
+import net.eneiluj.nextcloud.phonetrack.service.WebTrackSync;
+import net.eneiluj.nextcloud.phonetrack.service.WebTrackWorker;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
@@ -555,8 +556,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     }
                 }
                 if (db.getLocationNotSyncedCount() > 0) {
-                    Intent syncIntent = new Intent(LogjobsListViewActivity.this, WebTrackService.class);
-                    startService(syncIntent);
+                    WebTrackWorker.enqueue(getApplicationContext(), WebTrackWorker.ALL_LOGJOBS);
                     showToast(getString(R.string.uploading_started));
                 }
                 else {
@@ -1648,9 +1648,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(LoggerService.BROADCAST_LOCATION_GPS_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED);
-        filter.addAction(WebTrackService.BROADCAST_SYNC_STARTED);
-        filter.addAction(WebTrackService.BROADCAST_SYNC_DONE);
-        filter.addAction(WebTrackService.BROADCAST_SYNC_FAILED);
+        filter.addAction(WebTrackSync.BROADCAST_SYNC_STARTED);
+        filter.addAction(WebTrackSync.BROADCAST_SYNC_DONE);
+        filter.addAction(WebTrackSync.BROADCAST_SYNC_FAILED);
         filter.addAction(SessionServerSyncHelper.BROADCAST_SESSIONS_SYNC_FAILED);
         filter.addAction(SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED);
         filter.addAction(SessionServerSyncHelper.BROADCAST_SSO_TOKEN_MISMATCH);
@@ -1689,11 +1689,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         }
                     }
                     break;
-                case WebTrackService.BROADCAST_SYNC_STARTED:
+                case WebTrackSync.BROADCAST_SYNC_STARTED:
                     //swipeRefreshLayout.setRefreshing(true);
                     break;
                 // when sync is finished (fail or success)
-                case WebTrackService.BROADCAST_SYNC_DONE:
+                case WebTrackSync.BROADCAST_SYNC_DONE:
                     long ljId2 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     if (ljId2 != 0) {
                         if (LoggerService.DEBUG) {
@@ -1720,7 +1720,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     }
                     updateCurrentInfoDialog();
                     break;
-                case (WebTrackService.BROADCAST_SYNC_FAILED): {
+                case (WebTrackSync.BROADCAST_SYNC_FAILED): {
                     //long ljId3 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
                     showToast(getString(R.string.uploading_failed) + "\n" + errorMessage, Toast.LENGTH_LONG);

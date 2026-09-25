@@ -9,6 +9,7 @@ androidx-cardview = "androidx.cardview:cardview:1.0.0"
 androidx-core = "androidx.core:core:1.19.1"
 androidx-preference = "androidx.preference:preference:1.2.1"
 androidx-recyclerview = "androidx.recyclerview:recyclerview:1.4.0"
+androidx-work-runtime = "androidx.work:work-runtime:2.12.0"
 androidx-swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0"
 desugar-jdk-libs = "com.android.tools:desugar_jdk_libs:2.1.5"
 material = "com.google.android.material:material:1.14.0"
@@ -17,6 +18,7 @@ junit = "junit:junit:4.13.2"
 androidx-test-core = "androidx.test:core:1.7.0"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.3.0"
 robolectric = "org.robolectric:robolectric:4.17"
+androidx-work-testing = "androidx.work:work-testing:2.12.0"
 # NOTE: lowercase groupId (not "bitfireAT" as the GitHub org is styled) -
 # JitPack publishes this artifact's Maven path lowercased; the exact-case
 # groupId 404s on JitPack's server even though it reports "Build ok".

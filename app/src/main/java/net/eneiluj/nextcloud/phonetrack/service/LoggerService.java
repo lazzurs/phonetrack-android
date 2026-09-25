@@ -103,7 +103,6 @@ public class LoggerService extends Service {
     public static final String JOB_ID = "jobid";
     public static final String SCHEDULE_INTERVAL = "scheduleinterval";
 
-    private Intent syncIntent;
 
     private static volatile boolean isRunning = false;
     private static volatile boolean firstRun = false;
@@ -150,10 +149,9 @@ public class LoggerService extends Service {
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext());
 
-        syncIntent = new Intent(getApplicationContext(), WebTrackService.class);
         // start websync service if needed
         if (db.getLocationNotSyncedCount() > 0) {
-            startService(syncIntent);
+            WebTrackWorker.enqueue(getApplicationContext(), WebTrackWorker.ALL_LOGJOBS);
         }
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -1041,7 +1039,7 @@ public class LoggerService extends Service {
             } catch (InterruptedException e) {
                 if (DEBUG) { SystemLogger.e(TAG, "interrupted"); }
             }
-            startService(syncIntent);
+            WebTrackWorker.enqueue(getApplicationContext(), WebTrackWorker.ALL_LOGJOBS);
         }
     }
 
@@ -1054,9 +1052,7 @@ public class LoggerService extends Service {
         sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
         updateNotificationContent();
 
-        Intent syncOneDev = new Intent(getApplicationContext(), WebTrackService.class);
-        syncOneDev.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, logjobId);
-        startService(syncOneDev);
+        WebTrackWorker.enqueue(getApplicationContext(), logjobId);
     }
 
     // worker superclass

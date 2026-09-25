@@ -1,13 +1,11 @@
 package net.eneiluj.nextcloud.phonetrack.service;
 
-import android.app.AlarmManager;
-import android.app.IntentService;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.WorkerThread;
 import androidx.preference.PreferenceManager;
 
 import com.google.gson.GsonBuilder;
@@ -47,65 +45,36 @@ import org.json.JSONObject;
 import at.bitfire.cert4android.CustomCertManager;
 
 /**
- * Service synchronizing local database positions with remote server.
- *
+ * Uploads the positions stored in the local database to their destination
+ * (PhoneTrack, Nextcloud Maps or a custom URL). Run by {@link WebTrackWorker}.
  */
+public class WebTrackSync {
 
-public class WebTrackService extends IntentService {
-
-    private static final String TAG = WebTrackService.class.getSimpleName();
+    private static final String TAG = WebTrackSync.class.getSimpleName();
     public static final String BROADCAST_SYNC_FAILED = "net.eneiluj.nextcloud.phonetrack.broadcast.sync_failed";
     public static final String BROADCAST_SYNC_STARTED = "net.eneiluj.nextcloud.phonetrack.broadcast.sync_started";
     public static final String BROADCAST_SYNC_DONE = "net.eneiluj.nextcloud.phonetrack.broadcast.sync_done";
 
-    private PhoneTrackSQLiteOpenHelper db;
-    private WebTrackHelper web;
-    private static PendingIntent pi = null;
+    private final Context context;
+    private final PhoneTrackSQLiteOpenHelper db;
+    private final WebTrackHelper web;
+    private int sent;
 
-    final private static int FIVE_MINUTES = 1000 * 60 * 5;
-
-    public WebTrackService() {
-        super("WebTrackService");
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if (LoggerService.DEBUG) { Log.d(TAG, "[websync create]"); }
-
-        db = PhoneTrackSQLiteOpenHelper.getInstance(this);
+    public WebTrackSync(Context context) {
+        this.context = context.getApplicationContext();
+        db = PhoneTrackSQLiteOpenHelper.getInstance(this.context);
         CustomCertManager certManager = db.getPhonetrackServerSyncHelper().getCustomCertManager();
-        web = new WebTrackHelper(this, certManager);
+        web = new WebTrackHelper(this.context, certManager);
     }
 
     /**
-     * Handle synchronization intent
-     * @param intent Intent
+     * Send the positions not synced yet, of one logjob or of all of them (id 0).
+     *
+     * @return false if any upload failed (the positions stay unsynced and can be retried)
      */
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        if (LoggerService.DEBUG) { Log.d(TAG, "[websync start]"); }
-
-        long logjobId = intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0);
-
-        if (pi != null) {
-            // cancel pending alarm
-            if (LoggerService.DEBUG) { Log.d(TAG, "[websync cancel alarm]"); }
-            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            if (am != null) {
-                am.cancel(pi);
-            }
-            pi = null;
-        }
-
-        doSync(logjobId);
-
-    }
-
-    /**
-     * Send all positions in database
-     */
-    private void doSync(long ljIdToSync) {
+    @WorkerThread
+    public boolean sync(long ljIdToSync) {
+        sent = 0;
         boolean anyError = false;
 
         // get the logjobs
@@ -123,13 +92,13 @@ public class WebTrackService extends IntentService {
         if (logjobs.size() > 0) {
             // start loading animation in logjob list
             Intent intent = new Intent(BROADCAST_SYNC_STARTED);
-            intent.setPackage(getPackageName());
-            sendBroadcast(intent);
+            intent.setPackage(context.getPackageName());
+            context.sendBroadcast(intent);
         }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         long groupSync = 0;
-        String groupsyncString = prefs.getString(getString(R.string.pref_key_group_sync), "0");
+        String groupsyncString = prefs.getString(context.getString(R.string.pref_key_group_sync), "0");
         if (groupsyncString != null) {
             groupSync = Long.parseLong(groupsyncString);
         }
@@ -141,8 +110,8 @@ public class WebTrackService extends IntentService {
                 if (logjob.getDeviceName().isEmpty() && logjob.getToken().isEmpty() && logjob.getUrl().isEmpty()) {
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
                     if (locations.size() > 0 && locations.size() >= groupSync) {
-                        if (!SessionServerSyncHelper.isConfigured(getApplicationContext())) {
-                            throw new Exception(getString(R.string.error_no_account_maps));
+                        if (!SessionServerSyncHelper.isConfigured(context)) {
+                            throw new Exception(context.getString(R.string.error_no_account_maps));
                         }
                         PhoneTrackClient client = createPhoneTrackClient();
                         for (DBLogjobLocation loc : locations) {
@@ -150,12 +119,13 @@ public class WebTrackService extends IntentService {
                             Map<String, String> params = dbLocationToMap(loc);
                             web.postPositionToMaps(client, params);
                             db.setLocationSynced(locId);
+                            sent++;
                             db.incNbSync(logjob);
                             db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                             Intent intent = new Intent(BROADCAST_SYNC_DONE);
                             intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
-                            intent.setPackage(getPackageName());
-                            sendBroadcast(intent);
+                            intent.setPackage(context.getPackageName());
+                            context.sendBroadcast(intent);
                         }
                         if (locations.size() > 0) {
                             db.resetLastSyncError(ljId);
@@ -176,12 +146,13 @@ public class WebTrackService extends IntentService {
                             Map<String, String> params = dbLocationToMap(loc);
                             web.postPositionToPhoneTrack(url, params);
                             db.setLocationSynced(locId);
+                            sent++;
                             db.incNbSync(logjob);
                             db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                             Intent intent = new Intent(BROADCAST_SYNC_DONE);
                             intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
-                            intent.setPackage(getPackageName());
-                            sendBroadcast(intent);
+                            intent.setPackage(context.getPackageName());
+                            context.sendBroadcast(intent);
                         }
                         if (locations.size() > 0) {
                             db.resetLastSyncError(ljId);
@@ -201,14 +172,15 @@ public class WebTrackService extends IntentService {
                                 for (DBLogjobLocation locToDel : tmpLocs) {
                                     long locId = locToDel.getId();
                                     db.setLocationSynced(locId);
+                                    sent++;
                                     db.incNbSync(logjob);
                                 }
                                 tmpLocs = new ArrayList<>();
                                 // update nbsync in logjob list
                                 Intent intent = new Intent(BROADCAST_SYNC_DONE);
                                 intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
-                                intent.setPackage(getPackageName());
-                                sendBroadcast(intent);
+                                intent.setPackage(context.getPackageName());
+                                context.sendBroadcast(intent);
                             }
                         }
                         // last bunch
@@ -218,6 +190,7 @@ public class WebTrackService extends IntentService {
                             for (DBLogjobLocation locToDel : tmpLocs) {
                                 long locId = locToDel.getId();
                                 db.setLocationSynced(locId);
+                                sent++;
                                 db.incNbSync(logjob);
                             }
                         }
@@ -225,8 +198,8 @@ public class WebTrackService extends IntentService {
                         db.resetLastSyncError(ljId);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
-                        intent.setPackage(getPackageName());
-                        sendBroadcast(intent);
+                        intent.setPackage(context.getPackageName());
+                        context.sendBroadcast(intent);
                     }
                 }
                 // custom logjob
@@ -250,12 +223,14 @@ public class WebTrackService extends IntentService {
                         }
 
                         db.setLocationSynced(locId);
+
+                        sent++;
                         db.incNbSync(logjob);
                         db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
-                        intent.setPackage(getPackageName());
-                        sendBroadcast(intent);
+                        intent.setPackage(context.getPackageName());
+                        context.sendBroadcast(intent);
                     }
                     if (locations.size() > 0) {
                         db.resetLastSyncError(ljId);
@@ -279,26 +254,11 @@ public class WebTrackService extends IntentService {
                 handleError(e3, ljId);
             }
         }
-        // retry only if there was any error and tracking is on
-        if (anyError && LoggerService.isRunning()) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "[websync set alarm]"); }
-            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent syncIntent = new Intent(getApplicationContext(), WebTrackService.class);
-            pi = PendingIntent.getService(this, 0, syncIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
-            if (am != null) {
-                am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + FIVE_MINUTES, pi);
-            }
-        }
-        // notify loggerservice to update notification content
-        if (LoggerService.isRunning()) {
-            Intent intent = new Intent(this, LoggerService.class);
-            intent.putExtra(LoggerService.UPDATE_NOTIFICATION, true);
-            startService(intent);
-        }
         // stop loading animation in logjob list
         Intent intent = new Intent(BROADCAST_SYNC_DONE);
-        intent.setPackage(getPackageName());
-        sendBroadcast(intent);
+        intent.setPackage(context.getPackageName());
+        context.sendBroadcast(intent);
+        return !anyError;
     }
 
     /**
@@ -310,11 +270,11 @@ public class WebTrackService extends IntentService {
     private void handleError(Exception e, long ljId) {
         String message;
         if (e instanceof UnknownHostException) {
-            message = getString(R.string.e_unknown_host, e.getMessage());
+            message = context.getString(R.string.e_unknown_host, e.getMessage());
         } else if (e instanceof MalformedURLException || e instanceof URISyntaxException) {
-            message = getString(R.string.e_bad_url, e.getMessage());
+            message = context.getString(R.string.e_bad_url, e.getMessage());
         } else if (e instanceof ConnectException || e instanceof NoRouteToHostException) {
-            message = getString(R.string.e_connect, e.getMessage());
+            message = context.getString(R.string.e_connect, e.getMessage());
         } else {
             message = e.getMessage();
         }
@@ -325,8 +285,8 @@ public class WebTrackService extends IntentService {
         Intent intent = new Intent(BROADCAST_SYNC_FAILED);
         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
         intent.putExtra(LoggerService.BROADCAST_ERROR_MESSAGE, message);
-        intent.setPackage(getPackageName());
-        sendBroadcast(intent);
+        intent.setPackage(context.getPackageName());
+        context.sendBroadcast(intent);
     }
 
     /**
@@ -377,26 +337,22 @@ public class WebTrackService extends IntentService {
         return result;
     }
 
-    /**
-     * Cleanup
-     */
-    @Override
-    public void onDestroy() {
-        if (LoggerService.DEBUG) { Log.d(TAG, "[websync stop]"); }
-        super.onDestroy();
+    /** Number of positions uploaded by the last {@link #sync} call. */
+    public int getSentCount() {
+        return sent;
     }
 
     private PhoneTrackClient createPhoneTrackClient() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String url = "";
         String username = "";
         String password = "";
         boolean useSSO = preferences.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false);
         if (useSSO) {
             try {
-                SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(getApplicationContext());
-                NextcloudAPI nextcloudAPI = new NextcloudAPI(getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
-                return new PhoneTrackClient(url, username, password, nextcloudAPI, getApplicationContext());
+                SingleSignOnAccount ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(context);
+                NextcloudAPI nextcloudAPI = new NextcloudAPI(context, ssoAccount, new GsonBuilder().create(), apiCallback);
+                return new PhoneTrackClient(url, username, password, nextcloudAPI, context);
             } catch (NextcloudFilesAppAccountNotFoundException e) {
                 if (LoggerService.DEBUG) {
                     Log.d(TAG, "[NextcloudFilesAppAccountNotFoundException: " + e + "]");
@@ -412,8 +368,8 @@ public class WebTrackService extends IntentService {
         else {
             url = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
             username = preferences.getString(SettingsActivity.SETTINGS_USERNAME, SettingsActivity.DEFAULT_SETTINGS);
-            password = CredentialStore.getAccountPassword(getApplicationContext());
-            return new PhoneTrackClient(url, username, password, null, getApplicationContext());
+            password = CredentialStore.getAccountPassword(context);
+            return new PhoneTrackClient(url, username, password, null, context);
         }
     }
 
