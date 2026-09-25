@@ -5,11 +5,59 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-### Added (lazzurs fork)
-- GitHub Actions CI: lint, unit tests, and debug APK build on every push/PR to `main`
-- GitHub Actions release workflow: signed release APKs attached to GitHub Releases on every `v*` tag
-- `.pre-commit-config.yaml` with baseline hygiene hooks (whitespace, EOL, large files, secrets)
-- Fork attribution to upstream [eneiluj/phonetrack-android](https://gitlab.com/eneiluj/phonetrack-android) in README/CONTRIBUTING
+
+## [0.2.0] – not released yet
+First release of the [lazzurs fork](https://github.com/lazzurs/phonetrack-android), brought up to
+current Android requirements (targets Android 16 / API 36).
+
+### Updating – please read
+- **Coming from the original PhoneTrack** (F-Droid or GitLab builds): this fork is signed with a
+  different key, so Android can't update that app in place. Uninstall it first, then install this
+  one. Local logjobs and settings are lost: note your logjob settings before uninstalling.
+- **SMS commands now need allowed senders.** Settings → Sms → *Allowed senders* (or *Add a sender
+  from contacts*). Until at least one number is added, every SMS command is ignored.
+- **Passwords are no longer in cloud backups.** After restoring the phone from a backup, enter the
+  Nextcloud password (unless you log in through the Nextcloud app) and custom logjob passwords again.
+
+### Fixed
+- Tracking stopped after 6 hours on Android 15+, and didn't start at boot: it now runs as a
+  location service.
+- Crash when the phone dozes on Android 14+ without the "alarms & reminders" permission.
+- The app didn't load on devices using 16 KB memory pages (Android 15+).
+- Quick Settings tile crashed on Android 14+.
+- "Save logs" never opened the save dialog, and imported offline maps (.map files) never showed.
+- Permission prompts were dropped because they were all asked at once: they now come one by one.
+- SMS "createlogjob" reply crashed in Bulgarian, Polish, Russian and Chinese; missing values and a
+  broken link in the Brazilian Portuguese texts; a stray "%s" in a Romanian message.
+- SMS position replies could be late or never sent while the app was in the background, and two
+  requests at once mixed up the numbers.
+- The SMS "alarm" could leave the alarm volume at maximum; it now always restores it, and rings for
+  the whole requested time.
+- The "New log job" launcher shortcut did nothing in the dev and Play builds.
+
+### Security
+- Other apps could send the app a fake SMS and trigger its SMS commands, including sending the
+  position to any number.
+- SMS commands are only accepted from allowed phone numbers (see *Updating*).
+- Internal app events can no longer be observed or faked by other apps.
+- Passwords are stored separately and left out of cloud backups.
+
+### Changed
+- Uploads use Android's WorkManager: positions logged offline are sent as soon as the network is
+  back, even when tracking is off, with retries.
+- Screens are drawn edge to edge (behind the status and navigation bars) as Android 15+ requires;
+  themed (monochrome) launcher icon; per-app language setting (Android 13+).
+- New app color picker (presets and a hex field) and a new "New …" button menu.
+- Ready for Android 17's local network permission (asked only once the app targets Android 17).
+- Smaller download: release builds are optimized with R8 (about 35 % smaller).
+
+### Added (build and releases)
+- GitHub Actions CI: lint, unit tests for every flavor, debug and optimized release builds on
+  every change.
+- Releases published on GitHub with release notes, versioned APKs, R8 mapping files and SHA-256
+  checksums (see [RELEASING.md](https://github.com/lazzurs/phonetrack-android/blob/main/RELEASING.md)).
+- Fork attribution to upstream [eneiluj/phonetrack-android](https://gitlab.com/eneiluj/phonetrack-android)
+  in README/CONTRIBUTING.
 
 ## 0.1.0 – 2020-06-25
 ### Changed

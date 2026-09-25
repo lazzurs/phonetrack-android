@@ -4,7 +4,7 @@
 > **This is a fork.** [lazzurs/phonetrack-android](https://github.com/lazzurs/phonetrack-android) is maintained by [@lazzurs](https://github.com/lazzurs) and tracks the upstream project at [eneiluj/phonetrack-android on GitLab](https://gitlab.com/eneiluj/phonetrack-android). All credit for PhoneTrack itself goes to [eneiluj](https://gitlab.com/eneiluj) and the upstream contributors — this fork exists to add GitHub Actions CI/CD (build + automated releases) and other maintenance around the original app. Please report bugs and feature requests for the app itself [upstream](https://gitlab.com/eneiluj/phonetrack-android/issues); use [this fork's issue tracker](https://github.com/lazzurs/phonetrack-android/issues) only for fork-specific build/release/tooling issues.
 
 [![Build](https://github.com/lazzurs/phonetrack-android/actions/workflows/build.yml/badge.svg)](https://github.com/lazzurs/phonetrack-android/actions/workflows/build.yml)
-[![Latest release](https://img.shields.io/github/v/release/lazzurs/phonetrack-android?include_prereleases)](https://github.com/lazzurs/phonetrack-android/releases)
+[![Latest release](https://img.shields.io/github/v/release/lazzurs/phonetrack-android)](https://github.com/lazzurs/phonetrack-android/releases)
 
 An android app to log locations to [PhoneTrack Nextcloud app](https://gitlab.com/eneiluj/phonetrack-oc) or any custom server.
 
@@ -64,13 +64,13 @@ If you want to log to Nextcloud PhoneTrack :
 
 ## Install
 
-* APK Direct download : [this fork's GitHub Releases](https://github.com/lazzurs/phonetrack-android/releases) (built automatically by GitHub Actions on every tag)
+* APK Direct download : [this fork's GitHub Releases](https://github.com/lazzurs/phonetrack-android/releases) (built automatically by GitHub Actions on every tag). Each release has `phonetrack-<version>-normal.apk` (use this one), `phonetrack-<version>-play.apk`, and `SHA256SUMS.txt` to verify the download. How releases are made: [RELEASING.md](RELEASING.md)
 * Upstream also publishes builds via [Gitlab CI artifacts](https://gitlab.com/eneiluj/phonetrack-android/pipelines)
 * [![PhoneTrack App on fdroid.org](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/57bb389a0c40f5cb81dc1ae21a314adb/fd.png)](https://f-droid.org/packages/net.eneiluj.nextcloud.phonetrack/)
 
 ### A note on release signing
 
-Tagged releases from this fork are signed with a dedicated key held only as encrypted GitHub Actions secrets (`RELEASE_KEYSTORE_BASE64` / `RELEASE_KEYSTORE_PASSWORD`) on this repo — it is never committed to git. This keeps the signature consistent across successive releases so APKs install as upgrades over one another. It is **not** the same key as upstream's or F-Droid's builds — you cannot upgrade in place between builds from different sources; uninstall first. If you build release APKs yourself without those secrets set, Gradle falls back to signing with your local debug key instead (see [`app/build.gradle`](app/build.gradle)), which is fine for local testing but won't match the signature of the published releases.
+Tagged releases from this fork are signed with a dedicated key held only as encrypted GitHub Actions secrets (`RELEASE_KEYSTORE_BASE64` / `RELEASE_KEYSTORE_PASSWORD`) on this repo — it is never committed to git. This keeps the signature consistent across successive releases so APKs install as upgrades over one another. It is **not** the same key as upstream's or F-Droid's builds — you cannot upgrade in place between builds from different sources; uninstall first. If you build release APKs yourself without those secrets set, Gradle falls back to signing with your local debug key instead (see [`app/build.gradle.kts`](app/build.gradle.kts)), which is fine for local testing but won't match the signature of the published releases.
 
 ## Build
 

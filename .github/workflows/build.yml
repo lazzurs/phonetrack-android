@@ -18,6 +18,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # all tags: the release check compares the version code with the previous release's
+          fetch-depth: 0
+
+      # the version in gradle.properties must be releasable: newer version code, CHANGELOG
+      # section, store changelog (the same check the release workflow runs on a tag)
+      - name: Check release metadata
+        run: scripts/release/prepare.sh
 
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v6

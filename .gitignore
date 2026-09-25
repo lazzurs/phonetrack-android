@@ -9,3 +9,6 @@
 /projectFilesBackup/
 /app/.idea
 /crowdin*
+
+# output of scripts/release/prepare.sh
+/release-out/

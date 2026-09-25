@@ -1,0 +1,7 @@
+First release of the lazzurs fork, updated for Android 15/16.
+- Tracking no longer stops after 6 h and restarts at boot
+- SMS commands only from allowed senders: add them in Settings > Sms
+- Passwords left out of cloud backups
+- Offline positions upload when the network is back
+- Fixes for crashes, offline maps, SMS replies and the SMS alarm
+Coming from the original app: uninstall it first (different signing key).
