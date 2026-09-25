@@ -13,7 +13,6 @@
   <string name="action_syslog">Jurnalul de activitate</string>
   <string name="setting_title">Titlu</string>
   <string name="setting_title_long">Titlu sarcini log-uri (vizibil doar in aplicatie)</string>
-  <string name="mandatory">(obligatoriu)</string>
   <string name="setting_devicename">Nume aparat</string>
   <string name="setting_devicename_long">Nume dispozitiv sau token de rezervare</string>
   <string name="setting_token">Session token</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Păstrează GPS-ul activat între fixări</string>
   <string name="setting_keepgps_summary">Acest lucru va obține poziții mai precise, dar va afecta mai mult durata de viață a bateriei. Folosiți-l când timpul minim este sub 60 de secunde.</string>
   <string name="setting_significantmotion_enabled">Mod mișcare semnificativă</string>
-  <string name="setting_significantmotion_title">Obțineți poziția numai după o mișcare semnificativă</string>
   <string name="setting_significantmotion_summary">Experimental: Așteptați o mișcare semnificativă înainte de a ajunge la următoarea poziție. Economisește baterie semnificativ în unele cazuri. Incompatibil cu alte opțiuni.</string>
   <string name="setting_significantmotion_min_time_applied">Aplică timp minim</string>
   <string name="setting_significantmotion_min_time_applied_summary">Nu înregistra o poziție de fiecare dată când este detectată mișcare, așteptați \"timp minim\" între două puncte. Aceasta economisește baterie.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Timpul de așteptare pentru o singură fixare a locației (secunde). Economisește bateria în zonele fără acoperire bună. Dacă se utilizează atât GPS-ul cât și rețeaua, acest interval de timp determină de asemenea, după cât timp va fi utilizată poziția rețelei de calitate inferioară. Setați la zero pentru a dezactiva timpul de expirare. Trebuie să fie mai mic decât timpul minim.</string>
   <string name="logjob_title_log_to">Logare la %s</string>
   <string name="default_nextcloud_url">https://nextcloudpersonal.org</string>
-  <string name="default_device_name">NumeleDispozitivuluiMeu</string>
   <string name="default_session_token">supertoken</string>
   <string name="logjob_info_dialog_title">Despre %s</string>
   <string name="logjob_info_nbsync">%d locații trimise</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Harta pentru %s</string>
   <string name="display_info_menu_title">Informații jurnal</string>
   <string name="display_map_menu_title">Harta jurnalului de sesiune</string>
-  <string name="export_gpx_menu_title">Exportați în GPX</string>
   <string name="file_saved_success">Jurnal exportat în %s</string>
   <string name="syslog_saved_success">Jurnal activitate exportat în %s</string>
   <string name="delete_logjob_menu_title">Ştergeţi jurnalul</string>
-  <string name="action_sorting_method">Metodă de sortare</string>
   <string name="manage_accounts">Administrare conturi</string>
   <string name="is_running">in_functiune ( %1$s in_asteptare. %2$s trimis)</string>
   <string name="settings_server_settings">Cont utilizator</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Rețea</string>
   <string name="providers_gps_network">Rețea și GPS</string>
-  <string name="providers_passive">Pasiv</string>
-  <string name="providers_passive_gps">Pasiv și GPS</string>
-  <string name="providers_passive_network">Pasiv și rețea</string>
-  <string name="providers_passive_gps_network">Pasiv, GPS și rețea</string>
   <string name="settings_color_title">Culoarea principală a aplicației</string>
   <string name="settings_color_summary">Culoare pentru barele de acțiune, butoane de hartă etc...</string>
   <string name="settings_colorpicker_title">Alegeți culoarea</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">numele de utilizator sau parola greșite</string>
   <string name="error_invalid_pt_url">Link invalid pentru log-area PhoneTrack</string>
   <string name="error_invalid_url">Link incorect</string>
-  <string name="error_invalid_token">Token invalid</string>
-  <string name="error_invalid_title">Titlu invalid</string>
-  <string name="error_invalid_devname">Nume dispozitiv invalid</string>
-  <string name="error_invalid_mintime">Timp minim invalid</string>
-  <string name="error_invalid_mindistance">Distanță minimă invalidă</string>
-  <string name="error_invalid_minaccuracy">Precizie minimă invalidă</string>
-  <string name="error_invalid_timeout">Perioada timeout invalida</string>
   <string name="error_invalid_sms_keyword">Cuvânt cheie SMS nevalid</string>
   <string name="error_invalid_group_sync">Număr invalid</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Întunecat</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Revenire la vechea metodă de autentificare</string>
-  <string name="fallback_weblogin_back">Înapoi</string>
   <string name="use_sso_toggle">Utilizați contul din aplicația Nextcloud File</string>
   <string name="center_map">Arată poziția mea</string>
   <string name="follow_me">Urmăreşte poziţia mea</string>

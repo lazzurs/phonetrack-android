@@ -93,7 +93,9 @@ android {
     }
 
     lint {
-        abortOnError = false
+        // There are no lint errors left: keep it that way. Warnings don't fail the build
+        // (some, like newer library versions, appear without any code change).
+        abortOnError = true
         disable += "MissingTranslation"
     }
 }

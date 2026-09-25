@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
-            android:tint="#F8F246"/>
+            app:tint="#F8F246"/>
 
         <TextView
             android:id="@+id/infoNbPointsText"
@@ -146,7 +147,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
-            android:tint="#00ff00" />
+            app:tint="#00ff00" />
 
         <TextView
             android:id="@+id/infoNbsyncText"
@@ -171,7 +172,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
-            android:tint="#00ff00" />
+            app:tint="#00ff00" />
 
         <TextView
             android:id="@+id/infoLastSyncText"
@@ -195,7 +196,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
-            android:tint="#ff0000" />
+            app:tint="#ff0000" />
 
         <TextView
             android:id="@+id/infoNbnotsyncText"
@@ -220,7 +221,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_phonetrack_grey_24dp"
-            android:tint="#ff0000" />
+            app:tint="#ff0000" />
 
         <TextView
             android:id="@+id/infoLastSyncErrText"

@@ -13,7 +13,6 @@
   <string name="action_syslog">Aktivitetslogg</string>
   <string name="setting_title">Titel</string>
   <string name="setting_title_long">Logga jobbtitel (synligt endast i appen)</string>
-  <string name="mandatory">obligatorisk</string>
   <string name="setting_devicename">Device name</string>
   <string name="setting_devicename_long">Enhetens namn eller reservationstoken</string>
   <string name="setting_token">Session token</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Behåll GPS på mellan fixar</string>
   <string name="setting_keepgps_summary">Detta kommer att få mer exakta positioner men kommer att ha större effekt på batteriets livslängd. Använd det när minsta tiden är under 60 sekunder.</string>
   <string name="setting_significantmotion_enabled">Större rörelseläge</string>
-  <string name="setting_significantmotion_title">Set position först efter större rörelse</string>
   <string name="setting_significantmotion_summary">Experimentell: Vänta på större rörelse innan fångst av nästa position. Sparar mycket batteri i vissa fall. Inkompatibel med vissa andra inställningar.</string>
   <string name="setting_significantmotion_min_time_applied">Tillämpa minimum tid</string>
   <string name="setting_significantmotion_min_time_applied_summary">Spela inte in en position varje gång rörelse upptäcks, vänta \"minimal tid\" mellan två punkter. Detta sparar batteri.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Tid för plats fixering (sekunder). Sparar batteri i områden med dålig täckning. Om du använder både GPS och nätverk, avgör också vilken nätverkspositionen av lägre kvalitet kommer att användas. 0 för att inaktivera timeout. Måste vara mindre än 60 sec.</string>
   <string name="logjob_title_log_to">Logga till %s</string>
   <string name="default_nextcloud_url">https://yournextcloud.org</string>
-  <string name="default_device_name">MinEnhetsNamn</string>
   <string name="default_session_token">supertoken</string>
   <string name="logjob_info_dialog_title">Om %s</string>
   <string name="logjob_info_nbsync">%d platser skickade</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Karta för %s</string>
   <string name="display_info_menu_title">Information, loggning</string>
   <string name="display_map_menu_title">Karta över loggnings session</string>
-  <string name="export_gpx_menu_title">Exportera till GPX</string>
   <string name="file_saved_success">Loggjobb exporterat i %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Ta bort loggjobb</string>
-  <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
   <string name="is_running">kör (%1$s kvarstå, %2$s skickad)</string>
   <string name="settings_server_settings">Konto</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Nätverk</string>
   <string name="providers_gps_network">Nätverk och GPS</string>
-  <string name="providers_passive">Passiv</string>
-  <string name="providers_passive_gps">Passiv och GPS</string>
-  <string name="providers_passive_network">Passiv och Nätverk</string>
-  <string name="providers_passive_gps_network">Passiv, GPS och nätverk</string>
   <string name="settings_color_title">Appikonens färg</string>
   <string name="settings_color_summary">Color for action bars, map buttons etc...</string>
   <string name="settings_colorpicker_title">Välj färg</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">fel användarnamn eller lösenord</string>
   <string name="error_invalid_pt_url">Ogiltig PhoneTrack loggningslänk</string>
   <string name="error_invalid_url">Ogiltig länk</string>
-  <string name="error_invalid_token">Ogiltig token</string>
-  <string name="error_invalid_title">Ogiltig titel</string>
-  <string name="error_invalid_devname">Ogiltigt enhetsnamn</string>
-  <string name="error_invalid_mintime">Ogiltig minsta tid</string>
-  <string name="error_invalid_mindistance">Ogiltig minsta avstånd</string>
-  <string name="error_invalid_minaccuracy">Ogiltig minsta noggrannhet</string>
-  <string name="error_invalid_timeout">Ogiltig timeout</string>
   <string name="error_invalid_sms_keyword">Ogiltigt SMS-nyckelord</string>
   <string name="error_invalid_group_sync">Ogiltigt nummer</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Mörk</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Återgå till gammal inloggningsmetod</string>
-  <string name="fallback_weblogin_back">Bakåt</string>
   <string name="use_sso_toggle">Använd konto från Nextcloud Files app</string>
   <string name="center_map">Visa min position</string>
   <string name="follow_me">Följ min position</string>

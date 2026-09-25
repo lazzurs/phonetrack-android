@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -30,6 +30,7 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
+import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 import java.util.ArrayList;
@@ -68,6 +69,8 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
     }
 
+    // small local SQLite read on the main thread: the session list (a few rows) is needed to build the screen
+    @SuppressLint("ThreadConstraint")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_edit, container, false);
@@ -146,16 +149,10 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString());
-                // restore keyboard auto hide behaviour
-                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
         });
         fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                // restore keyboard auto hide behaviour
-                InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
         });
         fromUrlDialog = fromUrlBuilder.create();
@@ -246,6 +243,8 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         return valid;
     }
 
+    // small local SQLite read on the main thread: the menu depends on whether any unshared session exists
+    @SuppressLint("ThreadConstraint")
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -373,11 +372,7 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         int itemId = item.getItemId();
         if (itemId == R.id.menu_fromLogUrl) {
             fromUrlDialog.show();
-            fromUrlEdit.setSelectAllOnFocus(true);
-            fromUrlEdit.requestFocus();
-            // show keyboard
-            InputMethodManager inputMethodManager = (InputMethodManager) fromUrlEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            KeyboardUtil.showForDialog(fromUrlDialog, fromUrlEdit);
             return true;
         }
         else if (itemId == R.id.menu_selectSession) {

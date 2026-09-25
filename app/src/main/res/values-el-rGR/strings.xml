@@ -13,7 +13,6 @@
   <string name="action_syslog">Activity logs</string>
   <string name="setting_title">Τίτλος</string>
   <string name="setting_title_long">Τίτλος της εργασίας καταγραφής (ορατό μόνο στην εφαρμογή)</string>
-  <string name="mandatory">(υποχρεωτικό)</string>
   <string name="setting_devicename">Όνομα συσκευής</string>
   <string name="setting_devicename_long">Όνομα συσκευής ή διακριτικό κράτησης</string>
   <string name="setting_token">Διακριτικό συνεδρίας</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Διατήρηση ανοιχτού GPS μεταξύ των σταθεροποιήσεων</string>
   <string name="setting_keepgps_summary">Αυτό θα φέρει πιο ακριβείς θέσεις, αλλά θα έχει μεγαλύτερη επίδραση στη διάρκεια ζωής μπαταρίας. Χρησιμοποιείστε το όταν ελάχιστος χρόνος είναι κάτω από 60 δευτερόλεπτα.</string>
   <string name="setting_significantmotion_enabled">Λειτουργία σημαντικής κίνησης</string>
-  <string name="setting_significantmotion_title">Λήψη θέσης μόνο μετά από σημαντική κίνηση</string>
   <string name="setting_significantmotion_summary">Πειραματικό: Αναμονή για σημαντική κίνηση πριν τη λήψη της επόμενης θέσης. Εξοικονομεί πολλή ενέργεια σε κάποιες περιπτώσεις. Ασύμβατη με κάποιες άλλες επιλογές.</string>
   <string name="setting_significantmotion_min_time_applied">Εφαρμογή ελάχιστου χρόνου</string>
   <string name="setting_significantmotion_min_time_applied_summary">Αποφυγή καταγραφής θέσης με κάθε κίνηση. Αναμονή \"ελάχιστου χρόνου\" μεταξύ δύο σημείων. Αυτό εξοικονομεί μπαταρία.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Χρόνος αναμονής για μία σταθεροποίηση θέσης (δευτερόλεπτα). Εξοικονομεί μπαταρία σε περιοχές χωρίς καλή κάλυψη. Εάν χρησιμοποιείτε τόσο το GPS όσο και το δίκτυο, αυτό καθορίζει επίσης μετά από πόσο χρονικό διάστημα θα χρησιμοποιηθεί η χαμηλότερη ποιότητα θέσης του δικτύου. Ορίστε το σε μηδέν για να απενεργοποιήσετε το χρονικό όριο. Πρέπει να είναι λιγότερο από τον ελάχιστο χρόνο.</string>
   <string name="logjob_title_log_to">Καταγραφή σε %s</string>
   <string name="default_nextcloud_url">https://yournextcloud.org</string>
-  <string name="default_device_name">τοόνοματηςσυσκευήςμου</string>
   <string name="default_session_token">ταυτοποιητικόσυνεδρίας</string>
   <string name="logjob_info_dialog_title">Περί %s</string>
   <string name="logjob_info_nbsync">%d τοποθεσίες εστάλησαν</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Χάρτης για %s</string>
   <string name="display_info_menu_title">Πληροφορίες καταγραφής</string>
   <string name="display_map_menu_title">Χάρτης της συνεδρίας καταγραφής</string>
-  <string name="export_gpx_menu_title">Εξαγωγή σε GPX</string>
   <string name="file_saved_success">Η εργασία καταγραφής εξάχθηκε στο %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Διαγραφή εργασίας καταγραφής</string>
-  <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
   <string name="is_running">τρέχει (%1$s εκκρεμούν, %2$s εστάλησαν)</string>
   <string name="settings_server_settings">Λογαριασμός</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Δίκτυο</string>
   <string name="providers_gps_network">Δίκτυο και GPS</string>
-  <string name="providers_passive">Παθητικό</string>
-  <string name="providers_passive_gps">Παθητικό και GPS</string>
-  <string name="providers_passive_network">Παθητικό και Δίκτυο</string>
-  <string name="providers_passive_gps_network">Παθητικό και GPS και Δίκτυο</string>
   <string name="settings_color_title">Κύριο χρώμα εφαρμογής</string>
   <string name="settings_color_summary">Χρώμα για τα μενού, τα πλήκτρα χάρτη και άλλα...</string>
   <string name="settings_colorpicker_title">Επιλογή χρώματος</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">λάθος όνομα χρήστη ή κωδικός πρόσβασης</string>
   <string name="error_invalid_pt_url">Μη έγκυρος σύνδεσμος καταγραφής PhoneTrack</string>
   <string name="error_invalid_url">Μη έγκυρος σύνδεσμος</string>
-  <string name="error_invalid_token">Μη έγκυρο διακριτικό</string>
-  <string name="error_invalid_title">Μη έγκυρος τίτλος</string>
-  <string name="error_invalid_devname">Μη έγκυρο όνομα συσκευής</string>
-  <string name="error_invalid_mintime">Μη έγκυρος ελάχιστος χρόνος</string>
-  <string name="error_invalid_mindistance">Μη έγκυρη ελάχιστη απόσταση</string>
-  <string name="error_invalid_minaccuracy">Μη έγκυρη ελάχιστη ακρίβεια</string>
-  <string name="error_invalid_timeout">Μη έγκυρη λήξη χρονικού ορίου</string>
   <string name="error_invalid_sms_keyword">Μη έγκυρη λέξη-κλειδί SMS</string>
   <string name="error_invalid_group_sync">Μη έγκυρος αριθμός</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Σκοτεινό</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Επιστροφή σε παλιά μέθοδο σύνδεσης</string>
-  <string name="fallback_weblogin_back">Πίσω</string>
   <string name="use_sso_toggle">Χρήση λογαριασμού από την εφαρμογή Nextcloud Files</string>
   <string name="center_map">Εμφάνιση της θέσης μου</string>
   <string name="follow_me">Παρακολούθηση της θέσης μου</string>

@@ -13,7 +13,6 @@
   <string name="action_syslog">Activity logs</string>
   <string name="setting_title">Tittel</string>
   <string name="setting_title_long">Loggjobbtittel (kun synlig i appen)</string>
-  <string name="mandatory">(Obligatorisk)</string>
   <string name="setting_devicename">Enhetsnavn</string>
   <string name="setting_devicename_long">Enhetsnavn eller reservasjonstoken</string>
   <string name="setting_token">Session token</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Behold GPS på mellom fikser</string>
   <string name="setting_keepgps_summary">Dette vil få mer nøyaktige posisjoner, men vil ha mer effekt på batteritiden. Bruk det når minimumstiden er under 60 sekunder.</string>
   <string name="setting_significantmotion_enabled">Betydelig bevegelsesmodus</string>
-  <string name="setting_significantmotion_title">Få posisjon bare etter betydelig bevegelse</string>
   <string name="setting_significantmotion_summary">Eksperimentelt: Vent til betydelig bevegelse før neste posisjon. Sparer mye batteri i noen tilfeller. Uforenlig med noen andre alternativer.</string>
   <string name="setting_significantmotion_min_time_applied">Bruk minimumstid</string>
   <string name="setting_significantmotion_min_time_applied_summary">Ikke gjør mål posisjon hver gang bevegelse oppdages, vent «minimumstid» mellom to punkt. Dette sparer strøm.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
   <string name="logjob_title_log_to">Log to %s</string>
   <string name="default_nextcloud_url">https://yournextcloud.org</string>
-  <string name="default_device_name">myDeviceName</string>
   <string name="default_session_token">supertoken</string>
   <string name="logjob_info_dialog_title">About %s</string>
   <string name="logjob_info_nbsync">%d locations sent</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Map for %s</string>
   <string name="display_info_menu_title">Logjob information</string>
   <string name="display_map_menu_title">Map of logjob\'s session</string>
-  <string name="export_gpx_menu_title">Export to GPX</string>
   <string name="file_saved_success">Logjob exported in %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Delete logjob</string>
-  <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
   <string name="is_running">running (%1$s pending, %2$s sent)</string>
   <string name="settings_server_settings">Account</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Network</string>
   <string name="providers_gps_network">Network and GPS</string>
-  <string name="providers_passive">Passive</string>
-  <string name="providers_passive_gps">Passive and GPS</string>
-  <string name="providers_passive_network">Passive and Network</string>
-  <string name="providers_passive_gps_network">Passive and GPS and Network</string>
   <string name="settings_color_title">App main color</string>
   <string name="settings_color_summary">Color for action bars, map buttons etc...</string>
   <string name="settings_colorpicker_title">Choose color</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">wrong username or password</string>
   <string name="error_invalid_pt_url">Invalid PhoneTrack logging link</string>
   <string name="error_invalid_url">Invalid link</string>
-  <string name="error_invalid_token">Invalid token</string>
-  <string name="error_invalid_title">Invalid title</string>
-  <string name="error_invalid_devname">Invalid device name</string>
-  <string name="error_invalid_mintime">Invalid minimum time</string>
-  <string name="error_invalid_mindistance">Invalid minimum distance</string>
-  <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
-  <string name="error_invalid_timeout">Invalid timeout</string>
   <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
   <string name="error_invalid_group_sync">Invalid number</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Dark</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Revert to old login method</string>
-  <string name="fallback_weblogin_back">Back</string>
   <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
   <string name="center_map">Show my position</string>
   <string name="follow_me">Follow my position</string>

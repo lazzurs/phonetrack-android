@@ -13,7 +13,6 @@
   <string name="action_syslog">Activity logs</string>
   <string name="setting_title">Títol</string>
   <string name="setting_title_long">Nom de l\'enregistrament (només visible a l\'app)</string>
-  <string name="mandatory">(obligatori)</string>
   <string name="setting_devicename">Nom del dispositiu</string>
   <string name="setting_devicename_long">Nom de dispositiu o token reservat</string>
   <string name="setting_token">Token de sessió</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Deixar el GPS activat entre localitzacions</string>
   <string name="setting_keepgps_summary">Això aconseguirà posicions més precises, però tindrà major impacte a la durada de la bateria. Fer servir quan el temps mínim estigui per sota de 60 segons.</string>
   <string name="setting_significantmotion_enabled">Mode de moviment significatiu</string>
-  <string name="setting_significantmotion_title">Obtenir posició només després de moviment significatiu</string>
   <string name="setting_significantmotion_summary">Experimental: Esperar movimient significativo previ a obtenir la següent posició. Estalviarà molta bateria en alguns casos. Incompatible amb altres opcions.</string>
   <string name="setting_significantmotion_min_time_applied">Utilitzar el minim temps possible</string>
   <string name="setting_significantmotion_min_time_applied_summary">No gravar una posició cada vegada que es detecta moviment, esperar \"temps mínim\" entre dos punts. Estalvia bateria.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long the lower quality network position will be used. Set to zero to disable timeout. Must be inferior than min time.</string>
   <string name="logjob_title_log_to">Registrar-se a %s</string>
   <string name="default_nextcloud_url">https://elvostrenextcloud.cat</string>
-  <string name="default_device_name">elMeuDispositiu</string>
   <string name="default_session_token">supertoken</string>
   <string name="logjob_info_dialog_title">Sobre %s</string>
   <string name="logjob_info_nbsync">%d posicions enviades</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Mapa per %s</string>
   <string name="display_info_menu_title">Logjob information</string>
   <string name="display_map_menu_title">Map of logjob\'s session</string>
-  <string name="export_gpx_menu_title">Export to GPX</string>
   <string name="file_saved_success">Logjob exported in %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Delete logjob</string>
-  <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
   <string name="is_running">corrent (%1$s pendent, %2$s enviat)</string>
   <string name="settings_server_settings">Compte</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Xarxa</string>
   <string name="providers_gps_network">Xarxa i GPS</string>
-  <string name="providers_passive">Passiu</string>
-  <string name="providers_passive_gps">Passiu i GPS</string>
-  <string name="providers_passive_network">Passiu i Xarxa</string>
-  <string name="providers_passive_gps_network">Passiu i GPS i Xarxa</string>
   <string name="settings_color_title">Color principal de l\'App</string>
   <string name="settings_color_summary">Color per barres d\'acció, botons del mapa, etc...</string>
   <string name="settings_colorpicker_title">Triar color</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">nombre d\'usuari o contrasenya incorrectes</string>
   <string name="error_invalid_pt_url">Enllaç de registre a PhoneTrack no vàlida</string>
   <string name="error_invalid_url">Enllaç no vàlid</string>
-  <string name="error_invalid_token">Petició no vàlida</string>
-  <string name="error_invalid_title">Títol incorrecte</string>
-  <string name="error_invalid_devname">Nom de dispositiu no vàlid</string>
-  <string name="error_invalid_mintime">Temps mínim no vàlid</string>
-  <string name="error_invalid_mindistance">Distància mínima no vàlida</string>
-  <string name="error_invalid_minaccuracy">Presició mínima no vàlida</string>
-  <string name="error_invalid_timeout">Temps d\'espera no vàlid</string>
   <string name="error_invalid_sms_keyword">Paraula clau SMS no vàlida</string>
   <string name="error_invalid_group_sync">Nombre no vàlid</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Fosc</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Retornar a l\'anterior mètode d\'accés</string>
-  <string name="fallback_weblogin_back">Enrera</string>
   <string name="use_sso_toggle">Fer servir un compte d\'aplicacions d\'arxius Nextcloud</string>
   <string name="center_map">Show my position</string>
   <string name="follow_me">Follow my position</string>

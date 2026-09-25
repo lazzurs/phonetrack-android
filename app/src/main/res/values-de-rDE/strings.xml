@@ -13,7 +13,6 @@
   <string name="action_syslog">Aktivitätsprotokolle</string>
   <string name="setting_title">Titel</string>
   <string name="setting_title_long">Titel des Protokollierungsauftrags (nur in der App sichtbar)</string>
-  <string name="mandatory">(erforderlich)</string>
   <string name="setting_devicename">Gerätename</string>
   <string name="setting_devicename_long">Gerätename oder Reservierungstoken</string>
   <string name="setting_token">Sitzungstoken</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">GPS zwischen den Positionsbestimmungen eingeschaltet lassen</string>
   <string name="setting_keepgps_summary">Dies führt zu genaueren Positionsangaben, beeinflusst aber die Akkulaufzeit. Empfohlene Verwendung bei einer Mindestdauer unter 60 Sekunden.</string>
   <string name="setting_significantmotion_enabled">Modus bei deutlicher Bewegung</string>
-  <string name="setting_significantmotion_title">Position erst nach deutlicher Bewegung ermitteln</string>
   <string name="setting_significantmotion_summary">Experimentell: Warten auf eine deutliche Bewegung, bevor die nächste Position ermittelt wird. Spart in einigen Fällen viel Batterie. Nicht kompatibel mit einigen anderen Optionen.</string>
   <string name="setting_significantmotion_min_time_applied">Mindestzeit übernehmen</string>
   <string name="setting_significantmotion_min_time_applied_summary">Nicht bei jeder erkannten Bewegung die Position bestimmen, sondern eine „Mindestzeit” zwischen zwei Positionsbestimmungen warten. Dies schont die Batterie.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Zeit (in Sekunden), um auf eine einzelne Standortbestimmung zu warten. Spart Batterie in Bereichen mit schlechter Abdeckung. Wenn sowohl GPS als auch Netzwerk verwendet werden, bestimmt dies auch, nach welcher Zeit die qualitativ schlechtere Netzwerkposition verwendet wird. Auf Null setzen, um die Zeitüberschreitung zu deaktivieren. Muss geringer sein als die Mindestzeit.</string>
   <string name="logjob_title_log_to">In %s protokollieren</string>
   <string name="default_nextcloud_url">https://yournextcloud.org</string>
-  <string name="default_device_name">Mein Gerätename</string>
   <string name="default_session_token">Supertoken</string>
   <string name="logjob_info_dialog_title">Über %s</string>
   <string name="logjob_info_nbsync">%d Standorte gesendet</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Karte für %s</string>
   <string name="display_info_menu_title">Informationen des Protokollierungsauftrags</string>
   <string name="display_map_menu_title">Karte der Protokollierungsauftragssitzung</string>
-  <string name="export_gpx_menu_title">Als GPX exportieren</string>
   <string name="file_saved_success">Protokollierungsauftrag als %s exportiert</string>
   <string name="syslog_saved_success">Aktivitätsprotokoll exportiert nach %s</string>
   <string name="delete_logjob_menu_title">Protokollierungsauftrag löschen</string>
-  <string name="action_sorting_method">Sortiermethode</string>
   <string name="manage_accounts">Konten verwalten</string>
   <string name="is_running">wird ausgeführt (%1$s ausstehend, %2$s gesendet)</string>
   <string name="settings_server_settings">Konto</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Netzwerk</string>
   <string name="providers_gps_network">Netzwerk und GPS</string>
-  <string name="providers_passive">Passiv</string>
-  <string name="providers_passive_gps">Passiv und GPS</string>
-  <string name="providers_passive_network">Passiv und Netzwerk</string>
-  <string name="providers_passive_gps_network">Passiv, GPS und Netzwerk</string>
   <string name="settings_color_title">Hauptfarbe der App</string>
   <string name="settings_color_summary">Farbe für Aktionsleisten, Kartenschaltflächen usw. …</string>
   <string name="settings_colorpicker_title">Farbe wählen</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">Benutzername oder Passwort ungültig</string>
   <string name="error_invalid_pt_url">Ungültige PhoneTrack-Protokollierungslink</string>
   <string name="error_invalid_url">Ungültiger Link</string>
-  <string name="error_invalid_token">Ungültige Sicherheitskette</string>
-  <string name="error_invalid_title">Ungültiger Titel</string>
-  <string name="error_invalid_devname">Ungültiger Gerätename</string>
-  <string name="error_invalid_mintime">Ungültige Mindestzeit</string>
-  <string name="error_invalid_mindistance">Ungültiger Mindestentfernung</string>
-  <string name="error_invalid_minaccuracy">Ungültige Mindestgenauigkeit</string>
-  <string name="error_invalid_timeout">Zeitüberschreitung ungültig</string>
   <string name="error_invalid_sms_keyword">Ungültiges SMS-Schlüsselwort</string>
   <string name="error_invalid_group_sync">Ungültige Rufnummer</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Dunkel</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Zurück zur alte Anmeldemethode</string>
-  <string name="fallback_weblogin_back">Zurück</string>
   <string name="use_sso_toggle">Konto aus der Nextcloud-Files-App verwenden</string>
   <string name="center_map">Standort anzeigen</string>
   <string name="follow_me">Meinem Standort folgen</string>
