@@ -122,6 +122,7 @@ public class WebTrackService extends IntentService {
         if (logjobs.size() > 0) {
             // start loading animation in logjob list
             Intent intent = new Intent(BROADCAST_SYNC_STARTED);
+            intent.setPackage(getPackageName());
             sendBroadcast(intent);
         }
 
@@ -152,6 +153,7 @@ public class WebTrackService extends IntentService {
                             db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                             Intent intent = new Intent(BROADCAST_SYNC_DONE);
                             intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                            intent.setPackage(getPackageName());
                             sendBroadcast(intent);
                         }
                         if (locations.size() > 0) {
@@ -177,6 +179,7 @@ public class WebTrackService extends IntentService {
                             db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                             Intent intent = new Intent(BROADCAST_SYNC_DONE);
                             intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                            intent.setPackage(getPackageName());
                             sendBroadcast(intent);
                         }
                         if (locations.size() > 0) {
@@ -203,6 +206,7 @@ public class WebTrackService extends IntentService {
                                 // update nbsync in logjob list
                                 Intent intent = new Intent(BROADCAST_SYNC_DONE);
                                 intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                                intent.setPackage(getPackageName());
                                 sendBroadcast(intent);
                             }
                         }
@@ -220,6 +224,7 @@ public class WebTrackService extends IntentService {
                         db.resetLastSyncError(ljId);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                        intent.setPackage(getPackageName());
                         sendBroadcast(intent);
                     }
                 }
@@ -248,6 +253,7 @@ public class WebTrackService extends IntentService {
                         db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+                        intent.setPackage(getPackageName());
                         sendBroadcast(intent);
                     }
                     if (locations.size() > 0) {
@@ -290,6 +296,7 @@ public class WebTrackService extends IntentService {
         }
         // stop loading animation in logjob list
         Intent intent = new Intent(BROADCAST_SYNC_DONE);
+        intent.setPackage(getPackageName());
         sendBroadcast(intent);
     }
 
@@ -317,6 +324,7 @@ public class WebTrackService extends IntentService {
         Intent intent = new Intent(BROADCAST_SYNC_FAILED);
         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
         intent.putExtra(LoggerService.BROADCAST_ERROR_MESSAGE, message);
+        intent.setPackage(getPackageName());
         sendBroadcast(intent);
     }
 

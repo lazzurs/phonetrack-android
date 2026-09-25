@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.telephony.SmsManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -42,6 +43,16 @@ import net.eneiluj.nextcloud.phonetrack.R;
  * Currently, it offers methods for working with HTML string resources.
  */
 public class SupportUtil {
+
+    /**
+     * SmsManager.getDefault() is deprecated since API 31 in favour of the system service.
+     */
+    public static SmsManager getSmsManager(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return context.getSystemService(SmsManager.class);
+        }
+        return SmsManager.getDefault();
+    }
 
     /**
      * @return true if precise or approximate location has been granted.

@@ -171,21 +171,26 @@
             android:name="net.eneiluj.nextcloud.phonetrack.service.SmsLocationSendService"
             android:exported="false" />
 
+        <!-- BOOT_COMPLETED is sent by the system, which may deliver to
+             non-exported receivers; nothing else should be able to trigger it.
+             (QUICKBOOT_POWERON was dropped: onReceive only acts on BOOT_COMPLETED.) -->
         <receiver
             android:name="net.eneiluj.nextcloud.phonetrack.service.BootCompletedReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
+        <!-- Must stay exported to receive SMS_RECEIVED, so require the permission
+             only the telephony stack holds. Without it any installed app could send
+             a forged SMS and trigger the remote commands (start tracking, send position). -->
         <receiver
             android:name="net.eneiluj.nextcloud.phonetrack.service.SmsListener"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>

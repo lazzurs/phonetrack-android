@@ -803,6 +803,7 @@ public class LoggerService extends Service {
      */
     private void sendBroadcast(String broadcast) {
         Intent intent = new Intent(broadcast);
+        intent.setPackage(getPackageName());
         sendBroadcast(intent);
     }
 
@@ -813,6 +814,7 @@ public class LoggerService extends Service {
     private void sendBroadcast(String broadcast, long ljId) {
         Intent intent = new Intent(broadcast);
         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
+        intent.setPackage(getPackageName());
         sendBroadcast(intent);
     }
 

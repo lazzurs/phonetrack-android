@@ -1691,7 +1691,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(SessionServerSyncHelper.BROADCAST_NETWORK_AVAILABLE);
         filter.addAction(SessionServerSyncHelper.BROADCAST_NETWORK_UNAVAILABLE);
         filter.addAction(SessionServerSyncHelper.BROADCAST_AVATAR_UPDATED);
-        registerReceiver(mBroadcastReceiver, filter, Context.RECEIVER_EXPORTED);
+        ContextCompat.registerReceiver(this, mBroadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     /**
