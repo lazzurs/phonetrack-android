@@ -20,8 +20,9 @@ android {
         applicationId = "net.eneiluj.nextcloud.phonetrack"
         minSdk = 26
         targetSdk = 36
-        versionCode = 21
-        versionName = "0.1.1"
+        // from gradle.properties, the single source of the version (see RELEASING.md)
+        versionCode = providers.gradleProperty("appVersionCode").get().toInt()
+        versionName = providers.gradleProperty("appVersionName").get()
         vectorDrawables.useSupportLibrary = true
         resValue("string", "applicationId", "net.eneiluj.nextcloud.phonetrack")
     }

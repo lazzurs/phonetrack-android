@@ -1,5 +1,8 @@
 name: Release
 
+# A v* tag publishes a release (vX.Y.Z = full release, vX.Y.Z-suffix = pre-release).
+# Run manually for a dry run: everything is built and checked, and the would-be release
+# (notes, APKs, checksums) is uploaded as a workflow artifact instead. See RELEASING.md.
 on:
   push:
     tags:
@@ -15,13 +18,21 @@ concurrency:
 
 jobs:
   release:
-    name: Build signed APKs and publish release
+    name: Build signed APKs and publish release (dry run unless tagged)
     runs-on: ubuntu-latest
     env:
       RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # all tags: the version code is compared with the previous release's
+          fetch-depth: 0
+
+      - name: Check version and write release notes
+        id: meta
+        # a dry run checks the release of the version in gradle.properties
+        run: scripts/release/prepare.sh "${{ github.ref_type == 'tag' && github.ref_name || '' }}" release-out
 
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v6
@@ -66,20 +77,39 @@ jobs:
         run: ./gradlew -Pci --console=plain assembleNormalRelease assemblePlayRelease
 
       - name: Collect APKs
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
         run: |
-          mkdir -p release-out
-          cp app/build/outputs/apk/normal/release/*.apk release-out/
-          cp app/build/outputs/apk/play/release/*.apk release-out/
-          # R8 mapping files, to turn obfuscated stack traces back into readable ones
-          # (e.g. ~/android-sdk/cmdline-tools/latest/bin/retrace mapping-normal.txt trace.txt)
-          cp app/build/outputs/mapping/normalRelease/mapping.txt release-out/mapping-normal.txt
-          cp app/build/outputs/mapping/playRelease/mapping.txt release-out/mapping-play.txt
+          for flavor in normal play; do
+            cp "app/build/outputs/apk/$flavor/release/app-$flavor-release.apk" \
+              "release-out/phonetrack-$VERSION-$flavor.apk"
+            # R8 mapping files, to turn obfuscated stack traces back into readable ones
+            # (retrace phonetrack-<version>-<flavor>-mapping.txt trace.txt)
+            cp "app/build/outputs/mapping/${flavor}Release/mapping.txt" \
+              "release-out/phonetrack-$VERSION-$flavor-mapping.txt"
+          done
+          (cd release-out && sha256sum phonetrack-*.apk phonetrack-*-mapping.txt > SHA256SUMS.txt)
+          cat release-out/SHA256SUMS.txt
 
       - name: Create GitHub release
+        if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v3
         with:
-          files: |
-            release-out/*.apk
-            release-out/mapping-*.txt
+          name: PhoneTrack ${{ steps.meta.outputs.version }}
+          # CHANGELOG.md section, followed by GitHub's list of merged pull requests
+          body_path: release-out/RELEASE_NOTES.md
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          prerelease: ${{ steps.meta.outputs.prerelease }}
+          make_latest: ${{ steps.meta.outputs.prerelease == 'true' && 'false' || 'true' }}
+          files: |
+            release-out/phonetrack-*.apk
+            release-out/phonetrack-*-mapping.txt
+            release-out/SHA256SUMS.txt
+
+      - name: Upload dry-run release
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-dry-run-${{ steps.meta.outputs.version }}
+          path: release-out/
+          if-no-files-found: error

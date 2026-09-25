@@ -1,0 +1,12 @@
+# Groups the pull requests GitHub lists under the CHANGELOG notes of each release
+# (generate_release_notes in .github/workflows/release.yml), by label.
+changelog:
+  categories:
+    - title: Fixes
+      labels: [bug]
+    - title: Features and improvements
+      labels: [enhancement]
+    - title: Documentation
+      labels: [documentation]
+    - title: Other changes
+      labels: ["*"]
