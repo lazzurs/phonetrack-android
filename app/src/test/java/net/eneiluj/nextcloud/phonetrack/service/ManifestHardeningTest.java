@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
+import android.os.Build;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -28,6 +29,12 @@ public class ManifestHardeningTest {
 
     private final Context context = ApplicationProvider.getApplicationContext();
     private final PackageManager pm = context.getPackageManager();
+
+    @Test
+    public void testsEmulateTheTargetSdk() {
+        // raise sdk= in src/test/resources/robolectric.properties together with targetSdk
+        assertEquals(context.getApplicationInfo().targetSdkVersion, Build.VERSION.SDK_INT);
+    }
 
     @Test
     public void loggerServiceIsALocationForegroundService() throws Exception {
