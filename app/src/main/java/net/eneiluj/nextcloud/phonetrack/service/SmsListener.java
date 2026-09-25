@@ -6,11 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Handler;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
@@ -38,10 +33,6 @@ public class SmsListener extends BroadcastReceiver {
     private static final String TAG = SmsListener.class.getSimpleName();
     public static final String BROADCAST_LOGJOB_LIST_UPDATED = "net.eneiluj.nextcloud.phonetrack.broadcast.logjob_list_updated";
 
-    // those static attributes are unique and accessible to any SmsListener instance
-    private static Handler handler = null;
-    private static Ringtone ringtone;
-    private static int initialAlarmVolume = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -157,68 +148,8 @@ public class SmsListener extends BroadcastReceiver {
     }
 
     private void startAlarm(Context context, String from, int duration) {
-        SmsManager smsManager = SupportUtil.getSmsManager(context);
-        AudioManager am;
-        am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
-        // our alarm is ringing : stop it and restore volume
-        if (SmsListener.handler != null) {
-            Log.d(TAG, "STOPING ALARM YO");
-            SmsListener.ringtone.stop();
-            am.setStreamVolume(AudioManager.STREAM_ALARM, SmsListener.initialAlarmVolume, 0);
-            SmsListener.handler.removeCallbacksAndMessages(null);
-            SmsListener.handler = null;
-
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.SEND_SMS
-            ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                String smsContent = context.getString(R.string.sms_alarm_stopped);
-                smsManager.sendTextMessage(from, null, smsContent, null, null);
-            }
-        }
-        // no alarm yet, save alarm volume and start it yo
-        else {
-            Log.d(TAG, "STARTING ALARM YO");
-
-            SmsListener.initialAlarmVolume = am.getStreamVolume(AudioManager.STREAM_ALARM);
-            am.setStreamVolume(AudioManager.STREAM_ALARM, am.getStreamMaxVolume(AudioManager.STREAM_ALARM), 0);
-
-            Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            if (alert == null) {
-                // alert is null, using backup
-                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                if (alert == null) {
-                    // alert backup is null, using 2nd backup
-                    alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                }
-            }
-
-            SmsListener.ringtone = RingtoneManager.getRingtone(context, alert);
-            SmsListener.ringtone.setStreamType(AudioManager.STREAM_ALARM);
-            SmsListener.ringtone.play();
-
-            SmsListener.handler = new Handler();
-            SmsListener.handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SmsListener.ringtone.stop();
-                    am.setStreamVolume(AudioManager.STREAM_ALARM, SmsListener.initialAlarmVolume, 0);
-                    SmsListener.handler = null;
-                }
-            }, duration*1000);
-
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.SEND_SMS
-            ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                String smsContent = context.getString(R.string.sms_alarm_started, duration);
-                smsManager.sendTextMessage(from, null, smsContent, null, null);
-                Log.d(TAG, "Send SMS: "+smsContent);
-            }
-        }
+        // rings from a foreground service, which also restores the alarm volume afterwards
+        SmsAlarmService.toggle(context, from, duration);
     }
 
     private void startOrStopLogjobs(Context context, boolean start, String from, @Nullable String logjobName) {
