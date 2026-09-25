@@ -21,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.Environment;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSyslog;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 import java.io.IOException;
@@ -168,18 +170,45 @@ public class SyslogManagerActivity extends AppCompatActivity {
         Log.i(TAG, "[onPause end]");
     }
 
+    /**
+     * The log can be long: read it and build the text off the main thread, then show it at once
+     * (appending line by line also re-laid out the TextView and posted a scroll per line).
+     */
     private void updateSyslogContent() {
-        textView.setText("");
-        List<DBSyslog> syslogs = db.getSyslogs(null, null);
-        for (DBSyslog sl: syslogs) {
-            addLine(sl.getMessage(), sl.getTimestamp());
+        new BackgroundTask<Void, CharSequence>() {
+            @Override
+            protected CharSequence doInBackground(Void... voids) {
+                SpannableStringBuilder content = new SpannableStringBuilder();
+                for (DBSyslog sl : db.getSyslogs(null, null)) {
+                    content.append(formatLine(sl.getMessage(), sl.getTimestamp()));
+                }
+                return content;
+            }
+
+            @Override
+            protected void onPostExecute(CharSequence content) {
+                if (isDestroyed()) {
+                    return;
+                }
+                textView.setText(content);
+                scrollToEnd();
+            }
+        }.executeInParallel();
+    }
+
+    private CharSequence formatLine(String message, long timestamp) {
+        synchronized (sdfComplete) {
+            return Html.fromHtml("<b>[" + sdfComplete.format(timestamp * 1000) + "]</b> " + message + "<br/>",
+                    Html.FROM_HTML_MODE_LEGACY);
         }
     }
 
     private void addLine(String message, long timestamp) {
-        textView.append(
-                Html.fromHtml("<b>[" + sdfComplete.format(timestamp * 1000) + "]</b> " + message + "<br/>")
-        );
+        textView.append(formatLine(message, timestamp));
+        scrollToEnd();
+    }
+
+    private void scrollToEnd() {
         scrollView.post(new Runnable() {
             @Override
             public void run() {

@@ -12,7 +12,6 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.NetworkRequest;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 
@@ -50,6 +49,7 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.SettingsActivity;
 import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
@@ -319,10 +319,10 @@ public class SessionServerSyncHelper {
     }
 
     /**
-     * SyncTask is an AsyncTask which performs the synchronization in a background thread.
+     * SyncTask is a BackgroundTask which performs the synchronization in a background thread.
      * Synchronization consists of two parts: pushLocalChanges and pullRemoteChanges.
      */
-    private class SyncTask extends AsyncTask<Void, Void, LoginStatus> {
+    private class SyncTask extends BackgroundTask<Void, LoginStatus> {
         private final boolean onlyLocalChanges;
         private final List<ICallback> callbacks = new ArrayList<>();
         private PhoneTrackClient client;
@@ -503,7 +503,7 @@ public class SessionServerSyncHelper {
         }
     }
 
-    private class GetNCColorTask extends AsyncTask<Void, Void, LoginStatus> {
+    private class GetNCColorTask extends BackgroundTask<Void, LoginStatus> {
 
         private final List<ICallback> callbacks = new ArrayList<>();
         private PhoneTrackClient client;
@@ -677,7 +677,7 @@ public class SessionServerSyncHelper {
      * or just get the share token if it already exists
      *
      */
-    private class ShareDeviceTask extends AsyncTask<Void, Void, LoginStatus> {
+    private class ShareDeviceTask extends BackgroundTask<Void, LoginStatus> {
         private PhoneTrackClient client;
         private final String token;
         private final String deviceName;
@@ -771,7 +771,7 @@ public class SessionServerSyncHelper {
         return false;
     }
 
-    private class GetSessionPositionsTask extends AsyncTask<Void, Void, LoginStatus> {
+    private class GetSessionPositionsTask extends BackgroundTask<Void, LoginStatus> {
         private PhoneTrackClient client;
         private final DBSession session;
         private final Long lastTimestamp;
@@ -859,7 +859,7 @@ public class SessionServerSyncHelper {
      * task to ask server to create a session
      *
      */
-    private class CreateSessionTask extends AsyncTask<Void, Void, LoginStatus> {
+    private class CreateSessionTask extends BackgroundTask<Void, LoginStatus> {
         private PhoneTrackClient client;
         private final String sessionName;
         private String sessionId = null;
@@ -926,7 +926,7 @@ public class SessionServerSyncHelper {
         }
     }
 
-    private class GetNCUserAvatarTask extends AsyncTask<Void, Void, LoginStatus> {
+    private class GetNCUserAvatarTask extends BackgroundTask<Void, LoginStatus> {
 
         private final List<ICallback> callbacks = new ArrayList<>();
         private PhoneTrackClient client;

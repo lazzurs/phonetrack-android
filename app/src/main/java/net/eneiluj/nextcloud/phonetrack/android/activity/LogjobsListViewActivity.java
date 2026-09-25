@@ -19,7 +19,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -113,6 +112,7 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackSync;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackWorker;
+import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
@@ -744,7 +744,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     }
 
 
-    private class LoadCategoryListTask extends AsyncTask<Void, Void, List<NavigationAdapter.NavigationItem>> {
+    private class LoadCategoryListTask extends BackgroundTask<Void, List<NavigationAdapter.NavigationItem>> {
         @Override
         protected List<NavigationAdapter.NavigationItem> doInBackground(Void... voids) {
             /*List<NavigationAdapter.NavigationItem> categories = db.getCategories();
@@ -1030,8 +1030,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 }
             }
         };
-        new LoadLogjobsListTask(getApplicationContext(), callback, navigationSelection, query).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        new LoadCategoryListTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoadLogjobsListTask(getApplicationContext(), callback, navigationSelection, query).executeInParallel();
+        new LoadCategoryListTask().executeInParallel();
     }
 
     @Override

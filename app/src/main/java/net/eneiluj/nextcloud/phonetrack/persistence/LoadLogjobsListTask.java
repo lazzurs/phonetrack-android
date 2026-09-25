@@ -1,7 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.persistence;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -16,13 +15,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.Item;
 
-public class LoadLogjobsListTask extends AsyncTask<Void, Void, List<Item>> {
+public class LoadLogjobsListTask extends BackgroundTask<Void, List<Item>> {
 
     private final Context context;
     private final LogjobsLoadedListener callback;
