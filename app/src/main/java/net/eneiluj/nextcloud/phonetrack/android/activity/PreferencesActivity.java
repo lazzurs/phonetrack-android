@@ -8,6 +8,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -47,12 +48,14 @@ public class PreferencesActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container_view, new PreferencesFragment(), "preftag")
                 .commit();
-    }
 
-    @Override
-    public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
-        //finish();
+        // onBackPressed() is no longer called with predictive back (default from targetSdk 36)
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                NavUtils.navigateUpFromSameTask(PreferencesActivity.this);
+            }
+        });
     }
 
     @Override

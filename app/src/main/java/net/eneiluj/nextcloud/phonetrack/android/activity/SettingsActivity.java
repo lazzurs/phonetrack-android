@@ -297,16 +297,6 @@ public class SettingsActivity extends AppCompatActivity {
         }*/
     }
 
-    /**
-     * Prevent pressing back button on first run
-     */
-    @Override
-    public void onBackPressed() {
-        //if (!first_run) {
-            super.onBackPressed();
-        //}
-    }
-
     protected boolean isValidUrl(String url) {
         return Patterns.WEB_URL.matcher(url).matches();
     }

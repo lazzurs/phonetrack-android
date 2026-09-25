@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -123,10 +124,17 @@ import static net.eneiluj.nextcloud.phonetrack.util.SupportUtil.formatDistance;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
-    public final static int PERMISSION_LOCATION = 1;
-    private final static int PERMISSION_FOREGROUND = 2;
-    public final static int PERMISSION_BACKGROUND_LOCATION = 3;
-    private final static int PERMISSION_NOTIFICATIONS = 4;
+    // Runtime permissions are requested one step at a time (see requestNextPermission()):
+    // Android only shows one request at a time and ignores a background location
+    // request made before foreground location is granted.
+    private boolean locationPermissionAsked = false;
+    private boolean notificationPermissionAsked = false;
+    private boolean backgroundLocationPermissionAsked = false;
+    private boolean batteryOptimizationAsked = false;
+
+    private final ActivityResultLauncher<String[]> permissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
+                    result -> requestNextPermission());
 
     private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
@@ -237,12 +245,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
+        getOnBackPressedDispatcher().addCallback(this, closeSearchOnBack);
         setupToolBar();
         setupLogjobsList();
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
 
-        checkAndRequestPermissions();
+        if (savedInstanceState == null) {
+            // not again on rotation / recreation
+            requestNextPermission();
+        }
 
         Map<String, Integer> enabled = db.getEnabledCount();
         Integer enabledCount = enabled.get("1");
@@ -278,129 +290,77 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     }
 
+    /**
+     * Walk through the permissions the app needs, one request at a time:
+     * foreground location, notifications (API 33+), background location (with an
+     * explanation first, API 29+), then the battery optimization exemption.
+     * Each request's result callback calls this again to continue.
+     */
     @SuppressLint("BatteryLife")
-    private void checkAndRequestPermissions() {
-        // Android 10
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED
-                    || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED
-                    || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                if (LoggerService.DEBUG) {
-                    SystemLogger.d(TAG, "request fine, coarse and background location permissions");
-                }
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION,
-                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                        },
-                        PERMISSION_LOCATION
-                );
-            }
-        } else {
-            // android != 10
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED
-                    || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                if (LoggerService.DEBUG) {
-                    SystemLogger.d(TAG, "request fine and coarse location permissions");
-                }
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION
-                        },
-                        PERMISSION_LOCATION
-                );
+    private void requestNextPermission() {
+        if (!locationPermissionAsked) {
+            locationPermissionAsked = true;
+            if (!SupportUtil.hasForegroundLocationPermission(this)) {
+                if (LoggerService.DEBUG) { SystemLogger.d(TAG, "request fine and coarse location permissions"); }
+                permissionLauncher.launch(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                });
+                return;
             }
         }
 
-        // Android >= 30
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        if (!notificationPermissionAsked) {
+            notificationPermissionAsked = true;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
-                AlertDialog.Builder builder;
-                builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog));
-                builder.setTitle(this.getString(R.string.background_location_permission_title))
-                        .setMessage(getString(R.string.background_location_permission_message)
-                                + "\n\n"
-                                + getPackageManager().getBackgroundPermissionOptionLabel()
-                        )
-                        .setPositiveButton(R.string.simple_yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (LoggerService.DEBUG) {
-                                    SystemLogger.d(TAG, "request background location permission");
-                                }
-                                // this request will take user to Application's Setting page
-                                ActivityCompat.requestPermissions(
-                                        LogjobsListViewActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
-                                        PERMISSION_BACKGROUND_LOCATION
-                                );
-                            }
+                if (LoggerService.DEBUG) { SystemLogger.d(TAG, "requesting POST_NOTIFICATIONS permission"); }
+                permissionLauncher.launch(new String[]{Manifest.permission.POST_NOTIFICATIONS});
+                return;
+            }
+        }
+
+        if (!backgroundLocationPermissionAsked) {
+            backgroundLocationPermissionAsked = true;
+            // background location can only be granted on top of foreground location
+            if (SupportUtil.hasForegroundLocationPermission(this)
+                    && !SupportUtil.hasBackgroundLocationPermission(this)) {
+                CharSequence optionLabel = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+                        ? getPackageManager().getBackgroundPermissionOptionLabel()
+                        : "";
+                new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog))
+                        .setTitle(R.string.background_location_permission_title)
+                        .setMessage(getString(R.string.background_location_permission_message) + "\n\n" + optionLabel)
+                        .setPositiveButton(R.string.simple_yes, (dialog, which) -> {
+                            if (LoggerService.DEBUG) { SystemLogger.d(TAG, "request background location permission"); }
+                            // on Android 11+ this takes the user to the app's location settings page
+                            permissionLauncher.launch(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION});
                         })
-                        .setNegativeButton(R.string.simple_no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
+                        // "no" or back: carry on with the next step
+                        .setNegativeButton(R.string.simple_no, (dialog, which) -> requestNextPermission())
+                        .setOnCancelListener(dialog -> requestNextPermission())
                         .show();
+                return;
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                if (LoggerService.DEBUG) { SystemLogger.d(TAG, "request foreground permission"); }
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{Manifest.permission.FOREGROUND_SERVICE},
-                        PERMISSION_FOREGROUND
-                );
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                if (LoggerService.DEBUG) {
-                    SystemLogger.d(TAG, "requesting POST_NOTIFICATIONS permissions");
+        if (!batteryOptimizationAsked) {
+            batteryOptimizationAsked = true;
+            try {
+                String packageName = getPackageName();
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                SystemLogger.d(TAG, "check if we need to request for ignoring battery optimizations for " + packageName);
+                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                    Intent i = new Intent();
+                    i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    i.setData(Uri.parse("package:" + packageName));
+                    SystemLogger.d(TAG, "request for ignoring battery optimizations for " + packageName);
+                    startActivity(i);
                 }
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{
-                                Manifest.permission.POST_NOTIFICATIONS,
-                        },
-                        PERMISSION_NOTIFICATIONS
-                );
+            } catch (Exception e) {
+                SystemLogger.d(TAG, "Unable to request ignoring battery optimizations: " + e);
             }
-        }
-
-        // battery optimization
-        try {
-            String packageName = getPackageName();
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-
-            SystemLogger.d(TAG,"check if we need to request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                Intent i = new Intent();
-                i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                i.setData(Uri.parse("package:" + packageName));
-                SystemLogger.d(TAG,"request for ignoring battery optimizations for " + Uri.parse("package:" + packageName));
-                startActivity(i);
-            }
-        } catch (Exception e) {
-            SystemLogger.d(TAG,"Unable to request ignoring battery optimizations: " + e);
         }
     }
 
@@ -553,6 +513,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     @SuppressLint("PrivateResource")
     private void updateToolbars(boolean disableSearch) {
+        closeSearchOnBack.setEnabled(!disableSearch);
         homeToolbar.setVisibility(disableSearch ? VISIBLE : GONE);
         toolbar.setVisibility(disableSearch ? GONE : VISIBLE);
         appBar.setStateListAnimator(
@@ -1567,14 +1528,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         return selected;
     }
 
-    @Override
-    public void onBackPressed() {
-        if (toolbar.getVisibility() == VISIBLE) {
+    /**
+     * Back closes the search toolbar when it is open. Enabled only while it is,
+     * so the system (predictive) back gesture works normally otherwise.
+     */
+    private final OnBackPressedCallback closeSearchOnBack = new OnBackPressedCallback(false) {
+        @Override
+        public void handleOnBackPressed() {
             updateToolbars(true);
-        } else {
-            super.onBackPressed();
         }
-    }
+    };
 
     private void synchronize() {
         if (LoggerService.DEBUG) { SystemLogger.d(TAG, "synchronize()"); }
@@ -1840,27 +1803,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED:
                     showToast(getString(R.string.location_permission_denied), Toast.LENGTH_LONG);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        ActivityCompat.requestPermissions(
-                                LogjobsListViewActivity.this,
-                                new String[]{
-                                        Manifest.permission.ACCESS_FINE_LOCATION,
-                                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                                },
-                                PERMISSION_LOCATION
-                        );
-                    }
-                    else {
-                        ActivityCompat.requestPermissions(
-                                LogjobsListViewActivity.this,
-                                new String[]{
-                                        Manifest.permission.ACCESS_FINE_LOCATION,
-                                        Manifest.permission.ACCESS_COARSE_LOCATION
-                                },
-                                PERMISSION_LOCATION
-                        );
-                    }
+                    locationPermissionAsked = false;
+                    backgroundLocationPermissionAsked = false;
+                    requestNextPermission();
                     break;
                 case SessionServerSyncHelper.BROADCAST_NETWORK_AVAILABLE:
                     swipeRefreshLayout.setEnabled(true);
