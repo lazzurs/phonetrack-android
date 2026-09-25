@@ -84,6 +84,11 @@ android {
         }
     }
 
+    testOptions {
+        // Robolectric needs the merged manifest and resources
+        unitTests.isIncludeAndroidResources = true
+    }
+
     lint {
         abortOnError = false
         disable += "MissingTranslation"
@@ -113,6 +118,11 @@ dependencies {
     implementation(libs.osmdroid.mapsforge)
     implementation(libs.colorpreference)
     implementation(libs.lobsterpicker)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.ext.junit)
 
     androidTestImplementation(libs.junit)
 }

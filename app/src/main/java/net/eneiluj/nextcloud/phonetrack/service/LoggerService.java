@@ -48,6 +48,7 @@ import android.os.SystemClock;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
@@ -704,7 +705,8 @@ public class LoggerService extends Service {
      * and the user can revoke at any time; setExactAndAllowWhileIdle() throws a
      * SecurityException without it, so fall back to an inexact idle alarm.
      */
-    private void setAlarmAllowWhileIdle(long triggerAtElapsed, PendingIntent operation) {
+    @VisibleForTesting
+    static void setAlarmAllowWhileIdle(AlarmManager alarmManager, long triggerAtElapsed, PendingIntent operation) {
         if (AlarmManagerCompat.canScheduleExactAlarms(alarmManager)) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtElapsed, operation);
         } else {
@@ -1233,7 +1235,7 @@ public class LoggerService extends Service {
             if (SupportUtil.isDozing(LoggerService.this)){
                 //Only invoked once per 15 minutes in doze mode
                 SystemLogger.d(TAG, "Device is dozing, using infrequent alarm");
-                setAlarmAllowWhileIdle(SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
+                setAlarmAllowWhileIdle(alarmManager, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             } else {
                 alarmManager.set(
                         AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -1456,7 +1458,7 @@ public class LoggerService extends Service {
             if (SupportUtil.isDozing(LoggerService.this)){
                 // Only invoked every 15 minutes in doze mode
                 SystemLogger.e(TAG, "Device is dozing, using infrequent alarm");
-                setAlarmAllowWhileIdle(SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
+                setAlarmAllowWhileIdle(alarmManager, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             }
