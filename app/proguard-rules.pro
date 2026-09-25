@@ -1,17 +1,30 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in C:\Users\stnieder\AppData\Local\Android\sdk/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
+# R8 rules for release builds (isMinifyEnabled in app/build.gradle.kts).
 #
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Components declared in the manifest and classes referenced from layout / preference XML
+# are kept automatically; AndroidX, Gson, Conscrypt and Nextcloud SSO ship their own rules.
 
-# Add any project specific keep options here:
+# Readable stack traces in crash reports and the in-app system log: keep line numbers,
+# and map them back with the mapping.txt attached to each release.
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Libraries without consumer rules that load classes or resources by name.
+# There is no instrumented test run of a minified build, so keep them whole rather
+# than guess: the size cost is small next to the risk of breaking maps or TLS on device.
+#   osmdroid: tile providers and modules
+-keep class org.osmdroid.** { *; }
+-dontwarn org.osmdroid.**
+#   mapsforge: render themes (XML) and the map file reader
+-keep class org.mapsforge.** { *; }
+-dontwarn org.mapsforge.**
+#   cert4android: custom certificate trust, data binding UI, Conscrypt provider setup
+-keep class at.bitfire.cert4android.** { *; }
+-dontwarn at.bitfire.cert4android.**
+#   Floating action button menu (custom views and their attributes)
+-keep class com.github.clans.fab.** { *; }
+
+# Stored in Bundles / saved instance state (Serializable): field names must not change
+# between the writer and the reader.
+-keepclassmembers class net.eneiluj.nextcloud.phonetrack.model.** implements java.io.Serializable {
+    <fields>;
+}
