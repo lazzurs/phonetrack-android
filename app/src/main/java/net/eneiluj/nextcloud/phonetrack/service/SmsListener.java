@@ -313,5 +313,3 @@ public class SmsListener extends BroadcastReceiver {
     }
 
 }
-
-

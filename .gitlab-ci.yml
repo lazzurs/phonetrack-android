@@ -97,4 +97,3 @@ debugTests:
       - build
   script:
     - ./gradlew -Pci --console=plain :app:testDevDebug
-
