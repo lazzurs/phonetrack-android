@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+// Fork release signing: CI decodes the RELEASE_KEYSTORE_BASE64 secret to a file and passes its
+// path here via env vars, so releases are signed consistently across builds. Without those env
+// vars (local dev builds), `release` falls back to the debug signing config so it still installs.
+def releaseKeystorePath = System.getenv("RELEASE_KEYSTORE_PATH")
+def releaseKeystorePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+def hasReleaseSigning = releaseKeystorePath && releaseKeystorePassword
+
 android {
     compileSdk 35
     // buildToolsVersion '29.0.3'
@@ -12,10 +19,21 @@ android {
         vectorDrawables.useSupportLibrary true
         resValue "string", "applicationId", applicationId
     }
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(releaseKeystorePath)
+                storePassword releaseKeystorePassword
+                keyAlias System.getenv("RELEASE_KEY_ALIAS") ?: "phonetrack-fork"
+                keyPassword System.getenv("RELEASE_KEY_PASSWORD") ?: releaseKeystorePassword
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig hasReleaseSigning ? signingConfigs.release : signingConfigs.debug
         }
     }
     compileOptions {

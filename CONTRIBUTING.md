@@ -1,5 +1,11 @@
 # Contributing guide
 
+> This repository is [lazzurs/phonetrack-android](https://github.com/lazzurs/phonetrack-android), a fork of
+> [eneiluj/phonetrack-android](https://gitlab.com/eneiluj/phonetrack-android) that adds GitHub Actions CI/CD.
+> For bugs or features in the app itself, please use the upstream tracker linked below. Use
+> [this fork's issue tracker](https://github.com/lazzurs/phonetrack-android/issues) only for problems with this
+> fork's build, release, or tooling setup.
+
 ## Submitting bug reports
 
 If you find a bug, feel free to [open an issue](https://gitlab.com/eneiluj/phonetrack-android/issues). But please provide these information in the comment:

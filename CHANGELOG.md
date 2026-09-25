@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added (lazzurs fork)
+- GitHub Actions CI: lint, unit tests, and debug APK build on every push/PR to `main`
+- GitHub Actions release workflow: signed release APKs attached to GitHub Releases on every `v*` tag
+- `.pre-commit-config.yaml` with baseline hygiene hooks (whitespace, EOL, large files, secrets)
+- Fork attribution to upstream [eneiluj/phonetrack-android](https://gitlab.com/eneiluj/phonetrack-android) in README/CONTRIBUTING
+
 ## 0.1.0 – 2020-06-25
 ### Changed
 - apply new design (like NC Notes and NC Files)
