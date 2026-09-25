@@ -13,7 +13,6 @@
   <string name="action_syslog">Activiteiten log</string>
   <string name="setting_title">Naam</string>
   <string name="setting_title_long">Log job titel (alleen zichtbaar in de app)</string>
-  <string name="mandatory">(verplicht)</string>
   <string name="setting_devicename">Apparaatnaam</string>
   <string name="setting_devicename_long">Toestelnaam of reservering token</string>
   <string name="setting_token">Sessie token</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">GPS ingeschakeld houden tussen fixes</string>
   <string name="setting_keepgps_summary">Dit zal nauwkeuriger posities geven, maar zal meer effect hebben op het batterijverbruik. Gebruik het wanneer de minimale tijd onder de 60 seconden is.</string>
   <string name="setting_significantmotion_enabled">Bewegingsmodus aanzienlijk</string>
-  <string name="setting_significantmotion_title">Bepaal positie alleen na een significante beweging</string>
   <string name="setting_significantmotion_summary">Experimenteel: Wacht op een significante beweging voor het verkrijgen van de volgende positie. Spaart de batterij in een aantal gevallen. Niet compatibel met sommige andere opties.</string>
   <string name="setting_significantmotion_min_time_applied">Pas minimum tijd toe</string>
   <string name="setting_significantmotion_min_time_applied_summary">Niet elke keer dat beweging wordt waargenomen een positie opnemen, maar een \"minimum tijd\" wachten tussen twee punten. Dit spaart de batterij.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Wachttijd voor een enkele locatiebepaling (seconden). Bespaart batterij in gebieden zonder goede dekking. Bij gebruik van zowel GPS als netwerk bepaalt dit ook na hoeveel tijd de netwerkpositie van lagere kwaliteit zal worden gebruikt. Stel in op nul om de time-out uit te schakelen. Moet korter zijn dan de minimale tijd.</string>
   <string name="logjob_title_log_to">Log naar %s</string>
   <string name="default_nextcloud_url">https://yournextcloud.org</string>
-  <string name="default_device_name">mijnToestelNaam</string>
   <string name="default_session_token">supertoken</string>
   <string name="logjob_info_dialog_title">Over %s</string>
   <string name="logjob_info_nbsync">%d posities verzonden</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Kaart voor %s</string>
   <string name="display_info_menu_title">Logtaak informatie</string>
   <string name="display_map_menu_title">Kaart van de logtaak sessie</string>
-  <string name="export_gpx_menu_title">Exporteren naar GPX</string>
   <string name="file_saved_success">Logtaak geëxporteerd in %s</string>
   <string name="syslog_saved_success">Activiteiten log geëxporteerd in %s</string>
   <string name="delete_logjob_menu_title">Logtaak verwijderen</string>
-  <string name="action_sorting_method">Sorteermethode</string>
   <string name="manage_accounts">Beheer accounts</string>
   <string name="is_running">draaiend (%1$s in behandeling, %2$s verzonden)</string>
   <string name="settings_server_settings">Account</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Netwerk</string>
   <string name="providers_gps_network">Netwerk en GPS</string>
-  <string name="providers_passive">Passief</string>
-  <string name="providers_passive_gps">Passief en GPS</string>
-  <string name="providers_passive_network">Passief en netwerk</string>
-  <string name="providers_passive_gps_network">Passief, GPS en netwerk</string>
   <string name="settings_color_title">Hoofdkleur applicatie</string>
   <string name="settings_color_summary">Kleur voor actie bars, knoppen van de kaart etc...</string>
   <string name="settings_colorpicker_title">Kies een kleur</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">verkeerde gebruikersnaam of wachtwoord</string>
   <string name="error_invalid_pt_url">Ongeldige PhoneTrack logging link</string>
   <string name="error_invalid_url">Ongeldige link</string>
-  <string name="error_invalid_token">Ongeldig token</string>
-  <string name="error_invalid_title">Ongeldige titel</string>
-  <string name="error_invalid_devname">Ongeldige toestelnaam</string>
-  <string name="error_invalid_mintime">Ongeldige minimumtijd</string>
-  <string name="error_invalid_mindistance">Ongeldige minimumafstand</string>
-  <string name="error_invalid_minaccuracy">Ongeldige minimale nauwkeurigheid</string>
-  <string name="error_invalid_timeout">Ongeldige timeout</string>
   <string name="error_invalid_sms_keyword">Ongeldig SMS-trefwoord</string>
   <string name="error_invalid_group_sync">Ongeldig getal</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Donker</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Terug naar oude login methode</string>
-  <string name="fallback_weblogin_back">Vorige</string>
   <string name="use_sso_toggle">Gebruik account van Nextcloud Bestanden app</string>
   <string name="center_map">Toon mijn positie</string>
   <string name="follow_me">Volg mijn positie</string>

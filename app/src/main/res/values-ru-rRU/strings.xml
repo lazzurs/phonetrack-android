@@ -13,7 +13,6 @@
   <string name="action_syslog">Лог активности</string>
   <string name="setting_title">Название</string>
   <string name="setting_title_long">Название журналирования (в приложении)</string>
-  <string name="mandatory">(обязательное)</string>
   <string name="setting_devicename">Имя устройства</string>
   <string name="setting_devicename_long">Имя устройства или маркер резервирования</string>
   <string name="setting_token">Маркер сессии</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Сохранять GPS до фиксации</string>
   <string name="setting_keepgps_summary">Это позволит получить более точную позицию, но сократит время жизни батареи. Используйте когда минимальное время меньше 60 секунд.</string>
   <string name="setting_significantmotion_enabled">Режим увеличенных перемещений</string>
-  <string name="setting_significantmotion_title">Получить позицию только после значительного перемещения</string>
   <string name="setting_significantmotion_summary">Экспериментальный: Ожидание значительного перемещения перед тем, как получить следующую позицию. В некоторых случаях экономит заряд батареи. Несовместимо с некоторыми другими опциями.</string>
   <string name="setting_significantmotion_min_time_applied">Применить минимальное время</string>
   <string name="setting_significantmotion_min_time_applied_summary">Не записывать позицию каждый раз, когда происходит движение, подождите \"минимальное время\" между двумя точками. Это экономит батарею.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Время ожидания при определении единичного местоположения (в секундах). Экономит заряд батареи в районах с плохим покрытием. При использовании GPS и определения местоположения по сети также задаётся, как долго будет использоваться местоположение источника более низкого качества. Установите на ноль, чтобы отключить тайм-аут. Должно быть меньше минимального времени между двумя записанными точками.</string>
   <string name="logjob_title_log_to">Запись в %s</string>
   <string name="default_nextcloud_url">https://yournextcloud.org</string>
-  <string name="default_device_name">имяУстройства</string>
   <string name="default_session_token">супертокен</string>
   <string name="logjob_info_dialog_title">О %s</string>
   <string name="logjob_info_nbsync">%d положений передано</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Карта для %s</string>
   <string name="display_info_menu_title">Информация о задании журнала</string>
   <string name="display_map_menu_title">Карта лога сессии</string>
-  <string name="export_gpx_menu_title">Экспорт в GPX</string>
   <string name="file_saved_success">Задание журнала экспортировано в %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Удалить задание журнала</string>
-  <string name="action_sorting_method">Метод сортировки</string>
   <string name="manage_accounts">Управление аккаунтами</string>
   <string name="is_running">выполнение (ожидает %1$s, отправлено %2$s)</string>
   <string name="settings_server_settings">Учетная запись</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Сеть</string>
   <string name="providers_gps_network">Сеть и GPS</string>
-  <string name="providers_passive">Пассивный</string>
-  <string name="providers_passive_gps">Пассивный и GPS</string>
-  <string name="providers_passive_network">Пассивный и cеть</string>
-  <string name="providers_passive_gps_network">Пассивный, GPS и сеть</string>
   <string name="settings_color_title">Основной цвет приложения</string>
   <string name="settings_color_summary">Цвет панели управления, кнопок на карте, и тд...</string>
   <string name="settings_colorpicker_title">Выберите цвет</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">неправильное имя пользователя или пароль</string>
   <string name="error_invalid_pt_url">Неверная ссылка для журнала PhoneTrack</string>
   <string name="error_invalid_url">Некорректная ссылка</string>
-  <string name="error_invalid_token">Неверный токен</string>
-  <string name="error_invalid_title">Неверное название</string>
-  <string name="error_invalid_devname">Недопустимое имя устройства</string>
-  <string name="error_invalid_mintime">Параметр \"Минимальное время\" за пределами допустимых значений</string>
-  <string name="error_invalid_mindistance">Параметр \"Минимальная дистанция\" за пределами допустимых значений</string>
-  <string name="error_invalid_minaccuracy">Параметр \"Минимальная точность\" за пределами допустимых значений</string>
-  <string name="error_invalid_timeout">Неверный тайм-аут</string>
   <string name="error_invalid_sms_keyword">Недопустимое ключевое слово SMS</string>
   <string name="error_invalid_group_sync">Недопустимый номер</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Темная</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Вернуться к старому методу авторизации</string>
-  <string name="fallback_weblogin_back">Назад</string>
   <string name="use_sso_toggle">Использовать учетную запись Nextcloud</string>
   <string name="center_map">Показать мою позицию</string>
   <string name="follow_me">Следовать за мной</string>

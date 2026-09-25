@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -50,7 +51,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -66,6 +66,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.IGetLastPosCallback;
 import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
@@ -226,7 +227,10 @@ public class MapActivity extends AppCompatActivity {
         //if (requestCode == import_file_cmd && resultCode == Activity.RESULT_OK) {
     }
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    // small local SQLite read on the main thread: the session to show (one row) is needed to build the screen
+    @SuppressLint("ThreadConstraint")
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ctx = getApplicationContext();
@@ -695,28 +699,18 @@ public class MapActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             setLastMin(numberEdit.getText().toString());
                             Log.i(TAG, "[CHANGE last min] "+numberEdit.getText().toString());
-                            // restore keyboard auto hide behaviour
-                            InputMethodManager inputMethodManager = (InputMethodManager) numberEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         }
                     });
 
                     fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            // restore keyboard auto hide behaviour
-                            InputMethodManager inputMethodManager = (InputMethodManager) numberEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         }
                     });
 
                     // create the alert dialog
                     Dialog fromUrlDialog = fromUrlBuilder.create();
                     fromUrlDialog.show();
-                    numberEdit.setSelectAllOnFocus(true);
-                    numberEdit.requestFocus();
-                    // show keyboard
-                    InputMethodManager inputMethodManager = (InputMethodManager) numberEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                    KeyboardUtil.showForDialog(fromUrlDialog, numberEdit);
                 } else if (item == itemlimit) {
                     int currentLimit = prefs.getInt("map_limit", 300);
 
@@ -734,28 +728,18 @@ public class MapActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             setLimit(limitEdit.getText().toString());
                             Log.i(TAG, "[CHANGE LIMIT] "+limitEdit.getText().toString());
-                            // restore keyboard auto hide behaviour
-                            InputMethodManager inputMethodManager = (InputMethodManager) limitEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         }
                     });
 
                     fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            // restore keyboard auto hide behaviour
-                            InputMethodManager inputMethodManager = (InputMethodManager) limitEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         }
                     });
 
                     // create the alert dialog
                     Dialog fromUrlDialog = fromUrlBuilder.create();
                     fromUrlDialog.show();
-                    limitEdit.setSelectAllOnFocus(true);
-                    limitEdit.requestFocus();
-                    // show keyboard
-                    InputMethodManager inputMethodManager = (InputMethodManager) limitEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                    KeyboardUtil.showForDialog(fromUrlDialog, limitEdit);
                 } else if (item == itemFreq) {
                     int currentFreq = prefs.getInt("map_freq", 15);
 
@@ -773,28 +757,18 @@ public class MapActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             setFrequency(frequencyEdit.getText().toString());
                             Log.i(TAG, "[CHANGE FREQ] "+frequencyEdit.getText().toString());
-                            // restore keyboard auto hide behaviour
-                            InputMethodManager inputMethodManager = (InputMethodManager) frequencyEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         }
                     });
 
                     fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            // restore keyboard auto hide behaviour
-                            InputMethodManager inputMethodManager = (InputMethodManager) frequencyEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         }
                     });
 
                     // create the alert dialog
                     Dialog fromUrlDialog = fromUrlBuilder.create();
                     fromUrlDialog.show();
-                    frequencyEdit.setSelectAllOnFocus(true);
-                    frequencyEdit.requestFocus();
-                    // show keyboard
-                    InputMethodManager inputMethodManager = (InputMethodManager) frequencyEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                    KeyboardUtil.showForDialog(fromUrlDialog, frequencyEdit);
                 } else if (item == itemPin) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
 

@@ -13,7 +13,6 @@
   <string name="action_syslog">Activity logs</string>
   <string name="setting_title">Заглавие</string>
   <string name="setting_title_long">Запишете заглавието на заданието (видимо само в приложението)</string>
-  <string name="mandatory">(задължително)</string>
   <string name="setting_devicename">Име на устройството</string>
   <string name="setting_devicename_long">Име на устройство или резервиран тоукън</string>
   <string name="setting_token">Тоукън на сесията</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Поддържайте GPS между поправките</string>
   <string name="setting_keepgps_summary">Това ще даде по-точни позиции, но ще има по-голям ефект върху живота на батерията. Използвайте го, когато минималното време е под 60 секунди.</string>
   <string name="setting_significantmotion_enabled">Режим на значително движение</string>
-  <string name="setting_significantmotion_title">Вземете позиция само след значително движение</string>
   <string name="setting_significantmotion_summary">Експериментална: Изчакайте значително движение, преди да заемете следващата позиция. В някои случаи спестява много батерия. Несъвместимо с някои други опции.</string>
   <string name="setting_significantmotion_min_time_applied">Приложете минимално време</string>
   <string name="setting_significantmotion_min_time_applied_summary">Не записвайте позиция всеки път, когато е открито движение, изчакайте \"минимално време\" между две точки. Това спестява батерията.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Време за изчакване за еднократно определяне на локация (секунди). Спестява батерията на територии без добро покритие. Ако използвате GPS и мрежата заедно, това определя след колко време ще бъде използвана мрежовата позиция с по-ниско качество. Задайте нула, за да деактивирате изчакване. Трябва да е по-малко от минималното време.</string>
   <string name="logjob_title_log_to">Запис в %s</string>
   <string name="default_nextcloud_url">https://yournextcloud.org</string>
-  <string name="default_device_name">имеУстройство</string>
   <string name="default_session_token">supertoken</string>
   <string name="logjob_info_dialog_title">Около %s</string>
   <string name="logjob_info_nbsync">%d пратена локация</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Карта за %s</string>
   <string name="display_info_menu_title">Logjob information</string>
   <string name="display_map_menu_title">Map of logjob\'s session</string>
-  <string name="export_gpx_menu_title">Export to GPX</string>
   <string name="file_saved_success">Logjob exported in %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Delete logjob</string>
-  <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
   <string name="is_running">изпълнение (%1$s изчакват, %2$s изпратени)</string>
   <string name="settings_server_settings">Профил</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Мрежа</string>
   <string name="providers_gps_network">Мрежа и GPS</string>
-  <string name="providers_passive">Пасивен</string>
-  <string name="providers_passive_gps">Пасивен и GPS</string>
-  <string name="providers_passive_network">Пасивен и мрежа</string>
-  <string name="providers_passive_gps_network">Пасивен, GPS и мрежа</string>
   <string name="settings_color_title">Основен цвят</string>
   <string name="settings_color_summary">Цвят за ленти за действие, бутони за карта и т.н.</string>
   <string name="settings_colorpicker_title">Изберете цвят</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">грешен име или парола</string>
   <string name="error_invalid_pt_url">Невалидна връзка за регистрация на PhoneTrack</string>
   <string name="error_invalid_url">Невалидна връзка</string>
-  <string name="error_invalid_token">Невалиден тоукън</string>
-  <string name="error_invalid_title">Невалидно заглавие</string>
-  <string name="error_invalid_devname">Невалидно име на устройството</string>
-  <string name="error_invalid_mintime">Невалидно минимално време</string>
-  <string name="error_invalid_mindistance">Невалидна минимална дистанция</string>
-  <string name="error_invalid_minaccuracy">Невалидна минимална точност</string>
-  <string name="error_invalid_timeout">Невалиден период на изчакване</string>
   <string name="error_invalid_sms_keyword">Невалидна ключова дума за SMS</string>
   <string name="error_invalid_group_sync">Невалиден номер</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Тъмен</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Върнете се към стария метод за вход</string>
-  <string name="fallback_weblogin_back">Назад</string>
   <string name="use_sso_toggle">Използвайте акаунта от приложението Nextcloud</string>
   <string name="center_map">Show my position</string>
   <string name="follow_me">Follow my position</string>

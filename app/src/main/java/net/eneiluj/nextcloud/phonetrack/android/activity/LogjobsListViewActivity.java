@@ -68,13 +68,11 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -112,6 +110,7 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackSync;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackWorker;
+import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
 import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
@@ -647,25 +646,15 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                                 showToast(getString(R.string.error_create_session_network), Toast.LENGTH_LONG);
                             }
                         }
-                        // restore keyboard auto hide behaviour
-                        InputMethodManager inputMethodManager = (InputMethodManager) sessionNameEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
                 });
                 sessionBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        // restore keyboard auto hide behaviour
-                        InputMethodManager inputMethodManager = (InputMethodManager) sessionNameEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
                 });
                 AlertDialog sessionDialog = sessionBuilder.create();
                 sessionDialog.show();
-                sessionNameEdit.setSelectAllOnFocus(true);
-                sessionNameEdit.requestFocus();
-                // show keyboard
-                InputMethodManager inputMethodManager = (InputMethodManager) sessionNameEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                KeyboardUtil.showForDialog(sessionDialog, sessionNameEdit);
             }
         });
 
@@ -1773,49 +1762,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         showToast(errorMessage, Toast.LENGTH_LONG);
                     }
 
-                    // show sessions sync error toast
-                    LayoutInflater inflater1 = getLayoutInflater();
-                    View layout1 = inflater1.inflate(R.layout.sync_success_toast,
-                            findViewById(R.id.custom_toast_container));
-
-                    LinearLayout ll1 = layout1.findViewById(R.id.custom_toast_container);
-                    ll1.setBackgroundColor(Color.TRANSPARENT);
-                    TextView text1 = layout1.findViewById(R.id.text);
-                    text1.setText("");
-                    ImageView im1 = layout1.findViewById(R.id.toast_icon);
-                    im1.setImageResource(R.drawable.ic_pt_error);
-
-                    Toast toast1 = new Toast(getApplicationContext());
-                    toast1.setGravity(Gravity.TOP | Gravity.END, 65, 16);
-                    toast1.setDuration(Toast.LENGTH_SHORT);
-                    toast1.setView(layout1);
-                    toast1.show();
 
                     updateAllLogjobItems();
                     break;
                 case SessionServerSyncHelper.BROADCAST_SESSIONS_SYNCED:
-                    //showToast(getString(R.string.sessions_sync_success));
                     if (ssoSnackbar != null) {
                         ssoSnackbar.dismiss();
                         ssoSnackbar = null;
                     }
-                    // show sessions sync success toast
-                    LayoutInflater inflater2 = getLayoutInflater();
-                    View layout2 = inflater2.inflate(R.layout.sync_success_toast,
-                            findViewById(R.id.custom_toast_container));
-
-                    LinearLayout ll2 = layout2.findViewById(R.id.custom_toast_container);
-                    ll2.setBackgroundColor(Color.TRANSPARENT);
-                    TextView text2 = layout2.findViewById(R.id.text);
-                    text2.setText("");
-                    ImageView im2 = layout2.findViewById(R.id.toast_icon);
-                    im2.setImageResource(R.drawable.ic_nextcloud_logo_white);
-
-                    Toast toast2 = new Toast(getApplicationContext());
-                    toast2.setGravity(Gravity.TOP | Gravity.END, 65, 16);
-                    toast2.setDuration(Toast.LENGTH_SHORT);
-                    toast2.setView(layout2);
-                    toast2.show();
+                    // (custom-view toasts are deprecated and not shown from the background)
+                    Snackbar.make(swipeRefreshLayout, R.string.sessions_sync_success, Snackbar.LENGTH_SHORT).show();
 
                     updateAllLogjobItems();
                     break;

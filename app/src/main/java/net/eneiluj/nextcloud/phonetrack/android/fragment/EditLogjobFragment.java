@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,7 +51,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -66,6 +66,7 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
@@ -153,6 +154,8 @@ public abstract class EditLogjobFragment extends Fragment {
     private DialogInterface.OnClickListener deleteDialogClickListener;
     private AlertDialog.Builder confirmDeleteAlertBuilder;
 
+    // small local SQLite read on the main thread: the logjob to edit (one row) is needed to build the screen
+    @SuppressLint("ThreadConstraint")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -704,8 +707,9 @@ public abstract class EditLogjobFragment extends Fragment {
 
     public void onCloseLogjob() {
         Log.d(getClass().getSimpleName(), "onCLOSE()");
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        if (getActivity() != null && getView() != null) {
+            KeyboardUtil.hide(getActivity().getWindow(), getView());
+        }
     }
 
     /**

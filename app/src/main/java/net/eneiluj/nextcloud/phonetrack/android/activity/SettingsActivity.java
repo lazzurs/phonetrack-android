@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.annotation.SuppressLint;
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -389,6 +390,9 @@ public class SettingsActivity extends AppCompatActivity {
         return x509Certificate;
     }
 
+    // JavaScript: Nextcloud's web login flow (login/v2) needs it. The WebView only loads the
+    // user's own server.
+    @SuppressLint("SetJavaScriptEnabled")
     private void webLogin() {
         setContentView(R.layout.activity_settings_webview);
         webView = findViewById(R.id.login_webview);
@@ -428,6 +432,10 @@ public class SettingsActivity extends AppCompatActivity {
                 webView.setVisibility(View.VISIBLE);
             }
 
+            // proceed() only runs after the user explicitly trusted this certificate in
+            // cert4android's dialog (self-hosted servers often use self-signed certificates);
+            // otherwise the load is cancelled
+            @SuppressLint("WebViewClientOnReceivedSslError")
             @Override
             public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
                 X509Certificate cert = getX509CertificateFromError(error);

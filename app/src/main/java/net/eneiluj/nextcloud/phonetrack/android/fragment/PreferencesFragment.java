@@ -89,11 +89,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     private ActionBar toolbar;
 
     @Override
-    public Fragment getCallbackFragment() {
-        return this;
-    }
-
-    @Override
     public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
         caller.setPreferenceScreen(pref);
         return true;

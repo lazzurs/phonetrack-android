@@ -13,7 +13,6 @@
   <string name="action_syslog">Registro de actividad</string>
   <string name="setting_title">Título</string>
   <string name="setting_title_long">Título largo de la tarea (visible solo en la app)</string>
-  <string name="mandatory">(obligatorio)</string>
   <string name="setting_devicename">Nombre de dispositivo</string>
   <string name="setting_devicename_long">Nombre del dispositivo o token de reserva</string>
   <string name="setting_token">Token de sesión</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Mantener el GPS encendido entre localizaciones</string>
   <string name="setting_keepgps_summary">Esto conseguirá posiciones más precisas pero tendrá mayor impacto en la duración de la batería. Utilizar cuando el tiempo mínimo sea menor de 60 segundos.</string>
   <string name="setting_significantmotion_enabled">Modo de movimiento significativo</string>
-  <string name="setting_significantmotion_title">Obtener posición solo después de movimiento significativo</string>
   <string name="setting_significantmotion_summary">Experimenta: Esperar un movimiento significativo antes de obtener la siguiente posición. Ahorra mucha batería en algunos casos. Incompatible con alguna otra opción.</string>
   <string name="setting_significantmotion_min_time_applied">Aplicar tiempo mínimo</string>
   <string name="setting_significantmotion_min_time_applied_summary">No grabar una posición cada vez que se detecta movimiento, esperar \"tiempo mínimo\" entre dos puntos. Ahorra batería.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Tiempo a esperar para una única ubicación fija (segundos). Ahorra batería en zonas sin buena cobertura. Si se usa tanto GPS como red, también determina después de cuánto tiempo se utilizará la posición de la red de menor calidad. Poner en cero para desactivar el tiempo de espera. Debe ser inferior al tiempo mínimo.</string>
   <string name="logjob_title_log_to">Registrarse en %s</string>
   <string name="default_nextcloud_url">https://tunextcloud.org</string>
-  <string name="default_device_name">NombreDeMiDispositivo</string>
   <string name="default_session_token">supertoken</string>
   <string name="logjob_info_dialog_title">Acerca de %s</string>
   <string name="logjob_info_nbsync">%d posiciones enviadas</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Mapa de %s</string>
   <string name="display_info_menu_title">Información de la tarea de registro</string>
   <string name="display_map_menu_title">Mapa de sesiones de tareas de registro</string>
-  <string name="export_gpx_menu_title">Exportar a GPX</string>
   <string name="file_saved_success">Tarea de registro exportada en %s</string>
   <string name="syslog_saved_success">Registro de actividades exportado en %s</string>
   <string name="delete_logjob_menu_title">Borrar tarea de registro</string>
-  <string name="action_sorting_method">Orden</string>
   <string name="manage_accounts">Administrar cuentas</string>
   <string name="is_running">procesando (%1$s pendiente, %2$s enviado)</string>
   <string name="settings_server_settings">Cuenta</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Red</string>
   <string name="providers_gps_network">Red y GPS</string>
-  <string name="providers_passive">Pasivo</string>
-  <string name="providers_passive_gps">Pasivo y GPS</string>
-  <string name="providers_passive_network">Pasivo y red</string>
-  <string name="providers_passive_gps_network">Pasivo y GPS y red</string>
   <string name="settings_color_title">Color principal de la app</string>
   <string name="settings_color_summary">Color para barras de acción, botones del mapa, etc...</string>
   <string name="settings_colorpicker_title">Elegir color</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">nombre de usuario o contraseña incorrectos</string>
   <string name="error_invalid_pt_url">Enlace de registro PhoneTrack no válido</string>
   <string name="error_invalid_url">Enlace inválido</string>
-  <string name="error_invalid_token">Petición no válida</string>
-  <string name="error_invalid_title">Título incorrecto</string>
-  <string name="error_invalid_devname">Nombre de dispositivo no válido</string>
-  <string name="error_invalid_mintime">Tiempo mínimo no válido</string>
-  <string name="error_invalid_mindistance">Distancia mínima no válida</string>
-  <string name="error_invalid_minaccuracy">Precisión mínima no válida</string>
-  <string name="error_invalid_timeout">Tiempo de espera inválido</string>
   <string name="error_invalid_sms_keyword">Palabra clave no válida</string>
   <string name="error_invalid_group_sync">Número inválido</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Oscuro</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Volver al antiguo método de inicio de sesión</string>
-  <string name="fallback_weblogin_back">Volver</string>
   <string name="use_sso_toggle">Usar cuenta de la aplicación Nextcloud Files</string>
   <string name="center_map">Mostrar mi ubicación</string>
   <string name="follow_me">Seguir mi posición</string>

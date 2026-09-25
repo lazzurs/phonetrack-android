@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<network-security-config>
-    <base-config cleartextTrafficPermitted="true">
+<!-- Deliberately permissive: PhoneTrack talks to servers its users run themselves.
+     - cleartext: some are plain http:// on a home network (HTTPS is still the default in the UI)
+     - user CAs: some use a private certificate authority installed on the phone
+     Self-signed certificates are handled separately by cert4android, one at a time, after the
+     user explicitly trusts them. -->
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <base-config
+        cleartextTrafficPermitted="true"
+        tools:ignore="InsecureBaseConfiguration">
         <trust-anchors>
             <certificates src="system" />
-            <certificates src="user" />
+            <certificates
+                src="user"
+                tools:ignore="AcceptsUserCertificates" />
         </trust-anchors>
     </base-config>
 </network-security-config>

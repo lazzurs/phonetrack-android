@@ -13,7 +13,6 @@
   <string name="action_syslog">Záznamy aktivit</string>
   <string name="setting_title">Nadpis</string>
   <string name="setting_title_long">Název úlohy zaznamenávání (viditelné pouze v aplikaci)</string>
-  <string name="mandatory">(povinné)</string>
   <string name="setting_devicename">Název zařízení</string>
   <string name="setting_devicename_long">Název zařízení nebo rezervační token</string>
   <string name="setting_token">Token relace</string>
@@ -82,7 +81,6 @@
   <string name="setting_keepgps_title">Ponechat mezi odečty polohy GPS přijímač zapnutý</string>
   <string name="setting_keepgps_summary">Tím získáte přesnější pozice, ale bude mít větší vliv na výdrž zařízení na akumulátor. Používejte, pokud je minimální čas kratší než 60 sekund.</string>
   <string name="setting_significantmotion_enabled">Režim významného pohybu</string>
-  <string name="setting_significantmotion_title">Získat pozici pouze po významném pohybu</string>
   <string name="setting_significantmotion_summary">Experimentální: Počkat na významný pohyb před získáním další pozice. V některých případech ušetří mnoho energie z akumulátoru. Nekompatibilní s některými ostatními předvolbami.</string>
   <string name="setting_significantmotion_min_time_applied">Použít minimální čas</string>
   <string name="setting_significantmotion_min_time_applied_summary">Nezaznamenávat polohu pokaždé, když je zjištěn pohyb v čase, počkat na „minimální čas“ mezi dvěma body. To šetří energii z akumulátoru.</string>
@@ -92,7 +90,6 @@
   <string name="setting_significantmotion_timeout_summary">Čas po který čekat na určení jedné pozice (sekundy). Ušetří energii z akumulátoru v oblastech bez dobrého pokrytí. Pokud používáte GPS i síť, určuje to také po jak dlouho bude použita méně přesná pozice ze sítě. Pokud nechcete časový limit, nastavte na nulu. Je třeba, aby bylo nižší než min. doba.</string>
   <string name="logjob_title_log_to">Zaznamenávat do %s</string>
   <string name="default_nextcloud_url">https://vasnextcloud.example.com</string>
-  <string name="default_device_name">nazevMehoZarizeni</string>
   <string name="default_session_token">supertoken</string>
   <string name="logjob_info_dialog_title">O aplikaci %s</string>
   <string name="logjob_info_nbsync">odesláno %d pozic</string>
@@ -153,11 +150,9 @@
   <string name="homescreen_map_shortcut_long_title">Mapa pro %s</string>
   <string name="display_info_menu_title">Informace o úloze zaznamenávání</string>
   <string name="display_map_menu_title">Mapa relace úlohy zaznamenávání</string>
-  <string name="export_gpx_menu_title">Exportovat do GPX</string>
   <string name="file_saved_success">Úloha zaznamenávání exportována do %s</string>
   <string name="syslog_saved_success">Záznam aktivity exportován do %s</string>
   <string name="delete_logjob_menu_title">Smazat úlohu zaznamenávání</string>
-  <string name="action_sorting_method">Způsob řazení</string>
   <string name="manage_accounts">Spravovat účty</string>
   <string name="is_running">spuštěné (%1$s čeká, %2$s odesláno)</string>
   <string name="settings_server_settings">Účet</string>
@@ -185,10 +180,6 @@
   <string name="providers_gps">GPS</string>
   <string name="providers_network">Síť</string>
   <string name="providers_gps_network">Síť a GPS</string>
-  <string name="providers_passive">Pasivní</string>
-  <string name="providers_passive_gps">Pasivní a GPS</string>
-  <string name="providers_passive_network">Pasivní a síť</string>
-  <string name="providers_passive_gps_network">Pasivní, GPS a síť</string>
   <string name="settings_color_title">Hlavní barva aplikace</string>
   <string name="settings_color_summary">Barva lišt s akcemi, mapová tlačítka, atd…</string>
   <string name="settings_colorpicker_title">Vyberte barvu</string>
@@ -272,13 +263,6 @@
   <string name="error_username_password_invalid">nesprávné uživatelské jméno nebo heslo</string>
   <string name="error_invalid_pt_url">Neplatný odkaz pro zaznamenávání PhoneTrack</string>
   <string name="error_invalid_url">Neplatný odkaz</string>
-  <string name="error_invalid_token">Neplatný token</string>
-  <string name="error_invalid_title">Neplatný název</string>
-  <string name="error_invalid_devname">Neplatný název zařízení</string>
-  <string name="error_invalid_mintime">Neplatný minimální čas</string>
-  <string name="error_invalid_mindistance">Neplatná minimální vzdálenost</string>
-  <string name="error_invalid_minaccuracy">Neplatná minimální přesnost</string>
-  <string name="error_invalid_timeout">Neplatný časový limit</string>
   <string name="error_invalid_sms_keyword">Neplatné SMS klíčové slovo</string>
   <string name="error_invalid_group_sync">Neplatné číslo</string>
   <string name="url_source">https://gitlab.com/eneiluj/phonetrack-android</string>
@@ -327,7 +311,6 @@
   <string name="pref_value_theme_dark">Tmavé</string>
   <string name="pref_key_group_sync">groupSync</string>
   <string name="pref_key_osmdroid_load">loadOsmdroidPath</string>
-  <string name="pref_key_osmdroid_path">osmdroidPath</string>
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
@@ -336,8 +319,6 @@
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
   <string name="pref_value_providers">1</string>
-  <string name="fallback_weblogin_text">Vrátit se ke staré metodě přihlašování</string>
-  <string name="fallback_weblogin_back">Zpět</string>
   <string name="use_sso_toggle">Použít účet z aplikace Nextcloud Soubory</string>
   <string name="center_map">Zobrazit mou pozici</string>
   <string name="follow_me">Následovat mou pozici</string>
