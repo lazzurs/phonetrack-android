@@ -125,6 +125,19 @@
         android:persistent="true"
         android:summary="phonetrack"
         android:title="@string/settings_sms_keyword_title" />
+
+    <EditTextPreference
+        android:icon="@drawable/ic_sms_grey_24dp"
+        android:dialogMessage="@string/settings_sms_allowed_senders_long"
+        android:dialogTitle="@string/settings_sms_allowed_senders_title"
+        android:key="@string/pref_key_sms_allowed_senders"
+        android:defaultValue=""
+        android:persistent="true"
+        android:title="@string/settings_sms_allowed_senders_title" />
+
+    <Preference
+        android:key="@string/pref_key_sms_add_contact"
+        android:title="@string/settings_sms_add_contact_title" />
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -2,6 +2,7 @@ package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +13,11 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.text.InputType;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -56,6 +61,7 @@ import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
+import net.eneiluj.nextcloud.phonetrack.util.SmsSenderAllowlist;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import java.io.File;
@@ -268,18 +274,17 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                         );
                     }
 
-                    smsKeywordPref.setVisible(true);
+                    setSmsSettingsVisible(true);
                 }
                 else {
-                    smsKeywordPref.setVisible(false);
+                    setSmsSettingsVisible(false);
                 }
                 return true;
             }
         });
 
-        if (!smsPref.isChecked()) {
-            smsKeywordPref.setVisible(false);
-        }
+        setupSmsAllowedSenders();
+        setSmsSettingsVisible(smsPref.isChecked());
 
         final EditTextPreference groupSyncPref = (EditTextPreference) findPreference(getString(R.string.pref_key_group_sync));
         String groupSyncValStr = sp.getString(getString(R.string.pref_key_group_sync), "0");
@@ -439,6 +444,82 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 .setNegativeButton(getString(R.string.simple_cancel), null)
                 .show();
     }
+    private final ActivityResultLauncher<Intent> pickSmsSenderLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null && data.getData() != null) {
+                    addSmsAllowedSender(data.getData());
+                }
+            });
+
+    private void setSmsSettingsVisible(boolean visible) {
+        findPreference(getString(R.string.pref_key_sms_keyword)).setVisible(visible);
+        findPreference(getString(R.string.pref_key_sms_allowed_senders)).setVisible(visible);
+        findPreference(getString(R.string.pref_key_sms_add_contact)).setVisible(visible);
+    }
+
+    private void setupSmsAllowedSenders() {
+        final EditTextPreference allowedPref = findPreference(getString(R.string.pref_key_sms_allowed_senders));
+        updateSmsAllowedSendersSummary(allowedPref, allowedPref.getText());
+        allowedPref.setOnBindEditTextListener(editText -> editText.setInputType(InputType.TYPE_CLASS_PHONE));
+        allowedPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            List<String> numbers = SmsSenderAllowlist.parse((String) newValue);
+            for (String number : numbers) {
+                if (!SmsSenderAllowlist.isValidEntry(number)) {
+                    showToast(getString(R.string.error_invalid_sms_allowed_sender, number), Toast.LENGTH_LONG);
+                    return false;
+                }
+            }
+            // store normalised, then refresh the summary
+            String normalised = SmsSenderAllowlist.join(numbers);
+            ((EditTextPreference) preference).setText(normalised);
+            updateSmsAllowedSendersSummary(preference, normalised);
+            return false;
+        });
+
+        Preference addContactPref = findPreference(getString(R.string.pref_key_sms_add_contact));
+        addContactPref.setOnPreferenceClickListener(preference -> {
+            // the system picker grants access to the chosen entry only: no READ_CONTACTS needed
+            Intent pick = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+            try {
+                pickSmsSenderLauncher.launch(pick);
+            } catch (ActivityNotFoundException e) {
+                showToast(getString(R.string.error_no_contact_picker), Toast.LENGTH_LONG);
+            }
+            return true;
+        });
+    }
+
+    private void addSmsAllowedSender(Uri phoneUri) {
+        String number = null;
+        try (Cursor c = requireContext().getContentResolver().query(phoneUri,
+                new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null)) {
+            if (c != null && c.moveToFirst()) {
+                number = c.getString(0);
+            }
+        } catch (SecurityException e) {
+            Log.w(TAG, "Unable to read picked contact: " + e);
+        }
+        if (number == null || number.trim().isEmpty()) {
+            return;
+        }
+        EditTextPreference allowedPref = findPreference(getString(R.string.pref_key_sms_allowed_senders));
+        List<String> numbers = SmsSenderAllowlist.parse(allowedPref.getText());
+        if (!numbers.contains(number.trim())) {
+            numbers.add(number.trim());
+        }
+        String joined = SmsSenderAllowlist.join(numbers);
+        allowedPref.setText(joined);
+        updateSmsAllowedSendersSummary(allowedPref, joined);
+    }
+
+    private void updateSmsAllowedSendersSummary(Preference preference, String value) {
+        List<String> numbers = SmsSenderAllowlist.parse(value);
+        preference.setSummary(numbers.isEmpty()
+                ? getString(R.string.settings_sms_allowed_senders_none)
+                : SmsSenderAllowlist.join(numbers));
+    }
+
     public void disableSms() {
         final CheckBoxPreference smsPref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_sms));
         smsPref.setChecked(false);

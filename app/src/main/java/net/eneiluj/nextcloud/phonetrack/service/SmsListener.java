@@ -21,7 +21,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.util.SmsSenderAllowlist;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
+import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
@@ -66,6 +68,11 @@ public class SmsListener extends BroadcastReceiver {
                 Log.d(TAG, "current keyword: '" + keyword + "'");
                 Log.d(TAG, "Received from: " + msg_from);
                 if (word0.equals(keyword.trim().toLowerCase())) {
+                    // the keyword is visible in any SMS, it is not a secret: only allowed numbers may send commands
+                    if (!SmsSenderAllowlist.isAllowed(context, msg_from)) {
+                        SystemLogger.w(TAG, "Ignored SMS command from " + msg_from + ": not an allowed sender");
+                        return;
+                    }
                     Log.d(TAG, "We received the keyword: "+keyword);
                     keywordReceived(msgContent, msg_from, context);
                 }
