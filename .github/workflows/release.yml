@@ -51,6 +51,9 @@ jobs:
             echo "::warning::RELEASE_KEYSTORE_BASE64 secret not set; release APKs will be debug-signed."
           fi
 
+      - name: DEBUG list tasks
+        run: ./gradlew -Pci --console=plain :app:tasks --all | grep -i normalrelease || true
+
       - name: Run unit tests
         run: ./gradlew -Pci --console=plain :app:testNormalReleaseUnitTest
 
