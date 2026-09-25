@@ -293,6 +293,12 @@
     <string name="error_invalid_minaccuracy">Invalid minimum accuracy</string>
     <string name="error_invalid_timeout">Invalid timeout</string>
     <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
+    <string name="settings_sms_allowed_senders_title">Allowed senders</string>
+    <string name="settings_sms_allowed_senders_long">Only SMS from these phone numbers can request the position or run commands. Separate numbers with commas.</string>
+    <string name="settings_sms_allowed_senders_none">No allowed sender: all SMS commands are ignored</string>
+    <string name="settings_sms_add_contact_title">Add a sender from contacts</string>
+    <string name="error_invalid_sms_allowed_sender">Not a phone number: %s</string>
+    <string name="error_no_contact_picker">No contacts app found</string>
     <string name="error_invalid_group_sync">Invalid number</string>
 
     <!-- Snackbar Actions -->
@@ -343,6 +349,8 @@
     <string name="pref_key_sms" translatable="false">listenSMS</string>
     <string name="pref_key_preset_hint_disabled" translatable="false">presetHintDisabled</string>
     <string name="pref_key_sms_keyword" translatable="false">SMSkeyword</string>
+    <string name="pref_key_sms_allowed_senders" translatable="false">SMSallowedSenders</string>
+    <string name="pref_key_sms_add_contact" translatable="false">SMSaddContact</string>
     <string name="pref_key_use_server_color" translatable="false">useServerColor</string>
     <string name="pref_key_avatar" translatable="false">ncAvatar</string>
     <string name="pref_key_autostart" translatable="false">autostart</string>
