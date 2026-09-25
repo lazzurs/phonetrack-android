@@ -52,7 +52,7 @@ jobs:
           fi
 
       - name: Run unit tests
-        run: ./gradlew -Pci --console=plain :app:testNormalRelease
+        run: ./gradlew -Pci --console=plain :app:testNormalReleaseUnitTest
 
       - name: Assemble release APKs
         run: ./gradlew -Pci --console=plain assembleNormalRelease assemblePlayRelease

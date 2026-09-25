@@ -40,7 +40,7 @@ jobs:
         run: ./gradlew -Pci --console=plain :app:lintDevDebug
 
       - name: Unit tests (dev flavor)
-        run: ./gradlew -Pci --console=plain :app:testDevDebug
+        run: ./gradlew -Pci --console=plain :app:testDevDebugUnitTest
 
       - name: Assemble debug APK (dev flavor)
         run: ./gradlew -Pci --console=plain assembleDevDebug
