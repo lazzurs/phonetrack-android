@@ -79,7 +79,13 @@ dependencies {
 
     implementation 'com.github.clans:fab:1.6.4'
     implementation "androidx.appcompat:appcompat:1.8.0"
-    implementation 'androidx.core:core-ktx:1.19.1'
+    // NOTE: capped below latest (1.19.1) - that version's transitive
+    // androidx.core:core requires compileSdk 37 + AGP 9.1.0+, which would
+    // drag in a much bigger platform-target migration (new Android
+    // background-execution/permission behavior per API level matters a lot
+    // for this app's background location logging) than a routine bump.
+    // 1.16.0 is the newest release still compatible with compileSdk 35 / AGP 8.8.0.
+    implementation 'androidx.core:core-ktx:1.16.0'
     implementation "com.google.android.material:material:1.14.0"
     implementation "androidx.recyclerview:recyclerview:1.4.0"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0"
