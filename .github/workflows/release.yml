@@ -52,7 +52,7 @@ jobs:
           fi
 
       - name: DEBUG list tasks
-        run: ./gradlew -Pci --console=plain :app:tasks --all | grep -i normalrelease || true
+        run: ./gradlew -Pci --console=plain :app:tasks --all | grep -i unittest || true
 
       - name: Run unit tests
         run: ./gradlew -Pci --console=plain :app:testNormalReleaseUnitTest
