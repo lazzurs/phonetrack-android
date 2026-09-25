@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
@@ -232,7 +233,7 @@ public class SmsListener extends BroadcastReceiver {
                     Intent intent = new Intent(context, LoggerService.class);
                     intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
                     intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, lj.getId());
-                    context.startService(intent);
+                    startLoggerService(context, intent);
 
                     // update potential logjob list view
                     Intent broadcastIntent = new Intent(BROADCAST_LOCATION_UPDATED);
@@ -259,6 +260,23 @@ public class SmsListener extends BroadcastReceiver {
         }
     }
 
+    /**
+     * SMS_RECEIVED grants a short foreground-service start allowance, but a plain
+     * startService() of a stopped service from here is a background start. Use
+     * startForegroundService() when LoggerService will have to promote itself.
+     */
+    private static void startLoggerService(Context context, Intent intent) {
+        try {
+            if (!LoggerService.isRunning() && SupportUtil.hasBackgroundLocationPermission(context)) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } catch (IllegalStateException e) {
+            Log.w(TAG, "Unable to notify LoggerService: " + e);
+        }
+    }
+
     private void createLogjob(Context context, String from, int minTime) {
         Log.d(TAG, "CREATE LOGJOB YO");
         SmsManager smsManager = SmsManager.getDefault();
@@ -279,7 +297,7 @@ public class SmsListener extends BroadcastReceiver {
             Intent intent = new Intent(context, LoggerService.class);
             intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOBS, true);
             intent.putExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, newLjId);
-            context.startService(intent);
+            startLoggerService(context, intent);
 
             // update potential logjob list view
             Intent broadcastIntent = new Intent(BROADCAST_LOGJOB_LIST_UPDATED);

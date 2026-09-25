@@ -247,7 +247,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         Map<String, Integer> enabled = db.getEnabledCount();
         Integer enabledCount = enabled.get("1");
         int nbEnabledLogjobs = enabledCount != null ? enabledCount : 0;
-        if (nbEnabledLogjobs > 0) {
+        if (nbEnabledLogjobs > 0 && SupportUtil.hasForegroundLocationPermission(this)) {
             SystemLogger.d(TAG, "Found enabled jobs => start loggerservice");
             // start loggerservice !
             Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);

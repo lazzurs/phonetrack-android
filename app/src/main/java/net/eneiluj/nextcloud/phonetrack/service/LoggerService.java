@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.TriggerEvent;
@@ -48,7 +49,9 @@ import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 import androidx.core.app.TaskStackBuilder;
 
 import java.util.HashMap;
@@ -203,7 +206,10 @@ public class LoggerService extends Service {
 
         if (nbEnabled > 0) {
             final Notification notification = showNotification(NOTIFICATION_ID);
-            startForeground(NOTIFICATION_ID, notification);
+            if (!startLocationForeground(notification)) {
+                stopSelf();
+                return;
+            }
             updateNotificationContent();
 
             isRunning = true;
@@ -257,7 +263,7 @@ public class LoggerService extends Service {
             registerReceiver(airplaneModeChangeReceiver, filterAirplane);
         } else {
             final Notification notification = showNotification(NOTIFICATION_ID);
-            startForeground(NOTIFICATION_ID, notification);
+            startLocationForeground(notification);
             if (DEBUG) {
                 SystemLogger.d(TAG, "onCreate: stop because no logjob enabled");
             }
@@ -689,6 +695,40 @@ public class LoggerService extends Service {
         public void run() {
             if (DEBUG) { SystemLogger.d(TAG, "LoggerThread run"); }
             super.run();
+        }
+    }
+
+    /**
+     * Schedule an ELAPSED_REALTIME_WAKEUP alarm that fires during Doze.
+     * Exact alarms need SCHEDULE_EXACT_ALARM, which Android 14+ denies by default
+     * and the user can revoke at any time; setExactAndAllowWhileIdle() throws a
+     * SecurityException without it, so fall back to an inexact idle alarm.
+     */
+    private void setAlarmAllowWhileIdle(long triggerAtElapsed, PendingIntent operation) {
+        if (AlarmManagerCompat.canScheduleExactAlarms(alarmManager)) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtElapsed, operation);
+        } else {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtElapsed, operation);
+        }
+    }
+
+    /**
+     * Promote this service to a location-type foreground service.
+     * Android 14+ throws if the location permission is missing, and Android 12+
+     * throws if the start is not allowed from the background (e.g. at boot without
+     * background location access). Callers gate on the permissions, this is the last line.
+     *
+     * @return true if the service is now in the foreground
+     */
+    private boolean startLocationForeground(Notification notification) {
+        try {
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
+            return true;
+        } catch (RuntimeException e) {
+            // SecurityException or ForegroundServiceStartNotAllowedException
+            SystemLogger.e(TAG, "Unable to start location foreground service: " + e);
+            return false;
         }
     }
 
@@ -1191,11 +1231,7 @@ public class LoggerService extends Service {
             if (SupportUtil.isDozing(LoggerService.this)){
                 //Only invoked once per 15 minutes in doze mode
                 SystemLogger.d(TAG, "Device is dozing, using infrequent alarm");
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                        SystemClock.elapsedRealtime() + millisDelay,
-                        nextPointIntent
-                );
+                setAlarmAllowWhileIdle(SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             } else {
                 alarmManager.set(
                         AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -1418,7 +1454,7 @@ public class LoggerService extends Service {
             if (SupportUtil.isDozing(LoggerService.this)){
                 // Only invoked every 15 minutes in doze mode
                 SystemLogger.e(TAG, "Device is dozing, using infrequent alarm");
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
+                setAlarmAllowWhileIdle(SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             }
