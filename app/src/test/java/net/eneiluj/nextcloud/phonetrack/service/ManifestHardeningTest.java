@@ -18,6 +18,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,6 +48,12 @@ public class ManifestHardeningTest {
         List<String> requested = Arrays.asList(pkg.requestedPermissions);
         assertTrue(requested.contains(Manifest.permission.FOREGROUND_SERVICE_LOCATION));
         assertFalse(requested.contains(Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC));
+    }
+
+    @Test
+    public void declaresLocalNetworkAccessForAndroid17() throws Exception {
+        PackageInfo pkg = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
+        assertTrue(Arrays.asList(pkg.requestedPermissions).contains(LocalNetworkAccess.PERMISSION));
     }
 
     @Test
