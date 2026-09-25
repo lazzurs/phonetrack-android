@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -121,69 +120,105 @@
 
     </LinearLayout>
 
-    <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/floatingMenu"
+    <!-- "New ..." speed-dial menu (Material FloatingActionButton; replaced the archived
+         com.github.clans:fab). The backdrop closes the menu when tapped. -->
+    <View
+        android:id="@+id/fabScrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        fab:menu_labels_ellipsize="end"
-        fab:menu_labels_singleLine="true"
-        fab:menu_fab_label="@string/simple_cancel"
-        fab:menu_backgroundColor="@color/bg_normal_transparent"
-        fab:menu_animationDelayPerItem="0"
-        fab:menu_colorNormal="@color/primary"
-        fab:menu_colorPressed="@color/primary"
-        fab:menu_colorRipple="#ffffff"
-        android:padding="8dp">
+        android:background="@color/bg_normal_transparent"
+        android:clickable="true"
+        android:focusable="false"
+        android:visibility="gone" />
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_create_session"
+    <LinearLayout
+        android:id="@+id/floatingMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:gravity="end"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/fabActions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/fab_row_session"
+                style="@style/FabMenuRow">
+
+                <TextView
+                    android:id="@+id/fab_create_session_label"
+                    style="@style/FabMenuLabel"
+                    android:text="@string/fab_create_session" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_create_session"
+                    style="@style/FabMenuAction"
+                    android:contentDescription="@string/fab_create_session"
+                    android:src="@drawable/ic_add_white_24dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fab_row_phonetrack"
+                style="@style/FabMenuRow">
+
+                <TextView
+                    android:id="@+id/fab_create_phonetrack_label"
+                    style="@style/FabMenuLabel"
+                    android:text="@string/fab_create_phonetrack" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_create_phonetrack"
+                    style="@style/FabMenuAction"
+                    android:contentDescription="@string/fab_create_phonetrack"
+                    android:src="@drawable/ic_notify_24dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fab_row_maps"
+                style="@style/FabMenuRow">
+
+                <TextView
+                    android:id="@+id/fab_create_maps_label"
+                    style="@style/FabMenuLabel"
+                    android:text="@string/fab_create_maps" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_create_maps"
+                    style="@style/FabMenuAction"
+                    android:contentDescription="@string/fab_create_maps"
+                    android:src="@drawable/ic_location_on_white_24dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fab_row_custom"
+                style="@style/FabMenuRow">
+
+                <TextView
+                    android:id="@+id/fab_create_custom_label"
+                    style="@style/FabMenuLabel"
+                    android:text="@string/fab_create_custom" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_create_custom"
+                    style="@style/FabMenuAction"
+                    android:contentDescription="@string/fab_create_custom"
+                    android:src="@drawable/ic_link_white_24dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/action_create"
             android:src="@drawable/ic_add_white_24dp"
-            fab:fab_size="normal"
-            app:fab_colorNormal="@color/primary"
-            app:fab_colorPressed="@color/primary"
-            app:fab_showAnimation="@anim/fab_slide_in_from_right"
-            app:fab_hideAnimation="@anim/fab_slide_out_to_right"
-            fab:fab_label="@string/fab_create_session"/>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_create_phonetrack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_notify_24dp"
-            fab:fab_size="normal"
-            app:fab_colorNormal="@color/primary"
-            app:fab_colorPressed="@color/primary"
-            app:fab_showAnimation="@anim/fab_slide_in_from_right"
-            app:fab_hideAnimation="@anim/fab_slide_out_to_right"
-            fab:fab_label="@string/fab_create_phonetrack"/>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_create_maps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_location_on_white_24dp"
-            fab:fab_size="normal"
-            app:fab_colorNormal="@color/primary"
-            app:fab_colorPressed="@color/primary"
-            app:fab_showAnimation="@anim/fab_slide_in_from_right"
-            app:fab_hideAnimation="@anim/fab_slide_out_to_right"
-            fab:fab_label="@string/fab_create_maps"/>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_create_custom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_link_white_24dp"
-            fab:fab_size="normal"
-            app:fab_colorNormal="@color/primary"
-            app:fab_colorPressed="@color/primary"
-            app:fab_showAnimation="@anim/fab_slide_in_from_right"
-            app:fab_hideAnimation="@anim/fab_slide_out_to_right"
-            fab:fab_label="@string/fab_create_custom"/>
-
-    </com.github.clans.fab.FloatingActionMenu>
+            app:tint="@android:color/white" />
+    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -132,7 +132,6 @@ dependencies {
     implementation(libs.nextcloud.sso)
     implementation(libs.gson)
 
-    implementation(libs.clans.fab)
     implementation(libs.osmdroid.android)
     implementation(libs.osmdroid.mapsforge)
 

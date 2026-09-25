@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,6 +46,7 @@ import com.codebutchery.androidgpx.data.GPXTrackPoint;
 */
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
 import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
@@ -167,11 +169,23 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     DrawerLayout drawerLayout;
     TextView account;
     SwipeRefreshLayout swipeRefreshLayout;
-    com.github.clans.fab.FloatingActionButton fabCreatePhoneTrack;
-    com.github.clans.fab.FloatingActionButton fabCreateCustom;
-    com.github.clans.fab.FloatingActionButton fabCreateSession;
-    com.github.clans.fab.FloatingActionButton fabCreateMaps;
-    com.github.clans.fab.FloatingActionMenu fabMenu;
+    FloatingActionButton fabCreatePhoneTrack;
+    FloatingActionButton fabCreateCustom;
+    FloatingActionButton fabCreateSession;
+    FloatingActionButton fabCreateMaps;
+    FloatingActionButton fabMain;
+    /** the whole speed-dial menu (hidden while searching) */
+    View fabMenu;
+    View fabActions;
+    View fabScrim;
+    private boolean fabMenuOpen = false;
+    /** closes the speed-dial menu; enabled only while it is open */
+    private final OnBackPressedCallback closeFabMenuOnBack = new OnBackPressedCallback(false) {
+        @Override
+        public void handleOnBackPressed() {
+            setFabMenuOpen(false, true);
+        }
+    };
     RecyclerView listNavigationCategories;
     RecyclerView listNavigationMenu;
     RecyclerView listView;
@@ -238,6 +252,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         fabCreateSession = findViewById(R.id.fab_create_session);
         fabCreateMaps = findViewById(R.id.fab_create_maps);
         fabMenu = findViewById(R.id.floatingMenu);
+        fabMain = findViewById(R.id.fabMain);
+        fabActions = findViewById(R.id.fabActions);
+        fabScrim = findViewById(R.id.fabScrim);
         listNavigationCategories = findViewById(R.id.navigationList);
         listNavigationMenu = findViewById(R.id.navigationMenu);
         listView = findViewById(R.id.recycler_view);
@@ -405,6 +422,35 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 .setNegativeButton(R.string.simple_no, (dialog, which) -> requestNextPermission())
                 .setOnCancelListener(dialog -> requestNextPermission())
                 .show();
+    }
+
+    /**
+     * Open or close the "New ..." speed-dial menu. Session and Maps logjobs need a Nextcloud
+     * account, so their entries only show when one is configured.
+     */
+    private void setFabMenuOpen(boolean open, boolean animate) {
+        fabMenuOpen = open;
+        closeFabMenuOnBack.setEnabled(open);
+        if (open) {
+            int accountEntries = SessionServerSyncHelper.isConfigured(getApplicationContext()) ? View.VISIBLE : View.GONE;
+            findViewById(R.id.fab_row_session).setVisibility(accountEntries);
+            findViewById(R.id.fab_row_maps).setVisibility(accountEntries);
+        }
+        fabActions.setVisibility(open ? View.VISIBLE : View.GONE);
+        fabScrim.setVisibility(open ? View.VISIBLE : View.GONE);
+        fabMain.setContentDescription(getString(open ? R.string.simple_cancel : R.string.action_create));
+        // the "+" turns into an "x"
+        float rotation = open ? 45f : 0f;
+        if (animate) {
+            fabMain.animate().rotation(rotation).setDuration(150).start();
+            if (open) {
+                fabActions.setAlpha(0f);
+                fabActions.setTranslationY(getResources().getDisplayMetrics().density * 16);
+                fabActions.animate().alpha(1f).translationY(0f).setDuration(150).start();
+            }
+        } else {
+            fabMain.setRotation(rotation);
+        }
     }
 
     private void fixProviders() {
@@ -608,29 +654,20 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             swipeRefreshLayout.setEnabled(false);
         }
 
-        fabMenu.setOnMenuToggleListener(new com.github.clans.fab.FloatingActionMenu.OnMenuToggleListener() {
-            @Override
-            public void onMenuToggle(boolean opened) {
-                if (opened) {
-                    if (SessionServerSyncHelper.isConfigured(getApplicationContext())) {
-                        fabCreateSession.setVisibility(View.VISIBLE);
-                        fabCreateMaps.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        fabCreateSession.setVisibility(View.GONE);
-                        fabCreateMaps.setVisibility(View.GONE);
-                    }
-                } else {
-
-                }
-            }
-        });
+        getOnBackPressedDispatcher().addCallback(this, closeFabMenuOnBack);
+        fabMain.setOnClickListener(v -> setFabMenuOpen(!fabMenuOpen, true));
+        fabScrim.setOnClickListener(v -> setFabMenuOpen(false, true));
+        // tapping a label does the same as its button
+        findViewById(R.id.fab_create_session_label).setOnClickListener(v -> fabCreateSession.performClick());
+        findViewById(R.id.fab_create_phonetrack_label).setOnClickListener(v -> fabCreatePhoneTrack.performClick());
+        findViewById(R.id.fab_create_maps_label).setOnClickListener(v -> fabCreateMaps.performClick());
+        findViewById(R.id.fab_create_custom_label).setOnClickListener(v -> fabCreateCustom.performClick());
 
         fabCreateSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                fabMenu.close(true);
+                setFabMenuOpen(false, true);
                 EditText sessionNameEdit = new EditText(view.getContext());
                 AlertDialog.Builder sessionBuilder = new AlertDialog.Builder(new ContextThemeWrapper(view.getContext(), R.style.AppThemeDialog));
                 sessionBuilder.setMessage(getString(R.string.dialog_msg_create_session));
@@ -664,7 +701,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 Intent createIntent = new Intent(getApplicationContext(), EditMapsLogjobActivity.class);
                 //startActivityForResult(createIntent, create_logjob_cmd);
                 createLogjobLauncher.launch(createIntent);
-                fabMenu.close(false);
+                setFabMenuOpen(false, false);
             }
         });
         fabCreateCustom.setOnClickListener(new View.OnClickListener() {
@@ -673,7 +710,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 Intent createIntent = new Intent(getApplicationContext(), EditCustomLogjobActivity.class);
                 //startActivityForResult(createIntent, create_logjob_cmd);
                 createLogjobLauncher.launch(createIntent);
-                fabMenu.close(false);
+                setFabMenuOpen(false, false);
             }
         });
         fabCreatePhoneTrack.setOnClickListener(new View.OnClickListener() {
@@ -682,32 +719,19 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 Intent createIntent = new Intent(getApplicationContext(), EditPhoneTrackLogjobActivity.class);
                 //startActivityForResult(createIntent, create_logjob_cmd);
                 createLogjobLauncher.launch(createIntent);
-                fabMenu.close(false);
+                setFabMenuOpen(false, false);
             }
         });
 
         boolean darkTheme = PhoneTrack.getAppTheme(this);
         // if dark theme and main color is black, make fab button lighter/gray
-        if (darkTheme && ThemeUtils.primaryColor(this) == Color.BLACK) {
-            fabMenu.setMenuButtonColorNormal(Color.DKGRAY);
-            fabCreateCustom.setColorNormal(Color.DKGRAY);
-            fabCreateSession.setColorNormal(Color.DKGRAY);
-            fabCreatePhoneTrack.setColorNormal(Color.DKGRAY);
-            fabCreateMaps.setColorNormal(Color.DKGRAY);
+        int fabColor = darkTheme && ThemeUtils.primaryColor(this) == Color.BLACK
+                ? Color.DKGRAY
+                : ThemeUtils.primaryColor(this);
+        ColorStateList fabTint = ColorStateList.valueOf(fabColor);
+        for (FloatingActionButton fab : new FloatingActionButton[]{fabMain, fabCreateSession, fabCreatePhoneTrack, fabCreateMaps, fabCreateCustom}) {
+            fab.setBackgroundTintList(fabTint);
         }
-        else {
-            fabMenu.setMenuButtonColorNormal(ThemeUtils.primaryColor(this));
-            fabCreateCustom.setColorNormal(ThemeUtils.primaryColor(this));
-            fabCreateSession.setColorNormal(ThemeUtils.primaryColor(this));
-            fabCreatePhoneTrack.setColorNormal(ThemeUtils.primaryColor(this));
-            fabCreateMaps.setColorNormal(ThemeUtils.primaryColor(this));
-        }
-        fabMenu.setMenuButtonColorPressed(ThemeUtils.primaryColor(this));
-
-        fabCreateCustom.setColorPressed(ThemeUtils.primaryColor(this));
-        fabCreateSession.setColorPressed(ThemeUtils.primaryColor(this));
-        fabCreatePhoneTrack.setColorPressed(ThemeUtils.primaryColor(this));
-        fabCreateMaps.setColorPressed(ThemeUtils.primaryColor(this));
     }
 
     private void setupNavigationList(final String selectedItem) {
