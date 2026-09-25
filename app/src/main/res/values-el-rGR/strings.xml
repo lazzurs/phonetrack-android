@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">Περί %s</string>
   <string name="logjob_info_nbsync">%d τοποθεσίες εστάλησαν</string>
   <string name="logjob_info_nbnotsync">%d τοποθεσίες αναμένονται</string>
-  <string name="logjob_info_last_activation">Τελευταία ενεργοποίηση πριν από\n%s στις\n%s</string>
+  <string name="logjob_info_last_activation">Τελευταία ενεργοποίηση πριν από\n%1$s στις\n%2$s</string>
   <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">Ο συναγερμός σταμάτησε</string>
   <string name="sms_logjobs_started">%d εργασίες καταγραφής ξεκίνησαν</string>
   <string name="sms_logjobs_stopped">%d εργασίες καταγραφής σταμάτησαν</string>
-  <string name="sms_logjob_created">Μία εργασία καταγραφής με συχνότητα %d δευτερολέπτων, δημιουργήθηκε στη συνεδρία %s</string>
+  <string name="sms_logjob_created">Μία εργασία καταγραφής με συχνότητα %1$d δευτερολέπτων, δημιουργήθηκε στη συνεδρία %2$s</string>
   <string name="sms_logjob_creation_impossible">Αδύνατη η δημιουργία εργασίας καταγραφής, δε βρέθηκε καμία συνεδρία</string>
   <string name="sms_failure_timeout_sms">Το PhoneTrack απέτυχε να λάβει τοποθεσία μετά από %d δευτερόλεπτα</string>
   <string name="sms_failure_timeout_notification">Έφτασε το χρονικό όριο των %1$d sec, στάλθηκε SMS σφάλματος στο %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Διαγραφή εργασίας καταγραφής</string>
   <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
-  <string name="is_running">τρέχει (%s εκκρεμούν, %s εστάλησαν)</string>
+  <string name="is_running">τρέχει (%1$s εκκρεμούν, %2$s εστάλησαν)</string>
   <string name="settings_server_settings">Λογαριασμός</string>
   <string name="settings_url">Διεύθυνση διακομιστή</string>
   <string name="settings_url_warn_http">ΠΡΟΣΟΧΗ: Το \"http\" δεν είναι ασφαλές. Παρακαλώ χρησιμοποιήστε το \"https\".</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">Λέξη-κλειδί SMS</string>
   <string name="settings_sms_keyword_long">Εάν αυτή η συσκευή λάβει SMS που περιλαμβάνει αυτή τη λέξη-κλειδί, οι πληροφορίες τοποθεσίας θα σταλούν ως απάντηση.</string>
   <string name="settings_sms_keyword_long2">Οι εντολές μπορούν να σταλούν και με αυτή τη σύνταξη: ΛΕΞΗΚΛΕΙΔΙ ΕΝΤΟΛΗ</string>
-  <string name="settings_sms_keyword_long3">Διαθέσιμες εντολές:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Διαθέσιμες εντολές:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Χρήση χρώματος διακομιστή</string>
   <string name="settings_use_server_color_subtitle">Λήψη χρώματος διακομιστή κατά το συγχρονισμό και χρήση ως βασικού χρώματος της εφαρμογής</string>
   <string name="settings_providers_title">Πάροχοι τοποθεσίας</string>

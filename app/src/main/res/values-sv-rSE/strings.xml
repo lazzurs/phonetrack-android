@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">Om %s</string>
   <string name="logjob_info_nbsync">%d platser skickade</string>
   <string name="logjob_info_nbnotsync">%d locations pending</string>
-  <string name="logjob_info_last_activation">Senaste aktivering\n%s sedan kl.\n%s</string>
+  <string name="logjob_info_last_activation">Senaste aktivering\n%1$s sedan kl.\n%2$s</string>
   <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">Larmet har stoppats</string>
   <string name="sms_logjobs_started">%d loggjobb har startats</string>
   <string name="sms_logjobs_stopped">%d loggjobb har stoppats</string>
-  <string name="sms_logjob_created">Ett loggjobb med %d sekundersfrekvens har skapats i session %s</string>
+  <string name="sms_logjob_created">Ett loggjobb med %1$d sekundersfrekvens har skapats i session %2$s</string>
   <string name="sms_logjob_creation_impossible">Omöjligt att skapa ett loggjobb, ingen session hittades</string>
   <string name="sms_failure_timeout_sms">PhoneTrack kunde inte få position efter %d sekunder</string>
   <string name="sms_failure_timeout_notification">%1$d sek timeout har uppnåtts, ett felmeddelande har skickats till %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Ta bort loggjobb</string>
   <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
-  <string name="is_running">kör (%s kvarstå, %s skickad)</string>
+  <string name="is_running">kör (%1$s kvarstå, %2$s skickad)</string>
   <string name="settings_server_settings">Konto</string>
   <string name="settings_url">Serveradress</string>
   <string name="settings_url_warn_http">VARNING: \"http\" är osäkra. Använd \"https\".</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">SMS keyword</string>
   <string name="settings_sms_keyword_long">Settings_sms_keyword_long.</string>
   <string name="settings_sms_keyword_long2">Du kan också skicka kommandon med denna syntax: KEYWORD KOMMAND</string>
-  <string name="settings_sms_keyword_long3">Tillgängliga kommandon:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Tillgängliga kommandon:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Använd serverns färgschema</string>
   <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
   <string name="settings_providers_title">Location providers</string>

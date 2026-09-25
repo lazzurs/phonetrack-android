@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">Over %s</string>
   <string name="logjob_info_nbsync">%d posities verzonden</string>
   <string name="logjob_info_nbnotsync">%d uitstaande posities</string>
-  <string name="logjob_info_last_activation">Laatste activerings\n%s geleden op\n%s</string>
+  <string name="logjob_info_last_activation">Laatste activerings\n%1$s geleden op\n%2$s</string>
   <string name="logjob_info_lastloc">Laatste locatie verworven\n%1$s geleden op\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">Alarm is gestopt</string>
   <string name="sms_logjobs_started">%d logjobs zijn gestart</string>
   <string name="sms_logjobs_stopped">%d logjobs zijn gestopt</string>
-  <string name="sms_logjob_created">Een logjob met %d seconden frequentie is gemaakt in sessie %s</string>
+  <string name="sms_logjob_created">Een logjob met %1$d seconden frequentie is gemaakt in sessie %2$s</string>
   <string name="sms_logjob_creation_impossible">Niet mogelijk om een logjob te maken, geen sessie gevonden</string>
   <string name="sms_failure_timeout_sms">PhoneTrack kon geen positie verkrijgen na %d seconden</string>
   <string name="sms_failure_timeout_notification">%1$d sec time-out bereikt, een foutmelding is per SMS verstuurd naar %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Logtaak verwijderen</string>
   <string name="action_sorting_method">Sorteermethode</string>
   <string name="manage_accounts">Beheer accounts</string>
-  <string name="is_running">draaiend (%s in behandeling, %s verzonden)</string>
+  <string name="is_running">draaiend (%1$s in behandeling, %2$s verzonden)</string>
   <string name="settings_server_settings">Account</string>
   <string name="settings_url">Serveradres</string>
   <string name="settings_url_warn_http">Waarschuwing: \"http\" onveilig is. Gelieve \'https\' gebruiken.</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">SMS trefwoord</string>
   <string name="settings_sms_keyword_long">Als deze telefoon een SMS ontvangt die dit trefwoord bevat, worden locatiegegevens teruggestuurd.</string>
   <string name="settings_sms_keyword_long2">Je kunt ook opdrachten verzenden met deze syntax: TREFWOORD OPDRACHT</string>
-  <string name="settings_sms_keyword_long3">Beschikbare opdrachten:\n- %s [NBSECONDEN(def=60)]\n- %s [LOGJOB NAAM]\n- %s [LOGJOB NAAM]\n- %s MINTIJD</string>
+  <string name="settings_sms_keyword_long3">Beschikbare opdrachten:\n- %1$s [NBSECONDEN(def=60)]\n- %2$s [LOGJOB NAAM]\n- %3$s [LOGJOB NAAM]\n- %4$s MINTIJD</string>
   <string name="settings_use_server_color_title">Server kleur gebruiken</string>
   <string name="settings_use_server_color_subtitle">Server kleur ophalen bij het synchroniseren en gebruiken als app basiskleur</string>
   <string name="settings_providers_title">Locatie aanbieders</string>

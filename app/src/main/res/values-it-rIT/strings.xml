@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">Circa %s</string>
   <string name="logjob_info_nbsync">%d posizioni inviate</string>
   <string name="logjob_info_nbnotsync">%d posizioni in sospeso</string>
-  <string name="logjob_info_last_activation">Ultima attivazione\n%s fa alle\n%s</string>
+  <string name="logjob_info_last_activation">Ultima attivazione\n%1$s fa alle\n%2$s</string>
   <string name="logjob_info_lastloc">Ultima posizione acquisita\n%1$s fa alle\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">L\'allarme è stato disattivato</string>
   <string name="sms_logjobs_started">%d i logjob sono stati avviati</string>
   <string name="sms_logjobs_stopped">%d i logjob sono stati interrotti</string>
-  <string name="sms_logjob_created">Un logjob con %d secondi di frequenza è stato creato nella sessione %s</string>
+  <string name="sms_logjob_created">Un logjob con %1$d secondi di frequenza è stato creato nella sessione %2$s</string>
   <string name="sms_logjob_creation_impossible">Impossibile creare un log, nessuna sessione trovata</string>
   <string name="sms_failure_timeout_sms">PhoneTrack non è riuscito ad ottenere la posizione dopo %d secondi</string>
   <string name="sms_failure_timeout_notification">timeout %1$d sec raggiunto, è stato inviato un SMS di errore a %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Elimina logjob</string>
   <string name="action_sorting_method">Metodo di ordinamento</string>
   <string name="manage_accounts">Gestisci account</string>
-  <string name="is_running">in esecuzione (%s in sospeso, %s inviato)</string>
+  <string name="is_running">in esecuzione (%1$s in sospeso, %2$s inviato)</string>
   <string name="settings_server_settings">Account</string>
   <string name="settings_url">Indirizzo Server</string>
   <string name="settings_url_warn_http">ATTENZIONE: \"http\" non è sicuro. Si prega di utilizzare \"https\".</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">Parola chiave SMS</string>
   <string name="settings_sms_keyword_long">Se questo telefono riceve un SMS che contiene solo questa parola chiave, le informazioni sulla posizione verranno inviate di nuovo.</string>
   <string name="settings_sms_keyword_long2">Puoi anche inviare comandi con questa sintassi: COMANDO KEYWORD</string>
-  <string name="settings_sms_keyword_long3">Comandi disponibili:\n- %s [NBSECONDS(def=60)]\n- %s [NOME LOGJOB]\n- %s [NOME LOGJOB]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Comandi disponibili:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [NOME LOGJOB]\n- %3$s [NOME LOGJOB]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Usa il colore del server</string>
   <string name="settings_use_server_color_subtitle">Ottieni il colore del server quando sincronizza e usalo come colore principale dell\'app</string>
   <string name="settings_providers_title">Fornitori di posizione</string>

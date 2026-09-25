@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">Despre %s</string>
   <string name="logjob_info_nbsync">%d locații trimise</string>
   <string name="logjob_info_nbnotsync">%d locații în așteptare</string>
-  <string name="logjob_info_last_activation">Ultima activare\n%s în urmă la\n%s</string>
+  <string name="logjob_info_last_activation">Ultima activare\n%1$s în urmă la\n%2$s</string>
   <string name="logjob_info_lastloc">Ultima locație obținută\n%1$s în urmă cu\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">Alarma a fost oprita</string>
   <string name="sms_logjobs_started">%d jurnale au fost pornite</string>
   <string name="sms_logjobs_stopped">%d jurnale au fost oprite</string>
-  <string name="sms_logjob_created">Un jurnal cu frecventa de %d secunde a fost creat in sesiunea %s</string>
+  <string name="sms_logjob_created">Un jurnal cu frecventa de %1$d secunde a fost creat in sesiunea %2$s</string>
   <string name="sms_logjob_creation_impossible">Imposibil de creat un jurnal, nu s-a gasit nicio sesiune</string>
   <string name="sms_failure_timeout_sms">PhoneTrack nu a reușit să obțină poziția după %d secunde</string>
   <string name="sms_failure_timeout_notification">Timpul de expirare de %1$d sec a fost atins, un SMS de eroare a fost trimis la %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Ştergeţi jurnalul</string>
   <string name="action_sorting_method">Metodă de sortare</string>
   <string name="manage_accounts">Administrare conturi</string>
-  <string name="is_running">in_functiune ( %s in_asteptare. %s trimis)</string>
+  <string name="is_running">in_functiune ( %1$s in_asteptare. %2$s trimis)</string>
   <string name="settings_server_settings">Cont utilizator</string>
   <string name="settings_url">Adresă server</string>
   <string name="settings_url_warn_http">ATENTIE: \"http\" e nesigur. Va rugam folositi \"https\".</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">Cuvânt cheie pentru SMS</string>
   <string name="settings_sms_keyword_long">Dacă acest telefon primește un SMS care conține doar acest cuvânt cheie, informațiile despre locație vor fi trimise înapoi.</string>
   <string name="settings_sms_keyword_long2">Puteți trimite de asemenea comenzi cu această sintaxă: KEYWORD COMMAND</string>
-  <string name="settings_sms_keyword_long3">Comenzi disponibile:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Comenzi disponibile:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Folosește culoarea temei serverului</string>
   <string name="settings_use_server_color_subtitle">Obțineți culoarea temei serverului atunci când sincronizați și utilizați-o ca culoare principală a aplicației</string>
   <string name="settings_providers_title">Furnizori de locație</string>
@@ -209,7 +209,7 @@
   <string name="settings_osmdroid_delete_success">Fișier șters</string>
   <string name="osmdroid_file_load_success">Fișier importat cu succes</string>
   <string name="osmdroid_file_load_no_space">Nu mai există spațiu pe stocarea externă</string>
-  <string name="osmdroid_file_load_exception">Eroare la copierea fisierului %s</string>
+  <string name="osmdroid_file_load_exception">Eroare la copierea fișierului de hartă</string>
   <string name="settings_no_osmdroid_files_found">Nu s-a găsit niciun fișier hartă în datele aplicației</string>
   <string name="settings_save_syslogs">Salvează logurile de activitate</string>
   <string name="settings_share_syslogs">Partajează jurnalele de activitate</string>

@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">About %s</string>
   <string name="logjob_info_nbsync">%d locations sent</string>
   <string name="logjob_info_nbnotsync">%d locations pending</string>
-  <string name="logjob_info_last_activation">Last activation\n%s ago at\n%s</string>
+  <string name="logjob_info_last_activation">Last activation\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastloc">Last location acquired\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">Alarm has been stopped</string>
   <string name="sms_logjobs_started">%d logjobs have been started</string>
   <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
-  <string name="sms_logjob_created">A logjob with %d seconds frequency has been created in session %s</string>
+  <string name="sms_logjob_created">A logjob with %1$d seconds frequency has been created in session %2$s</string>
   <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
   <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
   <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Delete logjob</string>
   <string name="action_sorting_method">Sorting method</string>
   <string name="manage_accounts">Manage accounts</string>
-  <string name="is_running">futás (%s függőben,%s elküldve)</string>
+  <string name="is_running">futás (%1$s függőben,%2$s elküldve)</string>
   <string name="settings_server_settings">Account</string>
   <string name="settings_url">Server address</string>
   <string name="settings_url_warn_http">WARNING: \"http\" is unsafe. Please use \"https\".</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">SMS keyword</string>
   <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
   <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
-  <string name="settings_sms_keyword_long3">Available commands:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Available commands:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Use server color</string>
   <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
   <string name="settings_providers_title">Location providers</string>

@@ -97,7 +97,7 @@
   <string name="logjob_info_dialog_title">O programe %s</string>
   <string name="logjob_info_nbsync">%d odoslaných polôh</string>
   <string name="logjob_info_nbnotsync">%d čakajúcich polôh</string>
-  <string name="logjob_info_last_activation">Posledná aktivácia pred \n%s na \n%s</string>
+  <string name="logjob_info_last_activation">Posledná aktivácia pred \n%1$s na \n%2$s</string>
   <string name="logjob_info_lastloc">Posledná poloha získaná\npred %1$s o\n%2$s</string>
   <string name="logjob_info_lastsync">Last successful sync\n%1$s ago at\n%2$s</string>
   <string name="logjob_info_lastsync_error">Last synchronization error\n%1$s ago at\n%2$s\n\n%3$s</string>
@@ -140,7 +140,7 @@
   <string name="sms_alarm_stopped">Alarm bol zastavený</string>
   <string name="sms_logjobs_started">%d sledovacie úlohy boli spustené</string>
   <string name="sms_logjobs_stopped">%d sledovacie úlohy boli zastavené</string>
-  <string name="sms_logjob_created">Sledovanie s frekvenciou %d sekúnd bolo vytvorené v relácii %s</string>
+  <string name="sms_logjob_created">Sledovanie s frekvenciou %1$d sekúnd bolo vytvorené v relácii %2$s</string>
   <string name="sms_logjob_creation_impossible">Nie je možné vytvoriť sledovanie, nebola nájdená žiadna relácia</string>
   <string name="sms_failure_timeout_sms">PhoneTrack nemohol získať polohu po %d sekundách</string>
   <string name="sms_failure_timeout_notification">%1$d sek. pauza bola dosiahnutá, chybová SMS bola odoslaná %2$s</string>
@@ -159,7 +159,7 @@
   <string name="delete_logjob_menu_title">Vymazať úlohu záznamu</string>
   <string name="action_sorting_method">Metóda triedenia</string>
   <string name="manage_accounts">Spravovať účty</string>
-  <string name="is_running">spustené (%s čakajúce, %s odoslané)</string>
+  <string name="is_running">spustené (%1$s čakajúce, %2$s odoslané)</string>
   <string name="settings_server_settings">Účet</string>
   <string name="settings_url">Adresa servera</string>
   <string name="settings_url_warn_http">VAROVANIE: Protokol \"http\" je nebezpečný. Použite prosím \"https\".</string>
@@ -178,7 +178,7 @@
   <string name="settings_sms_keyword_title">SMS fráza</string>
   <string name="settings_sms_keyword_long">Ak tento telefón príjme SMS s frázou, odosielateľovi bude odoslaná informácia o polohe.</string>
   <string name="settings_sms_keyword_long2">Môžete tiež odosielať príkazy s touto syntax: FRÁZA PRÍKAZ</string>
-  <string name="settings_sms_keyword_long3">Dostupné príkazy:\n- %s [NBSECONDS(def=60)]\n- %s [LOGJOB NAME]\n- %s [LOGJOB NAME]\n- %s MINTIME</string>
+  <string name="settings_sms_keyword_long3">Dostupné príkazy:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
   <string name="settings_use_server_color_title">Použiť farbu zo servera</string>
   <string name="settings_use_server_color_subtitle">Získať farbu zo servera keď sa synchronizuje a použiť ju ako hlavnú farbu aplikácie</string>
   <string name="settings_providers_title">Poskytovatelia polohy</string>
