@@ -66,10 +66,16 @@ jobs:
           mkdir -p release-out
           cp app/build/outputs/apk/normal/release/*.apk release-out/
           cp app/build/outputs/apk/play/release/*.apk release-out/
+          # R8 mapping files, to turn obfuscated stack traces back into readable ones
+          # (e.g. ~/android-sdk/cmdline-tools/latest/bin/retrace mapping-normal.txt trace.txt)
+          cp app/build/outputs/mapping/normalRelease/mapping.txt release-out/mapping-normal.txt
+          cp app/build/outputs/mapping/playRelease/mapping.txt release-out/mapping-play.txt
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v3
         with:
-          files: release-out/*.apk
+          files: |
+            release-out/*.apk
+            release-out/mapping-*.txt
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, '-') }}

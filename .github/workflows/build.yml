@@ -46,6 +46,10 @@ jobs:
       - name: Assemble debug APK (dev flavor)
         run: ./gradlew -Pci --console=plain assembleDevDebug
 
+      # catches R8 (minify/shrink) configuration problems on every PR, not only at release time
+      - name: Assemble minified release APK (normal flavor)
+        run: ./gradlew -Pci --console=plain assembleNormalRelease
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v7
         with:
