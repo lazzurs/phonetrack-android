@@ -509,8 +509,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         });
 
-        final LinearLayout searchEditFrame = searchView.findViewById(R.id
-                .search_edit_frame);
+        final LinearLayout searchEditFrame = searchView.findViewById(androidx.appcompat.R.id.search_edit_frame);
 
         searchEditFrame.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             int oldVisibility = -1;
