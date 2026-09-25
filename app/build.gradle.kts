@@ -117,8 +117,6 @@ dependencies {
     implementation(libs.clans.fab)
     implementation(libs.osmdroid.android)
     implementation(libs.osmdroid.mapsforge)
-    implementation(libs.colorpreference)
-    implementation(libs.lobsterpicker)
 
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)

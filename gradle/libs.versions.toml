@@ -31,12 +31,6 @@ conscrypt-android = "org.conscrypt:conscrypt-android:2.5.3"
 clans-fab = "com.github.clans:fab:1.6.4"
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
 osmdroid-mapsforge = { module = "org.osmdroid:osmdroid-mapsforge", version.ref = "osmdroid" }
-# NOTE: kept at 1.0.6, not the newer 1.1.0 tag - 1.1.0 fails to compile
-# here (javac: "class file for com.kizitonwose.colorpreference.ColorDialog
-# not found"), apparently a package/module restructuring in that release.
-# Repo has been inactive since 2019.
-colorpreference = "com.github.kizitonwose.colorpreference:support:1.0.6"
-lobsterpicker = "com.larswerkman:lobsterpicker:1.0.1"
 nextcloud-sso = "com.github.nextcloud:Android-SingleSignOn:1.3.4"
 
 [plugins]

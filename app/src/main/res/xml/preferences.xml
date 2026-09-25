@@ -93,14 +93,12 @@
             android:summary="@string/settings_use_server_color_subtitle" />
 
 
-        <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+        <net.eneiluj.nextcloud.phonetrack.android.preference.ColorPreference
         android:defaultValue="@color/primary"
         android:icon="@drawable/ic_palette_grey_24dp"
         android:key="@string/pref_key_color"
         android:summary="@string/settings_color_summary"
-        android:title="@string/settings_color_title"
-        app:colorShape="circle"
-        app:showDialog="false" />
+        android:title="@string/settings_color_title" />
     </PreferenceCategory>
 
 
