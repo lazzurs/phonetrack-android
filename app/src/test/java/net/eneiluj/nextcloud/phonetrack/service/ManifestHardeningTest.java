@@ -39,6 +39,12 @@ public class ManifestHardeningTest {
     }
 
     @Test
+    public void usesTheForksOwnApplicationId() {
+        // changing it makes a different app: installs can no longer be updated
+        assertTrue(context.getPackageName(), context.getPackageName().matches("io\\.github\\.lazzurs\\.phonetrack(\\.dev|\\.play)?"));
+    }
+
+    @Test
     public void loggerServiceIsALocationForegroundService() throws Exception {
         // dataSync is capped at 6h/day on Android 15+ and can't start from BOOT_COMPLETED
         ServiceInfo info = pm.getServiceInfo(new ComponentName(context, LoggerService.class), 0);
