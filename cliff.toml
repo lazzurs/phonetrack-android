@@ -1,0 +1,46 @@
+# git-cliff (https://git-cliff.org) configuration: release notes and CHANGELOG.md entries are
+# generated from the Conventional Commits messages (type(scope): description) since the
+# previous release. See scripts/release/prepare.sh and RELEASING.md.
+
+[changelog]
+# Body of one release, without its heading (prepare.sh adds the heading and the optional
+# highlights in .github/release-highlights/<version>.md).
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim }}
+{% for commit in commits %}
+- {{ commit.message | split(pat="\n") | first | trim | upper_first }} \
+([{{ commit.id | truncate(length=7, end="") }}](https://github.com/lazzurs/phonetrack-android/commit/{{ commit.id }}))\
+{% endfor %}
+{% endfor %}
+{% if previous.version %}
+**Full changelog**: https://github.com/lazzurs/phonetrack-android/compare/{{ previous.version }}...{{ version }}
+{% endif %}
+"""
+trim = true
+
+[git]
+conventional_commits = true
+# commits of the original project (free-form messages) are left out
+filter_unconventional = true
+split_commits = false
+# only full releases delimit the notes: a release lists everything since the previous one,
+# release candidates included
+tag_pattern = "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+sort_commits = "oldest"
+filter_commits = false
+commit_parsers = [
+    { message = "^Merge ", skip = true },
+    # the automatic CHANGELOG.md update of each release
+    { message = "^docs\\(changelog\\)", skip = true },
+    { message = "^debug", skip = true },
+    { message = "^test", skip = true },
+    { message = "^style", skip = true },
+    # the HTML comments set the order of the sections
+    { message = "^[a-z]+\\(security\\)", group = "<!-- 0 -->Security" },
+    { message = "^feat", group = "<!-- 1 -->Features" },
+    { message = "^fix", group = "<!-- 2 -->Fixes" },
+    { message = "^(refactor|perf)", group = "<!-- 3 -->Changes" },
+    { message = "^(build|ci|chore)", group = "<!-- 4 -->Build and CI" },
+    { message = "^docs", group = "<!-- 5 -->Documentation" },
+]

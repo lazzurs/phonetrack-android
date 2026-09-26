@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Checks that a release is consistent and writes its release notes.
+# Checks that a release is consistent and generates its release notes.
 #
 #   scripts/release/prepare.sh [TAG] [OUT_DIR]
 #
@@ -7,10 +7,13 @@
 #   - TAG is vX.Y.Z (full release) or vX.Y.Z-suffix (pre-release, e.g. v0.3.0-rc.1)
 #   - X.Y.Z equals appVersionName in gradle.properties
 #   - appVersionCode is higher than the one of the previous release tag
-#   - CHANGELOG.md has a "## [X.Y.Z]" section (a pre-release may use "## [Unreleased]")
-#   - a full release has fastlane/metadata/android/en-US/changelogs/<appVersionCode>.txt
-# Writes OUT_DIR/RELEASE_NOTES.md (default: release-out) and prints key=value lines
-# (also appended to $GITHUB_OUTPUT when set): version, tag, prerelease, version_code.
+#   - there is something to release: Conventional Commits since the previous full release
+# Writes to OUT_DIR (default: release-out):
+#   RELEASE_NOTES.md   .github/release-highlights/X.Y.Z.md if it exists (hand-written, optional),
+#                      then the notes git-cliff generates from the commit messages (cliff.toml)
+#   CHANGELOG_ENTRY.md the same under a "## [X.Y.Z] – date" heading, for CHANGELOG.md
+# Prints key=value lines (also appended to $GITHUB_OUTPUT when set): version, tag, prerelease,
+# version_code, previous_release. Needs git-cliff (pipx install git-cliff).
 set -euo pipefail
 
 root=$(git rev-parse --show-toplevel)
@@ -62,39 +65,36 @@ if [[ -n $previous ]]; then
     fi
 fi
 
-# release notes: the CHANGELOG section of this version, without its heading
-section() {
-    awk -v want="$1" '
-        /^## / {
-            if (found) exit
-            heading = $0
-            sub(/^## +/, "", heading)
-            sub(/^\[/, "", heading)
-            split(heading, parts, /[] ]/)
-            if (parts[1] == want) { found = 1; next }
-        }
-        found { print }
-    ' CHANGELOG.md
-}
-notes=$(section "$base")
-if [[ -z ${notes//[[:space:]]/} ]] && [[ $prerelease == true ]]; then
-    notes=$(section "Unreleased")
-fi
-[[ -n ${notes//[[:space:]]/} ]] \
-    || fail "CHANGELOG.md has no '## [$base]' section with content: write the release notes there first"
+command -v git-cliff >/dev/null || fail "git-cliff is not installed (pipx install git-cliff)"
 
-if [[ $prerelease == false ]]; then
-    [[ -s fastlane/metadata/android/en-US/changelogs/$version_code.txt ]] \
-        || fail "missing fastlane/metadata/android/en-US/changelogs/$version_code.txt (store changelog, max 500 characters)"
-fi
+# notes cover everything since the previous full release (release candidates included)
+previous_release=$(git tag --list 'v*' --merged HEAD --sort=-creatordate \
+    | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | grep -vx "$tag" | head -1 || true)
+range=${previous_release:+$previous_release..}HEAD
+generated=$(git-cliff --config cliff.toml "$range" --tag "$tag" --strip all 2>/dev/null)
+[[ -n ${generated//[[:space:]]/} ]] \
+    || fail "no Conventional Commits (feat:, fix:, ...) since ${previous_release:-the first commit}: nothing to release"
 
+highlights_file=.github/release-highlights/$base.md
 mkdir -p "$out_dir"
-printf '%s\n' "$notes" | sed -e '/./,$!d' > "$out_dir/RELEASE_NOTES.md"
+{
+    if [[ -s $highlights_file ]]; then
+        cat "$highlights_file"
+        echo
+    fi
+    printf '%s\n' "$generated"
+} > "$out_dir/RELEASE_NOTES.md"
+{
+    echo "## [${tag#v}] – $(date -u +%Y-%m-%d)"
+    echo
+    cat "$out_dir/RELEASE_NOTES.md"
+} > "$out_dir/CHANGELOG_ENTRY.md"
 
 result="version=${tag#v}
 tag=$tag
 prerelease=$prerelease
-version_code=$version_code"
+version_code=$version_code
+previous_release=$previous_release"
 echo "$result"
 if [[ -n ${GITHUB_OUTPUT:-} ]]; then
     echo "$result" >> "$GITHUB_OUTPUT"
