@@ -29,6 +29,10 @@ jobs:
           # all tags: the version code is compared with the previous release's
           fetch-depth: 0
 
+      - name: Install git-cliff
+        # generates the release notes from the commit messages (cliff.toml)
+        run: pipx install git-cliff==2.14.2
+
       - name: Check version and write release notes
         id: meta
         # a dry run checks the release of the version in gradle.properties
@@ -96,15 +100,32 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           name: PhoneTrack ${{ steps.meta.outputs.version }}
-          # CHANGELOG.md section, followed by GitHub's list of merged pull requests
+          # highlights (optional) + notes generated from the commit messages
           body_path: release-out/RELEASE_NOTES.md
-          generate_release_notes: true
           prerelease: ${{ steps.meta.outputs.prerelease }}
           make_latest: ${{ steps.meta.outputs.prerelease == 'true' && 'false' || 'true' }}
           files: |
             release-out/phonetrack-*.apk
             release-out/phonetrack-*-mapping.txt
             release-out/SHA256SUMS.txt
+
+      - name: Add the release to CHANGELOG.md on main
+        if: github.ref_type == 'tag' && steps.meta.outputs.prerelease == 'false'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          git fetch origin main
+          git switch --detach origin/main
+          scripts/release/update-changelog.sh release-out/CHANGELOG_ENTRY.md
+          git add CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "CHANGELOG.md already has $VERSION"
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "docs(changelog): $VERSION"
+          git push origin HEAD:main
 
       - name: Upload dry-run release
         if: github.ref_type != 'tag'

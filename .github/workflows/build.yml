@@ -22,10 +22,20 @@ jobs:
           # all tags: the release check compares the version code with the previous release's
           fetch-depth: 0
 
-      # the version in gradle.properties must be releasable: newer version code, CHANGELOG
-      # section, store changelog (the same check the release workflow runs on a tag)
+      # release notes and CHANGELOG.md are generated from the commit messages
+      - name: Check commit messages (Conventional Commits)
+        if: github.event_name == 'pull_request'
+        run: scripts/release/check-commits.sh "origin/${{ github.base_ref }}"
+
+      - name: Install git-cliff
+        run: pipx install git-cliff==2.14.2
+
+      # the version in gradle.properties must be releasable (the same check the release
+      # workflow runs on a tag); also previews the next release notes in the job log
       - name: Check release metadata
-        run: scripts/release/prepare.sh
+        run: |
+          scripts/release/prepare.sh
+          cat release-out/RELEASE_NOTES.md
 
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v6

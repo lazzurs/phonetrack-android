@@ -27,6 +27,13 @@ If you find a bug, feel free to [open an issue](https://gitlab.com/eneiluj/phone
       3. use the top left back-arrow
       4. ...
 
+## Commit messages (this fork)
+
+Release notes and `CHANGELOG.md` are generated from commit messages, so they follow
+[Conventional Commits](https://www.conventionalcommits.org), e.g. `fix: keep the alarm volume`
+or `fix(security): only accept SMS from allowed senders`. CI checks it; the types and the release
+process are in [RELEASING.md](RELEASING.md).
+
 ## Adding new features
 
 If you want to contribute on the code, you can fork the project, commit your changes and make a pull request. For bigger features/changes, it's better to first [open an issue](https://gitlab.com/eneiluj/phonetrack-android/issues) and ask if this feature is needed or wanted – it would be very disappointing if you add a new cool feature and your pull request will be rejected by some reasons you didn't thought about.
