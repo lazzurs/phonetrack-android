@@ -17,14 +17,16 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "net.eneiluj.nextcloud.phonetrack"
+        // this fork's own ID (the original app is net.eneiluj.nextcloud.phonetrack): both can be
+        // installed side by side. Never change it again: an app with another ID is another app.
+        applicationId = "io.github.lazzurs.phonetrack"
         minSdk = 26
         targetSdk = 36
         // from gradle.properties, the single source of the version (see RELEASING.md)
         versionCode = providers.gradleProperty("appVersionCode").get().toInt()
         versionName = providers.gradleProperty("appVersionName").get()
         vectorDrawables.useSupportLibrary = true
-        resValue("string", "applicationId", "net.eneiluj.nextcloud.phonetrack")
+        resValue("string", "applicationId", "io.github.lazzurs.phonetrack")
     }
 
     signingConfigs {
@@ -76,14 +78,14 @@ android {
         }
         create("dev") {
             dimension = "default"
-            applicationId = "net.eneiluj.nextcloud.phonetrack.dev"
-            resValue("string", "applicationId", "net.eneiluj.nextcloud.phonetrack.dev")
+            applicationId = "io.github.lazzurs.phonetrack.dev"
+            resValue("string", "applicationId", "io.github.lazzurs.phonetrack.dev")
             resValue("string", "app_name", "PhoneTrack Dev")
         }
         create("play") {
             dimension = "default"
-            applicationId = "net.eneiluj.nextcloud.phonetrack.play"
-            resValue("string", "applicationId", "net.eneiluj.nextcloud.phonetrack.play")
+            applicationId = "io.github.lazzurs.phonetrack.play"
+            resValue("string", "applicationId", "io.github.lazzurs.phonetrack.play")
             resValue("string", "app_name", "PhoneTrack")
         }
     }

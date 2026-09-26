@@ -66,11 +66,11 @@ If you want to log to Nextcloud PhoneTrack :
 
 * APK Direct download : [this fork's GitHub Releases](https://github.com/lazzurs/phonetrack-android/releases) (built automatically by GitHub Actions on every tag). Each release has `phonetrack-<version>-normal.apk` (use this one), `phonetrack-<version>-play.apk`, and `SHA256SUMS.txt` to verify the download. How releases are made: [RELEASING.md](RELEASING.md)
 * Upstream also publishes builds via [Gitlab CI artifacts](https://gitlab.com/eneiluj/phonetrack-android/pipelines)
-* [![PhoneTrack App on fdroid.org](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/57bb389a0c40f5cb81dc1ae21a314adb/fd.png)](https://f-droid.org/packages/net.eneiluj.nextcloud.phonetrack/)
+* The original app (a separate app, `net.eneiluj.nextcloud.phonetrack`) is on F-Droid: [![PhoneTrack App on fdroid.org](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/57bb389a0c40f5cb81dc1ae21a314adb/fd.png)](https://f-droid.org/packages/net.eneiluj.nextcloud.phonetrack/)
 
 ### A note on release signing
 
-Tagged releases from this fork are signed with a dedicated key held only as encrypted GitHub Actions secrets (`RELEASE_KEYSTORE_BASE64` / `RELEASE_KEYSTORE_PASSWORD`) on this repo — it is never committed to git. This keeps the signature consistent across successive releases so APKs install as upgrades over one another. It is **not** the same key as upstream's or F-Droid's builds — you cannot upgrade in place between builds from different sources; uninstall first. If you build release APKs yourself without those secrets set, Gradle falls back to signing with your local debug key instead (see [`app/build.gradle.kts`](app/build.gradle.kts)), which is fine for local testing but won't match the signature of the published releases.
+Tagged releases from this fork are signed with a dedicated key held only as encrypted GitHub Actions secrets (`RELEASE_KEYSTORE_BASE64` / `RELEASE_KEYSTORE_PASSWORD`) on this repo — it is never committed to git. This keeps the signature consistent across successive releases so APKs install as upgrades over one another. It is **not** the same key as upstream's or F-Droid's builds, and since 0.2.0 this fork also has its own application ID, `io.github.lazzurs.phonetrack` (the original is `net.eneiluj.nextcloud.phonetrack`): the two are separate apps that can be installed side by side. Nothing is shared between them, so set the fork up again before removing the original. If you build release APKs yourself without those secrets set, Gradle falls back to signing with your local debug key instead (see [`app/build.gradle.kts`](app/build.gradle.kts)), which is fine for local testing but won't match the signature of the published releases.
 
 ## Build
 

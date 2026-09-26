@@ -78,6 +78,7 @@ The release APKs are signed with the fork's key, kept only in the repository sec
 signed with that same key, or installed apps can't be updated. Without the secrets (e.g. in a
 fork of this repository) the APKs are debug-signed and the workflow warns about it.
 
-The original PhoneTrack builds (F-Droid, GitLab) use the same application ID but a different key,
-so they can't be updated in place by these releases: users uninstall them first. Say so in the
-highlights of a release that could reach such users (0.2.0 does).
+The application ID is `io.github.lazzurs.phonetrack` (`.dev` / `.play` for the other flavors),
+different from the original app's `net.eneiluj.nextcloud.phonetrack`, so both can be installed
+side by side. **Never change it again**: Android treats an app with another ID as a different app,
+so existing installs would stop receiving updates.
