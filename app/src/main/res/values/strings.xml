@@ -228,6 +228,10 @@
     <string name="settings_theming_category">Theming</string>
     <string name="settings_group_sync_title">Send points by bunch of at least</string>
     <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
+    <string name="settings_send_deadline_title">Send at the latest after</string>
+    <string name="settings_send_deadline_long">Number of hours, for all log jobs. Points that are waiting for the bunch above to be complete are sent anyway once the oldest of them has waited this long, even if the phone is not moving. 0 means no time limit. Android may delay the upload a little to save battery.</string>
+    <string name="settings_send_deadline_off">No time limit</string>
+    <string name="settings_send_deadline_not_needed">Not needed: every point is sent straight away. Set a bunch of 2 or more above to use this.</string>
     <string name="settings_saving_category">Power/data saving</string>
     <string name="settings_power_saving_awareness_title">Respect power saving mode state</string>
     <string name="settings_power_saving_awareness_subtitle">Freeze active logjobs while power saving mode is enabled</string>
@@ -391,5 +395,9 @@
     <plurals name="ab_selected">
         <item quantity="one">%d selected</item>
         <item quantity="other">%d selected</item>
+    </plurals>
+    <plurals name="settings_send_deadline_summary">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
     </plurals>
 </resources>

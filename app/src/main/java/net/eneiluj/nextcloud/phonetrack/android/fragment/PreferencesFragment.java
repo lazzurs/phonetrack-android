@@ -13,9 +13,12 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -60,6 +63,7 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.service.UploadScheduler;
 import net.eneiluj.nextcloud.phonetrack.util.CertificateTrust;
 import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
@@ -342,10 +346,30 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                     editor.putString(getString(R.string.pref_key_group_sync), String.valueOf(valLong));
                     editor.apply();*/
                     preference.setSummary(String.valueOf(valLong));
+                    updateSendDeadlinePref(valLong, null);
+                    applyUploadSettingsOnceSaved();
                     return true;
                 }
             }
 
+        });
+
+        final EditTextPreference sendDeadlinePref = (EditTextPreference) findPreference(getString(R.string.pref_key_send_deadline));
+        updateSendDeadlinePref(groupSyncVal, null);
+        sendDeadlinePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                String newValueString = (String) newValue;
+                // up to 9999 hours; the dialog only accepts digits
+                if (newValueString == null || newValueString.isEmpty() || newValueString.length() > 4
+                        || !TextUtils.isDigitsOnly(newValueString)) {
+                    showToast(getString(R.string.error_invalid_group_sync), Toast.LENGTH_LONG);
+                    return false;
+                }
+                updateSendDeadlinePref(null, Long.valueOf(newValueString));
+                applyUploadSettingsOnceSaved();
+                return true;
+            }
         });
 
         ListPreference providersListPref = (ListPreference) providersPref;
@@ -629,6 +653,47 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         } else {
             preference.setIcon(R.drawable.ic_sunny_grey_24dp);
         }
+    }
+
+    /**
+     * "Send at the latest after" only means something when points are held back by a bunch size.
+     *
+     * @param groupSync new bunch size, null to read the saved one
+     * @param hours     new time limit, null to read the saved one
+     */
+    private void updateSendDeadlinePref(@Nullable Long groupSync, @Nullable Long hours) {
+        Preference pref = findPreference(getString(R.string.pref_key_send_deadline));
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        if (groupSync == null) {
+            groupSync = savedNumber(sp, R.string.pref_key_group_sync);
+        }
+        if (hours == null) {
+            hours = savedNumber(sp, R.string.pref_key_send_deadline);
+        }
+        boolean bunching = groupSync > 1;
+        pref.setEnabled(bunching);
+        if (!bunching) {
+            pref.setSummary(R.string.settings_send_deadline_not_needed);
+        } else if (hours <= 0) {
+            pref.setSummary(R.string.settings_send_deadline_off);
+        } else {
+            int quantity = (int) Math.min(hours, Integer.MAX_VALUE);
+            pref.setSummary(getResources().getQuantityString(R.plurals.settings_send_deadline_summary, quantity, quantity));
+        }
+    }
+
+    private long savedNumber(SharedPreferences sp, int keyId) {
+        try {
+            return Long.parseLong(sp.getString(getString(keyId), "0"));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /** The new value is saved after the change listener returns: apply it to waiting points then. */
+    private void applyUploadSettingsOnceSaved() {
+        final Context context = requireContext().getApplicationContext();
+        new Handler(Looper.getMainLooper()).post(() -> UploadScheduler.onSettingsChanged(context));
     }
 
     protected void showToast(CharSequence text, int duration) {
