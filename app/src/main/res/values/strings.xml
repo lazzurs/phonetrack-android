@@ -362,6 +362,7 @@
     <string name="pref_value_theme_light">Light</string>
     <string name="pref_value_theme_dark">Dark</string>
     <string name="pref_key_group_sync" translatable="false">groupSync</string>
+    <string name="pref_key_send_deadline" translatable="false">sendDeadlineHours</string>
     <string name="pref_key_osmdroid_load" translatable="false">loadOsmdroidPath</string>
     <string name="pref_key_osmdroid_delete" translatable="false">osmdroidDelete</string>
     <string name="pref_key_open_syslog" translatable="false">openSyslogManager</string>

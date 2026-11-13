@@ -55,7 +55,6 @@ import androidx.core.app.TaskStackBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
@@ -147,9 +146,7 @@ public class LoggerService extends Service {
         db = PhoneTrackSQLiteOpenHelper.getInstance(getApplicationContext());
 
         // start websync service if needed
-        if (db.getLocationNotSyncedCount() > 0) {
-            WebTrackWorker.enqueue(getApplicationContext(), WebTrackWorker.ALL_LOGJOBS);
-        }
+        UploadScheduler.uploadWhatIsDue(getApplicationContext());
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotificationManager != null) {
@@ -1017,15 +1014,9 @@ public class LoggerService extends Service {
         @Override
         public void onAvailable(@NonNull Network network) {
             if (DEBUG) { SystemLogger.d(TAG, "Network is available again: launch sync from loggerservice"); }
-            try {
-                // just to be sure the connection is effective
-                // sometimes i experienced problems when connecting to slow wifi networks
-                // i think internet access was not yet established when syncService was launched
-                TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-                if (DEBUG) { SystemLogger.e(TAG, "interrupted"); }
-            }
-            WebTrackWorker.enqueue(getApplicationContext(), WebTrackWorker.ALL_LOGJOBS);
+            // no need to wait for the connection to be usable: the upload work only runs on a
+            // validated network. Queues nothing when no position is due for upload.
+            UploadScheduler.uploadWhatIsDue(getApplicationContext());
         }
     }
 
@@ -1038,7 +1029,7 @@ public class LoggerService extends Service {
         sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
         updateNotificationContent();
 
-        WebTrackWorker.enqueue(getApplicationContext(), logjobId);
+        UploadScheduler.onPointStored(getApplicationContext(), logjobId);
     }
 
     // worker superclass

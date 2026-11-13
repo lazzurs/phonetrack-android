@@ -639,7 +639,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     }
                 }
                 if (db.getLocationNotSyncedCount() > 0) {
-                    WebTrackWorker.enqueue(getApplicationContext(), WebTrackWorker.ALL_LOGJOBS);
+                    // asked by the user: also send what "send points by bunch" holds back
+                    WebTrackWorker.enqueueManual(getApplicationContext());
                     showToast(getString(R.string.uploading_started));
                 }
                 else {

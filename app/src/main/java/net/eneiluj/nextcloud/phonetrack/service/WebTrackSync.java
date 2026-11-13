@@ -58,6 +58,7 @@ public class WebTrackSync {
     private final Context context;
     private final PhoneTrackSQLiteOpenHelper db;
     private final WebTrackHelper web;
+    private static final Object SYNC_LOCK = new Object();
     private int sent;
 
     public WebTrackSync(Context context) {
@@ -70,10 +71,19 @@ public class WebTrackSync {
     /**
      * Send the positions not synced yet, of one logjob or of all of them (id 0).
      *
+     * @param force send the positions that the "send points by bunch" setting would hold back
      * @return false if any upload failed (the positions stay unsynced and can be retried)
      */
     @WorkerThread
-    public boolean sync(long ljIdToSync) {
+    public boolean sync(long ljIdToSync, boolean force) {
+        // uploads of the same logjob can be queued under several names (per logjob, all logjobs,
+        // manual, deadline): one at a time, so that no position is read and sent by two of them
+        synchronized (SYNC_LOCK) {
+            return syncLocked(ljIdToSync, force);
+        }
+    }
+
+    private boolean syncLocked(long ljIdToSync, boolean force) {
         sent = 0;
         boolean anyError = false;
 
@@ -100,12 +110,7 @@ public class WebTrackSync {
             context.sendBroadcast(intent);
         }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        long groupSync = 0;
-        String groupsyncString = prefs.getString(context.getString(R.string.pref_key_group_sync), "0");
-        if (groupsyncString != null) {
-            groupSync = Long.parseLong(groupsyncString);
-        }
+        UploadScheduler.Settings uploadSettings = UploadScheduler.Settings.read(context);
 
         for (DBLogjob logjob : logjobs) {
             long ljId = logjob.getId();
@@ -113,7 +118,7 @@ public class WebTrackSync {
                 // Maps logjob
                 if (logjob.getDeviceName().isEmpty() && logjob.getToken().isEmpty() && logjob.getUrl().isEmpty()) {
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
-                    if (locations.size() > 0 && locations.size() >= groupSync) {
+                    if (!heldBack(locations, uploadSettings, force)) {
                         if (!SessionServerSyncHelper.isConfigured(context)) {
                             throw new Exception(context.getString(R.string.error_no_account_maps));
                         }
@@ -140,7 +145,7 @@ public class WebTrackSync {
                 else if (!logjob.getDeviceName().isEmpty() && !logjob.getToken().isEmpty()) {
                     URL url = web.getUrlFromPhoneTrackLogjob(logjob);
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
-                    if (locations.size() < groupSync) {
+                    if (heldBack(locations, uploadSettings, force)) {
                         continue;
                     }
                     // send one by one
@@ -214,7 +219,7 @@ public class WebTrackSync {
                     String password = logjob.getPassword();
                     boolean sendJsonPayload = logjob.getJson();
                     List<DBLogjobLocation> locations = db.getLocationsToSyncOfLogjob(ljId);
-                    if (locations.size() < groupSync) {
+                    if (heldBack(locations, uploadSettings, force)) {
                         continue;
                     }
                     for (DBLogjobLocation loc : locations) {
@@ -263,6 +268,18 @@ public class WebTrackSync {
         intent.setPackage(context.getPackageName());
         context.sendBroadcast(intent);
         return !anyError;
+    }
+
+    /**
+     * Same decision as the one made before queueing the upload (see {@link UploadScheduler}),
+     * for the runs that cover every logjob: one of them being due must not send the others.
+     *
+     * @param locations positions waiting for upload, oldest first
+     */
+    private static boolean heldBack(List<DBLogjobLocation> locations, UploadScheduler.Settings settings, boolean force) {
+        long oldest = locations.isEmpty() ? 0 : locations.get(0).getTimestamp();
+        return UploadPolicy.decide(locations.size(), oldest, System.currentTimeMillis() / 1000,
+                settings.minBunch, settings.maxDelaySeconds, force).action != UploadPolicy.Action.UPLOAD_NOW;
     }
 
     /**
