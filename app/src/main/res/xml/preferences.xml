@@ -159,6 +159,12 @@
             android:key="@string/pref_key_offline_mode_awareness"
             android:title="@string/settings_offline_mode_awareness_title"
             android:summary="@string/settings_offline_mode_awareness_subtitle" />
+        <CheckBoxPreference
+            android:icon="@drawable/ic_location_searching_grey_24dp"
+            android:defaultValue="true"
+            android:key="@string/pref_key_search_backoff"
+            android:title="@string/settings_search_backoff_title"
+            android:summary="@string/settings_search_backoff_subtitle" />
         <EditTextPreference
             android:id="@+id/editGroupSync"
             android:defaultValue="0"

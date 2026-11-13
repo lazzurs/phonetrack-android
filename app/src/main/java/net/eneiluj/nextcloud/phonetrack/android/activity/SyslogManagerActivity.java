@@ -248,6 +248,8 @@ public class SyslogManagerActivity extends AppCompatActivity {
         content += "Respect power saving state: " + respectPowerSaveMode + "\n";
         boolean respectAirplaneMode = prefs.getBoolean(getString(R.string.pref_key_offline_mode_awareness), false);
         content += "Respect airplane mode state: " + respectAirplaneMode + "\n";
+        boolean searchBackoff = prefs.getBoolean(getString(R.string.pref_key_search_backoff), true);
+        content += "Search less often without a position: " + searchBackoff + "\n";
         content += "\n";
 
         // get logjobs

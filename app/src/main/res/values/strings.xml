@@ -238,6 +238,8 @@
     <string name="settings_power_saving_awareness_subtitle">Freeze active logjobs while power saving mode is enabled</string>
     <string name="settings_offline_mode_awareness_title">Respect offline mode state</string>
     <string name="settings_offline_mode_awareness_subtitle">Freeze active logjobs while offline mode is enabled</string>
+    <string name="settings_search_backoff_title">Search less often without a position</string>
+    <string name="settings_search_backoff_subtitle">After 3 location searches in a row end at the timeout without a position (indoors, underground), wait longer between searches: up to 4 times the interval, at most 10 minutes, until a position is found again. Saves battery, but the first position after you get a signal back can be logged a few minutes late.</string>
 
     <string name="tracking_started">Logging started</string>
     <string name="tracking_stopped">Logging stopped</string>
@@ -376,6 +378,7 @@
     <string name="pref_key_reset_stats" translatable="false">resetStats</string>
     <string name="pref_key_power_saving_awareness" translatable="false">powerSavingAware</string>
     <string name="pref_key_offline_mode_awareness" translatable="false">offlineModeAware</string>
+    <string name="pref_key_search_backoff" translatable="false">searchBackoff</string>
     <string name="pref_value_providers" translatable="false">1</string>
     <string name="use_sso_toggle">Use account from Nextcloud Files app</string>
     <string name="center_map">Show my position</string>
