@@ -120,6 +120,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.text.format.DateUtils.isToday;
 
@@ -184,6 +185,13 @@ public class MapActivity extends AppCompatActivity {
     private Snackbar loadErrorSnackbar;
     // what to do once the location permission is granted
     private Runnable pendingLocationAction;
+    // the local database may have new positions: set on resume and when the logger saves one
+    private final AtomicBoolean localDataChanged = new AtomicBoolean(true);
+    // a server request is running: don't start another one (they would pile up on a slow network)
+    private final AtomicBoolean serverRequestRunning = new AtomicBoolean(false);
+    @VisibleForTesting
+    volatile int localDataReads = 0;
+    private volatile boolean mapUpdated = false;
     private String selectedLayer;
     private MapTileProviderBasic defaultTileProvider;
 
@@ -547,6 +555,8 @@ public class MapActivity extends AppCompatActivity {
         }
         */
         setupNavigationMenu();
+        // positions may have been logged while the map was in the background
+        localDataChanged.set(true);
         startRefresh();
         registerBroadcastReceiver();
         Log.i(TAG, "[onResume end]");
@@ -886,6 +896,7 @@ public class MapActivity extends AppCompatActivity {
             // to update last min displayed value
             setupNavigationMenu();
             applyPointFilters();
+            updateMap();
         } catch (Exception e) {
 
         }
@@ -900,13 +911,20 @@ public class MapActivity extends AppCompatActivity {
                 // to update limit displayed value
                 setupNavigationMenu();
                 applyPointFilters();
+                updateMap();
             }
         } catch (Exception e) {
 
         }
     }
 
-    private void applyPointFilters() {
+    /**
+     * Applies the point limit and the time window to each device's line.
+     *
+     * @return whether a line changed
+     */
+    private boolean applyPointFilters() {
+        boolean changed = false;
         int limit = prefs.getInt("map_limit", 300);
         int lastMin = prefs.getInt("map_last_min", 120);
 
@@ -926,8 +944,10 @@ public class MapActivity extends AppCompatActivity {
             }
             // then apply time filter
             if (lastMin > 0) {
-                Log.v("FIFI", "time filtering for "+devName);
                 locationsToDisplay = getTimeFilteredLocations(locationsToDisplay, lastMin);
+            }
+            if (sameLocations(displayedLocations.get(devName), locationsToDisplay)) {
+                continue;
             }
 
             geoPoints = new ArrayList<>();
@@ -935,9 +955,19 @@ public class MapActivity extends AppCompatActivity {
                 geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
             }
             lines.get(devName).setPoints(geoPoints);
-            displayedLocations.put(devName, locationsToDisplay);
+            // a copy: locationsToDisplay can be a view of a list that grows later
+            displayedLocations.put(devName, new ArrayList<>(locationsToDisplay));
+            changed = true;
         }
-        updateMap();
+        return changed;
+    }
+
+    /** Device location lists only grow at the end, so equal size and ends mean equal content. */
+    private static boolean sameLocations(@Nullable List<BasicLocation> a, List<BasicLocation> b) {
+        if (a == null || a.size() != b.size()) {
+            return false;
+        }
+        return a.isEmpty() || (a.get(0) == b.get(0) && a.get(a.size() - 1) == b.get(b.size() - 1));
     }
 
     private void bringDeviceToFront(String devName) {
@@ -1038,6 +1068,8 @@ public class MapActivity extends AppCompatActivity {
      * get data from the database
      */
     private void updatePositionsWithLocalData() {
+        localDataReads++;
+        boolean changed = false;
         List<DBLogjobLocation> locs;
         List<BasicLocation> basicLocs;
         // get list of session's devices with a logjob
@@ -1050,18 +1082,25 @@ public class MapActivity extends AppCompatActivity {
                 // get local positions of devices
                 locs = db.getLocationsOfLogjob(lj.getId());
                 basicLocs = new ArrayList<>(locs);
-                updateDevicePositions(lj.getDeviceName(), basicLocs, null);
+                changed |= updateDevicePositions(lj.getDeviceName(), basicLocs, null);
             }
         }
 
         // after data update : view update
-        updateMap();
+        changed |= applyPointFilters();
+        updateMapIfChanged(changed);
     }
 
-    private void updateDevicePositions(String devName, List<BasicLocation> locs, @Nullable String colorStr) {
+    /**
+     * Adds the device's positions that are newer than the ones it has.
+     * The caller applies the point filters and updates the map.
+     *
+     * @return whether the device has new positions or a new colour
+     */
+    private boolean updateDevicePositions(String devName, List<BasicLocation> locs, @Nullable String colorStr) {
         /////// LOCATIONS
         if (locs.size() == 0) {
-            return;
+            return false;
         }
         Long lastDevTs = lastTimestamps.get(devName);
         List<BasicLocation> locationsToAdd = new ArrayList<>();
@@ -1076,23 +1115,22 @@ public class MapActivity extends AppCompatActivity {
             // else add what's new
             if (lastDevTs == null) {
                 devLocations.addAll(locs);
+                locationsToAdd = locs;
             } else {
                 for (BasicLocation loc : locs) {
-                    Log.v(TAG, "AAAAA "+loc.getTimestamp()+" > "+ lastDevTs);
                     if (loc.getTimestamp() > lastDevTs) {
                         locationsToAdd.add(loc);
                     }
                 }
                 devLocations.addAll(locationsToAdd);
-                Log.v(TAG, "existing dev "+devName+" ADD "+locationsToAdd.size()+" locations");
             }
         }
         List<BasicLocation> deviceLocations = locations.get(devName);
-        Log.v(TAG, "deviceLocations size " + deviceLocations.size() + " access " + (deviceLocations.size()-1));
         BasicLocation lastLoc = deviceLocations.get(deviceLocations.size()-1);
         lastTimestamps.put(devName, lastLoc.getTimestamp());
 
         /////// COLORS
+        Integer previousColor = colors.get(devName);
         if (!colors.containsKey(devName)) {
             if (colorStr != null) {
                 colors.put(devName, Color.parseColor(colorStr));
@@ -1105,6 +1143,10 @@ public class MapActivity extends AppCompatActivity {
             }
         }
         int color = colors.get(devName);
+        if (locationsToAdd.isEmpty() && previousColor != null && previousColor == color) {
+            // nothing new
+            return false;
+        }
 
         /////// LINES
 
@@ -1119,7 +1161,6 @@ public class MapActivity extends AppCompatActivity {
             Polyline line = lines.get(devName);
             line.getOutlinePaint().setColor(color);
         }
-        applyPointFilters();
 
         /////// MARKER
         CustomLocationMarkerDrawable markerDrawable;
@@ -1185,6 +1226,7 @@ public class MapActivity extends AppCompatActivity {
         if (locationsToAdd.size() > 0) {
             m.setPosition(new GeoPoint(lastLoc.getLat(), lastLoc.getLon()));
         }
+        return true;
     }
 
     private List<BasicLocation> getLimitedLocations(List<BasicLocation> locations, int limit) {
@@ -1232,9 +1274,7 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // launch task of server sync with callback
-                Log.i(TAG, "[Task run]");
-                updatePositionsWithLocalData();
-                requestServerPositions();
+                refresh();
             }
         };
         int currentFreq = prefs.getInt("map_freq", 15);
@@ -1246,6 +1286,15 @@ public class MapActivity extends AppCompatActivity {
         timer.scheduleAtFixedRate(timerTask, 0, currentFreq*1000);
     }
 
+    /** One refresh, on the timer thread: local positions if there are new ones, then the server's. */
+    @VisibleForTesting
+    void refresh() {
+        if (localDataChanged.getAndSet(false)) {
+            updatePositionsWithLocalData();
+        }
+        requestServerPositions();
+    }
+
     public void stopRefresh() {
         if (timer != null) {
             timer.cancel();
@@ -1255,8 +1304,15 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void requestServerPositions() {
+        if (!serverRequestRunning.compareAndSet(false, true)) {
+            // the previous request hasn't finished: its answer will come
+            return;
+        }
         int currentLimit = prefs.getInt("map_limit", 300);
         boolean started = db.getPhonetrackServerSyncHelper().getSessionPositions(session, lastTimestamp, Long.valueOf(currentLimit), syncCallBack);
+        if (!started) {
+            serverRequestRunning.set(false);
+        }
         if (!started && SessionServerSyncHelper.isConfigured(ctx)) {
             runOnUiThread(() -> showLoadError(getString(R.string.error_sync, getString(R.string.error_no_network))));
         }
@@ -1267,6 +1323,7 @@ public class MapActivity extends AppCompatActivity {
     final IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
         @Override
         public void onFinish(Map<String, List<BasicLocation>> newLocations, Map<String, String> newColors, String message) {
+            serverRequestRunning.set(false);
             if (isFinishing() || isDestroyed()) {
                 return;
             }
@@ -1275,6 +1332,7 @@ public class MapActivity extends AppCompatActivity {
                 return;
             }
             hideLoadError();
+            boolean changed = false;
             if (newLocations != null) {
                 for (String devName : newLocations.keySet()) {
                     List<BasicLocation> locs = newLocations.get(devName);
@@ -1282,7 +1340,7 @@ public class MapActivity extends AppCompatActivity {
                         Log.i(TAG, "position results for dev : " + devName + " | " + locs.size());
                         String colorStr = newColors == null ? null : newColors.get(devName);
                         // update map with new device positions
-                        updateDevicePositions(devName, locs, colorStr);
+                        changed |= updateDevicePositions(devName, locs, colorStr);
                     }
                 }
             }
@@ -1290,7 +1348,9 @@ public class MapActivity extends AppCompatActivity {
             // update lastTimestamp for next server request
             updateLastTimestamp();
 
-            updateMap();
+            // also drops points that left the time window
+            changed |= applyPointFilters();
+            updateMapIfChanged(changed);
             showUpdatedTime();
         }
     };
@@ -1328,6 +1388,14 @@ public class MapActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(getString(R.string.map_updated_at,
                     DateFormat.getTimeFormat(this).format(new Date())));
+        }
+    }
+
+    /** Redraws (and auto-zooms) only when something changed, and once at the start for the device list. */
+    private void updateMapIfChanged(boolean changed) {
+        if (changed || !mapUpdated) {
+            mapUpdated = true;
+            updateMap();
         }
     }
 
@@ -1761,6 +1829,22 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    /** Reads the new local position on the refresh thread, not on the main thread. */
+    @VisibleForTesting
+    void onLocalPositionSaved() {
+        localDataChanged.set(true);
+        if (timer != null) {
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (localDataChanged.getAndSet(false)) {
+                        updatePositionsWithLocalData();
+                    }
+                }
+            }, 0);
+        }
+    }
+
     private void registerBroadcastReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(LoggerService.BROADCAST_LOCATION_UPDATED);
@@ -1781,7 +1865,7 @@ public class MapActivity extends AppCompatActivity {
                 case LoggerService.BROADCAST_LOCATION_UPDATED:
                     long ljId = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     if (LoggerService.DEBUG) { Log.d(TAG, "[inMAP broadcast loc updated " + ljId + "]"); }
-                    updatePositionsWithLocalData();
+                    onLocalPositionSaved();
                     break;
             }
         }

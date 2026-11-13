@@ -27,9 +27,13 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
+import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.DbTestSupport;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 
 import org.junit.After;
 import org.junit.Before;
@@ -234,5 +238,79 @@ public class MapActivityTest {
             assertTrue(name, button.getMinimumWidth() >= min);
             assertTrue(name, button.getMinimumHeight() >= min);
         }
+    }
+
+    @Test
+    public void refreshReadsLocalPositionsOnlyAfterTheLoggerSavedOne() throws Exception {
+        MapActivity activity = launchMap();
+        // the refresh started on resume reads them once
+        long deadline = System.currentTimeMillis() + 10_000;
+        while (activity.localDataReads == 0 && System.currentTimeMillis() < deadline) {
+            Thread.sleep(20);
+        }
+        assertEquals(1, activity.localDataReads);
+        // from here on, refreshes are run by hand
+        activity.stopRefresh();
+
+        activity.refresh();
+        activity.refresh();
+        assertEquals(1, activity.localDataReads);
+
+        activity.onLocalPositionSaved();
+        activity.refresh();
+        assertEquals(2, activity.localDataReads);
+        activity.refresh();
+        assertEquals(2, activity.localDataReads);
+    }
+
+    private static void addLocation(PhoneTrackSQLiteOpenHelper db, long ljId, long timestamp) {
+        db.addLocation(new DBLogjobLocation(0, ljId, 53.3, -6.2, timestamp, null, null, null, 5.0,
+                null, null, null, false, true));
+    }
+
+    /** Waits for the first refresh, on the timer thread, to put the devices on the map. */
+    private static void waitForDeviceList(MapActivity activity) throws InterruptedException {
+        long deadline = System.currentTimeMillis() + 10_000;
+        while (activity.itemsNavigationDevice == null && System.currentTimeMillis() < deadline) {
+            Thread.sleep(20);
+            shadowOf(Looper.getMainLooper()).idle();
+        }
+    }
+
+    private static int shownPoints(MapActivity activity, String device) {
+        for (NavigationAdapter.NavigationItem item : activity.itemsNavigationDevice) {
+            if (item.id.equals(device)) {
+                return item.count;
+            }
+        }
+        return -1;
+    }
+
+    @Test
+    public void newLocalPositionIsAddedToTheMap() throws Exception {
+        // the sync helper is a singleton that keeps an earlier test's Application (and settings)
+        ReflectionHelpers.setStaticField(SessionServerSyncHelper.class, "instance", null);
+        // a logjob of this phone logging into the session: its positions show without the server
+        PreferenceManager.getDefaultSharedPreferences(app).edit()
+                .putString(SettingsActivity.SETTINGS_URL, "http://127.0.0.1:9").commit();
+        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(app);
+        long ljId = db.addLogjob(new DBLogjob(0, "mine", "http://127.0.0.1:9", "family", "phone",
+                60, 0, 50, false, false, false, 60, false, false, 0, null, null, false));
+        long now = System.currentTimeMillis() / 1000;
+        addLocation(db, ljId, now - 120);
+        addLocation(db, ljId, now - 60);
+
+        MapActivity activity = launchMap();
+        waitForDeviceList(activity);
+        activity.stopRefresh();
+        assertEquals(1, activity.localDataReads);
+        assertEquals(2, shownPoints(activity, "phone"));
+
+        addLocation(db, ljId, now);
+        activity.onLocalPositionSaved();
+        activity.refresh();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(2, activity.localDataReads);
+        assertEquals(3, shownPoints(activity, "phone"));
     }
 }
