@@ -1014,6 +1014,31 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Positions waiting for upload, in one query.
+     *
+     * @return for each logjob that has some: {how many, time of the oldest one (epoch seconds)}
+     */
+    @NonNull
+    @WorkerThread
+    public Map<Long, long[]> getPendingUploadStats() {
+        SQLiteDatabase db = getReadableDatabase();
+        Map<Long, long[]> result = new HashMap<>();
+        try (Cursor cursor = db.query(
+                table_locations,
+                new String[]{key_logjobid, "COUNT(*)", "MIN(" + key_time + ")"},
+                key_synced + " = 0",
+                new String[]{},
+                key_logjobid,
+                null,
+                null)) {
+            while (cursor.moveToNext()) {
+                result.put(cursor.getLong(0), new long[]{cursor.getLong(1), cursor.getLong(2)});
+            }
+        }
+        return result;
+    }
+
     @WorkerThread
     public int getLocationNotSyncedCount() {
         SQLiteDatabase db = getReadableDatabase();

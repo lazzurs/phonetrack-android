@@ -130,6 +130,6 @@ public class LogjobDeletionTest {
     public void uploadingADeletedLogjobDoesNotThrow() {
         long id = logjob(false, 0).getId();
         db.deleteLogjob(id);
-        new WebTrackSync(activity).sync(id);
+        new WebTrackSync(activity).sync(id, false);
     }
 }
