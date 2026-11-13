@@ -1165,8 +1165,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     accountServerUrl = ssoAccount.url.replaceAll("/+$", "").replaceAll("^https?://", "");
                     accountUser = ssoAccount.userId;
                 } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
-                    accountServerUrl = "error";
-                    accountUser = "error";
+                    // the account was removed from the Nextcloud Files app (or the app itself)
+                    account.setText(getString(R.string.drawer_account_unavailable));
+                    updateAvatarInDrawer(false);
+                    return;
                 }
             } else {
                 accountServerUrl = preferences.getString(SettingsActivity.SETTINGS_URL, SettingsActivity.DEFAULT_SETTINGS);
