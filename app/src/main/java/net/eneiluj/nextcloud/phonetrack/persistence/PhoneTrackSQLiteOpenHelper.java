@@ -98,6 +98,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     static final String index_locations_pending = "LOCATIONS_PENDING_idx";
     @VisibleForTesting
     static final String index_locations_logjob = "LOCATIONS_LOGJOBID_CURRENTRUN_idx";
+    @VisibleForTesting
+    static final String selection_logjob_after_id =
+            "+" + key_logjobid + " = CAST(? AS INTEGER) AND " + key_id + " > ?";
 
     private static final String table_syslog = "SYSLOG";
     private static final String key_tag = "TAG";
@@ -983,6 +986,21 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return getLocationsCustom(
                 key_logjobid + " = ?",
                 new String[]{String.valueOf(ljId)},
+                key_time + " ASC"
+        );
+    }
+
+    /**
+     * Positions of a logjob stored after the one with the given id, oldest first: the ones the
+     * open map has not read yet. Ids only grow (AUTOINCREMENT), so SQLite reads just the newest
+     * rows of the table through its primary key. The unary + keeps it from using the LOGJOBID
+     * index instead, which would visit every position of the logjob; it also drops the column's
+     * integer affinity, hence the CAST of the argument (bound as text).
+     */
+    public List<DBLogjobLocation> getLocationsOfLogjobAfter(long ljId, long afterId) {
+        return getLocationsCustom(
+                selection_logjob_after_id,
+                new String[]{String.valueOf(ljId), String.valueOf(afterId)},
                 key_time + " ASC"
         );
     }

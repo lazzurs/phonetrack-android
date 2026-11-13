@@ -191,6 +191,10 @@ public class MapActivity extends AppCompatActivity {
     private final AtomicBoolean serverRequestRunning = new AtomicBoolean(false);
     @VisibleForTesting
     volatile int localDataReads = 0;
+    @VisibleForTesting
+    volatile int localRowsRead = 0;
+    // per logjob, the id of the newest local position read (only newer ones are read next time)
+    private final Map<Long, Long> lastLocalIds = new HashMap<>();
     private volatile boolean mapUpdated = false;
     private String selectedLayer;
     private MapTileProviderBasic defaultTileProvider;
@@ -1079,8 +1083,20 @@ public class MapActivity extends AppCompatActivity {
             if (lj.isPhonetrack()
                     && db.getPhonetrackServerSyncHelper().isAccountUrl(lj.getUrl())
                     && lj.getToken().equals(session.getToken())) {
-                // get local positions of devices
-                locs = db.getLocationsOfLogjob(lj.getId());
+                // get local positions of devices: all of them once, then only the ones stored since
+                Long lastId = lastLocalIds.get(lj.getId());
+                locs = lastId == null
+                        ? db.getLocationsOfLogjob(lj.getId())
+                        : db.getLocationsOfLogjobAfter(lj.getId(), lastId);
+                localRowsRead += locs.size();
+                for (DBLogjobLocation loc : locs) {
+                    if (lastId == null || loc.getId() > lastId) {
+                        lastId = loc.getId();
+                    }
+                }
+                if (lastId != null) {
+                    lastLocalIds.put(lj.getId(), lastId);
+                }
                 basicLocs = new ArrayList<>(locs);
                 changed |= updateDevicePositions(lj.getDeviceName(), basicLocs, null);
             }

@@ -304,6 +304,7 @@ public class MapActivityTest {
         waitForDeviceList(activity);
         activity.stopRefresh();
         assertEquals(1, activity.localDataReads);
+        assertEquals(2, activity.localRowsRead);
         assertEquals(2, shownPoints(activity, "phone"));
 
         addLocation(db, ljId, now);
@@ -311,6 +312,16 @@ public class MapActivityTest {
         activity.refresh();
         shadowOf(Looper.getMainLooper()).idle();
         assertEquals(2, activity.localDataReads);
+        // only the new position is read, not the two already on the map again
+        assertEquals(3, activity.localRowsRead);
+        assertEquals(3, shownPoints(activity, "phone"));
+
+        // nothing newer: nothing read, nothing added
+        activity.onLocalPositionSaved();
+        activity.refresh();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(3, activity.localDataReads);
+        assertEquals(3, activity.localRowsRead);
         assertEquals(3, shownPoints(activity, "phone"));
     }
 }
