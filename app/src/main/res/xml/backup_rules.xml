@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 11 and older, where one set of rules covers every kind of backup:
-     passwords (CredentialStore.FILE_NAME) are never backed up. -->
+<!-- Android 11 and older, where one set of rules covers every kind of backup.
+     Mirrors the cloud backup rules in data_extraction_rules.xml: no database,
+     no passwords (CredentialStore.FILE_NAME), no Single Sign-On token file. -->
 <full-backup-content>
+    <exclude domain="database" path="." />
     <exclude domain="sharedpref" path="credentials.xml" />
+    <exclude domain="sharedpref" path="single-sign-on.xml" />
 </full-backup-content>

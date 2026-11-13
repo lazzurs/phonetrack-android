@@ -16,3 +16,10 @@ the privacy policy of this server applies.
 * READ\_CONTACTS, SEND\_SMS and RECEIVE\_SMS permissions are used to catch commands received by SMS and send the answer back. The only SMS that are processed are those targeting PhoneTrack-Android.
 * GET\_ACCOUNTS permission is used by Single-Sign-On library to access accounts from Nextcloud Files app.
 * WRITE\_EXTERNAL\_STORAGE permission is used to write imported map files and to export GPX files.
+
+## Backups
+
+Android can back up the app's data to your Google account (cloud backup) or copy it directly to a new phone (device transfer).
+
+* **Cloud backup** contains only the ordinary settings (for example the server URL, user name, SMS keyword and allowed numbers). It does not contain the database (so no session tokens, log jobs, recorded positions or system log), the stored passwords or the Nextcloud Single Sign-On token. The backup is only made when Android can encrypt it with your screen lock. After restoring from a cloud backup you need to sign in again and recreate your log jobs.
+* **Device transfer** (phone to phone, started by you) also carries the database, so your log jobs, sessions and any positions not yet sent come with you. Stored passwords and the Single Sign-On token are never transferred: sign in again on the new phone.
