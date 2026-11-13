@@ -45,8 +45,8 @@
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="6dp"
-                            android:layout_marginRight="6dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
                             android:layout_marginTop="6dp"
                             android:layout_marginBottom="8dp"
                             android:orientation="horizontal">
@@ -80,8 +80,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
-                            android:layout_marginLeft="6dp"
-                            android:layout_marginRight="6dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -103,7 +103,6 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight=".70"
                                 android:layout_marginEnd="2dp"
-                                android:layout_marginRight="2dp"
                                 android:text="@string/drawer_connect_hint"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                                 android:layout_gravity="center_vertical"

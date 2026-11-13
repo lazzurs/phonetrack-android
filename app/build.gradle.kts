@@ -101,6 +101,8 @@ android {
         // (some, like newer library versions, appear without any code change).
         abortOnError = true
         disable += "MissingTranslation"
+        // Right-to-left languages are shipped: keep left/right out of layouts.
+        error += "RtlHardcoded"
     }
 }
 

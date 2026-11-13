@@ -32,7 +32,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.preference.PreferenceManager;
@@ -191,7 +190,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     Snackbar ssoSnackbar;
     ImageView avatarView;
     AppCompatImageButton menuButton;
-    AppCompatImageView accountButton;
+    AppCompatImageButton accountButton;
     MaterialCardView homeToolbar;
     AppBarLayout appBar;
 

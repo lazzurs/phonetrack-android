@@ -4,7 +4,9 @@ import android.graphics.Color;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Paint;
@@ -64,6 +66,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
         ImageView icon;
 
         private NavigationItem currentItem;
+        private final ClickListener clickListener;
+        private int iconActionId = View.NO_ID;
 
         ViewHolder(@NonNull View itemView, @NonNull final ClickListener clickListener) {
             super(itemView);
@@ -71,12 +75,9 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
             name = view.findViewById(R.id.navigationItemLabel);
             count = view.findViewById(R.id.navigationItemCount);
             icon = view.findViewById(R.id.navigationItemIcon);
-            icon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    clickListener.onIconClick(currentItem);
-                }
-            });
+            this.clickListener = clickListener;
+            icon.setFocusable(false);
+            icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -106,13 +107,47 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Vi
             count.setTextColor(textColor);
             icon.setColorFilter(isSelected ? textColor : 0);
 
-            if (isSelected) {
-                name.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
-                count.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
+            // recycled views must not keep the bold flag of the item they showed before
+            int boldFlag = isSelected ? Paint.FAKE_BOLD_TEXT_FLAG : 0;
+            name.setPaintFlags((name.getPaintFlags() & ~Paint.FAKE_BOLD_TEXT_FLAG) | boldFlag);
+            count.setPaintFlags((count.getPaintFlags() & ~Paint.FAKE_BOLD_TEXT_FLAG) | boldFlag);
+            ViewCompat.setStateDescription(view,
+                    isSelected ? view.getContext().getString(R.string.a11y_nav_selected) : null);
+
+            // The icon is only a separate touch target for items where it does something other than
+            // the row (expand a folder, show or hide a track). It is not a TalkBack focus stop: that
+            // action is offered on the row instead.
+            int actionLabel = iconActionLabel(item);
+            if (iconActionId != View.NO_ID) {
+                ViewCompat.removeAccessibilityAction(view, iconActionId);
+                iconActionId = View.NO_ID;
+            }
+            if (actionLabel != 0) {
+                icon.setOnClickListener(v -> clickListener.onIconClick(currentItem));
+                iconActionId = ViewCompat.addAccessibilityAction(view, view.getContext().getString(actionLabel),
+                        (v, args) -> {
+                            clickListener.onIconClick(currentItem);
+                            return true;
+                        });
+            } else {
+                icon.setOnClickListener(null);
+                icon.setClickable(false);
             }
             //view.setBackgroundColor(isSelected ? ContextCompat.getColor(view.getContext(), R.color.bg_highlighted) : Color.TRANSPARENT);
             view.setSelected(isSelected);
         }
+    }
+
+    /** String resource describing what tapping the icon does, or 0 when it does the same as the row. */
+    @StringRes
+    static int iconActionLabel(@NonNull NavigationItem item) {
+        if (item.icon == ICON_MULTIPLE || item.icon == ICON_MULTIPLE_OPEN) {
+            return R.string.a11y_nav_folder_action;
+        }
+        if (item.icon == R.drawable.ic_device_check_24 || item.icon == R.drawable.ic_phone_android_grey_24dp) {
+            return R.string.a11y_nav_track_action;
+        }
+        return 0;
     }
 
     public interface ClickListener {

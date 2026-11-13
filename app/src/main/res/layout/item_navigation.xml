@@ -18,7 +18,6 @@
         android:id="@+id/navigationItemCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:padding="8dp"
@@ -29,9 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_toStartOf="@id/navigationItemCount"
-        android:layout_toLeftOf="@id/navigationItemCount"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="44dp"
         android:layout_marginStart="44dp"
         android:ellipsize="end"
         android:textAppearance="@style/NavigationItem" />
