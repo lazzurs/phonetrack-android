@@ -1,6 +1,8 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.view.ContextThemeWrapper;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -218,6 +220,31 @@ public class SettingsActivity extends AppCompatActivity {
         handleSubmitButtonEnabled();
     }
 
+    /** Switches off the Nextcloud Files account: resets the server URL and removes the synced sessions. */
+    private void disconnectSso() {
+        use_sso_switch.setChecked(false);
+        use_sso_switch.getTrackDrawable().setColorFilter(ContextCompat.getColor(SettingsActivity.this, R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
+        use_sso_switch.getThumbDrawable().setColorFilter(ContextCompat.getColor(SettingsActivity.this, R.color.fg_default_high), PorterDuff.Mode.MULTIPLY);
+
+        url_wrapper.setVisibility(View.VISIBLE);
+        //urlWarnHttp.setVisibility(View.VISIBLE);
+        // stimulate url field to update http warning
+        String url = field_url.getText().toString();
+        field_url.setText("");
+        field_url.setText(url);
+        btn_submit.setVisibility(View.VISIBLE);
+
+        // update preferences
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(SETTINGS_USE_SSO, false);
+        editor.putString(SETTINGS_URL, DEFAULT_SETTINGS);
+        editor.apply();
+
+        // empty session list
+        PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(SettingsActivity.this);
+        db.clearSessions();
+    }
+
     private void setupListener() {
 
         use_sso_switch.setOnClickListener(new View.OnClickListener() {
@@ -231,26 +258,14 @@ public class SettingsActivity extends AppCompatActivity {
 
                     use_sso_switch.setChecked(false);
                 } else {
-                    use_sso_switch.getTrackDrawable().setColorFilter(ContextCompat.getColor(SettingsActivity.this, R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
-                    use_sso_switch.getThumbDrawable().setColorFilter(ContextCompat.getColor(SettingsActivity.this, R.color.fg_default_high), PorterDuff.Mode.MULTIPLY);
-
-                    url_wrapper.setVisibility(View.VISIBLE);
-                    //urlWarnHttp.setVisibility(View.VISIBLE);
-                    // stimulate url field to update http warning
-                    String url = field_url.getText().toString();
-                    field_url.setText("");
-                    field_url.setText(url);
-                    btn_submit.setVisibility(View.VISIBLE);
-
-                    // update preferences
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putBoolean(SETTINGS_USE_SSO, false);
-                    editor.putString(SETTINGS_URL, DEFAULT_SETTINGS);
-                    editor.apply();
-
-                    // empty session list
-                    PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(view.getContext());
-                    db.clearSessions();
+                    // the click already unticked the switch: keep it on until the user confirms
+                    use_sso_switch.setChecked(true);
+                    new AlertDialog.Builder(new ContextThemeWrapper(SettingsActivity.this, R.style.AppThemeDialog))
+                            .setTitle(R.string.sso_disconnect_title)
+                            .setMessage(R.string.sso_disconnect_message)
+                            .setPositiveButton(R.string.sso_disconnect_confirm, (dialog, which) -> disconnectSso())
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .show();
                 }
             }
 

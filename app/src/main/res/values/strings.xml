@@ -150,6 +150,12 @@
     <string name="dialog_msg_import_pt_url">Any compatible logging link given in PhoneTrack web interface</string>
     <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
     <string name="dialog_title_create_session">Create session</string>
+    <string name="sso_disconnect_title">Disconnect from the Nextcloud Files account?</string>
+    <string name="sso_disconnect_message">The server address will be reset and the synced sessions will be removed from this phone. Your log jobs and recorded positions are kept.</string>
+    <string name="sso_disconnect_confirm">Disconnect</string>
+    <string name="syslog_clear_title">Clear the activity log?</string>
+    <string name="syslog_clear_message">Switching activity logs on again deletes the entries recorded so far.</string>
+    <string name="syslog_clear_confirm">Clear and enable</string>
     <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
     <string name="logjob_delete_active_impossible">Impossible to delete an active log job</string>
     <string name="edit_logjob_choose_session_dialog_title">Choose a session</string>
@@ -189,6 +195,9 @@
     <string name="sms_logjob_updated">The SMS log job in session %2$s is running with %1$d seconds frequency</string>
     <string name="sms_command_notification_title">SMS command run</string>
     <string name="sms_command_notification">The SMS command \"%1$s\" from %2$s was run.</string>
+    <string name="sms_ignored_notification_title">SMS command ignored</string>
+    <string name="sms_ignored_notification">An SMS command from %1$s was ignored because that number is not in your allowed senders. Tap to change the SMS settings.</string>
+    <string name="sms_ignored_notification_no_senders">An SMS command from %1$s was ignored because no allowed sender is set. Tap to add one in the SMS settings.</string>
     <string name="sms_command_notification_no_pin">Sender numbers can be forged: if you did not send it, set an SMS PIN in the settings.</string>
     <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
     <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>
@@ -447,6 +456,7 @@
     <string name="pref_key_trust_system_certs" translatable="false">trustSystemCerts</string>
     <string name="pref_key_reset_trust" translatable="false">resetTrust</string>
     <string name="pref_key_theme" translatable="false">darkTheme</string>
+    <string name="pref_key_theme_mode" translatable="false">themeMode</string>
     <string name="pref_key_color" translatable="false">appColor</string>
     <string name="pref_key_sms" translatable="false">listenSMS</string>
     <string name="pref_key_preset_hint_disabled" translatable="false">presetHintDisabled</string>
@@ -459,6 +469,7 @@
     <string name="pref_key_avatar" translatable="false">ncAvatar</string>
     <string name="pref_key_autostart" translatable="false">autostart</string>
     <string name="pref_key_shownbsynced" translatable="false">shownbsynced</string>
+    <string name="pref_value_theme_system">Follow system</string>
     <string name="pref_value_theme_light">Light</string>
     <string name="pref_value_theme_dark">Dark</string>
     <string name="pref_key_group_sync" translatable="false">groupSync</string>

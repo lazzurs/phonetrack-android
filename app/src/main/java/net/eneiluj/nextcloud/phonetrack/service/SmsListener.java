@@ -25,6 +25,7 @@ import net.eneiluj.nextcloud.phonetrack.util.SmsSenderAllowlist;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
+import net.eneiluj.nextcloud.phonetrack.android.activity.PreferencesActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
@@ -68,6 +69,7 @@ public class SmsListener extends BroadcastReceiver {
                     // the keyword is visible in any SMS, it is not a secret: only allowed numbers may send commands
                     if (!SmsSenderAllowlist.isAllowed(context, msg_from)) {
                         SystemLogger.w(TAG, "Ignored SMS command from " + msg_from + ": not an allowed sender");
+                        notifyIgnored(context, msg_from);
                         return;
                     }
                     String[] words = checkPinAndRateLimit(context, msgContent.split("\\s+"), msg_from);
@@ -353,6 +355,41 @@ public class SmsListener extends BroadcastReceiver {
             }
         }
         return null;
+    }
+
+    /**
+     * Leaves a trace of a command that was ignored because its sender is not allowed (or no
+     * sender is allowed at all), so the owner can tell why a text did nothing. Anyone can send
+     * the keyword, so this is rate limited by {@link SmsCommandGuard#tryAcquireIgnoredNotice}.
+     * It shows the sender's number, never the message.
+     */
+    private static void notifyIgnored(Context context, @Nullable String from) {
+        if (from == null || from.trim().isEmpty()
+                || ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+                || !SmsCommandGuard.tryAcquireIgnoredNotice(context, from)) {
+            return;
+        }
+        String text = SmsSenderAllowlist.getAllowedSenders(context).isEmpty()
+                ? context.getString(R.string.sms_ignored_notification_no_senders, from)
+                : context.getString(R.string.sms_ignored_notification, from);
+        NotificationChannels.createSmsActivity(context);
+        PendingIntent open = PendingIntent.getActivity(context, 0,
+                new Intent(context, PreferencesActivity.class),
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, SmsLocationSendService.INFO_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notify_24dp)
+                .setContentTitle(context.getString(R.string.sms_ignored_notification_title))
+                .setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentIntent(open)
+                .setAutoCancel(true);
+        try {
+            NotificationManagerCompat.from(context).notify(commandNotificationId++, builder.build());
+        } catch (SecurityException e) {
+            Log.w(TAG, "Unable to show the ignored SMS command notification: " + e);
+        }
     }
 
     /**

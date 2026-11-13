@@ -82,4 +82,33 @@ public class SmsCommandGuardTest {
         now -= 24 * 60 * 60 * 1000L;
         assertTrue(SmsCommandGuard.tryAcquire(context, SENDER, true));
     }
+
+    @Test
+    public void ignoredNoticesAreOnePerSenderPerDay() {
+        assertTrue(SmsCommandGuard.tryAcquireIgnoredNotice(context, SENDER));
+        assertFalse(SmsCommandGuard.tryAcquireIgnoredNotice(context, SENDER));
+        // the same number written differently is the same sender
+        assertFalse(SmsCommandGuard.tryAcquireIgnoredNotice(context, "+353 87 123 4567"));
+        now += SmsCommandGuard.IGNORED_NOTICE_INTERVAL_MS - 1;
+        assertFalse(SmsCommandGuard.tryAcquireIgnoredNotice(context, SENDER));
+        now += 1;
+        assertTrue(SmsCommandGuard.tryAcquireIgnoredNotice(context, SENDER));
+    }
+
+    @Test
+    public void ignoredNoticesHaveATotalCapSoManyNumbersCannotFloodTheShade() {
+        for (int i = 0; i < SmsCommandGuard.MAX_IGNORED_NOTICES; i++) {
+            assertTrue(SmsCommandGuard.tryAcquireIgnoredNotice(context, "+35387000000" + i));
+        }
+        assertFalse(SmsCommandGuard.tryAcquireIgnoredNotice(context, "+353879999999"));
+        now += SmsCommandGuard.IGNORED_NOTICE_INTERVAL_MS;
+        assertTrue(SmsCommandGuard.tryAcquireIgnoredNotice(context, "+353879999999"));
+    }
+
+    @Test
+    public void ignoredNoticesDoNotTouchThePinLockoutOrCommandLimits() {
+        SmsCommandGuard.tryAcquireIgnoredNotice(context, SENDER);
+        assertFalse(SmsCommandGuard.isLockedOut(context, SENDER));
+        assertTrue(SmsCommandGuard.tryAcquire(context, SENDER, true));
+    }
 }

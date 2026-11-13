@@ -80,10 +80,12 @@
         android:title="@string/settings_theming_category"
         android:key="settings_theming_category">
 
-    <SwitchPreferenceCompat
-        android:defaultValue="@string/pref_value_theme_light"
+    <ListPreference
+        android:defaultValue="system"
+        android:entries="@array/themeModeEntries"
+        android:entryValues="@array/themeModeValues"
         android:icon="@drawable/ic_brightness_2_grey_24dp"
-        android:key="@string/pref_key_theme"
+        android:key="@string/pref_key_theme_mode"
         android:summary="%s"
         android:title="@string/settings_theme_title" />
 

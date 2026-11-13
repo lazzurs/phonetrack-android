@@ -9,4 +9,14 @@
         <item>6</item>
         <item>7</item>
     </string-array>
+    <string-array name="themeModeValues" translatable="false">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+    <string-array name="themeModeEntries">
+        <item>@string/pref_value_theme_system</item>
+        <item>@string/pref_value_theme_light</item>
+        <item>@string/pref_value_theme_dark</item>
+    </string-array>
 </resources>
