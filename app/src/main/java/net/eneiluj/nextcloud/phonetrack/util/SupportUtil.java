@@ -25,8 +25,10 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 import at.bitfire.cert4android.CustomCertManager;
@@ -84,8 +86,71 @@ public class SupportUtil {
     }
 
     /**
+     * Socket factory and hostname verifier for one trust manager, shared by all its connections.
+     *
+     * HttpURLConnection only reuses a pooled connection when the factory and verifier are the
+     * same instances, and only an SSLContext that lives on can resume a TLS session. A new
+     * SSLContext per request meant a new TCP connection and a full TLS handshake every time.
+     */
+    private static final class TlsConfig {
+        final CustomCertManager certManager;
+        final HostnameVerifier wrappedVerifier;
+        @Nullable
+        final SSLSocketFactory socketFactory;
+        final HostnameVerifier hostnameVerifier;
+
+        TlsConfig(CustomCertManager certManager, HostnameVerifier wrappedVerifier,
+                  @Nullable SSLSocketFactory socketFactory, HostnameVerifier hostnameVerifier) {
+            this.certManager = certManager;
+            this.wrappedVerifier = wrappedVerifier;
+            this.socketFactory = socketFactory;
+            this.hostnameVerifier = hostnameVerifier;
+        }
+    }
+
+    // one entry is enough: the app uses a single CustomCertManager (SessionServerSyncHelper)
+    @Nullable
+    private static TlsConfig tlsConfig;
+
+    private static synchronized TlsConfig getTlsConfig(CustomCertManager ccm, HostnameVerifier defaultVerifier) {
+        TlsConfig config = tlsConfig;
+        if (config != null && config.certManager == ccm && config.wrappedVerifier == defaultVerifier) {
+            return config;
+        }
+        HostnameVerifier verifier = ccm.new HostnameVerifier(defaultVerifier);
+        SSLSocketFactory factory = null;
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{ccm}, null);
+            factory = sslContext.getSocketFactory();
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            Log.e(SupportUtil.class.getSimpleName(), "Exception", e);
+            // ignore, use default TrustManager
+        }
+        config = new TlsConfig(ccm, defaultVerifier, factory, verifier);
+        if (factory != null) {
+            tlsConfig = config;
+        }
+        return config;
+    }
+
+    /**
+     * Drops the shared TLS socket factory, its pooled connections and its cached TLS sessions.
+     * A resumed session or a pooled connection skips the certificate check, so call this
+     * whenever trust is narrowed (certificates reset, system certificates no longer trusted):
+     * the next request then makes a new connection and checks the certificate again.
+     */
+    public static synchronized void resetTlsConnections() {
+        tlsConfig = null;
+    }
+
+    /**
      * Create a new {@link HttpURLConnection} for strUrl.
      * If protocol equals https, then install CustomCertManager in {@link SSLContext}.
+     * Connections made with the same CustomCertManager share one {@link SSLSocketFactory} and
+     * {@link HostnameVerifier}, so keep-alive and TLS session resumption work: read the
+     * response to the end and close its stream instead of calling disconnect() so the
+     * connection can be reused.
      *
      * @param ccm
      * @param strUrl
@@ -98,17 +163,10 @@ public class SupportUtil {
         HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
         if (ccm != null && url.getProtocol().equals("https")) {
             HttpsURLConnection httpsCon = (HttpsURLConnection) httpCon;
-            httpsCon.setHostnameVerifier(ccm.new HostnameVerifier(httpsCon.getHostnameVerifier()));
-            try {
-                SSLContext sslContext = SSLContext.getInstance("TLS");
-                sslContext.init(null, new TrustManager[]{ccm}, null);
-                httpsCon.setSSLSocketFactory(sslContext.getSocketFactory());
-            } catch (NoSuchAlgorithmException e) {
-                Log.e(SupportUtil.class.getSimpleName(), "Exception", e);
-                // ignore, use default TrustManager
-            } catch (KeyManagementException e) {
-                Log.e(SupportUtil.class.getSimpleName(), "Exception", e);
-                // ignore, use default TrustManager
+            TlsConfig config = getTlsConfig(ccm, httpsCon.getHostnameVerifier());
+            httpsCon.setHostnameVerifier(config.hostnameVerifier);
+            if (config.socketFactory != null) {
+                httpsCon.setSSLSocketFactory(config.socketFactory);
             }
         }
         return httpCon;
