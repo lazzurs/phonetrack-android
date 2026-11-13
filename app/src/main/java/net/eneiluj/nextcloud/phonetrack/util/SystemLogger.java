@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 
@@ -46,22 +47,24 @@ public class SystemLogger {
         }
     }
 
+    // Messages reach logcat in debug builds only (they can contain phone numbers and the like);
+    // the in-app system log below is the user's own, opt-in record. v/d/i are stripped by R8.
     public static void w(String tag, String message) {
-        Log.w(tag, message);
+        if (BuildConfig.DEBUG) { Log.w(tag, message); }
         if (enabled) {
             db.addSyslog("w", tag, message);
         }
     }
 
     public static void e(String tag, String message) {
-        Log.e(tag, message);
+        if (BuildConfig.DEBUG) { Log.e(tag, message); }
         if (enabled) {
             db.addSyslog("e", tag, message);
         }
     }
 
     public static void wtf(String tag, String message) {
-        Log.wtf(tag, message);
+        if (BuildConfig.DEBUG) { Log.wtf(tag, message); }
         if (enabled) {
             db.addSyslog("f", tag, message);
         }

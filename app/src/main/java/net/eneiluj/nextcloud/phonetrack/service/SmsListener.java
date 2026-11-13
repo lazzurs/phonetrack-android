@@ -55,9 +55,7 @@ public class SmsListener extends BroadcastReceiver {
                 }
 
                 String word0 = msgContent.split("\\s+")[0].trim().toLowerCase();
-                Log.d(TAG, "Received message: '" + msgContent + "'");
                 Log.d(TAG, "current keyword: '" + keyword + "'");
-                Log.d(TAG, "Received from: " + msg_from);
                 if (word0.equals(keyword.trim().toLowerCase())) {
                     // the keyword is visible in any SMS, it is not a secret: only allowed numbers may send commands
                     if (!SmsSenderAllowlist.isAllowed(context, msg_from)) {
@@ -142,7 +140,7 @@ public class SmsListener extends BroadcastReceiver {
                 }
             }
             else {
-                Log.d(TAG, "Sms location service already running for "+from);
+                Log.d(TAG, "Sms location service already running");
             }
         }
     }
@@ -256,7 +254,6 @@ public class SmsListener extends BroadcastReceiver {
                 String smsContent;
                 smsContent = context.getString(R.string.sms_logjob_created, minTime, sessionName);
                 smsManager.sendTextMessage(from, null, smsContent, null, null);
-                Log.d(TAG, "Send SMS: "+smsContent);
             }
         }
         else {
@@ -268,7 +265,6 @@ public class SmsListener extends BroadcastReceiver {
                 String smsContent;
                 smsContent = context.getString(R.string.sms_logjob_creation_impossible);
                 smsManager.sendTextMessage(from, null, smsContent, null, null);
-                Log.d(TAG, "Send SMS: "+smsContent);
             }
         }
     }

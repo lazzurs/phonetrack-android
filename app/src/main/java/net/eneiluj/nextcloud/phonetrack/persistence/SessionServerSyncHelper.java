@@ -359,7 +359,7 @@ public class SessionServerSyncHelper {
                                 Log.v(TAG, "session " + localSession.getName() + " found locally -> does not need update");
                             }
                         } else {
-                            Log.e(TAG, "session with token " + remoteSession.getToken() + " NOT found locally");
+                            Log.e(TAG, "remote session NOT found locally");
                         }
                     } else {
                         Log.v(TAG, "create session");
@@ -432,7 +432,7 @@ public class SessionServerSyncHelper {
                     intent.putExtra(LoggerService.BROADCAST_ERROR_MESSAGE, errorString);
                 }
                 else {
-                    Log.e(TAG, "Error while retrieving sessions: "+errorString);
+                    Log.e(TAG, "Error while retrieving sessions");
                 }
                 intent.setPackage(appContext.getPackageName());
                 appContext.sendBroadcast(intent);
@@ -663,9 +663,6 @@ public class SessionServerSyncHelper {
             try {
                 ServerResponse.ShareDeviceResponse response = client.shareDevice(getCustomCertManager(), token, deviceName);
                 sharetoken = response.getPublicToken();
-                if (LoggerService.DEBUG) {
-                    Log.i(TAG, "HERE IS THE TOKEN "+sharetoken);
-                }
                 if (prefs.getBoolean(SettingsActivity.SETTINGS_USE_SSO, false)) {
                     String settingsSsoUrl = prefs.getString(SettingsActivity.SETTINGS_SSO_URL, SettingsActivity.DEFAULT_SETTINGS);
                     settingsSsoUrl = settingsSsoUrl == null ? SettingsActivity.DEFAULT_SETTINGS : settingsSsoUrl;

@@ -8,6 +8,16 @@
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
 
+# Release builds must not write verbose, debug or info messages to logcat: they carry URLs with
+# session tokens, positions and server responses. R8 removes these calls together with the string
+# building for their arguments. Warnings and errors are kept, and call sites keep them free of
+# secrets. (Debug builds are not minified, so they still log.)
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+}
+
 # Libraries without consumer rules that load classes or resources by name.
 # There is no instrumented test run of a minified build, so keep them whole rather
 # than guess: the size cost is small next to the risk of breaking maps or TLS on device.

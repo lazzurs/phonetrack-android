@@ -87,7 +87,7 @@ public class WebTrackHelper {
         //OutputStream out = null;
         try {
             boolean redirect;
-            int redirectTries = 5;
+            int redirectTries = RedirectPolicy.MAX_REDIRECTS;
             do {
                 redirect = false;
                 //connection = (HttpURLConnection) url.openConnection();
@@ -113,24 +113,21 @@ public class WebTrackHelper {
                 }
 
                 int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_MOVED_PERM
-                        || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
-                        || responseCode == HttpURLConnection.HTTP_SEE_OTHER
-                        || responseCode == 307) {
+                if (RedirectPolicy.isRedirect(responseCode)) {
                     URL base = connection.getURL();
                     String location = connection.getHeaderField("Location");
                     if (LoggerService.DEBUG) { Log.d(TAG, "[postMultiple redirect: " + location + "]"); }
                     if (location == null || redirectTries == 0) {
                         throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
                     }
-                    redirect = true;
-                    redirectTries--;
-                    url = new URL(base, location);
-                    String h1 = base.getHost();
-                    String h2 = url.getHost();
-                    if (h1 != null && !h1.equalsIgnoreCase(h2)) {
+                    // refuses https -> http, another host or another port
+                    URL next = RedirectPolicy.resolve(base, location);
+                    if (next == null) {
                         throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
                     }
+                    redirect = true;
+                    redirectTries--;
+                    url = next;
                     try {
                         //out.close();
                         connection.getInputStream().close();
@@ -201,7 +198,7 @@ public class WebTrackHelper {
         OutputStream out = null;
         try {
             boolean redirect;
-            int redirectTries = 5;
+            int redirectTries = RedirectPolicy.MAX_REDIRECTS;
             do {
                 redirect = false;
                 //connection = (HttpURLConnection) url.openConnection();
@@ -227,24 +224,21 @@ public class WebTrackHelper {
                 out.flush();
 
                 int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_MOVED_PERM
-                        || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
-                        || responseCode == HttpURLConnection.HTTP_SEE_OTHER
-                        || responseCode == 307) {
+                if (RedirectPolicy.isRedirect(responseCode)) {
                     URL base = connection.getURL();
                     String location = connection.getHeaderField("Location");
                     if (LoggerService.DEBUG) { Log.d(TAG, "[postWithParams redirect: " + location + "]"); }
                     if (location == null || redirectTries == 0) {
                         throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
                     }
-                    redirect = true;
-                    redirectTries--;
-                    url = new URL(base, location);
-                    String h1 = base.getHost();
-                    String h2 = url.getHost();
-                    if (h1 != null && !h1.equalsIgnoreCase(h2)) {
+                    // refuses https -> http, another host or another port
+                    URL next = RedirectPolicy.resolve(base, location);
+                    if (next == null) {
                         throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
                     }
+                    redirect = true;
+                    redirectTries--;
+                    url = next;
                     try {
                         out.close();
                         connection.getInputStream().close();
@@ -301,7 +295,7 @@ public class WebTrackHelper {
         OutputStream out = null;
         try {
             boolean redirect;
-            int redirectTries = 5;
+            int redirectTries = RedirectPolicy.MAX_REDIRECTS;
             do {
                 redirect = false;
                 //connection = (HttpURLConnection) url.openConnection();
@@ -328,24 +322,21 @@ public class WebTrackHelper {
                 out.flush();
 
                 int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_MOVED_PERM
-                        || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
-                        || responseCode == HttpURLConnection.HTTP_SEE_OTHER
-                        || responseCode == 307) {
+                if (RedirectPolicy.isRedirect(responseCode)) {
                     URL base = connection.getURL();
                     String location = connection.getHeaderField("Location");
                     if (LoggerService.DEBUG) { Log.d(TAG, "[postWithParams redirect: " + location + "]"); }
                     if (location == null || redirectTries == 0) {
                         throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
                     }
-                    redirect = true;
-                    redirectTries--;
-                    url = new URL(base, location);
-                    String h1 = base.getHost();
-                    String h2 = url.getHost();
-                    if (h1 != null && !h1.equalsIgnoreCase(h2)) {
+                    // refuses https -> http, another host or another port
+                    URL next = RedirectPolicy.resolve(base, location);
+                    if (next == null) {
                         throw new IOException(context.getString(R.string.e_illegal_redirect, responseCode));
                     }
+                    redirect = true;
+                    redirectTries--;
+                    url = next;
                     try {
                         out.close();
                         connection.getInputStream().close();
