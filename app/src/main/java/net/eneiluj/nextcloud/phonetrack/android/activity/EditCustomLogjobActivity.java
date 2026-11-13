@@ -61,14 +61,13 @@ public class EditCustomLogjobActivity extends EditLogjobActivity {
                 timeout, false, false, 0, null, null, false
         );
 
-        String url;
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
-            url = intent.getStringExtra(Intent.EXTRA_TEXT);
-            if (!url.startsWith("http")) {
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            String url = getSharedText();
+            if (url == null || !url.startsWith("http")) {
                 showToast(getString(R.string.error_invalid_url), Toast.LENGTH_LONG);
-            }
-            else {
+            } else {
                 newLogjob.setUrl(url);
+                showPrefilledFromOtherApp();
             }
         }
 

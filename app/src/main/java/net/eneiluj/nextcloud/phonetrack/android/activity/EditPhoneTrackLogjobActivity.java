@@ -62,11 +62,12 @@ public class EditPhoneTrackLogjobActivity extends EditLogjobActivity {
                 timeout, false,false, 0, null, null, false
         );
 
-        String url;
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
-            url = intent.getStringExtra(Intent.EXTRA_TEXT);
-            if (!newLogjob.setAttrFromLoggingUrl(url)) {
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            String url = getSharedText();
+            if (url == null || !newLogjob.setAttrFromLoggingUrl(url)) {
                 showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
+            } else {
+                showPrefilledFromOtherApp();
             }
         }
 

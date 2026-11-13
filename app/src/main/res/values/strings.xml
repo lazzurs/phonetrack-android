@@ -283,6 +283,7 @@
     <string name="error_username_password_invalid">wrong username or password</string>
     <string name="error_invalid_pt_url">Invalid PhoneTrack logging link</string>
     <string name="error_invalid_url">Invalid link</string>
+    <string name="shared_url_prefilled">Link received from another app. Check it before saving.</string>
     <string name="error_invalid_sms_keyword">Invalid SMS keyword</string>
     <string name="settings_sms_allowed_senders_title">Allowed senders</string>
     <string name="settings_sms_allowed_senders_long">Only SMS from these phone numbers can request the position or run commands. Separate numbers with commas.</string>

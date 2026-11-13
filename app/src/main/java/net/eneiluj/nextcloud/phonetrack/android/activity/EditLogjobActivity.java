@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
+import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
@@ -58,8 +59,43 @@ public abstract class EditLogjobActivity extends AppCompatActivity implements Ed
         launchLogjobFragment();
     }
 
+    /**
+     * The ID of the logjob to edit, or 0 for a new one. Only the app itself opens an existing
+     * logjob: an intent from outside (a share, or one sent to the exported share alias) can
+     * carry any extras, so it never selects an existing logjob.
+     */
     protected long getLogjobId() {
-        return getIntent().getLongExtra(PARAM_LOGJOB_ID, 0);
+        Intent intent = getIntent();
+        if (isShare(intent) || !isOpenedByClassName(intent)) {
+            return 0;
+        }
+        return intent.getLongExtra(PARAM_LOGJOB_ID, 0);
+    }
+
+    private boolean isOpenedByClassName(Intent intent) {
+        return intent.getComponent() != null && getClass().getName().equals(intent.getComponent().getClassName());
+    }
+
+    private static boolean isShare(Intent intent) {
+        return Intent.ACTION_SEND.equals(intent.getAction());
+    }
+
+    /**
+     * @return the text another app shared to this activity, or null if there is none
+     * (not a text share, or a share without text).
+     */
+    protected String getSharedText() {
+        Intent intent = getIntent();
+        if (isShare(intent) && "text/plain".equals(intent.getType())) {
+            CharSequence text = intent.getCharSequenceExtra(Intent.EXTRA_TEXT);
+            return text == null ? null : text.toString();
+        }
+        return null;
+    }
+
+    /** Tells the user that the form was filled in by another app, not by them. */
+    protected void showPrefilledFromOtherApp() {
+        showToast(getString(R.string.shared_url_prefilled), Toast.LENGTH_LONG);
     }
 
     /**
