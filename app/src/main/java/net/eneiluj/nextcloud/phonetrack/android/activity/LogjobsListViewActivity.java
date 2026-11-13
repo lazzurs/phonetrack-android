@@ -28,6 +28,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -197,6 +198,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private long currentInfoDialogLogjobId = -1;
 
     private ItemAdapter adapter = null;
+    @VisibleForTesting
+    ItemTouchHelper.Callback swipeCallback;
     private NavigationAdapter adapterCategories;
     private NavigationAdapter.NavigationItem itemAll, itemEnabled, itemPhonetrack, itemCustom, itemUncategorized;
     private Category navigationSelection = new Category(null, null);
@@ -964,7 +967,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         adapter = new ItemAdapter(this, db);
         listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(this));
-        ItemTouchHelper touchHelper = new ItemTouchHelper(new SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        // START/END, not LEFT/RIGHT: the gestures follow the reading direction in right-to-left
+        // languages, like the row's layout (toggle label at the start, delete icon at the end)
+        swipeCallback = new SimpleCallback(0, ItemTouchHelper.START | ItemTouchHelper.END) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -984,7 +989,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
 
             /**
-             * Delete logjob if logjob is swiped to left or right
+             * Swiped towards the start (left in left-to-right languages): delete.
+             * Swiped towards the end: turn on or off.
              *
              * @param viewHolder RecyclerView.ViewHoler
              * @param direction  int
@@ -992,7 +998,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 switch(direction) {
-                    case ItemTouchHelper.LEFT: {
+                    case ItemTouchHelper.START: {
                         // warning, this could be viewHolder.getAbsoluteAdapterPosition() if we were using ConcatAdapter
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getBindingAdapterPosition());
                         DBLogjob upToDateLogjob = db.getLogjob(dbLogjob.getId());
@@ -1004,7 +1010,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         }
                         break;
                     }
-                    case ItemTouchHelper.RIGHT: {
+                    case ItemTouchHelper.END: {
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                         boolean resetOnToggle = preferences.getBoolean(getString(R.string.pref_key_reset_stats), false);
                         final DBLogjob dbLogjob = (DBLogjob) adapter.getItem(viewHolder.getBindingAdapterPosition());
@@ -1021,7 +1027,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 ItemAdapter.LogjobViewHolder logjobViewHolder = (ItemAdapter.LogjobViewHolder) viewHolder;
                 // show swipe icon on the side
-                logjobViewHolder.showSwipe(dX>0);
+                logjobViewHolder.showSwipe(swipeRevealsToggle(dX,
+                        recyclerView.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL));
                 // move only swipeable part of item (not leave-behind)
                 getDefaultUIUtil().onDraw(c, recyclerView, logjobViewHolder.logjobSwipeable, dX, dY, actionState, isCurrentlyActive);
             }
@@ -1030,8 +1037,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 getDefaultUIUtil().clearView(((ItemAdapter.LogjobViewHolder) viewHolder).logjobSwipeable);
             }
-        });
-        touchHelper.attachToRecyclerView(listView);
+        };
+        new ItemTouchHelper(swipeCallback).attachToRecyclerView(listView);
+    }
+
+    /**
+     * True if a row moved by dX shows the toggle label (at its start), false for the delete icon
+     * (at its end): a swipe towards the end, which is to the left in right-to-left languages.
+     */
+    static boolean swipeRevealsToggle(float dX, boolean rtl) {
+        return rtl ? dX < 0 : dX > 0;
     }
 
     private void refreshLists() {
