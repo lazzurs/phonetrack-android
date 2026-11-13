@@ -15,6 +15,8 @@ range=${previous:+$previous..}HEAD
 
 found=$(git log --no-merges --format='%h %s%n%b%x00' "$range" | awk -v RS='\0' '
     {
+        # git log puts a newline between commits, so every record but the first starts with one
+        sub(/^\n+/, "")
         subject = $0; sub(/\n.*/, "", subject)
         message = substr(subject, index(subject, " ") + 1)
         if (message ~ /^(feat|fix|perf|refactor)(\([a-z0-9._\/-]+\))?!?: / ||
