@@ -86,7 +86,11 @@ public class WebTrackSync {
         // if only one logjob is asked, just get this one
         else {
             logjobs = new ArrayList<>();
-            logjobs.add(db.getLogjob(ljIdToSync));
+            // the logjob may have been deleted since the upload was queued
+            DBLogjob single = db.getLogjob(ljIdToSync);
+            if (single != null) {
+                logjobs.add(single);
+            }
         }
 
         if (logjobs.size() > 0) {

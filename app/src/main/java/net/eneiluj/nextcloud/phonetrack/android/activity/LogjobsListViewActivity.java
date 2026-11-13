@@ -111,6 +111,7 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackSync;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackWorker;
+import net.eneiluj.nextcloud.phonetrack.util.LogjobDeletion;
 import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
 import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
@@ -1628,17 +1629,19 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             if (item.getItemId() == R.id.menu_delete) {
-                List<Integer> selection = adapter.getSelected();
-                for (Integer i : selection) {
-                    DBLogjob logjob = (DBLogjob) adapter.getItem(i);
-                    db.deleteLogjob(logjob.getId());
-                    adapter.remove(logjob);
-                    notifyLoggerService(logjob.getId());
+                List<DBLogjob> toDelete = new ArrayList<>();
+                for (Integer i : adapter.getSelected()) {
+                    toDelete.add((DBLogjob) adapter.getItem(i));
                 }
+                LogjobDeletion.confirmAndDelete(LogjobsListViewActivity.this, toDelete, () -> {
+                    for (DBLogjob logjob : toDelete) {
+                        adapter.remove(logjob);
+                    }
+                    refreshLists();
+                });
                 mode.finish(); // Action picked, so close the CAB
                 //after delete selection has to be cleared
                 searchView.setIconified(true);
-                refreshLists();
                 return true;
             }
             return false;
