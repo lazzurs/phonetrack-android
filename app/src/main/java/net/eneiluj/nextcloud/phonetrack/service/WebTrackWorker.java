@@ -61,6 +61,11 @@ public class WebTrackWorker extends Worker {
                 .enqueueUniqueWork(uniqueName(logjobId), ExistingWorkPolicy.KEEP, request);
     }
 
+    /** Drop the queued upload of a logjob (used when the logjob is deleted). */
+    public static void cancel(Context context, long logjobId) {
+        WorkManager.getInstance(context).cancelUniqueWork(uniqueName(logjobId));
+    }
+
     @VisibleForTesting
     static String uniqueName(long logjobId) {
         return logjobId == ALL_LOGJOBS ? "websync-all" : "websync-" + logjobId;

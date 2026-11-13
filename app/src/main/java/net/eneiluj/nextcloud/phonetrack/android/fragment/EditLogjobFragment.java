@@ -1,6 +1,8 @@
 package net.eneiluj.nextcloud.phonetrack.android.fragment;
 
 import android.annotation.SuppressLint;
+import java.util.Collections;
+import net.eneiluj.nextcloud.phonetrack.util.LogjobDeletion;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -148,8 +150,6 @@ public abstract class EditLogjobFragment extends Fragment {
 
     protected TextInputLayout minTimeTextInputLayout;
 
-    private DialogInterface.OnClickListener deleteDialogClickListener;
-    private AlertDialog.Builder confirmDeleteAlertBuilder;
 
     // small local SQLite read on the main thread: the logjob to edit (one row) is needed to build the screen
     @SuppressLint("ThreadConstraint")
@@ -474,29 +474,6 @@ public abstract class EditLogjobFragment extends Fragment {
                 }
         );
 
-        // delete confirmation
-        deleteDialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        //Yes button clicked
-                        db.deleteLogjob(logjob.getId());
-                        listener.close();
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
-                        break;
-                }
-            }
-        };
-        //confirmDeleteAlertBuilder = new AlertDialog.Builder(getActivity());
-        confirmDeleteAlertBuilder = new AlertDialog.Builder(new ContextThemeWrapper(this.getActivity(), R.style.AppThemeDialog));
-        confirmDeleteAlertBuilder.setMessage(getString(R.string.confirm_delete_logjob_dialog_title))
-                .setPositiveButton(getString(R.string.simple_yes), deleteDialogClickListener)
-                .setNegativeButton(getString(R.string.simple_no), deleteDialogClickListener);
-
         handler = new Handler(Looper.getMainLooper());
     }
 
@@ -562,11 +539,13 @@ public abstract class EditLogjobFragment extends Fragment {
      * Main-Menu-Handler
      */
     @Override
+    // small local SQLite reads/deletes on the main thread, like the other delete paths of the UI
+    @SuppressLint("ThreadConstraint")
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.menu_delete) {
             if (logjob.getId() != 0) {
-                confirmDeleteAlertBuilder.show();
+                LogjobDeletion.confirmAndDelete(requireActivity(), Collections.singletonList(logjob), listener::close);
             }
             else {
                 listener.close();

@@ -379,6 +379,14 @@
     <string name="allow_rotation">Allow rotation</string>
 
     <!-- Plurals -->
+    <plurals name="delete_logjobs_confirm">
+        <item quantity="one">Delete this log job?</item>
+        <item quantity="other">Delete %d log jobs?</item>
+    </plurals>
+    <plurals name="delete_logjobs_unsent_warning">
+        <item quantity="one">%d position has not been uploaded yet and will be lost.</item>
+        <item quantity="other">%d positions have not been uploaded yet and will be lost.</item>
+    </plurals>
     <plurals name="ab_selected">
         <item quantity="one">%d selected</item>
         <item quantity="other">%d selected</item>

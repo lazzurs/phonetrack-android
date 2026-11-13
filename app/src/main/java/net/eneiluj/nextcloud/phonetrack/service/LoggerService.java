@@ -501,6 +501,10 @@ public class LoggerService extends Service {
         }
         // it has been deleted or disabled
         else {
+            if (lj == null) {
+                // deleted: no point uploading positions for it any more
+                WebTrackWorker.cancel(getApplicationContext(), ljId);
+            }
             if (gpsLocListeners.containsKey(ljId)) {
                 // Stop requested updates, sleeping motion-based job
                 stopJob(ljId);
@@ -539,15 +543,10 @@ public class LoggerService extends Service {
             locManager.removeUpdates(networkLocListener);
         }
 
-        // stop any runnables waiting for an interval
-        DBLogjob lj = db.getLogjob(jobId);
-        SystemLogger.d(TAG, "will stop runnable? job " + jobId);
-        if (lj != null) {
-            SystemLogger.e(TAG, "YES, stop for job " + jobId);
-            LogjobWorker logjobWorker = mLogjobWorkers.get(jobId);
-            if (logjobWorker != null) {
-                logjobWorker.stop();
-            }
+        // stop any runnables waiting for an interval (the logjob may already be deleted from the database)
+        LogjobWorker logjobWorker = mLogjobWorkers.get(jobId);
+        if (logjobWorker != null) {
+            logjobWorker.stop();
         }
     }
 
