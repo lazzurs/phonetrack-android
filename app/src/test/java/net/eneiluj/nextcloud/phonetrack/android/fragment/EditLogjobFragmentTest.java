@@ -40,7 +40,7 @@ import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowToast;
 
-/** The log job editor: unsaved changes on Back, per-field errors, number parsing, placeholders. */
+/** The log job editor: unsaved changes on Back, per-field errors, number parsing, placeholders, http warning. */
 @RunWith(AndroidJUnit4.class)
 public class EditLogjobFragmentTest {
 
@@ -497,5 +497,48 @@ public class EditLogjobFragmentTest {
         assertEquals("abc123", field(R.id.editToken).getText().toString());
         assertEquals("myphone", field(R.id.editDeviceName).getText().toString());
         assertFalse(f.setFieldsFromPhoneTrackLoggingUrl("not a link"));
+    }
+
+    // http:// warning
+
+    private TextView httpWarning() {
+        return activity.findViewById(R.id.logjob_url_warn_http);
+    }
+
+    @Test
+    public void httpAddressShowsAWarningForPhoneTrack() {
+        open(EditPhoneTrackLogjobActivity.class, addPhoneTrackJob("Old"));
+        assertEquals(View.GONE, httpWarning().getVisibility());
+        type(R.id.editUrl, "http://cloud.example.test");
+        assertEquals(View.VISIBLE, httpWarning().getVisibility());
+        assertEquals(app.getString(R.string.logjob_url_warn_http_token), httpWarning().getText().toString());
+        type(R.id.editUrl, "https://cloud.example.test");
+        assertEquals(View.GONE, httpWarning().getVisibility());
+    }
+
+    @Test
+    public void httpAddressWithCredentialsShowsTheStrongerWarning() {
+        open(EditCustomLogjobActivity.class, addCustomJob("Old", "https://example.test/log"));
+        type(R.id.editUrl, "HTTP://example.test/log");
+        assertEquals(View.VISIBLE, httpWarning().getVisibility());
+        assertEquals(app.getString(R.string.logjob_url_warn_http), httpWarning().getText().toString());
+        type(R.id.editLogin, "me");
+        assertEquals(app.getString(R.string.logjob_url_warn_http_credentials), httpWarning().getText().toString());
+    }
+
+    @Test
+    public void httpWarningDoesNotBlockSaving() {
+        long id = addCustomJob("Old", "https://example.test/log");
+        open(EditCustomLogjobActivity.class, id);
+        type(R.id.editUrl, "http://example.test/log");
+        tapSave();
+        assertTrue(activity.isFinishing());
+        assertEquals("http://example.test/log", db.getLogjob(id).getUrl());
+    }
+
+    @Test
+    public void mapsJobNeverShowsTheHttpWarning() {
+        open(EditMapsLogjobActivity.class, 0);
+        assertEquals(View.GONE, httpWarning().getVisibility());
     }
 }

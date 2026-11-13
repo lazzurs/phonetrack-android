@@ -215,6 +215,18 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         validation.check(editUrlHint, urlError(getURL()));
     }
 
+    /** A login and password are sent with every position, so over http:// they travel unencrypted. */
+    @Nullable
+    @Override
+    protected String httpWarningText() {
+        if (!isPlainHttp(getURL())) {
+            return null;
+        }
+        return getLogin() != null || getPassword() != null
+                ? getString(R.string.logjob_url_warn_http_credentials)
+                : getString(R.string.logjob_url_warn_http);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

@@ -77,6 +77,7 @@ import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import static android.webkit.URLUtil.isValidUrl;
@@ -121,6 +122,7 @@ public abstract class EditLogjobFragment extends Fragment {
     private boolean revealAllErrors;
     /** Asks what to do with unsaved changes on Back or Up; enabled only while there are some. */
     private OnBackPressedCallback unsavedChangesCallback;
+    protected TextView httpWarning;
 
     public static final String SETTINGS_LAST_MINTIME = "settingsLastMintime";
     public static final String SETTINGS_LAST_MINDISTANCE = "settingsLastMindist";
@@ -284,6 +286,7 @@ public abstract class EditLogjobFragment extends Fragment {
         editMinTimeSummary = view.findViewById(R.id.editMinTimeSummary);
 
         minTimeTextInputLayout = view.findViewById(R.id.input_layout_min_time);
+        httpWarning = view.findViewById(R.id.logjob_url_warn_http);
 
         editMindistanceHint.setHelperText(getString(R.string.edit_range_metres, 0, MAX_METRES));
         editMinaccuracyHint.setHelperText(getString(R.string.edit_range_metres, 1, MAX_METRES));
@@ -808,7 +811,7 @@ public abstract class EditLogjobFragment extends Fragment {
 
     /**
      * Called whenever a field changes: updates the helper texts, the errors of the fields the user
-     * has edited and whether Back asks about unsaved changes.
+     * has edited, the http:// warning and whether Back asks about unsaved changes.
      */
     protected void onFormChanged() {
         if (editLocationTimeoutHint == null) {
@@ -826,6 +829,7 @@ public abstract class EditLogjobFragment extends Fragment {
                 ? getString(R.string.setting_keepgps_summary) + "\n" + getString(R.string.setting_keepgps_long_interval_warning)
                 : getString(R.string.setting_keepgps_summary));
         validate(false);
+        updateHttpWarning();
         if (unsavedChangesCallback != null) {
             unsavedChangesCallback.setEnabled(hasUnsavedChanges());
         }
@@ -930,6 +934,28 @@ public abstract class EditLogjobFragment extends Fragment {
 
     private boolean isMixedMode() {
         return getUseSignificantMotion() && getUseSignificantMotionInterval() && getUseSignificantMotionMixed();
+    }
+
+    /**
+     * @return the warning to show under the address, or null for none. Positions sent to an
+     * http:// address travel unencrypted.
+     */
+    @Nullable
+    protected String httpWarningText() {
+        return isPlainHttp(getURL()) ? getString(R.string.logjob_url_warn_http) : null;
+    }
+
+    protected static boolean isPlainHttp(String url) {
+        return url.trim().toLowerCase(Locale.ROOT).startsWith("http://");
+    }
+
+    private void updateHttpWarning() {
+        if (httpWarning == null) {
+            return;
+        }
+        String warning = httpWarningText();
+        httpWarning.setText(warning);
+        httpWarning.setVisibility(warning == null ? View.GONE : View.VISIBLE);
     }
 
     /** The result of checking the form: whether it is valid and the first field that is not. */

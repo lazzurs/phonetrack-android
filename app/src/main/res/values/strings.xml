@@ -128,6 +128,9 @@
     <string name="edit_unsaved_discard">Discard</string>
     <string name="edit_unsaved_keep_editing">Keep editing</string>
     <string name="logjob_title_from_logging_link">From PhoneTrack logging link</string>
+    <string name="logjob_url_warn_http">This address uses http://, so your positions are sent unencrypted and others on the network can read them. Use https:// if your server supports it.</string>
+    <string name="logjob_url_warn_http_token">This address uses http://, so your positions and the session token are sent unencrypted and others on the network can read them. Use https:// if your server supports it.</string>
+    <string name="logjob_url_warn_http_credentials">This address uses http://, so your positions and your HTTP login and password are sent unencrypted and others on the network can read them. Use https:// if your server supports it.</string>
     <string name="logjob_title_log_to">Log to %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_session_token">supertoken</string>

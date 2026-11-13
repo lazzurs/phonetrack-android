@@ -152,6 +152,13 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         validation.check(editDeviceNameHint, getDevicename().isEmpty() ? getString(R.string.edit_error_device_name_required) : null);
     }
 
+    /** The session token is part of the address positions are sent to, so it travels unencrypted too. */
+    @Nullable
+    @Override
+    protected String httpWarningText() {
+        return isPlainHttp(getURL()) ? getString(R.string.logjob_url_warn_http_token) : null;
+    }
+
     // small local SQLite read on the main thread: the menu depends on whether any unshared session exists
     @SuppressLint("ThreadConstraint")
     @Override
