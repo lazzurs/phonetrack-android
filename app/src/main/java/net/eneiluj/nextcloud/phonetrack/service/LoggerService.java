@@ -320,12 +320,14 @@ public class LoggerService extends Service {
                 if (logjobs.containsKey(jobId)) {
                     LogjobWorker logjobWorker = mLogjobWorkers.get(jobId);
                     if (logjobWorker != null) {
+                        // the alarm has fired: it no longer marks a job waiting for its next point
+                        logjobWorker.nextPointIntent = null;
                         boolean shouldGetPosition = logjobWorker.shouldGetPositionAfterInterval();
                         if (!shouldGetPosition) {
-                            SystemLogger.d(TAG, "[command] only schedule for " + jobId);
-                            // we just schedule next time to get a point. this happens in sigmotion when no motion has been seen
+                            SystemLogger.d(TAG, "[command] no position needed for " + jobId);
+                            // this happens in sigmotion when no motion has been seen
                             long intervalTimeMillis = intent.getLongExtra(SCHEDULE_INTERVAL, 0);
-                            logjobWorker.scheduleSampleAfterInterval(intervalTimeMillis);
+                            logjobWorker.onIntervalOverWithoutMotion(intervalTimeMillis);
                         } else {
                             SystemLogger.d(TAG, "[command] request location update for " + jobId);
                             boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
@@ -1296,6 +1298,13 @@ public class LoggerService extends Service {
             return true;
         }
 
+        /**
+         * The interval is over and {@link #shouldGetPositionAfterInterval()} said no position is needed.
+         */
+        public void onIntervalOverWithoutMotion(long intervalTimeMillis) {
+            scheduleSampleAfterInterval(intervalTimeMillis);
+        }
+
         protected abstract Runnable createSampleTimeoutDelayRunnable();
 
         public abstract void handleLocationChange(Location location);
@@ -1522,6 +1531,8 @@ public class LoggerService extends Service {
         private final SensorManager mSensorManager;
         private final Sensor mSensor;
         private boolean mMotionDetected = false;
+        /** No alarm is set: the next search starts on significant motion */
+        private boolean mWaitingForMotion = false;
 
         LogjobSignificantMotionWorker(DBLogjob logjob) {
             super(logjob);
@@ -1530,10 +1541,33 @@ public class LoggerService extends Service {
             mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
         }
 
+        /**
+         * Ask for the next significant motion. Does nothing on a device without the sensor (for
+         * example a log job restored from a backup), where requesting it would throw.
+         */
+        private void listenForMotion() {
+            if (mSensor != null) {
+                mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+            }
+        }
+
         public void stop() {
             super.stop();
             SystemLogger.e(TAG, "stop sigmotion sensor");
-            mSensorManager.cancelTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+            if (mSensor != null) {
+                mSensorManager.cancelTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+            }
+        }
+
+        /**
+         * Without hybrid mode and no motion during the interval: set no alarm, which used to wake
+         * the phone every interval while it lay still. {@link #onTrigger} starts the next search.
+         */
+        @Override
+        public void onIntervalOverWithoutMotion(long intervalTimeMillis) {
+            SystemLogger.d(TAG, "[SigMotion] No motion during the interval, waiting for motion before the next search");
+            mWaitingForMotion = true;
+            listenForMotion();
         }
 
         public boolean shouldGetPositionAfterInterval() {
@@ -1567,7 +1601,7 @@ public class LoggerService extends Service {
                     // Clear significant motion flag for next interval
                     mMotionDetected = false;
                     // Request significant motion notification
-                    mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+                    listenForMotion();
 
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
@@ -1604,7 +1638,7 @@ public class LoggerService extends Service {
             }
 
             // Ensure significant motion notifications are enabled
-            mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+            listenForMotion();
         }
 
         public void handleLocationChange(Location location) {
@@ -1649,7 +1683,7 @@ public class LoggerService extends Service {
                 mMotionDetected = false;
 
                 // Request significant motion notification
-                mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+                listenForMotion();
 
                 // If using an interval and the search is done, schedule sample for X seconds from last sample
                 if (mUseInterval && searchDone) {
@@ -1696,9 +1730,12 @@ public class LoggerService extends Service {
                     // If we're interval-based and there is a runnable waiting for the next interval we know we haven't
                     // already requested a location. This check helps us to avoid having two sampling sequences running
                     // for the same job.
-                    if (mUseInterval && nextPointIntent != null) {
-                        alarmManager.cancel(nextPointIntent);
-                        nextPointIntent = null;
+                    if (mUseInterval && (nextPointIntent != null || mWaitingForMotion)) {
+                        if (nextPointIntent != null) {
+                            alarmManager.cancel(nextPointIntent);
+                            nextPointIntent = null;
+                        }
+                        mWaitingForMotion = false;
 
                         SystemLogger.d(TAG, "Triggering immediate location request after significant motion due to " +
                                 (millisSinceLast / 1000.0) + " seconds since last point");
@@ -1709,6 +1746,10 @@ public class LoggerService extends Service {
                     if (requestUpdates) {
                         requestLocationUpdates(mJobId, true, true);
                     }
+                } else if (mWaitingForMotion) {
+                    // the last point is less than an interval old: search when the interval is over
+                    mWaitingForMotion = false;
+                    scheduleSampleAfterInterval(mIntervalTimeMillis - millisSinceLast);
                 }
             }
             // with mixed mode
@@ -1731,7 +1772,16 @@ public class LoggerService extends Service {
             }
 
             // Request notification for next significant motion
-            mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
+            listenForMotion();
+        }
+    }
+
+    /** Deliver a significant motion to a log job, which Robolectric cannot simulate. */
+    @VisibleForTesting
+    void onSignificantMotion(long jobId) {
+        LogjobWorker logjobWorker = mLogjobWorkers.get(jobId);
+        if (logjobWorker != null) {
+            logjobWorker.onTrigger(null);
         }
     }
 }
