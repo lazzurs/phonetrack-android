@@ -54,10 +54,10 @@ public class EditCustomLogjobActivity extends EditLogjobActivity {
         int timeout = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_TIMEOUT,
                 LocationSamplePolicy.defaultTimeoutSeconds(minTime));
 
-        String exampleHost = getString(R.string.example_hostname);
-
+        // the address starts empty (the form shows an example): a placeholder saved as a
+        // real value sends positions nowhere
         DBLogjob newLogjob = new DBLogjob(
-                0, "",  "https://"+exampleHost+"/page?lat=%LAT&lon=%LON&timestamp=%TIMESTAMP",
+                0, "", "",
                 "", "", minTime, minDistance, minAccuracy,
                 keepGpsOn, sigMotion, sigMotionMixed,
                 timeout, false, false, 0, null, null, false

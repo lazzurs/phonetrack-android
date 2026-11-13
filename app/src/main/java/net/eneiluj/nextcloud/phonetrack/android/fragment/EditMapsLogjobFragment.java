@@ -28,8 +28,6 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
-import static android.webkit.URLUtil.isValidUrl;
-
 public class EditMapsLogjobFragment extends EditLogjobFragment {
 
 
@@ -51,7 +49,7 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
         editPasswordLayout.setVisibility(View.GONE);
         editLoginLayout.setVisibility(View.GONE);
 
-        showHideValidationButtons();
+        onFormChanged();
 
         return view;
     }
@@ -152,56 +150,6 @@ public class EditMapsLogjobFragment extends EditLogjobFragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    protected boolean isFormValid() {
-        boolean valid = true;
-        if (getTitle() == null || getTitle().equals("")) {
-            editTitleHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editTitleHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getMinaccuracy() < 1) {
-            editMinaccuracyHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editMinaccuracyHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getMindistance() < 0) {
-            editMindistanceHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editMindistanceHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getUseSignificantMotion()) {
-            if (getUseSignificantMotionInterval() && getMintime() < 30) {
-                minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
-                valid = false;
-            } else {
-                minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-            }
-        }
-        else {
-            if (getMintime() < 1) {
-                minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
-                valid = false;
-            } else {
-                minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-            }
-        }
-        if (getLocationRequestTimeout() < 0 || getLocationRequestTimeout() >= getMintime()) {
-            editLocationTimeoutHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editLocationTimeoutHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-
-        return valid;
     }
 
     @Override

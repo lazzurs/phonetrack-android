@@ -21,8 +21,6 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
-import static android.webkit.URLUtil.isValidUrl;
-
 public class EditCustomLogjobFragment extends EditLogjobFragment {
     private static final String TAG = EditCustomLogjobFragment.class.getSimpleName();
 
@@ -56,12 +54,17 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         editPassword = view.findViewById(R.id.editPassword);
         editPassword.setText((logjob.getPassword() == null) ? "" : logjob.getPassword());
 
+        // an example, shown only while the field is empty: it is never saved
+        editUrlHint.setPlaceholderText("https://" + getString(R.string.example_hostname)
+                + "/page?lat=%LAT&lon=%LON&timestamp=%TIMESTAMP");
+
         editPost.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         Log.d(TAG, "use POST change");
                         showHideFields();
+                        onFormChanged();
                     }
                 }
         );
@@ -71,12 +74,13 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         Log.d(TAG, "send JSON change");
+                        onFormChanged();
                     }
                 }
         );
 
         showHideFields();
-        showHideValidationButtons();
+        onFormChanged();
 
         return view;
     }
@@ -206,61 +210,9 @@ public class EditCustomLogjobFragment extends EditLogjobFragment {
         return f;
     }
 
-    protected boolean isFormValid() {
-        boolean valid = true;
-        if (getTitle() == null || getTitle().equals("")) {
-            editTitleHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editTitleHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
-            editUrlHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editUrlHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getMindistance() < 0) {
-            editMindistanceHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editMindistanceHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getMinaccuracy() < 1) {
-            editMinaccuracyHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editMinaccuracyHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getUseSignificantMotion()) {
-            if (getUseSignificantMotionInterval() && getMintime() < 30) {
-                minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
-                valid = false;
-            } else {
-                minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-            }
-        }
-        else {
-            if (getMintime() < 1) {
-                minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
-                valid = false;
-            } else {
-                minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-            }
-        }
-        if (getLocationRequestTimeout() < 0 || getLocationRequestTimeout() >= getMintime()) {
-            editLocationTimeoutHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editLocationTimeoutHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-
-        return valid;
+    @Override
+    protected void validateConnectionFields(Validation validation) {
+        validation.check(editUrlHint, urlError(getURL()));
     }
 
     @Override

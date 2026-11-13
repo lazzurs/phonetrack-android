@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.preference.PreferenceManager;
 
@@ -35,8 +34,6 @@ import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.webkit.URLUtil.isValidUrl;
 
 
 public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
@@ -85,32 +82,6 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         editTokenHint = view.findViewById(R.id.input_layout_token);
 
 
-        editToken.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                Log.d(TAG, "token change");
-                showHideValidationButtons();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-
-        editDevicename.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                Log.d(TAG, "device name change");
-                showHideValidationButtons();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-
         // manage session list
         sessionList = db.getSessions();
         sessionNameList = new ArrayList<>();
@@ -148,7 +119,9 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
 
         fromUrlBuilder.setPositiveButton(getString(R.string.simple_ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString());
+                if (!setFieldsFromPhoneTrackLoggingUrl(fromUrlEdit.getText().toString())) {
+                    showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
+                }
             }
         });
         fromUrlBuilder.setNegativeButton(getString(R.string.simple_cancel), new DialogInterface.OnClickListener() {
@@ -167,80 +140,16 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
             }
         }
 
-        showHideValidationButtons();
+        onFormChanged();
 
         return view;
     }
 
-    protected boolean isFormValid() {
-        boolean valid = true;
-        if (getTitle() == null || getTitle().equals("")) {
-            editTitleHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editTitleHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getURL() == null || getURL().equals("") || !isValidUrl(getURL())) {
-            editUrlHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editUrlHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getToken() == null || getToken().equals("")) {
-            editTokenHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editTokenHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getDevicename() == null || getDevicename().equals("")) {
-            editDeviceNameHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editDeviceNameHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getUseSignificantMotion()) {
-            if (getUseSignificantMotionInterval() && getMintime() < 30) {
-                minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
-                valid = false;
-            } else {
-                minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-            }
-        }
-        else {
-            if (getMintime() < 1) {
-                minTimeTextInputLayout.setBackgroundColor(0x55FF0000);
-                valid = false;
-            } else {
-                minTimeTextInputLayout.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-            }
-        }
-        if (getMindistance() < 0) {
-            editMindistanceHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editMindistanceHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getMinaccuracy() < 1) {
-            editMinaccuracyHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editMinaccuracyHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-        if (getLocationRequestTimeout() < 0 || getLocationRequestTimeout() >= getMintime()) {
-            editLocationTimeoutHint.setBackgroundColor(0x55FF0000);
-            valid = false;
-        }
-        else {
-            editLocationTimeoutHint.setBackgroundColor(getResources().getColor(R.color.bg_normal));
-        }
-
-        return valid;
+    @Override
+    protected void validateConnectionFields(Validation validation) {
+        validation.check(editUrlHint, urlError(getURL()));
+        validation.check(editTokenHint, getToken().isEmpty() ? getString(R.string.edit_error_token_required) : null);
+        validation.check(editDeviceNameHint, getDevicename().isEmpty() ? getString(R.string.edit_error_device_name_required) : null);
     }
 
     // small local SQLite read on the main thread: the menu depends on whether any unshared session exists
@@ -437,7 +346,13 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
         editToken.setText(s.getToken());
     }
 
-    private void setFieldsFromPhoneTrackLoggingUrl(String url) {
+    /**
+     * Fills the form from a PhoneTrack logging link.
+     *
+     * @return false, changing nothing, if the text is not a logging link
+     */
+    @VisibleForTesting
+    boolean setFieldsFromPhoneTrackLoggingUrl(String url) {
         String[] spl = url.split("/apps/phonetrack/");
         if (spl.length == 2) {
             String nextURL = spl[0];
@@ -461,11 +376,13 @@ public class EditPhoneTrackLogjobFragment extends EditLogjobFragment {
                     splEnd = spl2[3].split("\\?");
                 }
                 String devname = splEnd[0];
-                editTitle.setText("From PhoneTrack logging URL");
+                editTitle.setText(getString(R.string.logjob_title_from_logging_link));
                 editDevicename.setText(devname);
                 editToken.setText(token);
                 editURL.setText(nextURL);
+                return true;
             }
         }
+        return false;
     }
 }

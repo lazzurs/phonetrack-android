@@ -393,7 +393,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/setting_min_distance">
+                    android:hint="@string/setting_min_distance"
+                    app:suffixText="@string/edit_unit_metres">
 
                     <EditText
                         android:id="@+id/editMinDistance"
@@ -544,7 +545,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/setting_min_time">
+                    android:hint="@string/setting_min_time"
+                    app:suffixText="@string/edit_unit_seconds">
 
                     <EditText
                         android:id="@+id/editMinTime"
@@ -595,7 +597,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/setting_min_accuracy">
+                    android:hint="@string/setting_min_accuracy"
+                    app:suffixText="@string/edit_unit_metres">
 
                     <EditText
                         android:id="@+id/editMinAccuracy"
@@ -698,7 +701,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/setting_significantmotion_timeout">
+                    android:hint="@string/setting_significantmotion_timeout"
+                    app:suffixText="@string/edit_unit_seconds">
 
                     <EditText
                         android:id="@+id/editSigMotionTimeout"
