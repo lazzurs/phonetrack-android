@@ -190,6 +190,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     TextView statusBannerText;
     Button statusBannerAction;
     Button statusBannerDismiss;
+    View emptyView;
 
 
     private View currentInfoDialogView = null;
@@ -263,6 +264,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         statusBannerText = findViewById(R.id.status_banner_text);
         statusBannerAction = findViewById(R.id.status_banner_action);
         statusBannerDismiss = findViewById(R.id.status_banner_dismiss);
+        emptyView = findViewById(R.id.empty_view);
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
@@ -407,6 +409,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             int accountEntries = SessionServerSyncHelper.isConfigured(getApplicationContext()) ? View.VISIBLE : View.GONE;
             findViewById(R.id.fab_row_session).setVisibility(accountEntries);
             findViewById(R.id.fab_row_maps).setVisibility(accountEntries);
+            // say why they are missing
+            findViewById(R.id.fab_account_hint).setVisibility(accountEntries == View.VISIBLE ? View.GONE : View.VISIBLE);
         }
         fabActions.setVisibility(open ? View.VISIBLE : View.GONE);
         fabScrim.setVisibility(open ? View.VISIBLE : View.GONE);
@@ -1049,12 +1053,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         if (searchView != null && !searchView.isIconified() && searchView.getQuery().length() != 0) {
             query = searchView.getQuery();
         }
+        // unfiltered: an empty list then means there is no log job at all
+        final boolean showsAll = query == null && navigationSelection.category == null
+                && navigationSelection.favorite == null;
 
         LoadLogjobsListTask.LogjobsLoadedListener callback = new LoadLogjobsListTask.LogjobsLoadedListener() {
             @Override
             public void onLogjobsLoaded(List<Item> ljItems, boolean showCategory) {
                 adapter.setShowCategory(showCategory);
                 adapter.setItemList(ljItems);
+                emptyView.setVisibility(showsAll && ljItems.isEmpty() ? VISIBLE : GONE);
                 if(scrollToTop) {
                     listView.scrollToPosition(0);
                 }

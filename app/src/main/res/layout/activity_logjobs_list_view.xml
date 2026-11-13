@@ -179,6 +179,20 @@
 
     </LinearLayout>
 
+    <!-- shown instead of a blank list before the first log job is created -->
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/logjobs_list_empty"
+        android:textColor="@color/fg_default_low"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
     <!-- "New ..." speed-dial menu (Material FloatingActionButton; replaced the archived
          com.github.clans:fab). The backdrop closes the menu when tapped. -->
     <View
@@ -206,6 +220,16 @@
             android:gravity="end"
             android:orientation="vertical"
             android:visibility="gone">
+
+            <!-- says why the session and Maps entries are missing (no Nextcloud account) -->
+            <TextView
+                android:id="@+id/fab_account_hint"
+                style="@style/FabMenuLabel"
+                android:layout_marginBottom="12dp"
+                android:maxWidth="280dp"
+                android:maxLines="4"
+                android:importantForAccessibility="yes"
+                android:text="@string/fab_account_hint" />
 
             <LinearLayout
                 android:id="@+id/fab_row_session"

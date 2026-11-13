@@ -289,6 +289,8 @@
     <string name="status_action_open_settings">Open settings</string>
     <string name="status_action_dismiss">Dismiss</string>
     <string name="tracking_problems_channel">Logging problems</string>
+    <string name="logjobs_list_empty">No log jobs yet. Tap + to log your position to a Nextcloud PhoneTrack session or to any web address. A Nextcloud account is only needed for PhoneTrack sessions and Nextcloud Maps.</string>
+    <string name="fab_account_hint">To create sessions or Nextcloud Maps log jobs, connect a Nextcloud account first: tap the account icon at the top.</string>
     <string name="autostart_skipped_title">Logging did not start after the restart</string>
     <string name="autostart_skipped_text">PhoneTrack can only start logging on its own when location access is set to \"%1$s\". Tap to fix this.</string>
     <string name="sessions_sync_success">Sessions synchronized</string>
