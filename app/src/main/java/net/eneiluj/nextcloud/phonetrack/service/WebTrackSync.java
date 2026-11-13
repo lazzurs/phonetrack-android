@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,10 +128,8 @@ public class WebTrackSync {
                             long locId = loc.getId();
                             Map<String, String> params = dbLocationToMap(loc);
                             web.postPositionToMaps(client, params);
-                            db.setLocationSynced(locId);
+                            db.markSynced(logjob, Collections.singletonList(locId));
                             sent++;
-                            db.incNbSync(logjob);
-                            db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                             Intent intent = new Intent(BROADCAST_SYNC_DONE);
                             intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                             intent.setPackage(context.getPackageName());
@@ -154,10 +153,8 @@ public class WebTrackSync {
                             long locId = loc.getId();
                             Map<String, String> params = dbLocationToMap(loc);
                             web.postPositionToPhoneTrack(url, params);
-                            db.setLocationSynced(locId);
+                            db.markSynced(logjob, Collections.singletonList(locId));
                             sent++;
-                            db.incNbSync(logjob);
-                            db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                             Intent intent = new Intent(BROADCAST_SYNC_DONE);
                             intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                             intent.setPackage(context.getPackageName());
@@ -178,12 +175,7 @@ public class WebTrackSync {
                             if (n%200 == 0) {
                                 JSONObject params = dbLocationsToJSON(tmpLocs);
                                 web.postMultiplePositionsToPhoneTrack(url, params);
-                                for (DBLogjobLocation locToDel : tmpLocs) {
-                                    long locId = locToDel.getId();
-                                    db.setLocationSynced(locId);
-                                    sent++;
-                                    db.incNbSync(logjob);
-                                }
+                                markSynced(logjob, tmpLocs);
                                 tmpLocs = new ArrayList<>();
                                 // update nbsync in logjob list
                                 Intent intent = new Intent(BROADCAST_SYNC_DONE);
@@ -196,14 +188,8 @@ public class WebTrackSync {
                         if (tmpLocs.size() > 0) {
                             JSONObject params = dbLocationsToJSON(tmpLocs);
                             web.postMultiplePositionsToPhoneTrack(url, params);
-                            for (DBLogjobLocation locToDel : tmpLocs) {
-                                long locId = locToDel.getId();
-                                db.setLocationSynced(locId);
-                                sent++;
-                                db.incNbSync(logjob);
-                            }
+                            markSynced(logjob, tmpLocs);
                         }
-                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         db.resetLastSyncError(ljId);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
@@ -231,11 +217,8 @@ public class WebTrackSync {
                             web.sendGETPositionToCustom(destUrl, params, login, password);
                         }
 
-                        db.setLocationSynced(locId);
-
+                        db.markSynced(logjob, Collections.singletonList(locId));
                         sent++;
-                        db.incNbSync(logjob);
-                        db.setLastSyncTimestamp(ljId, System.currentTimeMillis() / 1000);
                         Intent intent = new Intent(BROADCAST_SYNC_DONE);
                         intent.putExtra(LoggerService.BROADCAST_EXTRA_PARAM, ljId);
                         intent.setPackage(context.getPackageName());
@@ -268,6 +251,16 @@ public class WebTrackSync {
         intent.setPackage(context.getPackageName());
         context.sendBroadcast(intent);
         return !anyError;
+    }
+
+    /** A request carrying these positions was accepted: record all of them in one transaction. */
+    private void markSynced(DBLogjob logjob, List<DBLogjobLocation> locations) {
+        List<Long> ids = new ArrayList<>(locations.size());
+        for (DBLogjobLocation loc : locations) {
+            ids.add(loc.getId());
+        }
+        db.markSynced(logjob, ids);
+        sent += ids.size();
     }
 
     /**
