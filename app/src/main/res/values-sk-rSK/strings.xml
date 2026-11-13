@@ -222,8 +222,6 @@
   <string name="using_network">Používať polohu zo siete</string>
   <string name="using_gps">Používať polohu z Gps</string>
   <string name="background_location_permission_title">Oprávnenia na polohu bežiacu na pozadí</string>
-  <string name="background_location_permission_message">Na umožnenie behu PhoneTrack na pozadí musí byť povolené dodatočné oprávnenie. Na ďalšej obrazovke s nastaveniami vyberte: </string>
-  <string name="location_permission_denied">Prístup pre získanie polohy bol zamietnutý</string>
   <string name="sessions_sync_success">Relácia bola synchronizovaná</string>
   <string name="pref_autostart_title">Automatické spustenie</string>
   <string name="pref_autostart_summary">Záznam začne po štarte systému</string>

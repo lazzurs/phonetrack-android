@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
 import android.Manifest;
@@ -33,7 +34,7 @@ import org.robolectric.shadows.ShadowDialog;
 
 import java.time.Duration;
 
-/** Android 17 (targetSdk 37): the startup permission steps ask for local network access. */
+/** Android 17 (targetSdk 37): turning a log job on asks for local network access when the server needs it. */
 @RunWith(AndroidJUnit4.class)
 public class LocalNetworkPermissionFlowTest {
 
@@ -62,7 +63,11 @@ public class LocalNetworkPermissionFlowTest {
     private void startWithServer(String url) throws Exception {
         PreferenceManager.getDefaultSharedPreferences(app).edit()
                 .putString("settingsUrl", url).commit();
+        ListActivityTestSupport.addLogjob(app, "Hike", false);
         controller = Robolectric.buildActivity(LogjobsListViewActivity.class).setup();
+        // not at start-up: when a log job is turned on
+        assertNull(ShadowDialog.getLatestDialog());
+        controller.get().onLogjobEnabledClick(0, ListActivityTestSupport.awaitRows(controller.get(), 1));
         // the server check runs in the background, its result comes back on the main thread
         for (int i = 0; i < 50 && ShadowDialog.getLatestDialog() == null; i++) {
             Thread.sleep(20);

@@ -222,8 +222,6 @@
   <string name="using_network">Använder nätverksplats</string>
   <string name="using_gps">Använda gps plats</string>
   <string name="background_location_permission_title">Background location permission</string>
-  <string name="background_location_permission_message">To allow PhoneTrack to run in the background, an additional permission must be granted. On the next setting screen please select: </string>
-  <string name="location_permission_denied">Plats tillstånd nekas</string>
   <string name="sessions_sync_success">Sessioner synkroniserade</string>
   <string name="pref_autostart_title">Starta automatiskt</string>
   <string name="pref_autostart_summary">Loggning startar vid systemuppstart</string>

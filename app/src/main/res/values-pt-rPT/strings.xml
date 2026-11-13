@@ -222,8 +222,6 @@
   <string name="using_network">Utilizar localização da rede</string>
   <string name="using_gps">Utilizar localização GPS</string>
   <string name="background_location_permission_title">Permissão de localização em segundo plano</string>
-  <string name="background_location_permission_message">Para permitir que o PhoneTrack seja executado em segundo plano, é necessário conceder uma permissão adicional. No próximo ecrã selecione: </string>
-  <string name="location_permission_denied">Permissão do serviço de localização negada</string>
   <string name="sessions_sync_success">Sessões sincronizadas</string>
   <string name="pref_autostart_title">Iniciar automaticamente</string>
   <string name="pref_autostart_summary">O registo iniciará ao ligar o dispositivo</string>

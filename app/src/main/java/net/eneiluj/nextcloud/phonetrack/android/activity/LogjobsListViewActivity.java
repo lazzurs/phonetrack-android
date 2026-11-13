@@ -1,6 +1,5 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
-import android.Manifest;
 import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -12,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -50,7 +48,6 @@ import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
 import com.nextcloud.android.sso.helper.SingleAccountHelper;
 import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
-import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
@@ -63,8 +60,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 
-import android.os.PowerManager;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -72,6 +67,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -88,10 +84,13 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.Category;
@@ -107,11 +106,11 @@ import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
+import net.eneiluj.nextcloud.phonetrack.service.TrackingReadiness;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackSync;
 import net.eneiluj.nextcloud.phonetrack.service.WebTrackWorker;
 import net.eneiluj.nextcloud.phonetrack.util.LogjobDeletion;
 import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
-import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
 import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -128,18 +127,13 @@ import static net.eneiluj.nextcloud.phonetrack.util.SupportUtil.formatDistance;
 
 public class LogjobsListViewActivity extends AppCompatActivity implements ItemAdapter.LogjobClickListener {
 
-    // Runtime permissions are requested one step at a time (see requestNextPermission()):
-    // Android only shows one request at a time and ignores a background location
-    // request made before foreground location is granted.
-    private boolean locationPermissionAsked = false;
-    private boolean notificationPermissionAsked = false;
-    private boolean backgroundLocationPermissionAsked = false;
-    private boolean localNetworkAsked = false;
-    private boolean batteryOptimizationAsked = false;
+    // Permissions are asked for when a log job is turned on, not at start-up; what is still
+    // missing is shown in the status banner.
+    private final TrackingPermissionFlow trackingSetup =
+            new TrackingPermissionFlow(this, this::onTrackingReadinessMayHaveChanged);
 
-    private final ActivityResultLauncher<String[]> permissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
-                    result -> requestNextPermission());
+    /** Status banner causes the user dismissed; shown again if they go away and come back. */
+    static final String PREF_STATUS_BANNER_DISMISSED = "statusBannerDismissed";
 
     private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
@@ -192,6 +186,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     AppCompatImageButton accountButton;
     MaterialCardView homeToolbar;
     AppBarLayout appBar;
+    View statusBanner;
+    TextView statusBannerText;
+    Button statusBannerAction;
+    Button statusBannerDismiss;
 
 
     private View currentInfoDialogView = null;
@@ -261,6 +259,10 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         searchView = findViewById(R.id.search_view);
         homeToolbar = findViewById(R.id.home_toolbar);
         appBar = findViewById(R.id.appBar);
+        statusBanner = findViewById(R.id.status_banner);
+        statusBannerText = findViewById(R.id.status_banner_text);
+        statusBannerAction = findViewById(R.id.status_banner_action);
+        statusBannerDismiss = findViewById(R.id.status_banner_dismiss);
 
         db = PhoneTrackSQLiteOpenHelper.getInstance(this);
 
@@ -269,21 +271,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         setupLogjobsList();
         setupNavigationList(categoryAdapterSelectedItem);
         setupNavigationMenu();
-
-        if (savedInstanceState == null) {
-            // not again on rotation / recreation
-            requestNextPermission();
-        }
-
-        Map<String, Integer> enabled = db.getEnabledCount();
-        Integer enabledCount = enabled.get("1");
-        int nbEnabledLogjobs = enabledCount != null ? enabledCount : 0;
-        if (nbEnabledLogjobs > 0 && SupportUtil.hasForegroundLocationPermission(this)) {
-            SystemLogger.d(TAG, "Found enabled jobs => start loggerservice");
-            // start loggerservice !
-            Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
-            startForegroundService(intent);
-        }
 
         // only text the app stored itself (see SmsInfoStore): this activity is exported
         String[] smsInfo = SmsInfoStore.lookup(this, getIntent());
@@ -311,113 +298,102 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     }
 
+    private int enabledLogjobCount() {
+        Integer enabledCount = db.getEnabledCount().get("1");
+        return enabledCount != null ? enabledCount : 0;
+    }
+
     /**
-     * Walk through the permissions the app needs, one request at a time:
-     * foreground location, notifications (API 33+), background location (with an
-     * explanation first, API 29+), then the battery optimization exemption.
-     * Each request's result callback calls this again to continue.
+     * Start the logger service if log jobs are enabled and it is not running (e.g. location was
+     * just allowed), otherwise let it check its paused log jobs again.
      */
-    @SuppressLint("BatteryLife")
-    private void requestNextPermission() {
-        if (!locationPermissionAsked) {
-            locationPermissionAsked = true;
-            if (!SupportUtil.hasForegroundLocationPermission(this)) {
-                if (LoggerService.DEBUG) { SystemLogger.d(TAG, "request fine and coarse location permissions"); }
-                permissionLauncher.launch(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                });
-                return;
-            }
+    private void startOrRecheckLoggerService() {
+        if (enabledLogjobCount() == 0 || !SupportUtil.hasForegroundLocationPermission(this)) {
+            return;
         }
-
-        if (!notificationPermissionAsked) {
-            notificationPermissionAsked = true;
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                if (LoggerService.DEBUG) { SystemLogger.d(TAG, "requesting POST_NOTIFICATIONS permission"); }
-                permissionLauncher.launch(new String[]{Manifest.permission.POST_NOTIFICATIONS});
-                return;
-            }
-        }
-
-        if (!backgroundLocationPermissionAsked) {
-            backgroundLocationPermissionAsked = true;
-            // background location can only be granted on top of foreground location
-            if (SupportUtil.hasForegroundLocationPermission(this)
-                    && !SupportUtil.hasBackgroundLocationPermission(this)) {
-                CharSequence optionLabel = getPackageManager().getBackgroundPermissionOptionLabel();
-                new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog))
-                        .setTitle(R.string.background_location_permission_title)
-                        .setMessage(getString(R.string.background_location_permission_message) + "\n\n" + optionLabel)
-                        .setPositiveButton(R.string.simple_yes, (dialog, which) -> {
-                            if (LoggerService.DEBUG) { SystemLogger.d(TAG, "request background location permission"); }
-                            // on Android 11+ this takes the user to the app's location settings page
-                            permissionLauncher.launch(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION});
-                        })
-                        // "no" or back: carry on with the next step
-                        .setNegativeButton(R.string.simple_no, (dialog, which) -> requestNextPermission())
-                        .setOnCancelListener(dialog -> requestNextPermission())
-                        .show();
-                return;
-            }
-        }
-
-        if (!localNetworkAsked) {
-            localNetworkAsked = true;
-            // Android 17: reaching a server on the LAN needs the "Nearby devices" permission
-            if (LocalNetworkAccess.isEnforced(this) && !LocalNetworkAccess.isGranted(this)) {
-                new BackgroundTask<Void, Boolean>() {
-                    @Override
-                    protected Boolean doInBackground(Void... voids) {
-                        Context context = getApplicationContext();
-                        return LocalNetworkAccess.isNeededFor(context, LocalNetworkAccess.configuredServerUrls(context));
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean needed) {
-                        if (isDestroyed()) {
-                            return;
-                        }
-                        if (needed) {
-                            showLocalNetworkPermissionRationale();
-                        } else {
-                            requestNextPermission();
-                        }
-                    }
-                }.executeInParallel();
-                return;
-            }
-        }
-
-        if (!batteryOptimizationAsked) {
-            batteryOptimizationAsked = true;
-            try {
-                String packageName = getPackageName();
-                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                SystemLogger.d(TAG, "check if we need to request for ignoring battery optimizations for " + packageName);
-                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                    Intent i = new Intent();
-                    i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    i.setData(Uri.parse("package:" + packageName));
-                    SystemLogger.d(TAG, "request for ignoring battery optimizations for " + packageName);
-                    startActivity(i);
-                }
-            } catch (Exception e) {
-                SystemLogger.d(TAG, "Unable to request ignoring battery optimizations: " + e);
-            }
+        Intent intent = new Intent(LogjobsListViewActivity.this, LoggerService.class);
+        if (LoggerService.isRunning()) {
+            intent.putExtra(LoggerService.RECHECK_PAUSED_JOBS, true);
+            startService(intent);
+        } else {
+            SystemLogger.d(TAG, "Found enabled jobs => start loggerservice");
+            startForegroundService(intent);
         }
     }
 
-    private void showLocalNetworkPermissionRationale() {
-        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppThemeDialog))
-                .setTitle(R.string.local_network_permission_title)
-                .setMessage(R.string.local_network_permission_message)
-                .setPositiveButton(R.string.simple_yes, (dialog, which) ->
-                        permissionLauncher.launch(new String[]{LocalNetworkAccess.PERMISSION}))
-                .setNegativeButton(R.string.simple_no, (dialog, which) -> requestNextPermission())
-                .setOnCancelListener(dialog -> requestNextPermission())
-                .show();
+    private void onTrackingReadinessMayHaveChanged() {
+        updateStatusBanner();
+        startOrRecheckLoggerService();
+    }
+
+    /** What the status banner shows now, or null when it is hidden. */
+    TrackingReadiness.Cause statusBannerCause() {
+        List<TrackingReadiness.Cause> problems = TrackingReadiness.problems(TrackingReadiness.read(this));
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Set<String> dismissed = prefs.getStringSet(PREF_STATUS_BANNER_DISMISSED, Collections.emptySet());
+        // forget dismissals of problems that went away, so they are shown if they come back
+        Set<String> stillDismissed = new HashSet<>();
+        TrackingReadiness.Cause shown = null;
+        for (TrackingReadiness.Cause cause : problems) {
+            if (dismissed.contains(cause.name())) {
+                stillDismissed.add(cause.name());
+            } else if (shown == null) {
+                shown = cause;
+            }
+        }
+        if (!stillDismissed.equals(dismissed)) {
+            prefs.edit().putStringSet(PREF_STATUS_BANNER_DISMISSED, stillDismissed).apply();
+        }
+        // nothing to say while no log job is on
+        return enabledLogjobCount() > 0 ? shown : null;
+    }
+
+    /**
+     * The status banner above the list names what stops (or hinders) logging and offers to fix
+     * it. It replaces the start-up permission dialogs and the "permission denied" toast.
+     */
+    private void updateStatusBanner() {
+        TrackingReadiness.Cause cause = statusBannerCause();
+        if (cause == null) {
+            statusBanner.setVisibility(GONE);
+            return;
+        }
+        statusBannerText.setText(TrackingReadiness.describe(this, cause));
+        statusBannerAction.setText(trackingSetup.opensAppSettings(cause)
+                ? R.string.status_action_open_settings
+                : statusActionLabel(cause));
+        statusBannerAction.setOnClickListener(v -> trackingSetup.fix(cause));
+        statusBannerDismiss.setOnClickListener(v -> {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            Set<String> dismissed = new HashSet<>(prefs.getStringSet(PREF_STATUS_BANNER_DISMISSED, Collections.emptySet()));
+            dismissed.add(cause.name());
+            prefs.edit().putStringSet(PREF_STATUS_BANNER_DISMISSED, dismissed).apply();
+            updateStatusBanner();
+        });
+        statusBanner.setVisibility(VISIBLE);
+    }
+
+    private static int statusActionLabel(TrackingReadiness.Cause cause) {
+        switch (cause) {
+            case NEEDS_LOCATION:
+                return R.string.status_action_allow_location;
+            case NEEDS_PRECISE_LOCATION:
+                return R.string.status_action_allow_precise_location;
+            case NEEDS_BACKGROUND_LOCATION:
+                return R.string.status_action_allow_background_location;
+            case LOCATION_OFF:
+                return R.string.status_action_location_settings;
+            case PAUSED_AIRPLANE_MODE:
+                return R.string.status_action_airplane_mode_settings;
+            case PAUSED_BATTERY_SAVER:
+                return R.string.status_action_battery_saver_settings;
+            case NOTIFICATIONS_OFF:
+                return R.string.status_action_notifications;
+            case BATTERY_OPTIMISED:
+                return R.string.status_action_battery_optimisation;
+            default:
+                return R.string.status_action_open_settings;
+        }
     }
 
     /**
@@ -486,6 +462,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
 
         registerBroadcastReceiver();
+
+        // also when back from a settings screen: a permission may have been granted there
+        startOrRecheckLoggerService();
 
         updateCurrentInfoDialog();
 
@@ -1028,6 +1007,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         db.toggleEnabled(dbLogjob, syncCallBack, resetOnToggle);
                         refreshLists();
                         notifyLoggerService(dbLogjob.getId());
+                        onLogjobToggled(dbLogjob);
                         break;
                     }
                 }
@@ -1082,6 +1062,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         };
         new LoadLogjobsListTask(getApplicationContext(), callback, navigationSelection, query).executeInParallel();
         new LoadCategoryListTask().executeInParallel();
+        updateStatusBanner();
     }
 
     @Override
@@ -1279,6 +1260,14 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             refreshLists();
 
             notifyLoggerService(logjob.getId());
+            onLogjobToggled(logjob);
+        }
+    }
+
+    /** Turning a log job on is when to ask for what logging needs (with an explanation first). */
+    private void onLogjobToggled(DBLogjob logjob) {
+        if (logjob.isEnabled()) {
+            trackingSetup.onJobEnabled();
         }
     }
 
@@ -1706,7 +1695,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         filter.addAction(LoggerService.BROADCAST_LOCATION_NETWORK_DISABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_GPS_ENABLED);
         filter.addAction(LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED);
-        filter.addAction(LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED);
+        filter.addAction(LoggerService.BROADCAST_TRACKING_PAUSED);
         filter.addAction(WebTrackSync.BROADCAST_SYNC_STARTED);
         filter.addAction(WebTrackSync.BROADCAST_SYNC_DONE);
         filter.addAction(WebTrackSync.BROADCAST_SYNC_FAILED);
@@ -1823,6 +1812,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     break;
                 case LoggerService.BROADCAST_LOCATION_DISABLED:
                     showToast(getString(R.string.location_disabled), Toast.LENGTH_LONG);
+                    updateStatusBanner();
                     break;
                 case LoggerService.BROADCAST_LOCATION_NETWORK_ENABLED:
                     showToast(getString(R.string.using_network), Toast.LENGTH_LONG);
@@ -1830,11 +1820,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 case LoggerService.BROADCAST_LOCATION_GPS_ENABLED:
                     showToast(getString(R.string.using_gps), Toast.LENGTH_LONG);
                     break;
-                case LoggerService.BROADCAST_LOCATION_PERMISSION_DENIED:
-                    showToast(getString(R.string.location_permission_denied), Toast.LENGTH_LONG);
-                    locationPermissionAsked = false;
-                    backgroundLocationPermissionAsked = false;
-                    requestNextPermission();
+                case LoggerService.BROADCAST_TRACKING_PAUSED:
+                    // the banner names the cause; no dialog: it may be a pause the user chose
+                    updateStatusBanner();
                     break;
                 case SessionServerSyncHelper.BROADCAST_NETWORK_AVAILABLE:
                     swipeRefreshLayout.setEnabled(true);

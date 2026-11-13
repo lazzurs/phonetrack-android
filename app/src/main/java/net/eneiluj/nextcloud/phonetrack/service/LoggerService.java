@@ -9,7 +9,6 @@
 
 package net.eneiluj.nextcloud.phonetrack.service;
 
-import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -21,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -41,18 +39,17 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.PowerManager;
 import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.VisibleForTesting;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
 import androidx.core.app.TaskStackBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +82,10 @@ public class LoggerService extends Service {
     public static final String BROADCAST_LOCATION_STARTED = "net.eneiluj.nextcloud.phonetrack.broadcast.location_started";
     public static final String BROADCAST_LOCATION_STOPPED = "net.eneiluj.nextcloud.phonetrack.broadcast.location_stopped";
     public static final String BROADCAST_LOCATION_UPDATED = "net.eneiluj.nextcloud.phonetrack.broadcast.location_updated";
-    public static final String BROADCAST_LOCATION_PERMISSION_DENIED = "net.eneiluj.nextcloud.phonetrack.broadcast.location_permission_denied";
+    /** A log job cannot get positions now; {@link #BROADCAST_EXTRA_CAUSE} says why. */
+    public static final String BROADCAST_TRACKING_PAUSED = "net.eneiluj.nextcloud.phonetrack.broadcast.tracking_paused";
+    /** The {@link TrackingReadiness.Cause} name of {@link #BROADCAST_TRACKING_PAUSED}. */
+    public static final String BROADCAST_EXTRA_CAUSE = "net.eneiluj.nextcloud.phonetrack.broadcast.extra_cause";
     public static final String BROADCAST_LOCATION_NETWORK_DISABLED = "net.eneiluj.nextcloud.phonetrack.broadcast.network_disabled";
     public static final String BROADCAST_LOCATION_GPS_DISABLED = "net.eneiluj.nextcloud.phonetrack.broadcast.gps_disabled";
     public static final String BROADCAST_LOCATION_NETWORK_ENABLED = "net.eneiluj.nextcloud.phonetrack.broadcast.network_enabled";
@@ -102,6 +102,10 @@ public class LoggerService extends Service {
     public static final String SCHEDULE_INTERVAL = "scheduleinterval";
     /** Action of the alarm that ends a location search at the log job's location timeout */
     static final String ACTION_LOCATION_TIMEOUT = "net.eneiluj.nextcloud.phonetrack.action.LOCATION_TIMEOUT";
+    /** Extra: something that paused log jobs may have changed (e.g. a permission was granted). */
+    public static final String RECHECK_PAUSED_JOBS = "recheckpausedjobs";
+    /** Action of the alarm that lets a paused log job check again. */
+    static final String ACTION_RETRY_PAUSED_JOB = "net.eneiluj.nextcloud.phonetrack.RETRY_PAUSED_JOB";
 
 
     private static volatile boolean isRunning = false;
@@ -128,6 +132,8 @@ public class LoggerService extends Service {
     public static boolean DEBUG = true;
 
     private Map<Long, LogjobWorker> mLogjobWorkers;
+    /** Log jobs that cannot get positions now, and why. */
+    private final Map<Long, TrackingReadiness.Cause> pausedJobs = new HashMap<>();
 
     private ConnectionStateMonitor connectionMonitor;
     private BroadcastReceiver powerSaverChangeReceiver;
@@ -338,6 +344,19 @@ public class LoggerService extends Service {
                         }
                     }
                 }
+            } else if (intent != null && ACTION_RETRY_PAUSED_JOB.equals(intent.getAction())) {
+                long jobId = intent.getLongExtra(JOB_ID, 0);
+                if (pausedJobs.containsKey(jobId) && logjobs.containsKey(jobId)) {
+                    SystemLogger.d(TAG, "[command] paused job " + jobId + ": check again");
+                    restartUpdates(jobId);
+                }
+            } else if (intent != null && intent.getBooleanExtra(RECHECK_PAUSED_JOBS, false)) {
+                for (long jobId : new ArrayList<>(pausedJobs.keySet())) {
+                    if (logjobs.containsKey(jobId)) {
+                        SystemLogger.d(TAG, "[command] recheck paused job " + jobId);
+                        restartUpdates(jobId);
+                    }
+                }
             } else {
                 // start without parameter
                 if (DEBUG) {
@@ -389,39 +408,55 @@ public class LoggerService extends Service {
     }
 
     /**
-     * Check if user granted permission to access location.
-     *
-     * @return True if permission granted, false otherwise
+     * Why location must not be requested now (missing permission, or a pause the user chose
+     * for battery saver or airplane mode), or {@link TrackingReadiness.Cause#OK}.
      */
-    private boolean canAccessLocation() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // first we check is device is in power saving mode
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        boolean isPowerSaveMode = false;
-        if (pm != null) {
-            isPowerSaveMode = pm.isPowerSaveMode();
-        }
+    private TrackingReadiness.Cause locationGate() {
+        TrackingReadiness.Cause cause = TrackingReadiness.serviceGate(TrackingReadiness.read(this));
         if (DEBUG) {
-            SystemLogger.d(TAG, "POWERSAVE mode: " + isPowerSaveMode);
-            SystemLogger.d(TAG, "AIRPLANE mode: " + SupportUtil.isAirplaneModeOn(this));
+            SystemLogger.d(TAG, "location gate: " + cause);
         }
+        return cause;
+    }
 
-        boolean respectPowerSaveMode = prefs.getBoolean(getString(R.string.pref_key_power_saving_awareness), false);
+    /**
+     * Remember that a log job cannot get positions, tell the UI why, and check again after its
+     * interval (sooner if the activity or a power/airplane mode change asks for it).
+     */
+    private void pauseJob(long ljId, TrackingReadiness.Cause cause) {
+        pausedJobs.put(ljId, cause);
+        Intent intent = new Intent(BROADCAST_TRACKING_PAUSED);
+        intent.putExtra(BROADCAST_EXTRA_PARAM, ljId);
+        intent.putExtra(BROADCAST_EXTRA_CAUSE, cause.name());
+        intent.setPackage(getPackageName());
+        sendBroadcast(intent);
 
-        // then we check airplane mode related stuff
-        boolean respectAirplaneMode = prefs.getBoolean(getString(R.string.pref_key_offline_mode_awareness), false);
+        DBLogjob lj = logjobs.get(ljId);
+        long delay = TrackingReadiness.retryDelayMillis(lj == null ? 0 : lj.getMinTime());
+        AlarmManager am = getSystemService(AlarmManager.class);
+        if (am != null) {
+            am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pausedRetryIntent(ljId));
+        }
+        updateNotificationContent();
+    }
 
-        // then we check if we have location permissions
-        boolean hasLocPermissions = (
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
-        );
+    private void unpauseJob(long ljId) {
+        if (pausedJobs.remove(ljId) == null) {
+            return;
+        }
+        AlarmManager am = getSystemService(AlarmManager.class);
+        if (am != null) {
+            am.cancel(pausedRetryIntent(ljId));
+        }
+        updateNotificationContent();
+    }
 
-        return (!respectPowerSaveMode || !isPowerSaveMode)
-                && (!respectAirplaneMode || !SupportUtil.isAirplaneModeOn(this))
-                && hasLocPermissions;
+    private PendingIntent pausedRetryIntent(long ljId) {
+        Intent i = new Intent(this, LoggerService.class);
+        // its own action, so it is not the same PendingIntent as a worker's next-point alarm
+        i.setAction(ACTION_RETRY_PAUSED_JOB);
+        i.putExtra(JOB_ID, ljId);
+        return PendingIntent.getService(this, (int) ljId, i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     /**
@@ -560,6 +595,7 @@ public class LoggerService extends Service {
         if (logjobWorker != null) {
             logjobWorker.stop();
         }
+        unpauseJob(jobId);
     }
 
     /**
@@ -579,7 +615,9 @@ public class LoggerService extends Service {
             return false;
         }
         boolean hasLocationUpdates = false;
-        if (canAccessLocation()) {
+        TrackingReadiness.Cause gate = locationGate();
+        if (gate == TrackingReadiness.Cause.OK) {
+            unpauseJob(ljId);
             // update last acquisition start time only if we know
             // we are not in an "accuracy improvement" loop
             // in other words: if we start a timeout
@@ -623,11 +661,17 @@ public class LoggerService extends Service {
                 // no location provider available
                 sendBroadcast(BROADCAST_LOCATION_DISABLED);
                 if (DEBUG) { SystemLogger.d(TAG, "No available location updates"); }
+                // the updates requested above start if location is switched on before the search
+                // ends; the retry covers a longer switch-off
+                LocationManager lm = locManager;
+                if (lm != null && !lm.isLocationEnabled()) {
+                    pauseJob(ljId, TrackingReadiness.Cause.LOCATION_OFF);
+                }
             }
         } else {
-            // can't access location
-            sendBroadcast(BROADCAST_LOCATION_PERMISSION_DENIED);
-            if (DEBUG) { SystemLogger.d(TAG, "Location permission denied"); }
+            // can't access location: say why, and check again later instead of stalling
+            SystemLogger.d(TAG, "Not requesting location for job " + ljId + ": " + gate);
+            pauseJob(ljId, gate);
         }
 
         return hasLocationUpdates;
@@ -661,11 +705,9 @@ public class LoggerService extends Service {
     public void onDestroy() {
         if (DEBUG) { SystemLogger.d(TAG, "onDestroy"); }
 
-        if (canAccessLocation()) {
-            //noinspection MissingPermission
-            for (long ljId : gpsLocListeners.keySet()) {
-                stopJob(ljId);
-            }
+        // removing updates needs no permission; this also cancels the retries of paused jobs
+        for (long ljId : gpsLocListeners.keySet()) {
+            stopJob(ljId);
         }
 
         isRunning = false;
@@ -812,10 +854,29 @@ public class LoggerService extends Service {
     }
 
     private void updateNotificationContent() {
+        if (mNotificationBuilder == null) {
+            // still starting: showNotification() comes next
+            return;
+        }
         String nbLocations = String.valueOf(db.getLocationNotSyncedCount());
         String nbSent = String.valueOf(db.getNbTotalSync());
-        mNotificationBuilder.setContentText(String.format(getString(R.string.is_running), nbLocations, nbSent));
+        String text = String.format(getString(R.string.is_running), nbLocations, nbSent);
+        String paused = pausedText();
+        // a paused job must not look like it is running: say why instead
+        mNotificationBuilder.setContentText(paused != null ? paused : text);
+        mNotificationBuilder.setStyle(paused != null ? new NotificationCompat.BigTextStyle().bigText(paused) : null);
         mNotificationManager.notify(this.NOTIFICATION_ID, mNotificationBuilder.build());
+    }
+
+    /** Why (the most important reason) log jobs are paused, or null if none is. */
+    private String pausedText() {
+        TrackingReadiness.Cause cause = null;
+        for (TrackingReadiness.Cause c : pausedJobs.values()) {
+            if (cause == null || c.ordinal() < cause.ordinal()) {
+                cause = c;
+            }
+        }
+        return cause == null ? null : TrackingReadiness.describe(this, cause);
     }
 
     private void createNotificationChannel(String channelId, boolean lowImportance) {
@@ -1078,6 +1139,8 @@ public class LoggerService extends Service {
         lastUpdateRealtime.put(logjobId, loc.getElapsedRealtimeNanos() / 1000000);
 
         db.addLocation(logjobId, loc, battery);
+        // e.g. location was switched back on
+        pausedJobs.remove(logjobId);
 
         sendBroadcast(BROADCAST_LOCATION_UPDATED, logjobId);
         updateNotificationContent();
