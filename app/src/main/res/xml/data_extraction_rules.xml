@@ -7,8 +7,8 @@
      Only the ordinary preferences remain. The backup is only made when it can be
      encrypted client-side.
      Device transfer (direct, started by the owner): keeps the database so log jobs
-     survive a phone-to-phone migration. Passwords are Keystore-bound and useless on
-     another device, so they are left out; the SSO token is excluded as well. -->
+     survive a phone-to-phone migration. Passwords and the SSO token are left out so
+     that secrets never leave the device: the owner signs in again on the new phone. -->
 <data-extraction-rules>
     <cloud-backup disableIfNoEncryptionCapabilities="true">
         <exclude domain="database" path="." />
