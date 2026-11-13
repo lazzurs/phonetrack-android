@@ -141,6 +141,18 @@ public class EditLogjobFragmentTest {
         return app.getResources().getQuantityString(id, n, n);
     }
 
+    @Test
+    public void saveIconContrastsWithTheAppColour() {
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit()
+                .putInt(app.getString(R.string.pref_key_color), android.graphics.Color.YELLOW).commit();
+        open(EditCustomLogjobActivity.class, 0);
+        com.google.android.material.floatingactionbutton.FloatingActionButton fab = activity.findViewById(R.id.fab_edit_ok);
+        int fabColor = fab.getBackgroundTintList().getDefaultColor();
+        assertEquals(net.eneiluj.nextcloud.phonetrack.util.ThemeUtils.onPrimaryColor(fabColor),
+                fab.getImageTintList().getDefaultColor());
+        assertEquals(android.graphics.Color.BLACK, fab.getImageTintList().getDefaultColor());
+    }
+
     // Back and Up
 
     @Test

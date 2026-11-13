@@ -227,11 +227,12 @@ public abstract class EditLogjobFragment extends Fragment {
 
         boolean darkTheme = PhoneTrack.getAppTheme(getContext());
         // if dark theme and main color is black, make fab button lighter/gray
-        if (darkTheme && ThemeUtils.primaryColor(getContext()) == Color.BLACK) {
-            fabOk.setBackgroundTintList(ColorStateList.valueOf(Color.DKGRAY));
-        } else {
-            fabOk.setBackgroundTintList(ColorStateList.valueOf(ThemeUtils.primaryColor(getContext())));
-        }
+        int fabColor = darkTheme && ThemeUtils.primaryColor(getContext()) == Color.BLACK
+                ? Color.DKGRAY
+                : ThemeUtils.primaryColor(getContext());
+        fabOk.setBackgroundTintList(ColorStateList.valueOf(fabColor));
+        // the tick is black or white, whichever reads better on the app colour
+        fabOk.setImageTintList(ColorStateList.valueOf(ThemeUtils.onPrimaryColor(fabColor)));
         fabOk.setRippleColor(ThemeUtils.primaryDarkColor(getContext()));
 
         editTitle = view.findViewById(R.id.editTitle);
