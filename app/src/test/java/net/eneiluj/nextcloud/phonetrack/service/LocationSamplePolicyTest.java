@@ -44,4 +44,34 @@ public class LocationSamplePolicyTest {
         // Location.getAccuracy() is 0 when unknown
         assertEquals(ACCEPT, LocationSamplePolicy.decide(0, 50, false, 0, 5));
     }
+
+    @Test
+    public void defaultTimeoutForNewLogjobsIsHalfTheIntervalUpTo30Seconds() {
+        // was 59 s on the default 60 s interval
+        assertEquals(30, LocationSamplePolicy.defaultTimeoutSeconds(60));
+        assertEquals(30, LocationSamplePolicy.defaultTimeoutSeconds(300));
+        assertEquals(5, LocationSamplePolicy.defaultTimeoutSeconds(10));
+        assertEquals(0, LocationSamplePolicy.defaultTimeoutSeconds(1));
+    }
+
+    @Test
+    public void smsLogjobsGetAFiniteTimeoutBelowTheInterval() {
+        // was 0: no timeout, so GPS stayed on indoors
+        assertEquals(9, LocationSamplePolicy.smsTimeoutSeconds(10));
+        assertEquals(59, LocationSamplePolicy.smsTimeoutSeconds(60));
+        assertEquals(60, LocationSamplePolicy.smsTimeoutSeconds(600));
+        assertEquals(0, LocationSamplePolicy.smsTimeoutSeconds(1));
+        assertEquals(0, LocationSamplePolicy.smsTimeoutSeconds(0));
+    }
+
+    @Test
+    public void warnsWhenTheTimeoutIsMoreThanHalfTheInterval() {
+        assertEquals(98, LocationSamplePolicy.gpsOnPercentWithoutFixWarning(60, 59));
+        assertEquals(52, LocationSamplePolicy.gpsOnPercentWithoutFixWarning(60, 31));
+        assertEquals(0, LocationSamplePolicy.gpsOnPercentWithoutFixWarning(60, 30));
+        assertEquals(0, LocationSamplePolicy.gpsOnPercentWithoutFixWarning(60, 0));
+        // invalid forms are flagged elsewhere; never more than 100 %
+        assertEquals(100, LocationSamplePolicy.gpsOnPercentWithoutFixWarning(60, 90));
+        assertEquals(0, LocationSamplePolicy.gpsOnPercentWithoutFixWarning(-1, 30));
+    }
 }
