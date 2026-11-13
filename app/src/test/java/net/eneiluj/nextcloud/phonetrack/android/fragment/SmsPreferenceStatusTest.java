@@ -90,6 +90,7 @@ public class SmsPreferenceStatusTest {
     public void disabledShowsOnlyTheDescription() {
         open();
         assertEquals(context.getString(R.string.settings_sms_subtitle), summary());
+        assertTrue(summary(), summary().contains("allowed senders"));
     }
 
     @Test
