@@ -1,17 +1,17 @@
 # Contributing guide
 
 > This repository is [lazzurs/phonetrack-android](https://github.com/lazzurs/phonetrack-android), a fork of
-> [eneiluj/phonetrack-android](https://gitlab.com/eneiluj/phonetrack-android) that adds GitHub Actions CI/CD.
-> For bugs or features in the app itself, please use the upstream tracker linked below. Use
-> [this fork's issue tracker](https://github.com/lazzurs/phonetrack-android/issues) only for problems with this
-> fork's build, release, or tooling setup.
+> [eneiluj/phonetrack-android](https://gitlab.com/eneiluj/phonetrack-android). This fork has its own application ID
+> and behaviour, so please report bugs and feature requests for this app in
+> [this fork's issue tracker](https://github.com/lazzurs/phonetrack-android/issues). Problems that also exist in the
+> original app may be worth mentioning [upstream](https://gitlab.com/eneiluj/phonetrack-android/issues) too.
 
 ## Submitting bug reports
 
-If you find a bug, feel free to [open an issue](https://gitlab.com/eneiluj/phonetrack-android/issues). But please provide these information in the comment:
+If you find a bug, feel free to [open an issue](https://github.com/lazzurs/phonetrack-android/issues). But please provide these information in the comment:
 
 ### Copy & Paste
-    **Android version:** e. g. 7.1.2 Nougat
+    **Android version:** e. g. 14 or 16
 
     **Device**: e. g. LG G4
 
@@ -19,7 +19,7 @@ If you find a bug, feel free to [open an issue](https://gitlab.com/eneiluj/phone
 
     **App version:** e. g. v0.0.6
 
-    **App source:** self-built, project wiki, F-droid ?
+    **App source:** self-built, GitHub release, ...
 
     **Steps to reproduce:**
       1. open the app
@@ -40,4 +40,4 @@ changes from forks.
 
 ## Adding new features
 
-If you want to contribute on the code, you can fork the project, commit your changes and make a pull request. For bigger features/changes, it's better to first [open an issue](https://gitlab.com/eneiluj/phonetrack-android/issues) and ask if this feature is needed or wanted – it would be very disappointing if you add a new cool feature and your pull request will be rejected by some reasons you didn't thought about.
+If you want to contribute on the code, you can fork the project, commit your changes and make a pull request. For bigger features/changes, it's better to first [open an issue](https://github.com/lazzurs/phonetrack-android/issues) and ask if this feature is needed or wanted – it would be very disappointing if you add a new cool feature and your pull request will be rejected by some reasons you didn't thought about.
