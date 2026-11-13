@@ -92,6 +92,45 @@
     <string name="setting_significantmotion_timeout">Location timeout</string>
     <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long a network position is used instead, if it meets the minimum accuracy and distance. Set to zero to disable the timeout: GPS then keeps searching until it gets a position that meets the minimum accuracy, however long that takes. Must be shorter than the minimum time.</string>
     <string name="setting_timeout_gps_on_warning">Where no position can be found, GPS can be on for up to %1$d%% of the time with this timeout.</string>
+    <string name="edit_unit_seconds">s</string>
+    <string name="edit_unit_metres">m</string>
+    <string name="edit_range_seconds">In seconds, from %1$d to %2$d</string>
+    <string name="edit_range_metres">In metres, from %1$d to %2$d</string>
+    <string name="edit_range_timeout">In seconds, less than the minimum time. 0 turns the timeout off.</string>
+    <string name="edit_range_timeout_mixed">In seconds, less than the maximum time. 0 turns the timeout off.</string>
+    <string name="edit_error_title_required">Enter a title</string>
+    <string name="edit_error_url_invalid">Enter a full address, starting with https://</string>
+    <string name="edit_error_token_required">Enter the session token</string>
+    <string name="edit_error_device_name_required">Enter a device name</string>
+    <string name="edit_error_number_required">Enter a whole number</string>
+    <string name="edit_error_timeout_not_below_min_time">Must be less than the minimum time</string>
+    <string name="edit_error_timeout_not_below_max_time">Must be less than the maximum time</string>
+    <plurals name="edit_error_min_seconds">
+        <item quantity="one">Must be at least %d second</item>
+        <item quantity="other">Must be at least %d seconds</item>
+    </plurals>
+    <plurals name="edit_error_max_seconds">
+        <item quantity="one">Must be at most %d second</item>
+        <item quantity="other">Must be at most %d seconds</item>
+    </plurals>
+    <plurals name="edit_error_min_metres">
+        <item quantity="one">Must be at least %d metre</item>
+        <item quantity="other">Must be at least %d metres</item>
+    </plurals>
+    <plurals name="edit_error_max_metres">
+        <item quantity="one">Must be at most %d metre</item>
+        <item quantity="other">Must be at most %d metres</item>
+    </plurals>
+    <string name="edit_unsaved_title">Save changes?</string>
+    <string name="edit_unsaved_message">You have changed this log job.</string>
+    <string name="edit_unsaved_invalid_message">You have changed this log job, but some fields are not valid yet, so it cannot be saved. Keep editing to fix them, or discard your changes.</string>
+    <string name="edit_unsaved_save">Save</string>
+    <string name="edit_unsaved_discard">Discard</string>
+    <string name="edit_unsaved_keep_editing">Keep editing</string>
+    <string name="logjob_title_from_logging_link">From PhoneTrack logging link</string>
+    <string name="logjob_url_warn_http">This address uses http://, so your positions are sent unencrypted and others on the network can read them. Use https:// if your server supports it.</string>
+    <string name="logjob_url_warn_http_token">This address uses http://, so your positions and the session token are sent unencrypted and others on the network can read them. Use https:// if your server supports it.</string>
+    <string name="logjob_url_warn_http_credentials">This address uses http://, so your positions and your HTTP login and password are sent unencrypted and others on the network can read them. Use https:// if your server supports it.</string>
     <string name="logjob_title_log_to">Log to %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
     <string name="default_session_token">supertoken</string>

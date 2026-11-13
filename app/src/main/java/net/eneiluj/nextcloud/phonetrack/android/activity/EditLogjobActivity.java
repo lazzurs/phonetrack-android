@@ -31,8 +31,10 @@ public abstract class EditLogjobActivity extends AppCompatActivity implements Ed
         // the fragment is added straight into android.R.id.content
         EdgeToEdgeUtil.enable(this);
 
-        // Back saves the logjob (see close()). onBackPressed() is no longer called
-        // with predictive back, which is on by default from targetSdk 36.
+        // Back closes the editor without saving. While the form has unsaved changes the
+        // fragment's own callback (added later, so it runs first) asks whether to save them.
+        // onBackPressed() is no longer called with predictive back, which is on by default
+        // from targetSdk 36.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -128,7 +130,8 @@ public abstract class EditLogjobActivity extends AppCompatActivity implements Ed
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                close();
+                // same as Back, so unsaved changes are not lost without asking
+                getOnBackPressedDispatcher().onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

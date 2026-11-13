@@ -57,7 +57,9 @@ public class EditPhoneTrackLogjobActivity extends EditLogjobActivity {
                 LocationSamplePolicy.defaultTimeoutSeconds(minTime));
 
         DBLogjob newLogjob = new DBLogjob(
-                0, "",  getString(R.string.default_nextcloud_url), getString(R.string.default_session_token),
+                // address and token start empty (the form shows an example address): a
+                // placeholder saved as a real value sends positions nowhere
+                0, "", "", "",
                 android.os.Build.MODEL.replaceAll(" ", "").replaceAll("/", ""),
                 minTime, minDistance, minAccuracy,
                 keepGpsOn, sigMotion, sigMotionMixed,
@@ -69,6 +71,7 @@ public class EditPhoneTrackLogjobActivity extends EditLogjobActivity {
             if (url == null || !newLogjob.setAttrFromLoggingUrl(url)) {
                 showToast(getString(R.string.error_invalid_pt_url), Toast.LENGTH_LONG);
             } else {
+                newLogjob.setTitle(getString(R.string.logjob_title_from_logging_link));
                 showPrefilledFromOtherApp();
             }
         }
