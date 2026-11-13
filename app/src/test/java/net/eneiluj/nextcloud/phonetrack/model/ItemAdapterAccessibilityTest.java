@@ -35,6 +35,7 @@ public class ItemAdapterAccessibilityTest {
     private PhoneTrackSQLiteOpenHelper db;
     private AppCompatActivity activity;
     private ItemAdapter adapter;
+    private int deleteActionPosition = -1;
 
     @Before
     public void setUp() {
@@ -46,6 +47,7 @@ public class ItemAdapterAccessibilityTest {
             @Override public void onLogjobEnabledClick(int position, View v) { }
             @Override public void onLogjobMoreButtonClick(int position, View v) { }
             @Override public boolean onLogjobLongClick(int position, View v) { return false; }
+            @Override public void onLogjobDeleteAction(int position) { deleteActionPosition = position; }
         }, db);
     }
 
@@ -129,5 +131,30 @@ public class ItemAdapterAccessibilityTest {
             found |= "Turn on or off".contentEquals(a.getLabel());
         }
         assertTrue(found);
+    }
+
+    @Test
+    public void rowOffersDeleteAsAccessibilityAction() {
+        bind("Hike", false, 0);
+        // attached to a RecyclerView so that the holder knows its position
+        androidx.recyclerview.widget.RecyclerView list = new androidx.recyclerview.widget.RecyclerView(activity);
+        list.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(activity));
+        list.setAdapter(adapter);
+        list.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY));
+        list.layout(0, 0, 1080, 1920);
+        View row = list.getChildAt(0);
+
+        AccessibilityNodeInfo info = AccessibilityNodeInfo.obtain();
+        row.onInitializeAccessibilityNodeInfo(info);
+        int deleteId = -1;
+        for (AccessibilityNodeInfo.AccessibilityAction a : info.getActionList()) {
+            if ("Delete".contentEquals(String.valueOf(a.getLabel()))) {
+                deleteId = a.getId();
+            }
+        }
+        assertTrue("no Delete action", deleteId != -1);
+        assertTrue(row.performAccessibilityAction(deleteId, null));
+        assertEquals(0, deleteActionPosition);
     }
 }

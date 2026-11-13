@@ -285,6 +285,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onLogjobMoreButtonClick(int position, View v);
 
         boolean onLogjobLongClick(int position, View v);
+
+        /** The row's "Delete" accessibility action (the swipe gesture has no TalkBack equivalent). */
+        void onLogjobDeleteAction(int position);
     }
 
     public class LogjobViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
@@ -323,6 +326,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // the swipe gesture has no TalkBack equivalent, so offer it as an action on the row
             ViewCompat.addAccessibilityAction(v, v.getContext().getString(R.string.a11y_logjob_toggle_action),
                     (view, args) -> logjobEnabled.performClick());
+            ViewCompat.addAccessibilityAction(v, v.getContext().getString(R.string.menu_delete), (view, args) -> {
+                final int adapterPosition = getAdapterPosition();
+                if (adapterPosition == NO_POSITION) {
+                    return false;
+                }
+                logjobClickListener.onLogjobDeleteAction(adapterPosition);
+                return true;
+            });
         }
 
         @Override

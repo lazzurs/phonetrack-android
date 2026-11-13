@@ -1272,6 +1272,19 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     }
 
+    @Override
+    public void onLogjobDeleteAction(int position) {
+        DBLogjob logjob = (DBLogjob) adapter.getItem(position);
+        if (logjob == null) {
+            return;
+        }
+        List<DBLogjob> toDelete = Collections.singletonList(logjob);
+        LogjobDeletion.confirmAndDelete(this, toDelete, () -> {
+            adapter.remove(logjob);
+            refreshLists();
+        });
+    }
+
     /** Turning a log job on is when to ask for what logging needs (with an explanation first). */
     private void onLogjobToggled(DBLogjob logjob) {
         if (logjob.isEnabled()) {
