@@ -21,7 +21,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -170,7 +169,6 @@ public class MapActivity extends AppCompatActivity {
     private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd\nHH:mm:ss z", Locale.ROOT);
     private final SimpleDateFormat sdfCompleteSimple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     private final SimpleDateFormat sdfHour = new SimpleDateFormat("HH:mm:ss", Locale.ROOT);
-    private Drawable toggleCircle;
 
     private Map<String, OnlineTileSourceBase> layersMap;
     private String selectedLayer;
@@ -246,15 +244,6 @@ public class MapActivity extends AppCompatActivity {
             return;
         }
         session = db.getSession(sessionid);
-
-        toggleCircle = ContextCompat.getDrawable(ctx, R.drawable.ic_plain_circle_grey_24dp)
-                .getConstantState().newDrawable();
-        toggleCircle.setColorFilter(
-                new PorterDuffColorFilter(
-                        ThemeUtils.primaryColor(ctx),
-                        PorterDuff.Mode.SRC_IN
-                )
-        );
 
         setContentView(R.layout.drawer_layout_map);
         EdgeToEdgeUtil.enable(this);
@@ -461,11 +450,7 @@ public class MapActivity extends AppCompatActivity {
         drawerLayoutMap.addDrawerListener(drawerToggle);
         setTitle(getString(R.string.simple_map_title, session.getName()));
 
-        //drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackgroundColor(ThemeUtils.primaryColor(this));
-        int[] colors = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
-        GradientDrawable gradientDrawable = new GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT, colors);
-        drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackground(gradientDrawable);
+        ThemeUtils.styleDrawerHeader(this, drawerLayoutMap.findViewById(R.id.drawer_top_layout_map));
 
         ImageView logoView = drawerLayoutMap.findViewById(R.id.drawer_logo_map);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
@@ -1258,15 +1243,14 @@ public class MapActivity extends AppCompatActivity {
         btAllowRotation = (ImageButton) findViewById(R.id.ic_allow_rotation);
         btLayers = (ImageButton) findViewById(R.id.ic_map_layers);
 
-        btDisplayMyLoc.setColorFilter(Color.WHITE);
-        btFollowMe.setColorFilter(Color.WHITE);
         btZoom.setColorFilter(Color.WHITE);
-        btZoomAuto.setColorFilter(Color.WHITE);
-        btAllowRotation.setColorFilter(Color.WHITE);
         btLayers.setColorFilter(Color.WHITE);
+        for (ImageButton toggle : new ImageButton[]{btDisplayMyLoc, btFollowMe, btZoomAuto, btAllowRotation}) {
+            setToggleOn(toggle, false);
+        }
 
         if (prefs.getBoolean("map_myposition", true)) {
-            btDisplayMyLoc.setBackground(toggleCircle);
+            setToggleOn(btDisplayMyLoc, true);
             mLocationOverlay.enableMyLocation();
         } else {
             mLocationOverlay.disableMyLocation();
@@ -1280,13 +1264,13 @@ public class MapActivity extends AppCompatActivity {
                 if (mLocationOverlay.isMyLocationEnabled()) {
                     mLocationOverlay.disableMyLocation();
                     mLocationOverlay.disableFollowLocation();
-                    btDisplayMyLoc.setBackgroundResource(0);
-                    btFollowMe.setBackgroundResource(0);
+                    setToggleOn(btDisplayMyLoc, false);
+                    setToggleOn(btFollowMe, false);
                     prefs.edit().putBoolean("map_myposition", false).apply();
                     prefs.edit().putBoolean("map_followme", false).apply();
                 } else {
                     mLocationOverlay.enableMyLocation();
-                    btDisplayMyLoc.setBackground(toggleCircle);
+                    setToggleOn(btDisplayMyLoc, true);
                     prefs.edit().putBoolean("map_myposition", true).apply();
                 }
             }
@@ -1294,13 +1278,13 @@ public class MapActivity extends AppCompatActivity {
 
         if (prefs.getBoolean("map_followme", false)) {
             // disable auto zoom (which shouldn't be enabled but who knows these days)
-            btZoomAuto.setBackgroundResource(0);
+            setToggleOn(btZoomAuto, false);
             prefs.edit().putBoolean("map_autozoom", false).apply();
             // enable follow me
             mLocationOverlay.enableMyLocation();
             mLocationOverlay.enableFollowLocation();
-            btFollowMe.setBackground(toggleCircle);
-            btDisplayMyLoc.setBackground(toggleCircle);
+            setToggleOn(btFollowMe, true);
+            setToggleOn(btDisplayMyLoc, true);
         } else {
             mLocationOverlay.disableFollowLocation();
         }
@@ -1312,12 +1296,12 @@ public class MapActivity extends AppCompatActivity {
                 Log.i(TAG, "rotation clicked ");
                 if (mRotationGestureOverlay.isEnabled()) {
                     mRotationGestureOverlay.setEnabled(false);
-                    btAllowRotation.setBackgroundResource(0);
+                    setToggleOn(btAllowRotation, false);
                     map.setMapOrientation(0);
                     prefs.edit().putBoolean("map_allow_rotation", false).apply();
                 } else {
                     mRotationGestureOverlay.setEnabled(true);
-                    btAllowRotation.setBackground(toggleCircle);
+                    setToggleOn(btAllowRotation, true);
                     prefs.edit().putBoolean("map_allow_rotation", true).apply();
                 }
             }
@@ -1325,7 +1309,7 @@ public class MapActivity extends AppCompatActivity {
 
         if (prefs.getBoolean("map_allow_rotation", false)) {
             mRotationGestureOverlay.setEnabled(true);
-            btAllowRotation.setBackground(toggleCircle);
+            setToggleOn(btAllowRotation, true);
         } else {
             mRotationGestureOverlay.setEnabled(false);
         }
@@ -1336,17 +1320,17 @@ public class MapActivity extends AppCompatActivity {
                 Log.i(TAG, "btFollowMe clicked ");
                 if (mLocationOverlay.isFollowLocationEnabled()) {
                     mLocationOverlay.disableFollowLocation();
-                    btFollowMe.setBackgroundResource(0);
+                    setToggleOn(btFollowMe, false);
                     prefs.edit().putBoolean("map_followme", false).apply();
                 } else {
                     // disable autozoom
-                    btZoomAuto.setBackgroundResource(0);
+                    setToggleOn(btZoomAuto, false);
                     prefs.edit().putBoolean("map_autozoom", false).apply();
                     // enable follow me
                     mLocationOverlay.enableMyLocation();
                     mLocationOverlay.enableFollowLocation();
-                    btFollowMe.setBackground(toggleCircle);
-                    btDisplayMyLoc.setBackground(toggleCircle);
+                    setToggleOn(btFollowMe, true);
+                    setToggleOn(btDisplayMyLoc, true);
                     prefs.edit().putBoolean("map_myposition", true).apply();
                     prefs.edit().putBoolean("map_followme", true).apply();
                 }
@@ -1364,10 +1348,10 @@ public class MapActivity extends AppCompatActivity {
         });
 
         if (prefs.getBoolean("map_autozoom", true)) {
-            btZoomAuto.setBackground(toggleCircle);
+            setToggleOn(btZoomAuto, true);
             // disable follow me
             mLocationOverlay.disableFollowLocation();
-            btFollowMe.setBackgroundResource(0);
+            setToggleOn(btFollowMe, false);
             prefs.edit().putBoolean("map_followme", false).apply();
         }
 
@@ -1378,14 +1362,14 @@ public class MapActivity extends AppCompatActivity {
                 if (!prefs.getBoolean("map_autozoom", true)) {
                     // disable follow me
                     mLocationOverlay.disableFollowLocation();
-                    btFollowMe.setBackgroundResource(0);
+                    setToggleOn(btFollowMe, false);
                     prefs.edit().putBoolean("map_followme", false).apply();
                     // enable auto zoom
-                    btZoomAuto.setBackground(toggleCircle);
+                    setToggleOn(btZoomAuto, true);
                     prefs.edit().putBoolean("map_autozoom", true).apply();
                     zoomOnAllMarkers();
                 } else {
-                    btZoomAuto.setBackgroundResource(0);
+                    setToggleOn(btZoomAuto, false);
                     prefs.edit().putBoolean("map_autozoom", false).apply();
                 }
             }
@@ -1417,6 +1401,23 @@ public class MapActivity extends AppCompatActivity {
                 selectDialog.show();
             }
         });
+    }
+
+    /**
+     * Shows a map toggle as on (a circle in the app colour behind the icon) or off.
+     * The icon is black or white, whichever reads better on the app colour.
+     */
+    private void setToggleOn(ImageButton button, boolean on) {
+        if (on) {
+            Drawable circle = ContextCompat.getDrawable(ctx, R.drawable.ic_plain_circle_grey_24dp).mutate();
+            int color = ThemeUtils.primaryColor(ctx);
+            circle.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+            button.setBackground(circle);
+            button.setColorFilter(ThemeUtils.onPrimaryColor(color));
+        } else {
+            button.setBackground(null);
+            button.setColorFilter(Color.WHITE);
+        }
     }
 
     private void setTileSource(String layerKey) {
