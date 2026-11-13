@@ -469,6 +469,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         final View preview = colorView.findViewById(R.id.colorPreview);
         final EditText hexField = colorView.findViewById(R.id.colorHex);
         final int[] chosen = {colorPref.getValue()};
+        final View contrastHint = colorView.findViewById(R.id.colorContrastHint);
+        final Runnable updateContrastHint = () -> contrastHint.setVisibility(
+                ThemeUtils.onPrimaryColor(chosen[0]) == Color.WHITE ? View.GONE : View.VISIBLE);
+        updateContrastHint.run();
 
         preview.setBackground(ColorPreference.circle(chosen[0]));
         hexField.setText(ColorPreference.toHex(chosen[0]));
@@ -489,6 +493,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 preview.setBackground(ColorPreference.circle(color));
                 // updates the field; the watcher below accepts the same value
                 hexField.setText(ColorPreference.toHex(color));
+                updateContrastHint.run();
             });
             grid.addView(swatch);
         }
@@ -508,6 +513,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 if (parsed != null) {
                     chosen[0] = parsed;
                     preview.setBackground(ColorPreference.circle(parsed));
+                    updateContrastHint.run();
                 }
             }
         });

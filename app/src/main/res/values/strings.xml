@@ -235,6 +235,7 @@
     <string name="settings_syslog_label">Activity logs</string>
     <string name="settings_theming_category">Theming</string>
     <string name="settings_group_sync_title">Send points in batches of at least</string>
+    <string name="settings_colorpicker_low_contrast">Low contrast: white is hard to read on this colour, so the app will use dark text and icons on it.</string>
     <string name="settings_group_sync_off">Off: each point is sent straight away</string>
     <string name="settings_sms_summary_no_senders">No allowed sender yet: every SMS command is ignored. Tap \"Allowed senders\" to add one.</string>
     <string name="settings_sms_summary_no_pin">No PIN set: sender numbers can be forged. Tap \"SMS PIN\" to set one.</string>

@@ -132,6 +132,29 @@ public class ColorPreferenceTest {
         controller.destroy();
     }
 
+    @Test
+    public void dialogWarnsAboutLowContrastForLightColours() {
+        DbTestSupport.resetDatabase();
+        ActivityController<PreferencesActivity> controller =
+                Robolectric.buildActivity(PreferencesActivity.class).setup();
+        PreferencesFragment fragment = (PreferencesFragment) controller.get()
+                .getSupportFragmentManager().findFragmentByTag("preftag");
+        ColorPreference pref = fragment.findPreference(context.getString(R.string.pref_key_color));
+
+        pref.performClick();
+        AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
+        android.view.View hint = dialog.findViewById(R.id.colorContrastHint);
+        EditText hex = dialog.findViewById(R.id.colorHex);
+
+        // the default blue keeps white text
+        assertEquals(android.view.View.GONE, hint.getVisibility());
+        hex.setText("#CDDC39");
+        assertEquals(android.view.View.VISIBLE, hint.getVisibility());
+        hex.setText("#123456");
+        assertEquals(android.view.View.GONE, hint.getVisibility());
+        controller.destroy();
+    }
+
     private int storedColor() {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getInt(context.getString(R.string.pref_key_color), 0);
