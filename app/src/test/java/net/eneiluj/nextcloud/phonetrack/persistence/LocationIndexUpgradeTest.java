@@ -189,7 +189,7 @@ public class LocationIndexUpgradeTest {
         PhoneTrackSQLiteOpenHelper helper = openWithHelper();
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        assertEquals(21, db.getVersion());
+        assertEquals(PhoneTrackSQLiteOpenHelper.database_version, db.getVersion());
         assertDataKept(helper);
 
         List<String> indexes = locationIndexes(db);
@@ -244,7 +244,7 @@ public class LocationIndexUpgradeTest {
         context.deleteDatabase(DB_NAME);
         PhoneTrackSQLiteOpenHelper fresh = PhoneTrackSQLiteOpenHelper.getInstance(context);
 
-        assertEquals(21, fresh.getReadableDatabase().getVersion());
+        assertEquals(PhoneTrackSQLiteOpenHelper.database_version, fresh.getReadableDatabase().getVersion());
         assertEquals(upgraded, locationIndexes(fresh.getReadableDatabase()));
     }
 }

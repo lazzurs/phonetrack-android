@@ -847,7 +847,7 @@ public class LoggerService extends Service {
                 running++;
             }
         }
-        LoggingNotification.setContent(this, mNotificationBuilder, running, db.getLocationNotSyncedCount(), pausedText());
+        LoggingNotification.setContent(this, mNotificationBuilder, running, pausedText(), db);
     }
 
     /** Why (the most important reason) log jobs are paused, or null if none is. */

@@ -62,6 +62,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -83,13 +84,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -182,6 +182,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     RecyclerView listNavigationMenu;
     RecyclerView listView;
     Snackbar ssoSnackbar;
+    /** Upload errors of the sync run in progress, by log job id, shown together when it ends */
+    private final Map<Long, String> uploadFailures = new LinkedHashMap<>();
     ImageView avatarView;
     AppCompatImageButton menuButton;
     AppCompatImageButton accountButton;
@@ -461,12 +463,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         swipeRefreshLayout.setRefreshing(false);
         //db.getPhonetrackServerSyncHelper().addCallbackPull(syncCallBack);
         if (db.getPhonetrackServerSyncHelper().isSyncPossible()) {
-            swipeRefreshLayout.setEnabled(true);
             synchronize();
         }
-        else {
-            swipeRefreshLayout.setEnabled(false);
-        }
+        updatePullToRefresh();
 
         registerBroadcastReceiver();
 
@@ -478,6 +477,15 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         updateUsernameInDrawer();
 
         if (LoggerService.DEBUG) { SystemLogger.d(TAG, "onResume END"); }
+    }
+
+    /**
+     * Pull to refresh syncs the sessions, which needs a Nextcloud account, and uploads the
+     * positions waiting, which does not (custom log jobs).
+     */
+    private void updatePullToRefresh() {
+        swipeRefreshLayout.setEnabled(db.getPhonetrackServerSyncHelper().isSyncPossible()
+                || db.getLocationNotSyncedCount() > 0);
     }
 
     private void updateCurrentInfoDialog() {
@@ -630,6 +638,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         });
 
+        // onResume enables it when there are positions to upload
         if (!db.getPhonetrackServerSyncHelper().isSyncPossible()) {
             swipeRefreshLayout.setEnabled(false);
         }
@@ -1481,8 +1490,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         long diffLastSync = tsNow - tsLastSync;
         SyncError lastSyncErr = db.getLastSyncError(ljId);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.ROOT);
-
         if (LoggerService.DEBUG) { SystemLogger.d(TAG, "updateInfoDialogContent " + tsLastLoc + " " + tsLastSync); }
 
         List<DBLogjobLocation> cRLocations = db.getCurrentRunLocationsOfLogjob(ljId);
@@ -1553,7 +1560,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         if (tsLastLoc != 0 && cRLocations.size() > 0) {
             Date d = new Date(tsLastLoc*1000);
             String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, c);
-            lastLocText = c.getString(R.string.logjob_info_lastloc, diffLastLocString, sdf.format(d));
+            lastLocText = c.getString(R.string.logjob_info_lastloc, diffLastLocString, formatDateTime(c, d));
 
             TextView tv3 = iView.findViewById(R.id.infoLastLocText);
             tv3.setText(lastLocText);
@@ -1564,7 +1571,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         if (tsLastSync != 0 && logjob.getNbSync() > 0) {
             Date d = new Date(tsLastSync*1000);
             String diffLastSyncString = SupportUtil.formatDuration(diffLastSync, c);
-            lastSyncText = c.getString(R.string.logjob_info_lastsync, diffLastSyncString, sdf.format(d));
+            lastSyncText = c.getString(R.string.logjob_info_lastsync, diffLastSyncString, formatDateTime(c, d));
 
             TextView tv4 = iView.findViewById(R.id.infoLastSyncText);
             tv4.setText(lastSyncText);
@@ -1575,12 +1582,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         if (lastSyncErr.getTimestamp() != 0) {
             Date d = new Date(lastSyncErr.getTimestamp()*1000);
-            String diffLastLocString = SupportUtil.formatDuration(diffLastLoc, c);
+            String diffLastErrString = SupportUtil.formatDuration(tsNow - lastSyncErr.getTimestamp(), c);
             lastSyncErrText = c.getString(
                     R.string.logjob_info_lastsync_error,
-                    diffLastLocString,
-                    sdf.format(d),
+                    diffLastErrString,
+                    formatDateTime(c, d),
                     lastSyncErr.getMessage());
+            if (lastSyncErr.getConsecutiveFailures() > 1) {
+                lastSyncErrText += "\n" + c.getResources().getQuantityString(R.plurals.logjob_info_failures_in_a_row,
+                        lastSyncErr.getConsecutiveFailures(), lastSyncErr.getConsecutiveFailures());
+            }
 
             TextView tv5 = iView.findViewById(R.id.infoLastSyncErrText);
             tv5.setText(lastSyncErrText);
@@ -1591,7 +1602,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         if (logjob.isEnabled()) {
             Date d = new Date(tsLastActivationSystem*1000);
             String diffLastActivationString = SupportUtil.formatDuration(diffLastActivation, c);
-            String lastActivationText = c.getString(R.string.logjob_info_last_activation, diffLastActivationString, sdf.format(d));
+            String lastActivationText = c.getString(R.string.logjob_info_last_activation, diffLastActivationString, formatDateTime(c, d));
 
             TextView tv3 = iView.findViewById(R.id.infoLastActivationText);
             tv3.setText(lastActivationText);
@@ -1599,6 +1610,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         } else {
             iView.findViewById(R.id.infoLastActivationLayout).setVisibility(View.GONE);
         }
+    }
+
+    /** In the user's locale and 12/24-hour setting */
+    private static String formatDateTime(Context c, Date d) {
+        return DateUtils.formatDateTime(c, d.getTime(),
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_TIME);
     }
 
     @Override
@@ -1772,6 +1789,9 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                             break;
                         }
                     }
+                    if (!swipeRefreshLayout.isEnabled()) {
+                        updatePullToRefresh();
+                    }
                     break;
                 case WebTrackSync.BROADCAST_SYNC_STARTED:
                     //swipeRefreshLayout.setRefreshing(true);
@@ -1801,13 +1821,23 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     // without parameter : end of sync service
                     else {
                         swipeRefreshLayout.setRefreshing(false);
+                        showUploadFailures();
                     }
                     updateCurrentInfoDialog();
                     break;
                 case (WebTrackSync.BROADCAST_SYNC_FAILED): {
-                    //long ljId3 = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
+                    // shown once for the whole run, when it is done
+                    long failedId = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     String errorMessage = intent.getStringExtra(LoggerService.BROADCAST_ERROR_MESSAGE);
-                    showToast(getString(R.string.uploading_failed) + "\n" + errorMessage, Toast.LENGTH_LONG);
+                    uploadFailures.put(failedId, errorMessage == null ? "" : errorMessage);
+                    // the row shows the error
+                    for (int i = 0; i < adapter.getItemCount(); i++) {
+                        Item item = adapter.getItem(i);
+                        if (item instanceof DBLogjob && ((DBLogjob) item).getId() == failedId) {
+                            adapter.notifyItemChanged(i);
+                            break;
+                        }
+                    }
                     updateCurrentInfoDialog();
                     break;
                 }
@@ -1874,6 +1904,24 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             }
         }
     };
+
+    private void showUploadFailures() {
+        if (uploadFailures.isEmpty()) {
+            return;
+        }
+        String text;
+        if (uploadFailures.size() == 1) {
+            Map.Entry<Long, String> failure = uploadFailures.entrySet().iterator().next();
+            DBLogjob logjob = db.getLogjob(failure.getKey());
+            String title = logjob == null ? "" : logjob.getTitle();
+            text = getString(R.string.upload_failed_one, title, failure.getValue());
+        } else {
+            text = getResources().getQuantityString(R.plurals.upload_failed_several,
+                    uploadFailures.size(), uploadFailures.size());
+        }
+        uploadFailures.clear();
+        Snackbar.make(swipeRefreshLayout, text, Snackbar.LENGTH_LONG).show();
+    }
 
     private final ICallback createSessionCallBack = new ICallback() {
         @Override

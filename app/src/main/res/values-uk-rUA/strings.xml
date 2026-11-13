@@ -241,11 +241,7 @@
   <string name="e_auth_failure">Authorization failure: %d</string>
   <string name="e_http_code">HTTP error code: %d</string>
   <string name="e_server_response">Server response error</string>
-  <string name="e_unknown_host">Unknown host: %s</string>
-  <string name="e_bad_url">Bad URL: %s</string>
-  <string name="e_connect">Connection error: %s</string>
   <string name="malformed_post_url">Malformed POST URL</string>
-  <string name="uploading_failed">Uploading failed:</string>
   <string name="uploading_started">Uploading started</string>
   <string name="certificate_notification_connection_security">PhoneTrack - безпека підключення</string>
   <string name="trust_certificate_unknown_certificate_found">У PhoneTrack з\'явився невідомий сертифікат. Ви хочете йому довіряти?</string>

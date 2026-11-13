@@ -42,7 +42,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 21;
+    @VisibleForTesting
+    static final int database_version = 22;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -74,6 +75,8 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_lastSyncTimestamp = "LASTSYNC";
     private static final String key_lastSyncErrorTimestamp = "LASTSYNCERRTIME";
     private static final String key_lastSyncErrorText = "LASTSYNCERR";
+    /** Uploads that failed in a row since the last successful one */
+    private static final String key_lastSyncErrorCount = "LASTSYNCERRCOUNT";
     private static final String key_login = "LOGIN";
     private static final String key_password = "PASSWORD";
     private static final String key_json = "JSON";
@@ -213,6 +216,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                 key_lastActivationGpsTimestamp + " INTEGER DEFAULT 0, " +
                 key_lastSyncErrorTimestamp + " INTEGER DEFAULT 0, " +
                 key_lastSyncErrorText + " TEXT, " +
+                key_lastSyncErrorCount + " INTEGER DEFAULT 0, " +
                 key_token + " TEXT, " +
                 key_login + " TEXT DEFAULT NULL, " +
                 key_password + " TEXT DEFAULT NULL, " +
@@ -299,6 +303,29 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             createLocationIndexes(db);
             deleteLocationsOfDeletedLogjobs(db);
         }
+        if (oldVersion < 22) {
+            addUploadErrorCountColumn(db);
+        }
+    }
+
+    /**
+     * Number of uploads of a log job that failed in a row, so that the logging notification
+     * mentions a failure that lasts and not every transient one. Safe to run again.
+     */
+    @VisibleForTesting
+    static void addUploadErrorCountColumn(SQLiteDatabase db) {
+        try (Cursor cursor = db.rawQuery("PRAGMA table_info(" + table_logjobs + ")", null)) {
+            int name = cursor.getColumnIndexOrThrow("name");
+            while (cursor.moveToNext()) {
+                if (key_lastSyncErrorCount.equals(cursor.getString(name))) {
+                    return;
+                }
+            }
+        }
+        db.execSQL("ALTER TABLE " + table_logjobs + " ADD COLUMN " + key_lastSyncErrorCount + " INTEGER DEFAULT 0");
+        // an error stored by an earlier version counts as one failure
+        db.execSQL("UPDATE " + table_logjobs + " SET " + key_lastSyncErrorCount + " = 1 WHERE "
+                + key_lastSyncErrorTimestamp + " != 0");
     }
 
     /**
@@ -1282,30 +1309,52 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    /** An upload of this log job failed: store why and when, and count it. */
     public void setLastSyncError(long ljId, long ts, String message) {
         SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE " + table_logjobs + " SET "
+                        + key_lastSyncErrorTimestamp + " = ?, "
+                        + key_lastSyncErrorText + " = ?, "
+                        + key_lastSyncErrorCount + " = IFNULL(" + key_lastSyncErrorCount + ", 0) + 1"
+                        + " WHERE " + key_id + " = ?",
+                new Object[]{ts, message, ljId});
+    }
+
+    /** An upload of this log job succeeded: forget the last error. */
+    public void resetLastSyncError(long ljId) {
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(key_lastSyncErrorTimestamp, ts);
-        values.put(key_lastSyncErrorText, message);
+        values.put(key_lastSyncErrorTimestamp, 0);
+        values.put(key_lastSyncErrorText, "");
+        values.put(key_lastSyncErrorCount, 0);
         db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
     }
 
-    public void resetLastSyncError(long ljId) {
-        setLastSyncError(ljId, 0, "");
-    }
-
+    @NonNull
     public SyncError getLastSyncError(long ljId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(table_logjobs, new String[]{key_lastSyncErrorTimestamp, key_lastSyncErrorText}, key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null);
         long ts = 0;
         String msg = "";
-        while (cursor.moveToNext()) {
-            ts = cursor.getLong(0);
-            msg = cursor.getString(1);
-            break;
+        int count = 0;
+        try (Cursor cursor = db.query(table_logjobs,
+                new String[]{key_lastSyncErrorTimestamp, key_lastSyncErrorText, key_lastSyncErrorCount},
+                key_id + " = ?", new String[]{String.valueOf(ljId)}, null, null, null)) {
+            if (cursor.moveToFirst()) {
+                ts = cursor.getLong(0);
+                msg = cursor.getString(1);
+                count = cursor.getInt(2);
+            }
         }
-        cursor.close();
-        return new SyncError(ts, msg);
+        return new SyncError(ts, msg, count);
+    }
+
+    /**
+     * Log jobs whose uploads failed at least this many times in a row, most recent failure first.
+     */
+    @NonNull
+    public List<DBLogjob> getLogjobsWithFailingUploads(int minConsecutiveFailures) {
+        return getLogjobsCustom(key_lastSyncErrorTimestamp + " != 0 AND " + key_lastSyncErrorCount + " >= ?",
+                new String[]{String.valueOf(minConsecutiveFailures)}, key_lastSyncErrorTimestamp + " DESC");
     }
 
     /**

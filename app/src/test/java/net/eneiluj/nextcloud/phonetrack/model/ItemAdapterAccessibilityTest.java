@@ -122,6 +122,24 @@ public class ItemAdapterAccessibilityTest {
     }
 
     @Test
+    public void rowShowsAFailingUploadUntilTheNextSuccess() {
+        ItemAdapter.LogjobViewHolder holder = bind("Hike", true, 1);
+        assertEquals(View.GONE, holder.uploadError.getVisibility());
+
+        long id = ((DBLogjob) adapter.getItem(0)).getId();
+        db.setLastSyncError(id, System.currentTimeMillis() / 1000, "The server refused the login (HTTP 401)");
+        adapter.onBindViewHolder(holder, 0);
+        assertEquals(View.VISIBLE, holder.uploadError.getVisibility());
+        assertEquals("Upload failing: The server refused the login (HTTP 401)", holder.uploadError.getText().toString());
+        String summary = holder.itemView.getContentDescription().toString();
+        assertTrue(summary, summary.endsWith("Upload failing: The server refused the login (HTTP 401)"));
+
+        db.resetLastSyncError(id);
+        adapter.onBindViewHolder(holder, 0);
+        assertEquals(View.GONE, holder.uploadError.getVisibility());
+    }
+
+    @Test
     public void rowOffersToggleAsAccessibilityAction() {
         ItemAdapter.LogjobViewHolder holder = bind("Hike", false, 0);
         AccessibilityNodeInfo info = AccessibilityNodeInfo.obtain();

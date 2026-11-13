@@ -218,6 +218,17 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (nbSentShown > 0) {
                 summary.add(ctx.getResources().getQuantityString(R.plurals.a11y_logjob_sent, nbSentShown, nbSentShown));
             }
+            // cleared by the next successful upload
+            SyncError uploadError = db.getLastSyncError(logjob.getId());
+            if (uploadError.isFailing()) {
+                String reason = uploadError.getMessage() == null ? "" : uploadError.getMessage();
+                String errorText = ctx.getString(R.string.logjob_upload_failing, reason);
+                nvHolder.uploadError.setText(errorText);
+                nvHolder.uploadError.setVisibility(View.VISIBLE);
+                summary.add(errorText);
+            } else {
+                nvHolder.uploadError.setVisibility(View.GONE);
+            }
             // The row sums up its state; the icons and counters are hidden from TalkBack in the layout.
             nvHolder.itemView.setContentDescription(TextUtils.join(", ", summary));
         }
@@ -304,6 +315,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         SwitchCompat logjobEnabled;
         TextView nbNotSync;
         TextView nbSync;
+        TextView uploadError;
         ImageButton moreButton;
 
         private LogjobViewHolder(View v) {
@@ -320,6 +332,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.logjobEnabled = v.findViewById(R.id.logjobEnabled);
             this.nbNotSync = v.findViewById(R.id.nbNotSync);
             this.nbSync = v.findViewById(R.id.nbSync);
+            this.uploadError = v.findViewById(R.id.logjobUploadError);
             this.moreButton = v.findViewById(R.id.moreButton);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);

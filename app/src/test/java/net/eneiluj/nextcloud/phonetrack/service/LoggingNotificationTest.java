@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
 
+import android.Manifest;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -20,7 +21,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.work.Configuration;
+import androidx.work.Data;
+import androidx.work.ListenableWorker;
 import androidx.work.testing.SynchronousExecutor;
+import androidx.work.testing.TestWorkerBuilder;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -38,6 +42,7 @@ import org.robolectric.android.controller.ServiceController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 /** The logging notification: its own channel, what it says, and its stop button. */
 @RunWith(AndroidJUnit4.class)
@@ -56,6 +61,10 @@ public class LoggingNotificationTest {
                 new Configuration.Builder().setExecutor(new SynchronousExecutor()).build());
         db = PhoneTrackSQLiteOpenHelper.getInstance(app);
         notificationManager = app.getSystemService(NotificationManager.class);
+        // ready to log, so that no log job is paused (see LoggerServicePauseTest)
+        shadowOf(app).grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        shadowOf(app.getSystemService(LocationManager.class)).setProviderEnabled(LocationManager.GPS_PROVIDER, true);
     }
 
     @After
@@ -130,6 +139,98 @@ public class LoggingNotificationTest {
         assertEquals("Logging 1 log job", n.extras.getCharSequence(Notification.EXTRA_TITLE).toString());
         assertEquals(app.getString(R.string.logging_notification_nothing_pending),
                 n.extras.getCharSequence(Notification.EXTRA_TEXT).toString());
+    }
+
+    private String text() {
+        return loggingNotification().extras.getCharSequence(Notification.EXTRA_TEXT).toString();
+    }
+
+    private void updateNotification() {
+        Intent intent = new Intent(app, LoggerService.class);
+        intent.putExtra(LoggerService.UPDATE_NOTIFICATION, true);
+        controller.get().onStartCommand(intent, 0, 2);
+    }
+
+    @Test
+    public void uploadThatKeepsFailingIsShownInTheNotificationUntilItWorks() {
+        long hike = logjob("hike", true);
+        addPosition(hike);
+        startService();
+
+        // a first failure is often transient: not worth mentioning yet
+        db.setLastSyncError(hike, System.currentTimeMillis() / 1000, "The server refused the login (HTTP 401)");
+        updateNotification();
+        assertEquals("1 position waiting to upload", text());
+
+        for (int i = 1; i < UploadErrors.NOTIFY_AFTER_FAILURES; i++) {
+            db.setLastSyncError(hike, System.currentTimeMillis() / 1000, "The server refused the login (HTTP 401)");
+        }
+        updateNotification();
+        assertEquals("Upload failing for ‘hike’: The server refused the login (HTTP 401)", text());
+        // the same notification, not a new one each time
+        assertEquals(1, shadowOf(notificationManager).getAllNotifications().size());
+        String big = loggingNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString();
+        assertTrue(big, big.endsWith("1 position waiting to upload"));
+
+        db.resetLastSyncError(hike);
+        updateNotification();
+        assertEquals("1 position waiting to upload", text());
+    }
+
+    @Test
+    public void pausedLoggingComesBeforeAFailingUpload() {
+        shadowOf(app).denyPermissions(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        long hike = logjob("hike", true);
+        for (int i = 0; i < UploadErrors.NOTIFY_AFTER_FAILURES; i++) {
+            db.setLastSyncError(hike, 100 + i, "Could not connect to the server");
+        }
+        startService();
+
+        Notification n = loggingNotification();
+        // nothing is logging: the title does not say otherwise
+        assertEquals(app.getString(R.string.notification_channel_logging),
+                n.extras.getCharSequence(Notification.EXTRA_TITLE).toString());
+        assertTrue(text(), text().startsWith("Logging is stopped"));
+        String big = n.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString();
+        assertTrue(big, big.contains("Upload failing for ‘hike’: Could not connect to the server"));
+    }
+
+    @Test
+    public void severalFailingLogjobsAreCounted() {
+        long hike = logjob("hike", true);
+        long car = logjob("car", true);
+        for (int i = 0; i < UploadErrors.NOTIFY_AFTER_FAILURES; i++) {
+            db.setLastSyncError(hike, 100 + i, "a");
+            db.setLastSyncError(car, 100 + i, "b");
+        }
+        startService();
+
+        assertEquals("Uploads failing for 2 log jobs", text());
+    }
+
+    @Test
+    public void failingWorkerRunsEndUpInTheNotification() {
+        long id = logjob("custom", true);
+        addPosition(id);
+        startService();
+
+        for (int attempt = 0; attempt < UploadErrors.NOTIFY_AFTER_FAILURES; attempt++) {
+            WebTrackWorker worker = TestWorkerBuilder.from(app, WebTrackWorker.class, Executors.newSingleThreadExecutor())
+                    .setInputData(new Data.Builder().putLong(WebTrackWorker.KEY_LOGJOB_ID, id).build())
+                    .setRunAttemptCount(attempt)
+                    .build();
+            assertEquals(ListenableWorker.Result.retry(), worker.doWork());
+            // the worker asks the running service to refresh its notification after each run
+            Intent asked = shadowOf(app).getNextStartedService();
+            assertTrue(asked.getBooleanExtra(LoggerService.UPDATE_NOTIFICATION, false));
+            controller.get().onStartCommand(asked, 0, attempt + 2);
+            if (attempt + 1 < UploadErrors.NOTIFY_AFTER_FAILURES) {
+                assertEquals("1 position waiting to upload", text());
+            }
+        }
+
+        assertEquals(UploadErrors.NOTIFY_AFTER_FAILURES, db.getLastSyncError(id).getConsecutiveFailures());
+        assertEquals("Upload failing for ‘custom’: Could not connect to the server", text());
     }
 
     @Test
