@@ -116,6 +116,8 @@ public class LoggerService extends Service {
     private PhoneTrackSQLiteOpenHelper db;
 
     private Map<Long, CorrectingLocation> lastLocations;
+    /** Latest GPS fix any log job received, which another one may use instead of searching */
+    private volatile CorrectingLocation latestGpsFix;
     private static volatile Map<Long, Long> lastUpdateRealtime;
 
     private final int NOTIFICATION_ID = 1526756640;
@@ -328,7 +330,7 @@ public class LoggerService extends Service {
                             // this happens in sigmotion when no motion has been seen
                             long intervalTimeMillis = intent.getLongExtra(SCHEDULE_INTERVAL, 0);
                             logjobWorker.onIntervalOverWithoutMotion(intervalTimeMillis);
-                        } else {
+                        } else if (!logjobWorker.useRecentFix(latestGpsFix)) {
                             SystemLogger.d(TAG, "[command] request location update for " + jobId);
                             boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
                             boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
@@ -918,10 +920,17 @@ public class LoggerService extends Service {
             if (DEBUG) {
                 SystemLogger.d(TAG, "location changed [" + type + "]: " + logjobId + "/" + logjob.getTitle() + ", bat : " + battery);
             }
+            boolean gps = LocationManager.GPS_PROVIDER.equals(loc.getProvider());
+            if (gps) {
+                latestGpsFix = loc;
+            }
 
             // always pass to the worker (sig motion or not)
             LogjobWorker logjobWorker = mLogjobWorkers.get(logjobId);
             if (logjobWorker != null) {
+                if (gps) {
+                    logjobWorker.mLastOwnGpsFixNanos = loc.getElapsedRealtimeNanos();
+                }
                 logjobWorker.handleLocationChange(loc);
             }
         }
@@ -1094,6 +1103,8 @@ public class LoggerService extends Service {
         protected CorrectingLocation mCachedNetworkResult;
         /** Searches in a row that ended at the timeout without logging a position */
         protected int mConsecutiveMisses;
+        /** When the last GPS fix this job received itself was taken */
+        protected long mLastOwnGpsFixNanos;
 
         protected boolean mUseSignificantMotion;
         protected boolean mUseMixedMode;
@@ -1295,6 +1306,29 @@ public class LoggerService extends Service {
 
         public boolean shouldGetPositionAfterInterval() {
             // by default, a logjob gets a position after the interval
+            return true;
+        }
+
+        /**
+         * At the start of a sample, use a GPS fix that another log job got moments ago instead of
+         * searching, if it is good enough for this one: when several log jobs run, it saves
+         * switching GPS on again for each.
+         *
+         * @return true if the fix ended this sample
+         */
+        public boolean useRecentFix(CorrectingLocation fix) {
+            // a fix this job received itself was already handled during its own search
+            if (fix == null || !useGps || !mUseInterval || fix.getElapsedRealtimeNanos() == mLastOwnGpsFixNanos) {
+                return false;
+            }
+            long ageMillis = SystemClock.elapsedRealtime() - fix.getElapsedRealtimeNanos() / 1000000;
+            if (!LocationSamplePolicy.canReuseFix(ageMillis, mIntervalTimeMillis)
+                    || decide(fix) == LocationSamplePolicy.Decision.KEEP_SEARCHING) {
+                return false;
+            }
+            SystemLogger.d(TAG, "Using a GPS fix from " + (ageMillis / 1000.0) + " s ago for job " + mJobId + " instead of searching");
+            updateLastAcquisitionStart();
+            handleLocationChange(fix);
             return true;
         }
 

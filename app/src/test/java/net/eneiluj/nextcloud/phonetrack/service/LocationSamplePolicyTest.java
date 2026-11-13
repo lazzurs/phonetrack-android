@@ -4,6 +4,8 @@ import static net.eneiluj.nextcloud.phonetrack.service.LocationSamplePolicy.Deci
 import static net.eneiluj.nextcloud.phonetrack.service.LocationSamplePolicy.Decision.KEEP_SEARCHING;
 import static net.eneiluj.nextcloud.phonetrack.service.LocationSamplePolicy.Decision.STATIONARY;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -83,6 +85,20 @@ public class LocationSamplePolicyTest {
         assertEquals(2000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(10_000));
         assertEquals(5000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(30_000));
         assertEquals(5000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(300_000));
+    }
+
+    @Test
+    public void aFixFromAnotherLogjobIsReusedOnlyWhenFresh() {
+        assertTrue(LocationSamplePolicy.canReuseFix(0, 60_000));
+        assertTrue(LocationSamplePolicy.canReuseFix(10_000, 60_000));
+        assertFalse(LocationSamplePolicy.canReuseFix(10_001, 60_000));
+        assertFalse(LocationSamplePolicy.canReuseFix(30_000, 600_000));
+        // a sixth of a short interval
+        assertTrue(LocationSamplePolicy.canReuseFix(2_000, 12_000));
+        assertFalse(LocationSamplePolicy.canReuseFix(2_001, 12_000));
+        assertFalse(LocationSamplePolicy.canReuseFix(1, 5));
+        // from the future: clock trouble, do not trust it
+        assertFalse(LocationSamplePolicy.canReuseFix(-1, 60_000));
     }
 
     @Test
