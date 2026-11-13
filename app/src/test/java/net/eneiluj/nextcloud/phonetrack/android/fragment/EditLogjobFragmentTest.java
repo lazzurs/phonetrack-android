@@ -428,6 +428,30 @@ public class EditLogjobFragmentTest {
         assertEquals(app.getString(R.string.edit_error_timeout_not_below_max_time), error(R.id.input_layout_sign_motion_timeout));
     }
 
+    @Test
+    public void keepGpsOnWarnsAboutLongIntervals() {
+        open(EditCustomLogjobActivity.class, addCustomJob("Old", "https://example.test/log"));
+        TextView summary = activity.findViewById(R.id.keepgpsonSummary);
+        String warning = app.getString(R.string.setting_keepgps_long_interval_warning);
+        assertFalse(summary.getText().toString().contains(warning));
+
+        // the job has a minimum time of 60 seconds
+        ((android.widget.CheckBox) activity.findViewById(R.id.keepgpson)).performClick();
+        idle();
+        assertTrue(summary.getText().toString().contains(warning));
+        assertTrue(summary.getText().toString().startsWith(app.getString(R.string.setting_keepgps_summary)));
+
+        type(R.id.editMinTime, "30");
+        assertFalse(summary.getText().toString().contains(warning));
+        type(R.id.editMinTime, "60");
+        assertTrue(summary.getText().toString().contains(warning));
+
+        // an invalid minimum time shows its error, not the warning
+        type(R.id.editMinTime, "9999999999");
+        assertFalse(summary.getText().toString().contains(warning));
+        assertNotNull(error(R.id.input_layout_min_time));
+    }
+
     // Numbers too long for an int
 
     @Test
