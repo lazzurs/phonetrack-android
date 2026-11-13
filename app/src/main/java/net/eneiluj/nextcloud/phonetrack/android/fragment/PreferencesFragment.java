@@ -319,7 +319,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         final EditTextPreference groupSyncPref = (EditTextPreference) findPreference(getString(R.string.pref_key_group_sync));
         String groupSyncValStr = sp.getString(getString(R.string.pref_key_group_sync), "0");
         long groupSyncVal = Long.valueOf(groupSyncValStr);
-        groupSyncPref.setSummary(String.valueOf(groupSyncVal));
+        setGroupSyncSummary(groupSyncPref, groupSyncVal);
         groupSyncPref.setDialogMessage(getString(R.string.settings_group_sync_long));
         groupSyncPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
@@ -345,7 +345,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                     /*SharedPreferences.Editor editor = sp.edit();
                     editor.putString(getString(R.string.pref_key_group_sync), String.valueOf(valLong));
                     editor.apply();*/
-                    preference.setSummary(String.valueOf(valLong));
+                    setGroupSyncSummary(preference, valLong);
                     updateSendDeadlinePref(valLong, null);
                     applyUploadSettingsOnceSaved();
                     return true;
@@ -679,6 +679,16 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         } else {
             int quantity = (int) Math.min(hours, Integer.MAX_VALUE);
             pref.setSummary(getResources().getQuantityString(R.plurals.settings_send_deadline_summary, quantity, quantity));
+        }
+    }
+
+    /** A bare number says nothing: give the unit, and say what 0 and 1 mean. */
+    private void setGroupSyncSummary(Preference pref, long points) {
+        if (points <= 1) {
+            pref.setSummary(R.string.settings_group_sync_off);
+        } else {
+            int quantity = (int) Math.min(points, Integer.MAX_VALUE);
+            pref.setSummary(getResources().getQuantityString(R.plurals.settings_group_sync_summary, quantity, quantity));
         }
     }
 

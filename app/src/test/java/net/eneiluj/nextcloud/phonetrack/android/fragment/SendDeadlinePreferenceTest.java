@@ -129,4 +129,23 @@ public class SendDeadlinePreferenceTest {
         assertTrue(deadline.isEnabled());
         assertEquals("3 hours", deadline.getSummary());
     }
+
+    @Test
+    public void bunchSizeSummaryHasAUnitAndSaysWhatOffMeans() {
+        openSettings();
+        String off = context.getString(R.string.settings_group_sync_off);
+        assertEquals(off, bunch.getSummary());
+        assertTrue(type(bunch, "1"));
+        assertEquals(off, bunch.getSummary());
+        assertTrue(type(bunch, "10"));
+        assertEquals("10 points", bunch.getSummary());
+    }
+
+    @Test
+    public void savedBunchSizeIsShownWithItsUnit() {
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putString(context.getString(R.string.pref_key_group_sync), "100").commit();
+        openSettings();
+        assertEquals("100 points", bunch.getSummary());
+    }
 }

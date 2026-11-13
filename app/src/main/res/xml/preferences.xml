@@ -175,7 +175,6 @@
             android:singleLine="true"
             android:selectAllOnFocus="true"
             android:persistent="true"
-            android:summary="0"
             android:dialogLayout="@layout/preference_edit_text_integer"
             android:title="@string/settings_group_sync_title" />
         <EditTextPreference
