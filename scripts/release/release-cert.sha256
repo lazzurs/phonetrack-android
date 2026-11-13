@@ -1,0 +1,5 @@
+# SHA-256 digest of the certificate that signs every release of this fork
+# (CN=lazzurs phonetrack-android fork). scripts/release/verify-apk-signer.sh compares each built
+# APK with it. Check it yourself on a downloaded APK: apksigner verify --print-certs phonetrack-X.Y.Z-normal.apk
+# Never change it: Android only installs an update signed with the same key (see RELEASING.md).
+bcc5bd6da42d888dc96eb85b33ec092ab2073fce379c8bf6968e3b57e32f074d

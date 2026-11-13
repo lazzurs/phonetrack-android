@@ -1,0 +1,15 @@
+# Keeps the actions in .github/workflows up to date: they are pinned to commit SHAs
+# (scripts/release/check-workflows.sh), and Dependabot moves the SHA and its "# vX.Y.Z" comment
+# together. Its "ci(deps): ..." commits don't publish a release (RELEASING.md).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions:
+        patterns: ["*"]

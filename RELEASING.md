@@ -78,7 +78,8 @@ On every push to `main` (a merged pull request), the Release workflow:
 1. decides: if `gradle.properties` has a version without a tag, that version; else, if there are
    user-facing commits since the previous release (`scripts/release/releasable.sh`), the next version
    from `git-cliff --bumped-version`; else nothing, and it stops;
-2. builds the signed APKs with that version, after the unit tests;
+2. builds the APKs with that version, after the unit tests, signs them with the release key and
+   checks that they really are signed with it (see [Signing](#signing));
 3. commits `build: release X.Y.Z` on top of the merge (the version in `gradle.properties` and the
    `CHANGELOG.md` entry), tags it `vX.Y.Z` and pushes both at once, then publishes the GitHub release.
 
@@ -89,15 +90,22 @@ If `main` moved on during the run, nothing is pushed: the run for the newer push
 release renames it to `X.Y.Z.md`.
 
 **Testing a release build first**: *Actions → Release → Run workflow* (on `main` or a branch) is a
-dry run of what a push would release. Its artifact has the signed APKs (optimized by R8, unlike debug
-builds) and the notes. To make every release wait until it's been tested, add required reviewers to
-the `release` [environment](https://docs.github.com/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments):
-the publish job then waits for an approval after the APKs are built (they're in the run's artifact).
+dry run of what a push would release. Its artifact has the APKs (optimized by R8, unlike debug
+builds) and the notes. Only a dry run **on `main`** is signed with the release key
+(`release-dry-run-X.Y.Z`). On any other branch the code hasn't been reviewed, so the APKs are
+debug-signed and named so (`release-dry-run-X.Y.Z-debug-signed`,
+`phonetrack-X.Y.Z-normal-debug-signed.apk`): they can't be installed as an update of a released
+app, only next to nothing (uninstall first, or use another device or user profile).
 
-**Pre-release**: push a tag `vX.Y.Z-rc.N` on a commit (e.g. of a branch) whose `gradle.properties`
-has the version `X.Y.Z`. Pre-releases don't update `CHANGELOG.md`.
+**Tags must be on `main`**: the workflow refuses a `v*` tag whose commit is not on `main`, before
+anything is built or signed. A release is code that was merged, never a branch.
 
-**Tag by hand** (e.g. if the workflow is broken): push a `vX.Y.Z` tag on a commit whose
+**Pre-release**: push a tag `vX.Y.Z-rc.N` on a commit of `main` whose `gradle.properties` has the
+version `X.Y.Z` and that isn't released yet. Pre-releases don't update `CHANGELOG.md`. Since a merge
+to `main` is released right away, there is rarely such a commit: in practice a pre-release is only
+possible while the automatic release is not working.
+
+**Tag by hand** (e.g. if the workflow is broken): push a `vX.Y.Z` tag on a commit of `main` whose
 `gradle.properties` has that version; the workflow checks and publishes it.
 
 To preview locally: `pipx install git-cliff`, then `scripts/release/releasable.sh`,
@@ -116,6 +124,16 @@ for forks), and there is no `pull_request_target` workflow. Keep it that way:
   code a maintainer merged or pushed. Its build job, which runs Gradle and so third-party code, has a
   read-only token and gets the signing secrets only in the two steps that need them; only the
   publish job can push.
+- The release key only signs code that is on `main`: a manual run on another branch is debug-signed,
+  and a tag that is not on `main` is refused.
+- Every action is pinned to a full commit SHA with its version in a comment
+  (`uses: owner/action@<40 hex digits> # vX.Y.Z`), because whoever controls an action's repository
+  can move a tag like `v4` to other code. CI fails otherwise, and when a workflow has no
+  `permissions:` block (`scripts/release/check-workflows.sh`). Dependabot
+  ([`.github/dependabot.yml`](.github/dependabot.yml)) proposes the updates as `ci(deps):` pull
+  requests, which don't publish a release. Review what changed in the action before merging one.
+- All workflows have a read-only token, except the publish job. The job that signs doesn't use the
+  Android SDK setup action or a Gradle cache written by another run.
 - Pull requests from other repositories can't change the version.
 - The workflow's own pushes (release commit and tag) use its token, which starts no workflow run, so
   a release can't trigger another one.
@@ -124,10 +142,60 @@ for forks), and there is no `pull_request_target` workflow. Keep it that way:
 
 ## Signing
 
-The release APKs are signed with the fork's key, kept only in the repository secrets
+The release APKs are signed with the fork's key, kept only in the secrets
 `RELEASE_KEYSTORE_BASE64` / `RELEASE_KEYSTORE_PASSWORD` (see the workflow). Every release must be
-signed with that same key, or installed apps can't be updated. Without the secrets (e.g. in a
-fork of this repository) the APKs are debug-signed and the workflow warns about it.
+signed with that same key, or installed apps can't be updated.
+
+- The SHA-256 digest of the key's certificate is in
+  [`scripts/release/release-cert.sha256`](scripts/release/release-cert.sha256). After assembling,
+  and again before publishing, `scripts/release/verify-apk-signer.sh` compares each APK's signer
+  with it (`apksigner verify --print-certs`). **A release that is debug-signed or signed with any
+  other key fails instead of being published**; so does one whose keystore secret is missing.
+  Anyone can run the same check on a downloaded APK.
+- Without the secrets (e.g. in a fork of this repository) a dry run's APKs are debug-signed, and a
+  push to `main` there fails at the signing step: a fork that wants its own releases replaces the
+  digest with its own key's.
+- The job that signs runs in the `release`
+  [environment](https://docs.github.com/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments)
+  (dry runs away from `main` run in none). The secrets may be repository secrets or secrets of that
+  environment; the workflow reads either.
+
+Repository settings that go with this (they are not in the code, so check them after changing
+anything here):
+
+- *Environments → release*: deployment branches and tags limited to the branch `main` and the tags
+  `v*`. **No required reviewers** and no wait timer, or releases stop being automatic (the signing
+  job and the publish job would each wait for an approval).
+- The signing secrets belong in that environment rather than at repository level: a repository
+  secret can be read by a workflow run started from any branch by anyone with write access (who
+  can edit the workflow on that branch), an environment secret only by runs on `main` and `v*`
+  tags. To move them, add `RELEASE_KEYSTORE_BASE64` and `RELEASE_KEYSTORE_PASSWORD` to the
+  environment with the same values, check with a dry run on `main`, then delete the repository
+  secrets.
+- *Rules → Rulesets*: a tag ruleset for `v*` that restricts creation, update and deletion, with
+  the repository admin and **GitHub Actions** in the bypass list (the release workflow pushes the
+  tag with its own token), and a branch ruleset or protection for `main`.
+- *Actions → General*: workflow permissions "Read repository contents" (the default token is
+  read-only), and optionally "Require actions to be pinned to a full-length commit SHA".
+
+## Dependencies
+
+- Libraries come from Google's Maven repository and Maven Central. [JitPack](https://jitpack.io),
+  which builds artifacts from Git on demand, only serves the two groups that are published nowhere
+  else (`com.github.bitfireat` for cert4android, `com.github.nextcloud` for Android-SingleSignOn;
+  the content filter in [`settings.gradle.kts`](settings.gradle.kts)). cert4android is pinned by its
+  full commit hash.
+- JitPack can rebuild an artifact, so the bytes behind a version are not fixed. Gradle therefore
+  checks the artifacts of those two groups against the SHA-256 checksums in
+  [`gradle/verification-metadata.xml`](gradle/verification-metadata.xml) and fails the build on any
+  other content; every other group is trusted as downloaded. After changing the version of one of
+  the two (review the new code first), set the new version and the SHA-256 of its `.aar` and
+  `.module` files in its `<component>` there; the build fails until they match, and its
+  dependency verification report shows the checksums of what was downloaded.
+- The Gradle wrapper checks the Gradle distribution it downloads against `distributionSha256Sum` in
+  [`gradle/wrapper/gradle-wrapper.properties`](gradle/wrapper/gradle-wrapper.properties). When
+  updating Gradle, take the new checksum from <https://gradle.org/release-checksums/>
+  (`./gradlew wrapper --gradle-version X.Y --gradle-distribution-sha256-sum <sum>`).
 
 The application ID is `io.github.lazzurs.phonetrack` (`.dev` / `.play` for the other flavors),
 different from the original app's `net.eneiluj.nextcloud.phonetrack`, so both can be installed

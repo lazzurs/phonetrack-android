@@ -23,9 +23,10 @@ androidx-work-testing = "androidx.work:work-testing:2.12.0"
 # NOTE: lowercase groupId (not "bitfireAT" as the GitHub org is styled) -
 # JitPack publishes this artifact's Maven path lowercased; the exact-case
 # groupId 404s on JitPack's server even though it reports "Build ok".
-# cert4android is never tagged (DAVx5 pins commits too): pin a commit from main.
+# cert4android is never tagged (DAVx5 pins commits too): pin a commit from main, by its full
+# 40-character hash (an abbreviated one could come to match another commit).
 # Check its manifest when moving the pin: the app overrides TrustCertificateActivity.
-cert4android = "com.github.bitfireat:cert4android:b070cc7"
+cert4android = "com.github.bitfireat:cert4android:b070cc7e74b9b74a39c55b147c013f54bd44e94d"
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
 osmdroid-mapsforge = { module = "org.osmdroid:osmdroid-mapsforge", version.ref = "osmdroid" }
 nextcloud-sso = "com.github.nextcloud:Android-SingleSignOn:1.3.4"
