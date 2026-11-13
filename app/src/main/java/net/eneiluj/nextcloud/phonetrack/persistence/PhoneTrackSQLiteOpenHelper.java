@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.NonNull;
@@ -41,7 +42,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
-    private static final int database_version = 20;
+    private static final int database_version = 21;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -91,6 +92,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String key_userAgent = "USERAGENT";
     private static final String key_synced = "SYNCED";
     private static final String key_currentRun = "CURRENTRUN";
+
+    @VisibleForTesting
+    static final String index_locations_pending = "LOCATIONS_PENDING_idx";
+    @VisibleForTesting
+    static final String index_locations_logjob = "LOCATIONS_LOGJOBID_CURRENTRUN_idx";
 
     private static final String table_syslog = "SYSLOG";
     private static final String key_tag = "TAG";
@@ -289,6 +295,43 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         if (oldVersion < 20) {
             moveLogjobPasswordsToCredentialStore(db, context);
         }
+        if (oldVersion < 21) {
+            createLocationIndexes(db);
+            deleteLocationsOfDeletedLogjobs(db);
+        }
+    }
+
+    /**
+     * Indexes for the positions table. Only adds indexes, so it is safe to run on a database
+     * that already has them.
+     * <ul>
+     * <li>Positions waiting for upload, per logjob and in time order. It is partial (only rows
+     * with SYNCED = 0), so it stays small however long the current run gets, and it covers the
+     * per-position counts (notification, upload policy) and the read of what to send.</li>
+     * <li>Positions of a logjob (map, info dialog, reset current run, deletion).</li>
+     * </ul>
+     * The queries must use the literal {@code SYNCED = 0} for SQLite to pick the partial index.
+     */
+    @VisibleForTesting
+    static void createLocationIndexes(SQLiteDatabase db) {
+        db.execSQL("CREATE INDEX IF NOT EXISTS " + index_locations_pending + " ON " + table_locations
+                + "(" + key_logjobid + ", " + key_time + ") WHERE " + key_synced + " = 0");
+        db.execSQL("CREATE INDEX IF NOT EXISTS " + index_locations_logjob + " ON " + table_locations
+                + "(" + key_logjobid + ", " + key_currentRun + ")");
+    }
+
+    /**
+     * Positions of a logjob that no longer exists (stored by the logger while the logjob was being
+     * deleted) cannot be shown or uploaded, but they were counted as waiting for upload, which
+     * queued upload work that had nothing to send. Positions of existing logjobs are kept.
+     */
+    @VisibleForTesting
+    static void deleteLocationsOfDeletedLogjobs(SQLiteDatabase db) {
+        int deleted = db.delete(table_locations,
+                key_logjobid + " NOT IN (SELECT " + key_id + " FROM " + table_logjobs + ")", null);
+        if (deleted > 0) {
+            Log.i(TAG, "Deleted " + deleted + " positions of deleted log jobs");
+        }
     }
 
     /**
@@ -374,6 +417,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private void createIndexes(SQLiteDatabase db) {
         createIndex(db, table_sessions, key_token);
         createIndex(db, table_logjobs, key_token);
+        createLocationIndexes(db);
     }
 
     private void createIndex(SQLiteDatabase db, String table, String column) {
@@ -676,20 +720,26 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public void resetLogjobCurrentRun(long ljId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        // reset nbSync
-        values.put(key_nbsync, 0);
-        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            // reset nbSync
+            values.put(key_nbsync, 0);
+            db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(ljId)});
 
-        // delete locations which are already synced
-        db.delete(table_locations,
-                key_logjobid + " = ? AND " + key_synced + " = 1",
-                new String[]{String.valueOf(ljId)});
+            // delete locations which are already synced
+            db.delete(table_locations,
+                    key_logjobid + " = ? AND " + key_synced + " = 1",
+                    new String[]{String.valueOf(ljId)});
 
-        // set currentRun of locations
-        ContentValues locValues = new ContentValues();
-        locValues.put(key_currentRun, 0);
-        db.update(table_locations, locValues, key_logjobid + " = ?", new String[]{String.valueOf(ljId)});
+            // set currentRun of locations
+            ContentValues locValues = new ContentValues();
+            locValues.put(key_currentRun, 0);
+            db.update(table_locations, locValues, key_logjobid + " = ?", new String[]{String.valueOf(ljId)});
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public void toggleEnabled(@NonNull DBLogjob logjob, @Nullable ICallback callback, boolean resetStats) {
@@ -811,14 +861,20 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     public void deleteLogjob(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        // delete all locations
-        db.delete(table_locations,
-                key_logjobid + " = ?",
-                new String[]{String.valueOf(id)});
-        // delete the log job
-        db.delete(table_logjobs,
-                key_id + " = ?",
-                new String[]{String.valueOf(id)});
+        db.beginTransaction();
+        try {
+            // delete all locations
+            db.delete(table_locations,
+                    key_logjobid + " = ?",
+                    new String[]{String.valueOf(id)});
+            // delete the log job
+            db.delete(table_logjobs,
+                    key_id + " = ?",
+                    new String[]{String.valueOf(id)});
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
         CredentialStore.removeLogjobPassword(context, id);
     }
 
@@ -859,9 +915,15 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_synced, 0);
         values.put(key_currentRun, 1);
 
-        db.insert(table_locations, null, values);
-
-        setLastLocTimestamp(ljId, loc.getTime() / 1000);
+        // one commit per position instead of two
+        db.beginTransaction();
+        try {
+            db.insert(table_locations, null, values);
+            setLastLocTimestamp(ljId, loc.getTime() / 1000);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public void addLocation(DBLogjobLocation dbLoc) {
@@ -954,8 +1016,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @NonNull
     private DBLogjobLocation getLocationFromCursor(@NonNull Cursor cursor) {
-
-        Log.v(getClass().getSimpleName(), "altitude from db : "+cursor.isNull(6));
         return new DBLogjobLocation(
                 cursor.getLong(0),
                 cursor.getLong(1),
@@ -1039,6 +1099,30 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Positions of one logjob waiting for upload: {how many, time of the oldest one (epoch
+     * seconds)}, or null if there are none. Run for every stored position when points are sent
+     * by bunch, so it only reads that logjob's entries of the pending index.
+     */
+    @Nullable
+    @WorkerThread
+    public long[] getPendingUploadStats(long ljId) {
+        SQLiteDatabase db = getReadableDatabase();
+        try (Cursor cursor = db.query(
+                table_locations,
+                new String[]{"COUNT(*)", "MIN(" + key_time + ")"},
+                key_logjobid + " = ? AND " + key_synced + " = 0",
+                new String[]{String.valueOf(ljId)},
+                null,
+                null,
+                null)) {
+            if (cursor.moveToFirst() && cursor.getLong(0) > 0) {
+                return new long[]{cursor.getLong(0), cursor.getLong(1)};
+            }
+        }
+        return null;
+    }
+
     @WorkerThread
     public int getLocationNotSyncedCount() {
         SQLiteDatabase db = getReadableDatabase();
@@ -1060,19 +1144,37 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * location is now synced with success
-     * it can be deleted if it's not a location of the "current run"
+     * These positions of the logjob were accepted by the server. In one transaction: delete the
+     * ones that are not part of the "current run" (nothing shows them any more), mark the others
+     * as synced (the map and the info dialog still show them), add them to the logjob's sent
+     * count and set its last sync time. If anything fails, all of them stay unsynced.
      */
-    public void setLocationSynced(long id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(key_synced, 1);
-        db.update(table_locations, values, key_id + " = ?", new String[]{String.valueOf(id)});
-
-        DBLogjobLocation loc = this.getLocation(id);
-        if (!loc.isCurrentRun()) {
-            deleteLocation(id);
+    public void markSynced(@NonNull DBLogjob logjob, @NonNull List<Long> locationIds) {
+        if (locationIds.isEmpty()) {
+            return;
         }
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try (SQLiteStatement delete = db.compileStatement("DELETE FROM " + table_locations
+                     + " WHERE " + key_id + " = ? AND " + key_currentRun + " IS NOT 1");
+             SQLiteStatement setSynced = db.compileStatement("UPDATE " + table_locations
+                     + " SET " + key_synced + " = 1 WHERE " + key_id + " = ?")) {
+            for (long id : locationIds) {
+                delete.bindLong(1, id);
+                if (delete.executeUpdateDelete() == 0) {
+                    setSynced.bindLong(1, id);
+                    setSynced.executeUpdateDelete();
+                }
+            }
+            db.execSQL("UPDATE " + table_logjobs + " SET "
+                            + key_nbsync + " = " + key_nbsync + " + ?, "
+                            + key_lastSyncTimestamp + " = ? WHERE " + key_id + " = ?",
+                    new Object[]{locationIds.size(), System.currentTimeMillis() / 1000, logjob.getId()});
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        logjob.setNbSync(logjob.getNbSync() + locationIds.size());
     }
 
     public void deleteLocation(long id) {
@@ -1080,14 +1182,6 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         db.delete(table_locations,
                 key_id + " = ?",
                 new String[]{String.valueOf(id)});
-    }
-
-    public void incNbSync(@NonNull DBLogjob logjob) {
-        logjob.setNbSync(logjob.getNbSync() + 1);
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(key_nbsync, logjob.getNbSync());
-        db.update(table_logjobs, values, key_id + " = ?", new String[]{String.valueOf(logjob.getId())});
     }
 
     public int getNbSync(long logjobId) {

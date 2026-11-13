@@ -77,7 +77,7 @@ public final class UploadScheduler {
             WebTrackWorker.enqueue(context, logjobId);
             return;
         }
-        long[] pending = PhoneTrackSQLiteOpenHelper.getInstance(context).getPendingUploadStats().get(logjobId);
+        long[] pending = PhoneTrackSQLiteOpenHelper.getInstance(context).getPendingUploadStats(logjobId);
         if (pending == null) {
             return;
         }
