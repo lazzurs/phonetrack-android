@@ -150,6 +150,12 @@
     <string name="dialog_msg_import_pt_url">Any compatible logging link given in PhoneTrack web interface</string>
     <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
     <string name="dialog_title_create_session">Create session</string>
+    <string name="sso_disconnect_title">Disconnect from the Nextcloud Files account?</string>
+    <string name="sso_disconnect_message">The server address will be reset and the synced sessions will be removed from this phone. Your log jobs and recorded positions are kept.</string>
+    <string name="sso_disconnect_confirm">Disconnect</string>
+    <string name="syslog_clear_title">Clear the activity log?</string>
+    <string name="syslog_clear_message">Switching activity logs on again deletes the entries recorded so far.</string>
+    <string name="syslog_clear_confirm">Clear and enable</string>
     <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
     <string name="logjob_delete_active_impossible">Impossible to delete an active log job</string>
     <string name="edit_logjob_choose_session_dialog_title">Choose a session</string>

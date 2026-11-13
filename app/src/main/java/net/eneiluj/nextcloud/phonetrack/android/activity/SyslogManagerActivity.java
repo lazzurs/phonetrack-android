@@ -87,9 +87,20 @@ public class SyslogManagerActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.menu_toggle_logs) {
             boolean isSyslogEnabled = SystemLogger.getEnabled();
-            if (!isSyslogEnabled) {
-                db.clearSyslog();
-                textView.setText("");
+            if (!isSyslogEnabled && !db.getSyslogs(null, null).isEmpty()) {
+                // switching logging on wipes the previous entries: ask first
+                new android.app.AlertDialog.Builder(new android.view.ContextThemeWrapper(this, R.style.AppThemeDialog))
+                        .setTitle(R.string.syslog_clear_title)
+                        .setMessage(R.string.syslog_clear_message)
+                        .setPositiveButton(R.string.syslog_clear_confirm, (dialog, which) -> {
+                            db.clearSyslog();
+                            textView.setText("");
+                            SystemLogger.setEnabled(true);
+                            toggleSyslogItem.setChecked(true);
+                        })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
+                return true;
             }
             SystemLogger.setEnabled(!isSyslogEnabled);
             toggleSyslogItem.setChecked(!isSyslogEnabled);
