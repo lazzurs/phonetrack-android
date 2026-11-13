@@ -82,6 +82,7 @@
     <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
     <string name="setting_keepgps_title">Keep GPS on between fixes</string>
     <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
+    <string name="setting_keepgps_long_interval_warning">With a minimum time of 60 seconds or more, GPS stays on all the time for little gain: turning this off saves battery.</string>
     <string name="setting_significantmotion_enabled">Significant motion mode</string>
     <string name="setting_significantmotion_summary">Experimental: Wait for significant motion before getting next position. Saves a lot of battery in some cases. Incompatible with some other options.</string>
     <string name="setting_significantmotion_min_time_applied">Apply minimum time</string>

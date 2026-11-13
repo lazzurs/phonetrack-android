@@ -76,6 +76,16 @@ public class LocationSamplePolicyTest {
     }
 
     @Test
+    public void keepGpsOnUpdatesFollowTheIntervalButStayFrequent() {
+        assertEquals(1000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(0));
+        assertEquals(1000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(1_000));
+        assertEquals(1000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(5_000));
+        assertEquals(2000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(10_000));
+        assertEquals(5000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(30_000));
+        assertEquals(5000, LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(300_000));
+    }
+
+    @Test
     public void searchesLessOftenAfterThreeMissesInARow() {
         assertEquals(60_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, 0));
         assertEquals(60_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, 1));

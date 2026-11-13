@@ -373,6 +373,58 @@ public class LoggerServiceSamplingTest {
     }
 
     @Test
+    public void keepGpsOnLogjobDoesNotAskForNetworkFixesItWouldNotUse() {
+        useProviders("3");
+        addLogjob(10, 0, 50, 0, true);
+        startService();
+
+        assertTrue(searching(LocationManager.GPS_PROVIDER));
+        assertFalse(searching(LocationManager.NETWORK_PROVIDER));
+    }
+
+    @Test
+    public void keepGpsOnLogjobStillUsesTheNetworkWithoutGps() {
+        useProviders("2");
+        long id = addLogjob(10, 0, 50, 0, true);
+        startService();
+
+        assertTrue(searching(LocationManager.NETWORK_PROVIDER));
+        ShadowLooper.idleMainLooper(10, TimeUnit.SECONDS);
+        deliver(fix(LocationManager.NETWORK_PROVIDER, 0, 20));
+        assertEquals(1, logged(id));
+    }
+
+    @Test
+    public void keepGpsOnLogjobGetsUpdatesAtAFifthOfItsIntervalUpToFiveSeconds() {
+        addLogjob(10, 0, 50, 0, true);
+        startService();
+        assertEquals(2000, shadowOf(locationManager).getLocationRequests(LocationManager.GPS_PROVIDER)
+                .get(0).getIntervalMillis());
+    }
+
+    @Test
+    public void keepGpsOnLogjobLogsOncePerInterval() {
+        long id = addLogjob(60, 0, 50, 0, true);
+        startService();
+        assertEquals(5000, shadowOf(locationManager).getLocationRequests(LocationManager.GPS_PROVIDER)
+                .get(0).getIntervalMillis());
+
+        // the test device has only just booted, and the first point waits for an interval after boot
+        ShadowLooper.idleMainLooper(60, TimeUnit.SECONDS);
+        deliver(fix(LocationManager.GPS_PROVIDER, 0, 5));
+        assertEquals(1, logged(id));
+
+        ShadowLooper.idleMainLooper(10, TimeUnit.SECONDS);
+        deliver(fix(LocationManager.GPS_PROVIDER, 100, 5));
+        assertEquals(1, logged(id));
+
+        ShadowLooper.idleMainLooper(50, TimeUnit.SECONDS);
+        deliver(fix(LocationManager.GPS_PROVIDER, 200, 5));
+        assertEquals(2, logged(id));
+        assertTrue(searching(LocationManager.GPS_PROVIDER));
+    }
+
+    @Test
     public void networkFallbackAtTheTimeoutMustMeetTheMinimumAccuracy() {
         useProviders("3");
         long id = addLogjob(60, 5, 50, 30);

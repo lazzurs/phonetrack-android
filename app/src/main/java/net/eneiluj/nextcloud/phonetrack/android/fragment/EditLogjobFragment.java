@@ -406,6 +406,9 @@ public abstract class EditLogjobFragment extends Fragment {
             }
         });
 
+        // updates the warning about long intervals
+        editKeepGpsOn.setOnCheckedChangeListener((buttonView, isChecked) -> showHideValidationButtons());
+
         editUseSignificantMotion.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -711,6 +714,10 @@ public abstract class EditLogjobFragment extends Fragment {
         editLocationTimeoutHint.setHelperText(gpsOnPercent > 0
                 ? getString(R.string.setting_timeout_gps_on_warning, gpsOnPercent)
                 : null);
+        boolean keepGpsOnWarning = getKeepGpsOn() && getMintime() >= KEEP_GPS_ON_WARNING_MIN_TIME;
+        keepgpsonSummary.setText(keepGpsOnWarning
+                ? getString(R.string.setting_keepgps_summary) + "\n" + getString(R.string.setting_keepgps_long_interval_warning)
+                : getString(R.string.setting_keepgps_summary));
         if (isFormValid()) {
             fabOk.show();
         } else {
@@ -719,6 +726,9 @@ public abstract class EditLogjobFragment extends Fragment {
     }
 
     protected abstract boolean isFormValid();
+
+    /** From this minimum time, keeping GPS on costs more battery than it is worth. */
+    private static final int KEEP_GPS_ON_WARNING_MIN_TIME = 60;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
