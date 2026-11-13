@@ -1108,6 +1108,40 @@ public class LoggerService extends Service {
             return isOk;
         }
 
+        /**
+         * Decide whether a fix ends the current search, compared with the last logged point.
+         */
+        protected LocationSamplePolicy.Decision decide(CorrectingLocation loc) {
+            int minDistance = mLogJob.getMinDistance();
+            double distance = 0;
+            if (minDistance > 0 && lastLocation != null) {
+                distance = SupportUtil.distance(
+                        lastLocation.getLatitude(), loc.getLatitude(),
+                        lastLocation.getLongitude(), loc.getLongitude(),
+                        lastLocation.getAltitude(), loc.getAltitude()
+                );
+            }
+            LocationSamplePolicy.Decision decision = LocationSamplePolicy.decide(
+                    loc.getAccuracy(), mLogJob.getMinAccuracy(), lastLocation != null, distance, minDistance);
+            SystemLogger.d(TAG, "Fix from " + loc.getProvider() + ": accuracy " + loc.getAccuracy()
+                    + " (max " + mLogJob.getMinAccuracy() + "), distance from last logged point " + distance
+                    + " (min " + minDistance + ") => " + decision);
+            return decision;
+        }
+
+        /**
+         * At the timeout, log the cached network fix instead of a GPS one, if it passes the same
+         * minimum accuracy and distance checks as any other fix.
+         */
+        protected void useCachedNetworkResult() {
+            if (decide(mCachedNetworkResult) == LocationSamplePolicy.Decision.ACCEPT) {
+                lastLocation = mCachedNetworkResult;
+                acceptAndSyncLocation(mJobId, mCachedNetworkResult);
+            } else {
+                SystemLogger.d(TAG, "Network location not accurate enough or too close to the last point, not logging it");
+            }
+        }
+
         public void updateLastAcquisitionStart() {
             // store time when position acquisition was launched
             lastAcquisitionStartTimestamp = System.currentTimeMillis() / 1000;
@@ -1165,8 +1199,7 @@ public class LoggerService extends Service {
 
                     if (mCachedNetworkResult != null) {
                         SystemLogger.d(TAG, "Reached timeout for location request, using network cached location");
-                        lastLocation = mCachedNetworkResult;
-                        acceptAndSyncLocation(mJobId, mCachedNetworkResult);
+                        useCachedNetworkResult();
                     } else {
                         SystemLogger.d(TAG, "Reached timeout for location request, NO network location");
                     }
@@ -1226,15 +1259,22 @@ public class LoggerService extends Service {
                 SystemLogger.d(TAG, "[LogjobClassicWorker] Got GPS result (or network one result without using GPS provider), immediately accepting");
 
                 // respect minimum distance/accuracy settings
-                boolean minDistanceOk = isMinDistanceOk(loc);
-                boolean minAccuracyOk = isMinAccuracyOk(loc);
-                if (minDistanceOk && minAccuracyOk) {
-                    // Accept, store and sync location
+                LocationSamplePolicy.Decision decision = decide(loc);
+                // an accurate fix ends the search even when it is too close to the last logged point:
+                // the phone has not moved, and searching on would only keep GPS on until the timeout
+                boolean searchDone = decision != LocationSamplePolicy.Decision.KEEP_SEARCHING;
+                if (searchDone) {
                     mCachedNetworkResult = null;
-                    lastLocation = loc;
-                    acceptAndSyncLocation(mJobId, loc);
+                    if (decision == LocationSamplePolicy.Decision.ACCEPT) {
+                        // Accept, store and sync location
+                        lastLocation = loc;
+                        acceptAndSyncLocation(mJobId, loc);
 
-                    mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
+                        mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
+                    } else {
+                        SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] Not enough DISTANCE (min "
+                                + mLogJob.getMinDistance() + "), not logging this location and stopping the search");
+                    }
 
                     // Cancel timeout runnable if we got a correct position
                     if (mTimeoutHandler != null) {
@@ -1244,18 +1284,18 @@ public class LoggerService extends Service {
 
                     // stop location request
                     if (useGps || useNet) {
-                        SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] => minDistanceOk && minAccuracyOk && (useGps || useNet) so locManager.removeUpdates()");
+                        SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] => search done && (useGps || useNet) so locManager.removeUpdates()");
                         locManager.removeUpdates(gpsLocationListener);
                         locManager.removeUpdates(networkLocationListener);
                         SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] remove updates because got position");
                     }
                 } else {
-                    SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] Not enough DISTANCE (min " + mLogJob.getMinDistance() +
-                            ") or ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
+                    SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] Not enough ACCURACY (min "
+                            + mLogJob.getMinAccuracy() + "), we skip this location");
                 }
 
-                // If using an interval AND position was accepted : schedule sample for X seconds from last sample
-                if (mUseInterval && minDistanceOk && minAccuracyOk) {
+                // If using an interval AND the search is done: schedule sample for X seconds from last sample
+                if (mUseInterval && searchDone) {
                     // how much time did it take to get current position?
                     long cTs = System.currentTimeMillis() / 1000;
                     long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
@@ -1266,13 +1306,12 @@ public class LoggerService extends Service {
                     SystemLogger.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
                             "with interval=" + mLogJob.getMinTime() + ", " +
                             "we now wait " + timeToWaitSecond + " seconds before getting a new one");
-                    SystemLogger.d(TAG, "Schedule next location request because we accepted a position");
+                    SystemLogger.d(TAG, "Schedule next location request because we got an accurate position");
                     scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 } else {
                     SystemLogger.d(TAG, "DO NOT schedule next location request because "
                             + "mUseInterval " + mUseInterval
-                            + " && minDistanceOk " + minDistanceOk
-                            + " && minAccuracyOk " + minAccuracyOk);
+                            + " && searchDone " + searchDone);
                 }
             } else {
                 SystemLogger.d(TAG, "Network location returned first, caching");
@@ -1384,8 +1423,7 @@ public class LoggerService extends Service {
 
                     if (mCachedNetworkResult != null) {
                         SystemLogger.d(TAG, "Reached timeout before GPS sample, using network sample");
-                        lastLocation = mCachedNetworkResult;
-                        acceptAndSyncLocation(mJobId, mCachedNetworkResult);
+                        useCachedNetworkResult();
                     } else {
                         SystemLogger.d(TAG, "Reached timeout before GPS sample, NO network sample");
                     }
@@ -1448,15 +1486,21 @@ public class LoggerService extends Service {
                 SystemLogger.d(TAG, "[LogjobSignificantMotionWorker] Got location result, immediately accepting");
 
                 // respect minimum distance/accuracy settings
-                boolean minDistanceOk = isMinDistanceOk(loc);
-                boolean minAccuracyOk = isMinAccuracyOk(loc);
-                if (minDistanceOk && minAccuracyOk) {
-                    // Accept, store and sync location
+                LocationSamplePolicy.Decision decision = decide(loc);
+                // an accurate fix ends the search even when it is too close to the last logged point
+                boolean searchDone = decision != LocationSamplePolicy.Decision.KEEP_SEARCHING;
+                if (searchDone) {
                     mCachedNetworkResult = null;
-                    lastLocation = loc;
-                    acceptAndSyncLocation(mJobId, loc);
+                    if (decision == LocationSamplePolicy.Decision.ACCEPT) {
+                        // Accept, store and sync location
+                        lastLocation = loc;
+                        acceptAndSyncLocation(mJobId, loc);
 
-                    mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
+                        mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
+                    } else {
+                        SystemLogger.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance()
+                                + "), not logging this location and stopping the search");
+                    }
 
                     // Cancel timeout runnable
                     if (mTimeoutHandler != null) {
@@ -1464,15 +1508,14 @@ public class LoggerService extends Service {
                         mTimeoutRunnable = null;
                     }
 
-                    // stop location request because we accept the location
+                    // stop location request because the search is done
                     if (useGps || useNet) {
-                        SystemLogger.d(TAG, "LogjobSignificantMotionWorker::timeoutRunnable => minDistanceOk && minAccuracyOk && (useGps || useNet) so locManager.removeUpdates()");
+                        SystemLogger.d(TAG, "LogjobSignificantMotionWorker::handleLocationChange => search done && (useGps || useNet) so locManager.removeUpdates()");
                         locManager.removeUpdates(gpsLocationListener);
                         locManager.removeUpdates(networkLocationListener);
                     }
                 } else {
-                    SystemLogger.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance() +
-                            ") or ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
+                    SystemLogger.d(TAG, "Not enough ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
                 }
 
                 // Clear significant motion flag for next interval
@@ -1481,8 +1524,8 @@ public class LoggerService extends Service {
                 // Request significant motion notification
                 mSensorManager.requestTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
 
-                // If using an interval and point accepted, schedule sample for X seconds from last sample
-                if (mUseInterval && minDistanceOk && minAccuracyOk) {
+                // If using an interval and the search is done, schedule sample for X seconds from last sample
+                if (mUseInterval && searchDone) {
                     // how much time did it take to get current position?
                     long cTs = System.currentTimeMillis() / 1000;
                     long timeSpentSearching = cTs - lastAcquisitionStartTimestamp;
@@ -1495,7 +1538,7 @@ public class LoggerService extends Service {
                             "we now wait " + timeToWaitSecond + " seconds before requesting a new one");
                     scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
-                // anyway if the position was rejected, the location request is still running
+                // if the position was not accurate enough, the location request is still running
                 // and we call this method when we get next location
             } else {
                 SystemLogger.d(TAG, "Network location returned first, caching");

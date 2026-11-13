@@ -290,7 +290,7 @@ public class SmsListener extends BroadcastReceiver {
                 DBLogjob lj = new DBLogjob(0, SMS_LOGJOB_TITLE, s.getNextURL(), s.getToken(),
                         "me", minTime, 0, 50,
                         false, false, false,
-                        0, false, true, 0, null, null, false);
+                        LocationSamplePolicy.smsTimeoutSeconds(minTime), false, true, 0, null, null, false);
                 newLjId = db.addLogjob(lj);
             } else {
                 if (existing.getMinTime() != minTime) {
@@ -298,7 +298,9 @@ public class SmsListener extends BroadcastReceiver {
                             existing.getUrl(), existing.getDeviceName(), existing.getPost(), minTime,
                             existing.getMinDistance(), existing.getMinAccuracy(), existing.keepGpsOnBetweenFixes(),
                             existing.useSignificantMotion(), existing.useSignificantMotionMixed(),
-                            existing.getLocationRequestTimeout(), existing.getLogin(), existing.getPassword(),
+                            // keep the timeout below the new interval, as the edit screen requires
+                            Math.min(existing.getLocationRequestTimeout(), LocationSamplePolicy.smsTimeoutSeconds(minTime)),
+                            existing.getLogin(), existing.getPassword(),
                             existing.getJson(), null);
                 }
                 if (!existing.isEnabled()) {

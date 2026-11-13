@@ -64,6 +64,7 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.EditLogjobActivity;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.service.LocationSamplePolicy;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
@@ -706,6 +707,10 @@ public abstract class EditLogjobFragment extends Fragment {
     }
 
     protected void showHideValidationButtons() {
+        int gpsOnPercent = LocationSamplePolicy.gpsOnPercentWithoutFixWarning(getMintime(), getLocationRequestTimeout());
+        editLocationTimeoutHint.setHelperText(gpsOnPercent > 0
+                ? getString(R.string.setting_timeout_gps_on_warning, gpsOnPercent)
+                : null);
         if (isFormValid()) {
             fabOk.show();
         } else {

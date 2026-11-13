@@ -14,6 +14,7 @@ import net.eneiluj.nextcloud.phonetrack.android.fragment.EditCustomLogjobFragmen
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditLogjobFragment;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.EditMapsLogjobFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
+import net.eneiluj.nextcloud.phonetrack.service.LocationSamplePolicy;
 
 public class EditMapsLogjobActivity extends EditLogjobActivity {
 
@@ -51,7 +52,8 @@ public class EditMapsLogjobActivity extends EditLogjobActivity {
         boolean keepGpsOn = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_KEEPGPSON, false);
         boolean sigMotion = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_SIGMOTION, false);
         boolean sigMotionMixed = prefs.getBoolean(EditLogjobFragment.SETTINGS_LAST_SIGMOTION_MIXED, false);
-        int timeout = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_TIMEOUT, 59);
+        int timeout = prefs.getInt(EditLogjobFragment.SETTINGS_LAST_TIMEOUT,
+                LocationSamplePolicy.defaultTimeoutSeconds(minTime));
 
         DBLogjob newLogjob = new DBLogjob(
                 0, "",  "",
