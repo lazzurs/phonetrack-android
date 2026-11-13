@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 12+. Passwords (CredentialStore.FILE_NAME) never go to the cloud backup.
-     No <device-transfer> section: a direct device-to-device transfer, started by the
-     owner, keeps everything (the platform default). -->
+<!-- Android 12+.
+     Cloud backup: the database (session tokens, log job URLs and logins, recorded
+     positions, system log) is never uploaded, nor are the passwords
+     (CredentialStore.FILE_NAME) or the Nextcloud Single Sign-On token file
+     ("single-sign-on", Constants.SSO_SHARED_PREFERENCE in Android-SingleSignOn).
+     Only the ordinary preferences remain. The backup is only made when it can be
+     encrypted client-side.
+     Device transfer (direct, started by the owner): keeps the database so log jobs
+     survive a phone-to-phone migration. Passwords are Keystore-bound and useless on
+     another device, so they are left out; the SSO token is excluded as well. -->
 <data-extraction-rules>
-    <cloud-backup>
+    <cloud-backup disableIfNoEncryptionCapabilities="true">
+        <exclude domain="database" path="." />
         <exclude domain="sharedpref" path="credentials.xml" />
+        <exclude domain="sharedpref" path="single-sign-on.xml" />
     </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="credentials.xml" />
+        <exclude domain="sharedpref" path="single-sign-on.xml" />
+    </device-transfer>
 </data-extraction-rules>

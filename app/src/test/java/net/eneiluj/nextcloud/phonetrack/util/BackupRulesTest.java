@@ -25,16 +25,54 @@ public class BackupRulesTest {
         return doc.getDocumentElement();
     }
 
-    private static int credentialExcludes(Element parent) {
+    // Constants.SSO_SHARED_PREFERENCE of Android-SingleSignOn 1.3.4; it holds the account token.
+    private static final String SSO_FILE = "single-sign-on.xml";
+
+    private static int excludes(Element parent, String domain, String path) {
         int found = 0;
         NodeList excludes = parent.getElementsByTagName("exclude");
         for (int i = 0; i < excludes.getLength(); i++) {
             Element e = (Element) excludes.item(i);
-            if ("sharedpref".equals(e.getAttribute("domain")) && CREDENTIALS_FILE.equals(e.getAttribute("path"))) {
+            if (domain.equals(e.getAttribute("domain")) && path.equals(e.getAttribute("path"))) {
                 found++;
             }
         }
         return found;
+    }
+
+    private static int credentialExcludes(Element parent) {
+        return excludes(parent, "sharedpref", CREDENTIALS_FILE);
+    }
+
+    private static Element section(String name) throws Exception {
+        return (Element) parse("data_extraction_rules.xml").getElementsByTagName(name).item(0);
+    }
+
+    @Test
+    public void cloudBackupExcludesDatabaseAndSsoToken() throws Exception {
+        Element cloud = section("cloud-backup");
+        assertEquals(1, excludes(cloud, "database", "."));
+        assertEquals(1, excludes(cloud, "sharedpref", SSO_FILE));
+    }
+
+    @Test
+    public void cloudBackupRequiresEncryption() throws Exception {
+        assertEquals("true", section("cloud-backup").getAttribute("disableIfNoEncryptionCapabilities"));
+    }
+
+    @Test
+    public void deviceTransferKeepsDatabaseButNotSecrets() throws Exception {
+        Element transfer = section("device-transfer");
+        assertEquals(0, excludes(transfer, "database", "."));
+        assertEquals(1, credentialExcludes(transfer));
+        assertEquals(1, excludes(transfer, "sharedpref", SSO_FILE));
+    }
+
+    @Test
+    public void legacyBackupExcludesDatabaseAndSsoToken() throws Exception {
+        Element legacy = parse("backup_rules.xml");
+        assertEquals(1, excludes(legacy, "database", "."));
+        assertEquals(1, excludes(legacy, "sharedpref", SSO_FILE));
     }
 
     @Test
