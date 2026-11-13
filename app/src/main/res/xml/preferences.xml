@@ -144,6 +144,12 @@
         android:key="@string/pref_key_sms_pin"
         android:persistent="false"
         android:title="@string/settings_sms_pin_title" />
+
+    <Preference
+        android:key="@string/pref_key_sms_fix_background"
+        android:title="@string/settings_sms_fix_background_title"
+        android:summary="@string/settings_sms_fix_background_summary"
+        android:visible="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -175,7 +181,6 @@
             android:singleLine="true"
             android:selectAllOnFocus="true"
             android:persistent="true"
-            android:summary="0"
             android:dialogLayout="@layout/preference_edit_text_integer"
             android:title="@string/settings_group_sync_title" />
         <EditTextPreference

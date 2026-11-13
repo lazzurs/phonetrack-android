@@ -53,7 +53,7 @@
     <string name="menu_preset_drive">Drive profile</string>
     <string name="menu_preset_precision">Max precision profile</string>
     <string name="menu_preset_battery">Battery saving profile</string>
-    <string name="preset_hint_title">Logjob settings presets</string>
+    <string name="preset_hint_title">Log job settings presets</string>
     <string name="preset_hint_content">Keep in mind those presets are just examples and you might want to adjust selected values.</string>
     <string name="dont_show_again">Don\'t show again</string>
     <string name="setting_set_preset">Preconfigured profiles</string>
@@ -73,13 +73,13 @@
     <string name="setting_login">HTTP login</string>
     <string name="setting_login_long">Login for basic HTTP authentication (optional)</string>
     <string name="setting_min_distance">Minimum distance</string>
-    <string name="setting_min_distance_long">Minimum distance between two logged points (meters)</string>
+    <string name="setting_min_distance_long">Minimum distance between two logged points (metres)</string>
     <string name="setting_min_time">Minimum time</string>
     <string name="setting_min_time_mixed">Maximum time</string>
-    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be superior than location timeout.</string>
+    <string name="setting_min_time_long">Minimum time between two logged points (seconds). Must be longer than the location timeout.</string>
     <string name="setting_min_time_mixed_long">Maximum time between two logged points (seconds)</string>
-    <string name="setting_min_accuracy">Minimum accuracy</string>
-    <string name="setting_min_accuracy_long">Minimum accuracy for logged points (meters). Do not log if accuracy value is greater than:</string>
+    <string name="setting_min_accuracy">Maximum allowed inaccuracy</string>
+    <string name="setting_min_accuracy_long">Maximum allowed inaccuracy for logged points (metres). A point is not logged if its estimated error is larger than this, so a larger number accepts worse fixes:</string>
     <string name="setting_keepgps_title">Keep GPS on between fixes</string>
     <string name="setting_keepgps_summary">This will get more accurate positions but will have more effect on battery life. Use it when minimum time is under 60 seconds.</string>
     <string name="setting_keepgps_long_interval_warning">With a minimum time of 60 seconds or more, GPS stays on all the time for little gain: turning this off saves battery.</string>
@@ -90,7 +90,7 @@
     <string name="setting_significantmotion_mixed">Hybrid mode (apply maximum time)</string>
     <string name="setting_significantmotion_mixed_summary">Record a position every time motion is detected. If no motion is detected, Record a position every \"maximum time\". This saves a little less battery.</string>
     <string name="setting_significantmotion_timeout">Location timeout</string>
-    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long a network position is used instead, if it meets the minimum accuracy and distance. Set to zero to disable the timeout: GPS then keeps searching until it gets a position that meets the minimum accuracy, however long that takes. Must be inferior than min time.</string>
+    <string name="setting_significantmotion_timeout_summary">Time to wait for a single location fix (seconds). Saves battery in areas without good coverage. If using both GPS and network this also determines after how long a network position is used instead, if it meets the minimum accuracy and distance. Set to zero to disable the timeout: GPS then keeps searching until it gets a position that meets the minimum accuracy, however long that takes. Must be shorter than the minimum time.</string>
     <string name="setting_timeout_gps_on_warning">Where no position can be found, GPS can be on for up to %1$d%% of the time with this timeout.</string>
     <string name="logjob_title_log_to">Log to %s</string>
     <string name="default_nextcloud_url">https://yournextcloud.org</string>
@@ -112,7 +112,7 @@
     <string name="dialog_msg_create_session">Create a logging session in Nextcloud PhoneTrack app</string>
     <string name="dialog_title_create_session">Create session</string>
     <string name="confirm_delete_logjob_dialog_title">Are you sure?</string>
-    <string name="logjob_delete_active_impossible">Impossible to delete an active logjob</string>
+    <string name="logjob_delete_active_impossible">Impossible to delete an active log job</string>
     <string name="edit_logjob_choose_session_dialog_title">Choose a session</string>
     <string name="map_choose_session_dialog_title">Choose a session to display on the map</string>
     <string name="map_choose_session_dialog_impossible">Impossible to display a session on the map</string>
@@ -133,7 +133,7 @@
     <string name="popup_user_agent">User-agent</string>
     <string name="sms_position_notification">Your position was sent by SMS to %s</string>
     <string name="sms_position_in_progress_notification">Getting the position requested by SMS by %s</string>
-    <string name="sms_notif_info_dialog_title">Sms information</string>
+    <string name="sms_notif_info_dialog_title">SMS information</string>
     <string name="sms_notif_info_dialog_message1">This SMS has been sent to %s:</string>
     <string name="sms_notif_info_dialog_message2">Go to PhoneTrack settings to disable this feature.</string>
     <string name="sms_geo_link">Geo link</string>
@@ -143,11 +143,11 @@
     <string name="sms_alarm_notification">Alarm requested by SMS is ringing</string>
     <string name="sms_alarm_notification_stop">Stop</string>
     <string name="sms_alarm_notification_channel">SMS alarm</string>
-    <string name="sms_logjobs_started">%d logjobs have been started</string>
-    <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
-    <string name="sms_logjob_created">A logjob with %1$d seconds frequency has been created in session %2$s</string>
-    <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
-    <string name="sms_logjob_updated">The SMS logjob in session %2$s is running with %1$d seconds frequency</string>
+    <string name="sms_logjobs_started">%d log jobs have been started</string>
+    <string name="sms_logjobs_stopped">%d log jobs have been stopped</string>
+    <string name="sms_logjob_created">A log job with %1$d seconds frequency has been created in session %2$s</string>
+    <string name="sms_logjob_creation_impossible">Impossible to create a log job, no session found</string>
+    <string name="sms_logjob_updated">The SMS log job in session %2$s is running with %1$d seconds frequency</string>
     <string name="sms_command_notification_title">SMS command run</string>
     <string name="sms_command_notification">The SMS command \"%1$s\" from %2$s was run.</string>
     <string name="sms_command_notification_no_pin">Sender numbers can be forged: if you did not send it, set an SMS PIN in the settings.</string>
@@ -161,11 +161,11 @@
     <string name="drawer_connect_hint">Tap here to connect</string>
     <string name="drawer_account_unavailable">Account unavailable, tap to reconnect</string>
     <string name="homescreen_map_shortcut_long_title">Map for %s</string>
-    <string name="display_info_menu_title">Logjob information</string>
-    <string name="display_map_menu_title">Map of logjob\'s session</string>
-    <string name="file_saved_success">Logjob exported in %s</string>
+    <string name="display_info_menu_title">Log job information</string>
+    <string name="display_map_menu_title">Map of log job\'s session</string>
+    <string name="file_saved_success">Log job exported in %s</string>
     <string name="syslog_saved_success">Activity log exported in %s</string>
-    <string name="delete_logjob_menu_title">Delete logjob</string>
+    <string name="delete_logjob_menu_title">Delete log job</string>
     <string name="manage_accounts">Manage accounts</string>
 
     <string name="is_running">running (%1$s pending, %2$s sent)</string>
@@ -186,10 +186,10 @@
     <string name="settings_theme_title">Theme</string>
     <string name="settings_notification_importance_title">Low notification importance</string>
     <string name="settings_notification_importance_subtitle">Reduce logging notification importance</string>
-    <string name="settings_reset_stats">Reset stats on logjob activation</string>
-    <string name="settings_reset_stats_subtitle">Reset statistics in logjob information dialog when logjob is activated</string>
+    <string name="settings_reset_stats">Reset stats on log job activation</string>
+    <string name="settings_reset_stats_subtitle">Reset statistics in log job information dialog when log job is activated</string>
     <string name="settings_sms">Listen to SMS</string>
-    <string name="settings_sms_subtitle">Listen to incoming SMS and answer location information if following keyword is received</string>
+    <string name="settings_sms_subtitle">Answer position requests and run commands received by SMS. Only the allowed senders below are obeyed.</string>
     <string name="settings_sms_keyword_title">SMS keyword</string>
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
@@ -219,7 +219,7 @@
     <string name="settings_cert_reset_toast">All custom certificates have been cleared</string>
     <string name="settings_network_category">Network</string>
     <string name="settings_logging_category">Logging</string>
-    <string name="settings_sms_category">Sms</string>
+    <string name="settings_sms_category">SMS</string>
     <string name="settings_map_category">Map</string>
     <string name="settings_debug_category">Debugging</string>
     <string name="settings_osmdroid_label">Import Mapsforge offline map tiles file</string>
@@ -234,17 +234,36 @@
     <string name="settings_toggle_syslogs">Enable activity logs</string>
     <string name="settings_syslog_label">Activity logs</string>
     <string name="settings_theming_category">Theming</string>
-    <string name="settings_group_sync_title">Send points by bunch of at least</string>
-    <string name="settings_group_sync_long">Wait until there is at least N points to send them to the server. This will save a lot of network data usage but points will not always be sent in real time.</string>
+    <string name="settings_group_sync_title">Send points in batches of at least</string>
+    <string name="settings_colorpicker_low_contrast">Low contrast: white is hard to read on this colour, so the app will use dark text and icons on it.</string>
+    <string name="settings_group_sync_off">Off: each point is sent straight away</string>
+    <string name="settings_sms_summary_no_senders">No allowed sender yet: every SMS command is ignored. Tap \"Allowed senders\" to add one.</string>
+    <string name="settings_sms_summary_no_pin">No PIN set: sender numbers can be forged. Tap \"SMS PIN\" to set one.</string>
+    <string name="settings_sms_summary_no_permission">SMS permission missing: nothing can be received. Untick and tick this box again to allow it.</string>
+    <string name="settings_sms_fix_background_title">Allow location all the time</string>
+    <string name="settings_sms_fix_background_summary">Replies need location access while the app is closed. Without it, the sender gets an error SMS. Tap to open the permission settings.</string>
+    <string name="settings_sms_permission_title">Allow SMS access?</string>
+    <string name="settings_sms_permission_message">PhoneTrack needs to read incoming SMS to spot your keyword, and to send the position back by SMS. Only numbers in \"Allowed senders\" can trigger it. Nothing is sent anywhere else.</string>
+    <string name="settings_sms_permission_continue">Continue</string>
+    <string name="settings_sms_permission_denied">SMS control stays off: PhoneTrack needs both the permission to receive and to send SMS.</string>
+    <string name="settings_sms_permission_blocked_title">SMS permission blocked</string>
+    <string name="settings_sms_permission_blocked_message">Android no longer asks for it. Allow SMS for PhoneTrack in the app settings, then tick \"Listen to SMS\" again.</string>
+    <string name="settings_sms_permission_open_settings">Open settings</string>
+    <string name="settings_sms_contacts_title">Show contact names?</string>
+    <string name="settings_sms_contacts_message">Optional. PhoneTrack can look up the name of the sender in your contacts for its notifications. Without it, the phone number is shown. Contacts are not uploaded.</string>
+    <string name="settings_sms_contacts_allow">Allow</string>
+    <string name="settings_sms_contacts_skip">Not now</string>
+    <string name="pref_key_sms_fix_background" translatable="false">SMSfixBackground</string>
+    <string name="settings_group_sync_long">Number of points, for all log jobs. Points are kept on the phone until at least this many are waiting, then sent together. This saves mobile data and battery, but points will not always reach the server in real time. 0 or 1 sends every point straight away.</string>
     <string name="settings_send_deadline_title">Send at the latest after</string>
     <string name="settings_send_deadline_long">Number of hours, for all log jobs. Points that are waiting for the bunch above to be complete are sent anyway once the oldest of them has waited this long, even if the phone is not moving. 0 means no time limit. Android may delay the upload a little to save battery.</string>
     <string name="settings_send_deadline_off">No time limit</string>
     <string name="settings_send_deadline_not_needed">Not needed: every point is sent straight away. Set a bunch of 2 or more above to use this.</string>
     <string name="settings_saving_category">Power/data saving</string>
-    <string name="settings_power_saving_awareness_title">Respect power saving mode state</string>
-    <string name="settings_power_saving_awareness_subtitle">Freeze active logjobs while power saving mode is enabled</string>
-    <string name="settings_offline_mode_awareness_title">Respect offline mode state</string>
-    <string name="settings_offline_mode_awareness_subtitle">Freeze active logjobs while offline mode is enabled</string>
+    <string name="settings_power_saving_awareness_title">Pause logging in power saving mode</string>
+    <string name="settings_power_saving_awareness_subtitle">Active log jobs stop recording points while power saving mode is on, and resume when it is turned off</string>
+    <string name="settings_offline_mode_awareness_title">Pause logging in airplane mode</string>
+    <string name="settings_offline_mode_awareness_subtitle">Active log jobs stop recording points while airplane mode is on, and resume when it is turned off</string>
     <string name="settings_search_backoff_title">Search less often without a position</string>
     <string name="settings_search_backoff_subtitle">After 3 location searches in a row end at the timeout without a position (indoors, underground), wait longer between searches: up to 4 times the interval, at most 10 minutes, until a position is found again. Saves battery, but the first position after you get a signal back can be logged a few minutes late.</string>
 
@@ -464,6 +483,10 @@
     <plurals name="ab_selected">
         <item quantity="one">%d selected</item>
         <item quantity="other">%d selected</item>
+    </plurals>
+    <plurals name="settings_group_sync_summary">
+        <item quantity="one">%d point</item>
+        <item quantity="other">%d points</item>
     </plurals>
     <plurals name="settings_send_deadline_summary">
         <item quantity="one">%d hour</item>
