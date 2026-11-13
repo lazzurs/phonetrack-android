@@ -280,9 +280,7 @@
   <string name="about_testers_title">Testerzy</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Kod źródłowy</string>
-  <string name="about_source">Projekt jest hostowany na Gitlabie: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Problemy</string>
-  <string name="about_issues">Możesz zgłaszać błędy, propozycje ulepszeń i prośby o funkcje w liście problemów na Gitlabie: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Tłumaczyć</string>
   <string name="about_translate">Dołącz do zespołu PhoneTrack na Crowdinie i pomóż nam przetłumaczyć tę aplikację: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">Licencja aplikacji</string>

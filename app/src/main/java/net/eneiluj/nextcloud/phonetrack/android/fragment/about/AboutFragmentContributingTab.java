@@ -29,8 +29,8 @@ public class AboutFragmentContributingTab extends Fragment {
         aboutIssues = v.findViewById(R.id.about_issues);
         aboutTranslate = v.findViewById(R.id.about_translate);
         //ButterKnife.bind(this, v);
-        SupportUtil.setHtml(aboutSource, R.string.about_source, getString(R.string.url_source));
-        SupportUtil.setHtml(aboutIssues, R.string.about_issues, getString(R.string.url_issues));
+        SupportUtil.setHtml(aboutSource, R.string.about_source_fork, getString(R.string.url_source));
+        SupportUtil.setHtml(aboutIssues, R.string.about_issues_fork, getString(R.string.url_issues));
         SupportUtil.setHtml(aboutTranslate, R.string.about_translate, getString(R.string.url_translations));
         return v;
     }

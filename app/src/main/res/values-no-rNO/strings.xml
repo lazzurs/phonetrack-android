@@ -280,9 +280,7 @@
   <string name="about_testers_title">Testers</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Source code</string>
-  <string name="about_source">This project is hosted on Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Issues</string>
-  <string name="about_issues">You can report bugs, enhancement proposals and feature requests at the Gitlab issue tracker: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Translate</string>
   <string name="about_translate">Join the PhoneTrack team on Crowdin and help us to translate this app: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">App license</string>

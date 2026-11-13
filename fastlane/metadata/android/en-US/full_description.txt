@@ -13,7 +13,8 @@ controlled by SMS commands.
 - Log to PhoneTrack Nextcloud app (PhoneTrack log job)
 - Log to any server which can receive HTTP GET or POST requests (custom log job)
 - Store positions when network is not available
-- Remote control by SMS:
+- Log to Nextcloud Maps (Nextcloud Maps log job)
+- Remote control by SMS, only from the phone numbers you allow, with an optional PIN:
     - get position
     - activate alarm
     - start all logjobs
@@ -31,7 +32,11 @@ If you want to log to Nextcloud PhoneTrack app :
 - Nextcloud instance running
 - Nextcloud PhoneTrack app enabled
 
-Otherwise, no requirements! (Except Android>=4.3)
+Otherwise, no requirements except Android 14 or newer.
+
+SMS commands are ignored until you add at least one allowed sender in Settings > Sms. If you set an SMS PIN, send commands as KEYWORD PIN COMMAND.
+
+On Android 17, reaching a server on your local network needs the "Nearby devices" permission, which the app asks for.
 
 # Alternatives
 

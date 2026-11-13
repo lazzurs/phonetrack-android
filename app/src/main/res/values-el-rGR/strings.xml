@@ -280,9 +280,7 @@
   <string name="about_testers_title">Δοκιμαστές</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Πηγαίος κώδικας</string>
-  <string name="about_source">Αυτό το project φιλοξενείται στο Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Προβλήματα</string>
-  <string name="about_issues">Μπορείτε να αναφέρετε σφάλματα, προτάσεις βελτίωσης και αιτήματα για νέες δυνατότητες στο Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Μετάφραση</string>
   <string name="about_translate">Γίνετε μέλος της ομάδας PhoneTrack στο Crowdin και βοηθήστε μας να μεταφράσουμε αυτήν την εφαρμογή: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">Άδεια χρήσης εφαρμογής</string>

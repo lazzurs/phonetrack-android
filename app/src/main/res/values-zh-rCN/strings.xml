@@ -280,9 +280,7 @@
   <string name="about_testers_title">测试者</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">源代码</string>
-  <string name="about_source">此项目托管于 Gitlab 上: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">工单</string>
-  <string name="about_issues">您可在 Gitlab 议题追踪上反馈错误、提出建议与请求添加特性: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">翻译</string>
   <string name="about_translate">加入 Crowdin 上的 PhoneTrack 团队来帮助我们翻译此应用: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">应用许可证</string>

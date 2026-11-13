@@ -280,9 +280,7 @@
   <string name="about_testers_title">Provadors</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Codi font</string>
-  <string name="about_source">Aquest projecte està allotjat a Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Problemes</string>
-  <string name="about_issues">Podeu informar d\'errors, propostes de millora i sol·licituds de funcions al seguiment de problemes de Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Traduir</string>
   <string name="about_translate">Uniu-vos a l\'equip de PhoneTrack de Crowdin i ajudeu-nos a traduir aquesta aplicació: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">Llicència de l\'aplicació</string>

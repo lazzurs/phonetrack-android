@@ -1,7 +1,7 @@
 # PhoneTrack for Android
 
 > [!NOTE]
-> **This is a fork.** [lazzurs/phonetrack-android](https://github.com/lazzurs/phonetrack-android) is maintained by [@lazzurs](https://github.com/lazzurs) and tracks the upstream project at [eneiluj/phonetrack-android on GitLab](https://gitlab.com/eneiluj/phonetrack-android). All credit for PhoneTrack itself goes to [eneiluj](https://gitlab.com/eneiluj) and the upstream contributors — this fork exists to add GitHub Actions CI/CD (build + automated releases) and other maintenance around the original app. Please report bugs and feature requests for the app itself [upstream](https://gitlab.com/eneiluj/phonetrack-android/issues); use [this fork's issue tracker](https://github.com/lazzurs/phonetrack-android/issues) only for fork-specific build/release/tooling issues.
+> **This is a fork.** [lazzurs/phonetrack-android](https://github.com/lazzurs/phonetrack-android) is maintained by [@lazzurs](https://github.com/lazzurs) and is based on the upstream project at [eneiluj/phonetrack-android on GitLab](https://gitlab.com/eneiluj/phonetrack-android). All credit for PhoneTrack itself goes to [eneiluj](https://gitlab.com/eneiluj) and the upstream contributors. This fork adds GitHub Actions CI/CD (build and automated releases), its own application ID and other changes. Please report bugs and feature requests for this app in [this fork's issue tracker](https://github.com/lazzurs/phonetrack-android/issues).
 
 [![Build](https://github.com/lazzurs/phonetrack-android/actions/workflows/build.yml/badge.svg)](https://github.com/lazzurs/phonetrack-android/actions/workflows/build.yml)
 [![Latest release](https://img.shields.io/github/v/release/lazzurs/phonetrack-android)](https://github.com/lazzurs/phonetrack-android/releases)
@@ -9,8 +9,6 @@
 An android app to log locations to [PhoneTrack Nextcloud app](https://gitlab.com/eneiluj/phonetrack-oc) or any custom server.
 
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/phonetrack/localized.svg)](https://crowdin.com/project/phonetrack)
-
-This is still a beta version.
 
 This app is originally a fork of [Nextcloud Notes for Android](https://github.com/stefan-niedermann/nextcloud-notes).
 It is also largely insired by [µLogger for Android](https://github.com/bfabiszewski/ulogger-android) for the logging service part.
@@ -38,7 +36,8 @@ This app is pretty simple so it has a low inpact on battery life. There has been
 * Send locations to PhoneTrack Nextcloud app
 * Send locations to custom server with GET or POST requests
 * Store positions when network is not available
-* Remote control by SMS:
+* Send locations to Nextcloud Maps (Nextcloud Maps log job)
+* Remote control by SMS, only from the phone numbers you allow (Settings > Sms > Allowed senders; with none, every command is ignored). Commands are sent as `KEYWORD COMMAND`, or `KEYWORD PIN COMMAND` if you set an optional SMS PIN:
     * get position
     * activate alarm
     * start all logjobs
@@ -47,11 +46,13 @@ This app is pretty simple so it has a low inpact on battery life. There has been
 * Launch on system startup
 * Display devices of a Nextcloud PhoneTrack session on a map
 * Dark theme
+* Cloud backups contain only ordinary settings, not the database, passwords or the Nextcloud sign-in token (see [PRIVACY.md](PRIVACY.md#backups))
 * Translated in many languages on [Crowdin](https://crowdin.com/project/phonetrack)
 
 
 ## :link: Requirements
-* Android >= 4.3
+* Android 14 or newer
+* On Android 17, the "Nearby devices" permission to reach a server on your local network (the app asks for it)
 
 If you want to log to Nextcloud PhoneTrack :
 
@@ -65,16 +66,15 @@ If you want to log to Nextcloud PhoneTrack :
 ## Install
 
 Requires **Android 14 or newer** (the Android versions that still get security updates; see
-[RELEASING.md](RELEASING.md#supported-android-versions)). Release 0.2.0 still runs on Android 8.0+.
+[RELEASING.md](RELEASING.md#supported-android-versions)).
 
 
-* APK Direct download : [this fork's GitHub Releases](https://github.com/lazzurs/phonetrack-android/releases) (built automatically by GitHub Actions on every tag). Each release has `phonetrack-<version>-normal.apk` (use this one), `phonetrack-<version>-play.apk`, and `SHA256SUMS.txt` to verify the download. How releases are made: [RELEASING.md](RELEASING.md)
-* Upstream also publishes builds via [Gitlab CI artifacts](https://gitlab.com/eneiluj/phonetrack-android/pipelines)
-* The original app (a separate app, `net.eneiluj.nextcloud.phonetrack`) is on F-Droid: [![PhoneTrack App on fdroid.org](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/57bb389a0c40f5cb81dc1ae21a314adb/fd.png)](https://f-droid.org/packages/net.eneiluj.nextcloud.phonetrack/)
+* APK Direct download : [this fork's GitHub Releases](https://github.com/lazzurs/phonetrack-android/releases) (built and published automatically by GitHub Actions on every release). Each release has `phonetrack-<version>-normal.apk` (use this one), `phonetrack-<version>-play.apk`, and `SHA256SUMS.txt` to verify the download. How releases are made: [RELEASING.md](RELEASING.md)
+* Builds of the original app are not updates for this one. The original app (a separate app, `net.eneiluj.nextcloud.phonetrack`) is on F-Droid: [![PhoneTrack App on fdroid.org](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/57bb389a0c40f5cb81dc1ae21a314adb/fd.png)](https://f-droid.org/packages/net.eneiluj.nextcloud.phonetrack/)
 
 ### A note on release signing
 
-Tagged releases from this fork are signed with a dedicated key held only as encrypted GitHub Actions secrets (`RELEASE_KEYSTORE_BASE64` / `RELEASE_KEYSTORE_PASSWORD`) on this repo — it is never committed to git. This keeps the signature consistent across successive releases so APKs install as upgrades over one another. It is **not** the same key as upstream's or F-Droid's builds, and since 0.2.0 this fork also has its own application ID, `io.github.lazzurs.phonetrack` (the original is `net.eneiluj.nextcloud.phonetrack`): the two are separate apps that can be installed side by side. Nothing is shared between them, so set the fork up again before removing the original. If you build release APKs yourself without those secrets set, Gradle falls back to signing with your local debug key instead (see [`app/build.gradle.kts`](app/build.gradle.kts)), which is fine for local testing but won't match the signature of the published releases.
+Tagged releases from this fork are signed with a dedicated key held only as encrypted GitHub Actions secrets (`RELEASE_KEYSTORE_BASE64` / `RELEASE_KEYSTORE_PASSWORD`) on this repo — it is never committed to git. This keeps the signature consistent across successive releases so APKs install as upgrades over one another. It is **not** the same key as upstream's or F-Droid's builds, so those builds cannot be updated in place to this fork's releases (or the other way round). Since 0.2.0 this fork also has its own application ID, `io.github.lazzurs.phonetrack` (the original is `net.eneiluj.nextcloud.phonetrack`): the two are separate apps that can be installed side by side. Nothing is shared between them, so set this app up again before removing the original. If you build release APKs yourself without those secrets set, Gradle falls back to signing with your local debug key instead (see [`app/build.gradle.kts`](app/build.gradle.kts)), which is fine for local testing but won't match the signature of the published releases.
 
 ## Build
 
@@ -93,15 +93,6 @@ Then open/import the project in Android studio and build it, or run `./gradlew a
 * [Donate with Liberapay : ![Donate with Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/eneiluj/donate)
 * [Donate with Paypal : <img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/3ef4665a2c25662265681d6304f71b43/paypal-donate-button.png" width="80"/>](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66PALMY8SF5JE)
 
-
-## :eyes: Screenshots
-
-[1<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/b29ea339fbb3a1dede386847e710fb49/1.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/b29ea339fbb3a1dede386847e710fb49/1.png)
-[2<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/c21cf9f1c58bd2341073b9a910d0d5ae/2.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/c21cf9f1c58bd2341073b9a910d0d5ae/2.png)
-[3<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/bfbbe80b0dd35303f81154a727b732d3/3.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/bfbbe80b0dd35303f81154a727b732d3/3.png)
-[4<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/cd1110b94bcd634fbbb314a590a7e3e9/4.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/cd1110b94bcd634fbbb314a590a7e3e9/4.png)
-[5<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/82ab4bba86fab9f3e09ace3875ed2e67/5.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/82ab4bba86fab9f3e09ace3875ed2e67/5.png)
-[6<img src="https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/2cea3c089c828540629246dc6f394ad5/6.png" width="300"/>](https://gitlab.com/eneiluj/phonetrack-android/wikis/uploads/2cea3c089c828540629246dc6f394ad5/6.png)
 
 ## :notebook: License
 This project is licensed under the [GNU GENERAL PUBLIC LICENSE](/LICENSE).

@@ -280,9 +280,7 @@
   <string name="about_testers_title">Testeri</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Zdrojový kód</string>
-  <string name="about_source">Tento projekt je hostovaný na Gitlabe: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Problémy</string>
-  <string name="about_issues">Chyby, návrhy na vylepšenia a požiadavky na funkcie môžete nahlásiť na Gitlabe: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Preklad</string>
   <string name="about_translate">Pridajte sa k PhoneTrack tímu na Crowdin a pomôže nám preložiť túto aplikáciu: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">Licencia aplikácie</string>
