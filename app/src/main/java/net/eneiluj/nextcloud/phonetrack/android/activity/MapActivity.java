@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -31,10 +33,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
+import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,6 +49,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.Parcelable;
 import android.text.InputType;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -57,6 +62,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -64,6 +71,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
@@ -171,6 +179,11 @@ public class MapActivity extends AppCompatActivity {
     private final SimpleDateFormat sdfHour = new SimpleDateFormat("HH:mm:ss", Locale.ROOT);
 
     private Map<String, OnlineTileSourceBase> layersMap;
+    // the last position loading error shown, until a refresh succeeds (null: none)
+    private String shownLoadError;
+    private Snackbar loadErrorSnackbar;
+    // what to do once the location permission is granted
+    private Runnable pendingLocationAction;
     private String selectedLayer;
     private MapTileProviderBasic defaultTileProvider;
 
@@ -217,6 +230,38 @@ public class MapActivity extends AppCompatActivity {
                         }
                     });
 
+    private final ActivityResultLauncher<String[]> locationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                Runnable action = pendingLocationAction;
+                pendingLocationAction = null;
+                if (hasLocationPermission()) {
+                    if (action != null) {
+                        action.run();
+                    }
+                } else {
+                    Toast.makeText(this, getString(R.string.map_location_permission_needed), Toast.LENGTH_LONG).show();
+                }
+            });
+
+    private boolean hasLocationPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * True if the location permission is granted. Otherwise asks for it, runs {@code action}
+     * once it is granted and returns false.
+     */
+    private boolean ensureLocationPermission(Runnable action) {
+        if (hasLocationPermission()) {
+            return true;
+        }
+        pendingLocationAction = action;
+        locationPermissionLauncher.launch(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+        return false;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -236,14 +281,17 @@ public class MapActivity extends AppCompatActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         long sessionid = getIntent().getLongExtra(PARAM_SESSIONID, 0);
-        if (sessionid == 0) {
-            Context context = getApplicationContext();
-            Toast toast = Toast.makeText(context, getString(R.string.session_not_found), Toast.LENGTH_LONG);
-            toast.show();
+        session = sessionid == 0 ? null : db.getSession(sessionid);
+        if (session == null) {
+            // the session was deleted (for example on the server) since this map was opened
+            // or pinned to the home screen
+            Toast.makeText(ctx, getString(R.string.session_not_found), Toast.LENGTH_LONG).show();
+            if (sessionid != 0) {
+                disablePinnedShortcut(sessionid);
+            }
             finish();
             return;
         }
-        session = db.getSession(sessionid);
 
         setContentView(R.layout.drawer_layout_map);
         EdgeToEdgeUtil.enable(this);
@@ -330,16 +378,30 @@ public class MapActivity extends AppCompatActivity {
 
     }
 
+    /** A pinned map shortcut whose session is gone: grey it out on the home screen. */
+    private void disablePinnedShortcut(long sessionId) {
+        try {
+            ShortcutManagerCompat.disableShortcuts(ctx, Collections.singletonList("map" + sessionId),
+                    getString(R.string.session_not_found));
+        } catch (RuntimeException e) {
+            Log.w(TAG, "could not disable the map shortcut", e);
+        }
+    }
+
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
     }
 
     @Override
     public void onConfigurationChanged(@NonNull android.content.res.Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawerToggle.syncState();
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
     }
 
     private void setupMapTileProviders() {
@@ -459,6 +521,10 @@ public class MapActivity extends AppCompatActivity {
     public void onResume(){
         Log.i(TAG, "[onResume begin]");
         super.onResume();
+        if (session == null) {
+            // finishing: onCreate found no session
+            return;
+        }
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -467,7 +533,7 @@ public class MapActivity extends AppCompatActivity {
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
 
         // i don't know why but map.onResume() always enables myLocation...
-        if (prefs.getBoolean("map_myposition", true)) {
+        if (prefs.getBoolean("map_myposition", true) && hasLocationPermission()) {
             mLocationOverlay.enableMyLocation();
         } else {
             mLocationOverlay.disableMyLocation();
@@ -489,6 +555,9 @@ public class MapActivity extends AppCompatActivity {
     public void onPause(){
         Log.i(TAG, "[onPause begin]");
         super.onPause();
+        if (session == null) {
+            return;
+        }
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1165,8 +1234,7 @@ public class MapActivity extends AppCompatActivity {
                 // launch task of server sync with callback
                 Log.i(TAG, "[Task run]");
                 updatePositionsWithLocalData();
-                int currentLimit = prefs.getInt("map_limit", 300);
-                db.getPhonetrackServerSyncHelper().getSessionPositions(session, lastTimestamp, Long.valueOf(currentLimit), syncCallBack);
+                requestServerPositions();
             }
         };
         int currentFreq = prefs.getInt("map_freq", 15);
@@ -1186,16 +1254,36 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    private final IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
+    private void requestServerPositions() {
+        int currentLimit = prefs.getInt("map_limit", 300);
+        boolean started = db.getPhonetrackServerSyncHelper().getSessionPositions(session, lastTimestamp, Long.valueOf(currentLimit), syncCallBack);
+        if (!started && SessionServerSyncHelper.isConfigured(ctx)) {
+            runOnUiThread(() -> showLoadError(getString(R.string.error_sync, getString(R.string.error_no_network))));
+        }
+    }
+
+    /** Called on the main thread when a server request ends. {@code message} is empty on success. */
+    @VisibleForTesting
+    final IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
         @Override
         public void onFinish(Map<String, List<BasicLocation>> newLocations, Map<String, String> newColors, String message) {
-            for (String devName : newLocations.keySet()) {
-                List<BasicLocation> locs = newLocations.get(devName);
-                if (locs != null) {
-                    Log.i(TAG, "position results for dev : " + devName + " | " + locs.size());
-                    String colorStr = newColors.get(devName);
-                    // update map with new device positions
-                    updateDevicePositions(devName, locs, colorStr);
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+            if (message != null && !message.isEmpty()) {
+                showLoadError(message);
+                return;
+            }
+            hideLoadError();
+            if (newLocations != null) {
+                for (String devName : newLocations.keySet()) {
+                    List<BasicLocation> locs = newLocations.get(devName);
+                    if (locs != null) {
+                        Log.i(TAG, "position results for dev : " + devName + " | " + locs.size());
+                        String colorStr = newColors == null ? null : newColors.get(devName);
+                        // update map with new device positions
+                        updateDevicePositions(devName, locs, colorStr);
+                    }
                 }
             }
 
@@ -1203,8 +1291,45 @@ public class MapActivity extends AppCompatActivity {
             updateLastTimestamp();
 
             updateMap();
+            showUpdatedTime();
         }
     };
+
+    /**
+     * Tells the user the positions could not be loaded, with a button to try again.
+     * The same error is shown once until a refresh succeeds, not on every refresh.
+     */
+    private void showLoadError(String message) {
+        // the first paragraph is for users, the rest is the exception
+        String text = message.split("\n\n", 2)[0].trim();
+        if (isFinishing() || text.equals(shownLoadError)) {
+            return;
+        }
+        shownLoadError = text;
+        loadErrorSnackbar = Snackbar.make(relativeLayoutMap, text, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.simple_retry, v -> {
+                    shownLoadError = null;
+                    stopRefresh();
+                    startRefresh();
+                });
+        loadErrorSnackbar.show();
+    }
+
+    private void hideLoadError() {
+        shownLoadError = null;
+        if (loadErrorSnackbar != null) {
+            loadErrorSnackbar.dismiss();
+            loadErrorSnackbar = null;
+        }
+    }
+
+    /** "Updated 14:05" under the title, so a stale map is recognisable. */
+    private void showUpdatedTime() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(getString(R.string.map_updated_at,
+                    DateFormat.getTimeFormat(this).format(new Date())));
+        }
+    }
 
     public void updateMap() {
         runOnUiThread(new Runnable() {
@@ -1249,12 +1374,16 @@ public class MapActivity extends AppCompatActivity {
             setToggleOn(toggle, false);
         }
 
-        if (prefs.getBoolean("map_myposition", true)) {
+        // without the location permission, "my position" can't work: show it as off
+        boolean canLocate = hasLocationPermission();
+        if (prefs.getBoolean("map_myposition", true) && canLocate) {
             setToggleOn(btDisplayMyLoc, true);
             mLocationOverlay.enableMyLocation();
         } else {
             mLocationOverlay.disableMyLocation();
-            prefs.edit().putBoolean("map_followme", false).apply();
+            if (!prefs.getBoolean("map_myposition", true)) {
+                prefs.edit().putBoolean("map_followme", false).apply();
+            }
         }
 
         btDisplayMyLoc.setOnClickListener(new View.OnClickListener() {
@@ -1269,6 +1398,9 @@ public class MapActivity extends AppCompatActivity {
                     prefs.edit().putBoolean("map_myposition", false).apply();
                     prefs.edit().putBoolean("map_followme", false).apply();
                 } else {
+                    if (!ensureLocationPermission(btDisplayMyLoc::performClick)) {
+                        return;
+                    }
                     mLocationOverlay.enableMyLocation();
                     setToggleOn(btDisplayMyLoc, true);
                     prefs.edit().putBoolean("map_myposition", true).apply();
@@ -1276,7 +1408,7 @@ public class MapActivity extends AppCompatActivity {
             }
         });
 
-        if (prefs.getBoolean("map_followme", false)) {
+        if (prefs.getBoolean("map_followme", false) && canLocate) {
             // disable auto zoom (which shouldn't be enabled but who knows these days)
             setToggleOn(btZoomAuto, false);
             prefs.edit().putBoolean("map_autozoom", false).apply();
@@ -1323,6 +1455,9 @@ public class MapActivity extends AppCompatActivity {
                     setToggleOn(btFollowMe, false);
                     prefs.edit().putBoolean("map_followme", false).apply();
                 } else {
+                    if (!ensureLocationPermission(btFollowMe::performClick)) {
+                        return;
+                    }
                     // disable autozoom
                     setToggleOn(btZoomAuto, false);
                     prefs.edit().putBoolean("map_autozoom", false).apply();
@@ -1404,10 +1539,12 @@ public class MapActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows a map toggle as on (a circle in the app colour behind the icon) or off.
-     * The icon is black or white, whichever reads better on the app colour.
+     * Shows a map toggle as on (a circle in the app colour behind the icon) or off, also to
+     * accessibility services. The icon is black or white, whichever reads better on the app colour.
      */
     private void setToggleOn(ImageButton button, boolean on) {
+        button.setSelected(on);
+        ViewCompat.setStateDescription(button, getString(on ? R.string.map_toggle_on : R.string.map_toggle_off));
         if (on) {
             Drawable circle = ContextCompat.getDrawable(ctx, R.drawable.ic_plain_circle_grey_24dp).mutate();
             int color = ThemeUtils.primaryColor(ctx);
