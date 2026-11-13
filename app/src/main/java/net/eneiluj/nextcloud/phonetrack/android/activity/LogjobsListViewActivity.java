@@ -18,7 +18,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -530,10 +529,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     private void setupToolBar() {
         setSupportActionBar(toolbar);
-        int[] colors = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
-        GradientDrawable gradientDrawable = new GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT, colors);
-        drawerLayout.findViewById(R.id.drawer_top_layout).setBackground(gradientDrawable);
+        ThemeUtils.styleDrawerHeader(this, drawerLayout.findViewById(R.id.drawer_top_layout));
 
         ImageView logoView = drawerLayout.findViewById(R.id.drawer_logo);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
@@ -727,8 +723,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                 ? Color.DKGRAY
                 : ThemeUtils.primaryColor(this);
         ColorStateList fabTint = ColorStateList.valueOf(fabColor);
+        // the icons are black or white, whichever reads better on the app colour
+        ColorStateList iconTint = ColorStateList.valueOf(ThemeUtils.onPrimaryColor(fabColor));
         for (FloatingActionButton fab : new FloatingActionButton[]{fabMain, fabCreateSession, fabCreatePhoneTrack, fabCreateMaps, fabCreateCustom}) {
             fab.setBackgroundTintList(fabTint);
+            fab.setImageTintList(iconTint);
         }
     }
 
@@ -1185,6 +1184,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     }
 
+    /** The white Nextcloud logo, tinted to stay readable on the drawer header's app colour. */
+    private void setDefaultAvatarInDrawer() {
+        avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+        avatarView.setColorFilter(ThemeUtils.onPrimaryColor(this), PorterDuff.Mode.SRC_IN);
+    }
+
     private void updateAvatarInDrawer(boolean isAccountConfigured) {
         if (isAccountConfigured) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1196,24 +1201,25 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     Bitmap rounded = ThemeUtils.getRoundedBitmap(decodedByte, decodedByte.getWidth() / 2);
                     avatarView.setImageBitmap(rounded);
+                    avatarView.clearColorFilter();
                     accountButton.setImageBitmap(rounded);
                 } catch (Exception e) {
                     SystemLogger.d(TAG, "[Avatar] Avatar can't be set: " + e.toString());
-                    avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+                    setDefaultAvatarInDrawer();
                     accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
                     accountButton.setColorFilter(Color.GRAY);
                     SystemLogger.d(TAG, "[Avatar] Default icons have been set");
                 }
             } else {
                 SystemLogger.d(TAG, "[Avatar] Empty avatar");
-                avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+                setDefaultAvatarInDrawer();
                 accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
                 accountButton.setColorFilter(Color.GRAY);
                 SystemLogger.d(TAG, "[Avatar] Default icons have been set");
             }
         } else {
             SystemLogger.d(TAG, "[Avatar] No account configured");
-            avatarView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_nextcloud_logo_white));
+            setDefaultAvatarInDrawer();
             accountButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_account_circle_grey_24dp));
             SystemLogger.d(TAG, "[Avatar] Default icons have been set");
         }

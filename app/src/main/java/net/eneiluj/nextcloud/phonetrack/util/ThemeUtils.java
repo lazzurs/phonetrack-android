@@ -9,8 +9,14 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.GradientDrawable;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -69,6 +75,56 @@ public class ThemeUtils {
                 Math.min(r,255),
                 Math.min(g,255),
                 Math.min(b,255));
+    }
+
+    /** WCAG minimum contrast for icons and large text. */
+    private static final double MIN_ICON_CONTRAST = 3.0;
+
+    /**
+     * The colour for icons and text drawn on {@code background}: white, as the app has always
+     * used, unless white falls below the WCAG 3:1 minimum for icons and large text, then black.
+     * The user, or the Nextcloud server's theme, can choose a colour as light as lime or amber,
+     * where white is unreadable; darker colours such as the default Nextcloud blue keep white.
+     * The result is always at least 3:1 (when white is below 3:1, black is above 7:1).
+     * A translucent background is judged as if it were opaque.
+     */
+    @ColorInt
+    public static int onPrimaryColor(@ColorInt int background) {
+        int opaque = ColorUtils.setAlphaComponent(background, 255);
+        return ColorUtils.calculateContrast(Color.WHITE, opaque) >= MIN_ICON_CONTRAST
+                ? Color.WHITE
+                : Color.BLACK;
+    }
+
+    /** {@link #onPrimaryColor(int)} for the app colour. */
+    @ColorInt
+    public static int onPrimaryColor(Context context) {
+        return onPrimaryColor(primaryColor(context));
+    }
+
+    /**
+     * Gives a navigation drawer header the app colour as a gradient, with its text in the
+     * colour that contrasts with it. The gradient moves away from the text colour (darker
+     * under white text, lighter under black text) so it never loses contrast. Icons in the
+     * header are left to the caller: some show pictures that must not be tinted.
+     */
+    public static void styleDrawerHeader(Context context, View header) {
+        int color = primaryColor(context);
+        int foreground = onPrimaryColor(color);
+        int end = manipulateColor(color, foreground == Color.WHITE ? 0.7f : 1.4f);
+        header.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{color, end}));
+        setTextColor(header, foreground);
+    }
+
+    private static void setTextColor(View view, @ColorInt int color) {
+        if (view instanceof TextView) {
+            ((TextView) view).setTextColor(color);
+        } else if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                setTextColor(group.getChildAt(i), color);
+            }
+        }
     }
 
     public static boolean isBrightColor(int color) {

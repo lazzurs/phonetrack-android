@@ -1,5 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -21,7 +23,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,10 +33,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
+import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +49,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.Parcelable;
 import android.text.InputType;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -58,6 +62,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.BasicLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -65,6 +71,7 @@ import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
@@ -113,6 +120,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.text.format.DateUtils.isToday;
 
@@ -170,9 +178,20 @@ public class MapActivity extends AppCompatActivity {
     private final SimpleDateFormat sdfComplete = new SimpleDateFormat("yyyy-MM-dd\nHH:mm:ss z", Locale.ROOT);
     private final SimpleDateFormat sdfCompleteSimple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT);
     private final SimpleDateFormat sdfHour = new SimpleDateFormat("HH:mm:ss", Locale.ROOT);
-    private Drawable toggleCircle;
 
     private Map<String, OnlineTileSourceBase> layersMap;
+    // the last position loading error shown, until a refresh succeeds (null: none)
+    private String shownLoadError;
+    private Snackbar loadErrorSnackbar;
+    // what to do once the location permission is granted
+    private Runnable pendingLocationAction;
+    // the local database may have new positions: set on resume and when the logger saves one
+    private final AtomicBoolean localDataChanged = new AtomicBoolean(true);
+    // a server request is running: don't start another one (they would pile up on a slow network)
+    private final AtomicBoolean serverRequestRunning = new AtomicBoolean(false);
+    @VisibleForTesting
+    volatile int localDataReads = 0;
+    private volatile boolean mapUpdated = false;
     private String selectedLayer;
     private MapTileProviderBasic defaultTileProvider;
 
@@ -219,6 +238,38 @@ public class MapActivity extends AppCompatActivity {
                         }
                     });
 
+    private final ActivityResultLauncher<String[]> locationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                Runnable action = pendingLocationAction;
+                pendingLocationAction = null;
+                if (hasLocationPermission()) {
+                    if (action != null) {
+                        action.run();
+                    }
+                } else {
+                    Toast.makeText(this, getString(R.string.map_location_permission_needed), Toast.LENGTH_LONG).show();
+                }
+            });
+
+    private boolean hasLocationPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * True if the location permission is granted. Otherwise asks for it, runs {@code action}
+     * once it is granted and returns false.
+     */
+    private boolean ensureLocationPermission(Runnable action) {
+        if (hasLocationPermission()) {
+            return true;
+        }
+        pendingLocationAction = action;
+        locationPermissionLauncher.launch(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+        return false;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -238,23 +289,17 @@ public class MapActivity extends AppCompatActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         long sessionid = getIntent().getLongExtra(PARAM_SESSIONID, 0);
-        if (sessionid == 0) {
-            Context context = getApplicationContext();
-            Toast toast = Toast.makeText(context, getString(R.string.session_not_found), Toast.LENGTH_LONG);
-            toast.show();
+        session = sessionid == 0 ? null : db.getSession(sessionid);
+        if (session == null) {
+            // the session was deleted (for example on the server) since this map was opened
+            // or pinned to the home screen
+            Toast.makeText(ctx, getString(R.string.session_not_found), Toast.LENGTH_LONG).show();
+            if (sessionid != 0) {
+                disablePinnedShortcut(sessionid);
+            }
             finish();
             return;
         }
-        session = db.getSession(sessionid);
-
-        toggleCircle = ContextCompat.getDrawable(ctx, R.drawable.ic_plain_circle_grey_24dp)
-                .getConstantState().newDrawable();
-        toggleCircle.setColorFilter(
-                new PorterDuffColorFilter(
-                        ThemeUtils.primaryColor(ctx),
-                        PorterDuff.Mode.SRC_IN
-                )
-        );
 
         setContentView(R.layout.drawer_layout_map);
         EdgeToEdgeUtil.enable(this);
@@ -341,16 +386,30 @@ public class MapActivity extends AppCompatActivity {
 
     }
 
+    /** A pinned map shortcut whose session is gone: grey it out on the home screen. */
+    private void disablePinnedShortcut(long sessionId) {
+        try {
+            ShortcutManagerCompat.disableShortcuts(ctx, Collections.singletonList("map" + sessionId),
+                    getString(R.string.session_not_found));
+        } catch (RuntimeException e) {
+            Log.w(TAG, "could not disable the map shortcut", e);
+        }
+    }
+
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
     }
 
     @Override
     public void onConfigurationChanged(@NonNull android.content.res.Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawerToggle.syncState();
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
     }
 
     private void setupMapTileProviders() {
@@ -461,11 +520,7 @@ public class MapActivity extends AppCompatActivity {
         drawerLayoutMap.addDrawerListener(drawerToggle);
         setTitle(getString(R.string.simple_map_title, session.getName()));
 
-        //drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackgroundColor(ThemeUtils.primaryColor(this));
-        int[] colors = { ThemeUtils.primaryColor(this), ThemeUtils.primaryLightColor(this) };
-        GradientDrawable gradientDrawable = new GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT, colors);
-        drawerLayoutMap.findViewById(R.id.drawer_top_layout_map).setBackground(gradientDrawable);
+        ThemeUtils.styleDrawerHeader(this, drawerLayoutMap.findViewById(R.id.drawer_top_layout_map));
 
         ImageView logoView = drawerLayoutMap.findViewById(R.id.drawer_logo_map);
         logoView.setColorFilter(ThemeUtils.primaryColor(this), PorterDuff.Mode.OVERLAY);
@@ -474,6 +529,10 @@ public class MapActivity extends AppCompatActivity {
     public void onResume(){
         Log.i(TAG, "[onResume begin]");
         super.onResume();
+        if (session == null) {
+            // finishing: onCreate found no session
+            return;
+        }
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -482,7 +541,7 @@ public class MapActivity extends AppCompatActivity {
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
 
         // i don't know why but map.onResume() always enables myLocation...
-        if (prefs.getBoolean("map_myposition", true)) {
+        if (prefs.getBoolean("map_myposition", true) && hasLocationPermission()) {
             mLocationOverlay.enableMyLocation();
         } else {
             mLocationOverlay.disableMyLocation();
@@ -496,6 +555,8 @@ public class MapActivity extends AppCompatActivity {
         }
         */
         setupNavigationMenu();
+        // positions may have been logged while the map was in the background
+        localDataChanged.set(true);
         startRefresh();
         registerBroadcastReceiver();
         Log.i(TAG, "[onResume end]");
@@ -504,6 +565,9 @@ public class MapActivity extends AppCompatActivity {
     public void onPause(){
         Log.i(TAG, "[onPause begin]");
         super.onPause();
+        if (session == null) {
+            return;
+        }
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -832,6 +896,7 @@ public class MapActivity extends AppCompatActivity {
             // to update last min displayed value
             setupNavigationMenu();
             applyPointFilters();
+            updateMap();
         } catch (Exception e) {
 
         }
@@ -846,13 +911,20 @@ public class MapActivity extends AppCompatActivity {
                 // to update limit displayed value
                 setupNavigationMenu();
                 applyPointFilters();
+                updateMap();
             }
         } catch (Exception e) {
 
         }
     }
 
-    private void applyPointFilters() {
+    /**
+     * Applies the point limit and the time window to each device's line.
+     *
+     * @return whether a line changed
+     */
+    private boolean applyPointFilters() {
+        boolean changed = false;
         int limit = prefs.getInt("map_limit", 300);
         int lastMin = prefs.getInt("map_last_min", 120);
 
@@ -872,8 +944,10 @@ public class MapActivity extends AppCompatActivity {
             }
             // then apply time filter
             if (lastMin > 0) {
-                Log.v("FIFI", "time filtering for "+devName);
                 locationsToDisplay = getTimeFilteredLocations(locationsToDisplay, lastMin);
+            }
+            if (sameLocations(displayedLocations.get(devName), locationsToDisplay)) {
+                continue;
             }
 
             geoPoints = new ArrayList<>();
@@ -881,9 +955,19 @@ public class MapActivity extends AppCompatActivity {
                 geoPoints.add(new GeoPoint(loc.getLat(), loc.getLon()));
             }
             lines.get(devName).setPoints(geoPoints);
-            displayedLocations.put(devName, locationsToDisplay);
+            // a copy: locationsToDisplay can be a view of a list that grows later
+            displayedLocations.put(devName, new ArrayList<>(locationsToDisplay));
+            changed = true;
         }
-        updateMap();
+        return changed;
+    }
+
+    /** Device location lists only grow at the end, so equal size and ends mean equal content. */
+    private static boolean sameLocations(@Nullable List<BasicLocation> a, List<BasicLocation> b) {
+        if (a == null || a.size() != b.size()) {
+            return false;
+        }
+        return a.isEmpty() || (a.get(0) == b.get(0) && a.get(a.size() - 1) == b.get(b.size() - 1));
     }
 
     private void bringDeviceToFront(String devName) {
@@ -984,6 +1068,8 @@ public class MapActivity extends AppCompatActivity {
      * get data from the database
      */
     private void updatePositionsWithLocalData() {
+        localDataReads++;
+        boolean changed = false;
         List<DBLogjobLocation> locs;
         List<BasicLocation> basicLocs;
         // get list of session's devices with a logjob
@@ -996,18 +1082,25 @@ public class MapActivity extends AppCompatActivity {
                 // get local positions of devices
                 locs = db.getLocationsOfLogjob(lj.getId());
                 basicLocs = new ArrayList<>(locs);
-                updateDevicePositions(lj.getDeviceName(), basicLocs, null);
+                changed |= updateDevicePositions(lj.getDeviceName(), basicLocs, null);
             }
         }
 
         // after data update : view update
-        updateMap();
+        changed |= applyPointFilters();
+        updateMapIfChanged(changed);
     }
 
-    private void updateDevicePositions(String devName, List<BasicLocation> locs, @Nullable String colorStr) {
+    /**
+     * Adds the device's positions that are newer than the ones it has.
+     * The caller applies the point filters and updates the map.
+     *
+     * @return whether the device has new positions or a new colour
+     */
+    private boolean updateDevicePositions(String devName, List<BasicLocation> locs, @Nullable String colorStr) {
         /////// LOCATIONS
         if (locs.size() == 0) {
-            return;
+            return false;
         }
         Long lastDevTs = lastTimestamps.get(devName);
         List<BasicLocation> locationsToAdd = new ArrayList<>();
@@ -1022,23 +1115,22 @@ public class MapActivity extends AppCompatActivity {
             // else add what's new
             if (lastDevTs == null) {
                 devLocations.addAll(locs);
+                locationsToAdd = locs;
             } else {
                 for (BasicLocation loc : locs) {
-                    Log.v(TAG, "AAAAA "+loc.getTimestamp()+" > "+ lastDevTs);
                     if (loc.getTimestamp() > lastDevTs) {
                         locationsToAdd.add(loc);
                     }
                 }
                 devLocations.addAll(locationsToAdd);
-                Log.v(TAG, "existing dev "+devName+" ADD "+locationsToAdd.size()+" locations");
             }
         }
         List<BasicLocation> deviceLocations = locations.get(devName);
-        Log.v(TAG, "deviceLocations size " + deviceLocations.size() + " access " + (deviceLocations.size()-1));
         BasicLocation lastLoc = deviceLocations.get(deviceLocations.size()-1);
         lastTimestamps.put(devName, lastLoc.getTimestamp());
 
         /////// COLORS
+        Integer previousColor = colors.get(devName);
         if (!colors.containsKey(devName)) {
             if (colorStr != null) {
                 colors.put(devName, Color.parseColor(colorStr));
@@ -1051,6 +1143,10 @@ public class MapActivity extends AppCompatActivity {
             }
         }
         int color = colors.get(devName);
+        if (locationsToAdd.isEmpty() && previousColor != null && previousColor == color) {
+            // nothing new
+            return false;
+        }
 
         /////// LINES
 
@@ -1065,7 +1161,6 @@ public class MapActivity extends AppCompatActivity {
             Polyline line = lines.get(devName);
             line.getOutlinePaint().setColor(color);
         }
-        applyPointFilters();
 
         /////// MARKER
         CustomLocationMarkerDrawable markerDrawable;
@@ -1131,6 +1226,7 @@ public class MapActivity extends AppCompatActivity {
         if (locationsToAdd.size() > 0) {
             m.setPosition(new GeoPoint(lastLoc.getLat(), lastLoc.getLon()));
         }
+        return true;
     }
 
     private List<BasicLocation> getLimitedLocations(List<BasicLocation> locations, int limit) {
@@ -1178,10 +1274,7 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // launch task of server sync with callback
-                Log.i(TAG, "[Task run]");
-                updatePositionsWithLocalData();
-                int currentLimit = prefs.getInt("map_limit", 300);
-                db.getPhonetrackServerSyncHelper().getSessionPositions(session, lastTimestamp, Long.valueOf(currentLimit), syncCallBack);
+                refresh();
             }
         };
         int currentFreq = prefs.getInt("map_freq", 15);
@@ -1193,6 +1286,15 @@ public class MapActivity extends AppCompatActivity {
         timer.scheduleAtFixedRate(timerTask, 0, currentFreq*1000);
     }
 
+    /** One refresh, on the timer thread: local positions if there are new ones, then the server's. */
+    @VisibleForTesting
+    void refresh() {
+        if (localDataChanged.getAndSet(false)) {
+            updatePositionsWithLocalData();
+        }
+        requestServerPositions();
+    }
+
     public void stopRefresh() {
         if (timer != null) {
             timer.cancel();
@@ -1201,25 +1303,101 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    private final IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
+    private void requestServerPositions() {
+        if (!serverRequestRunning.compareAndSet(false, true)) {
+            // the previous request hasn't finished: its answer will come
+            return;
+        }
+        int currentLimit = prefs.getInt("map_limit", 300);
+        boolean started = db.getPhonetrackServerSyncHelper().getSessionPositions(session, lastTimestamp, Long.valueOf(currentLimit), syncCallBack);
+        if (!started) {
+            serverRequestRunning.set(false);
+        }
+        if (!started && SessionServerSyncHelper.isConfigured(ctx)) {
+            runOnUiThread(() -> showLoadError(getString(R.string.error_sync, getString(R.string.error_no_network))));
+        }
+    }
+
+    /** Called on the main thread when a server request ends. {@code message} is empty on success. */
+    @VisibleForTesting
+    final IGetLastPosCallback syncCallBack = new IGetLastPosCallback() {
         @Override
         public void onFinish(Map<String, List<BasicLocation>> newLocations, Map<String, String> newColors, String message) {
-            for (String devName : newLocations.keySet()) {
-                List<BasicLocation> locs = newLocations.get(devName);
-                if (locs != null) {
-                    Log.i(TAG, "position results for dev : " + devName + " | " + locs.size());
-                    String colorStr = newColors.get(devName);
-                    // update map with new device positions
-                    updateDevicePositions(devName, locs, colorStr);
+            serverRequestRunning.set(false);
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+            if (message != null && !message.isEmpty()) {
+                showLoadError(message);
+                return;
+            }
+            hideLoadError();
+            boolean changed = false;
+            if (newLocations != null) {
+                for (String devName : newLocations.keySet()) {
+                    List<BasicLocation> locs = newLocations.get(devName);
+                    if (locs != null) {
+                        Log.i(TAG, "position results for dev : " + devName + " | " + locs.size());
+                        String colorStr = newColors == null ? null : newColors.get(devName);
+                        // update map with new device positions
+                        changed |= updateDevicePositions(devName, locs, colorStr);
+                    }
                 }
             }
 
             // update lastTimestamp for next server request
             updateLastTimestamp();
 
-            updateMap();
+            // also drops points that left the time window
+            changed |= applyPointFilters();
+            updateMapIfChanged(changed);
+            showUpdatedTime();
         }
     };
+
+    /**
+     * Tells the user the positions could not be loaded, with a button to try again.
+     * The same error is shown once until a refresh succeeds, not on every refresh.
+     */
+    private void showLoadError(String message) {
+        // the first paragraph is for users, the rest is the exception
+        String text = message.split("\n\n", 2)[0].trim();
+        if (isFinishing() || text.equals(shownLoadError)) {
+            return;
+        }
+        shownLoadError = text;
+        loadErrorSnackbar = Snackbar.make(relativeLayoutMap, text, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.simple_retry, v -> {
+                    shownLoadError = null;
+                    stopRefresh();
+                    startRefresh();
+                });
+        loadErrorSnackbar.show();
+    }
+
+    private void hideLoadError() {
+        shownLoadError = null;
+        if (loadErrorSnackbar != null) {
+            loadErrorSnackbar.dismiss();
+            loadErrorSnackbar = null;
+        }
+    }
+
+    /** "Updated 14:05" under the title, so a stale map is recognisable. */
+    private void showUpdatedTime() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(getString(R.string.map_updated_at,
+                    DateFormat.getTimeFormat(this).format(new Date())));
+        }
+    }
+
+    /** Redraws (and auto-zooms) only when something changed, and once at the start for the device list. */
+    private void updateMapIfChanged(boolean changed) {
+        if (changed || !mapUpdated) {
+            mapUpdated = true;
+            updateMap();
+        }
+    }
 
     public void updateMap() {
         runOnUiThread(new Runnable() {
@@ -1258,19 +1436,22 @@ public class MapActivity extends AppCompatActivity {
         btAllowRotation = (ImageButton) findViewById(R.id.ic_allow_rotation);
         btLayers = (ImageButton) findViewById(R.id.ic_map_layers);
 
-        btDisplayMyLoc.setColorFilter(Color.WHITE);
-        btFollowMe.setColorFilter(Color.WHITE);
         btZoom.setColorFilter(Color.WHITE);
-        btZoomAuto.setColorFilter(Color.WHITE);
-        btAllowRotation.setColorFilter(Color.WHITE);
         btLayers.setColorFilter(Color.WHITE);
+        for (ImageButton toggle : new ImageButton[]{btDisplayMyLoc, btFollowMe, btZoomAuto, btAllowRotation}) {
+            setToggleOn(toggle, false);
+        }
 
-        if (prefs.getBoolean("map_myposition", true)) {
-            btDisplayMyLoc.setBackground(toggleCircle);
+        // without the location permission, "my position" can't work: show it as off
+        boolean canLocate = hasLocationPermission();
+        if (prefs.getBoolean("map_myposition", true) && canLocate) {
+            setToggleOn(btDisplayMyLoc, true);
             mLocationOverlay.enableMyLocation();
         } else {
             mLocationOverlay.disableMyLocation();
-            prefs.edit().putBoolean("map_followme", false).apply();
+            if (!prefs.getBoolean("map_myposition", true)) {
+                prefs.edit().putBoolean("map_followme", false).apply();
+            }
         }
 
         btDisplayMyLoc.setOnClickListener(new View.OnClickListener() {
@@ -1280,27 +1461,30 @@ public class MapActivity extends AppCompatActivity {
                 if (mLocationOverlay.isMyLocationEnabled()) {
                     mLocationOverlay.disableMyLocation();
                     mLocationOverlay.disableFollowLocation();
-                    btDisplayMyLoc.setBackgroundResource(0);
-                    btFollowMe.setBackgroundResource(0);
+                    setToggleOn(btDisplayMyLoc, false);
+                    setToggleOn(btFollowMe, false);
                     prefs.edit().putBoolean("map_myposition", false).apply();
                     prefs.edit().putBoolean("map_followme", false).apply();
                 } else {
+                    if (!ensureLocationPermission(btDisplayMyLoc::performClick)) {
+                        return;
+                    }
                     mLocationOverlay.enableMyLocation();
-                    btDisplayMyLoc.setBackground(toggleCircle);
+                    setToggleOn(btDisplayMyLoc, true);
                     prefs.edit().putBoolean("map_myposition", true).apply();
                 }
             }
         });
 
-        if (prefs.getBoolean("map_followme", false)) {
+        if (prefs.getBoolean("map_followme", false) && canLocate) {
             // disable auto zoom (which shouldn't be enabled but who knows these days)
-            btZoomAuto.setBackgroundResource(0);
+            setToggleOn(btZoomAuto, false);
             prefs.edit().putBoolean("map_autozoom", false).apply();
             // enable follow me
             mLocationOverlay.enableMyLocation();
             mLocationOverlay.enableFollowLocation();
-            btFollowMe.setBackground(toggleCircle);
-            btDisplayMyLoc.setBackground(toggleCircle);
+            setToggleOn(btFollowMe, true);
+            setToggleOn(btDisplayMyLoc, true);
         } else {
             mLocationOverlay.disableFollowLocation();
         }
@@ -1312,12 +1496,12 @@ public class MapActivity extends AppCompatActivity {
                 Log.i(TAG, "rotation clicked ");
                 if (mRotationGestureOverlay.isEnabled()) {
                     mRotationGestureOverlay.setEnabled(false);
-                    btAllowRotation.setBackgroundResource(0);
+                    setToggleOn(btAllowRotation, false);
                     map.setMapOrientation(0);
                     prefs.edit().putBoolean("map_allow_rotation", false).apply();
                 } else {
                     mRotationGestureOverlay.setEnabled(true);
-                    btAllowRotation.setBackground(toggleCircle);
+                    setToggleOn(btAllowRotation, true);
                     prefs.edit().putBoolean("map_allow_rotation", true).apply();
                 }
             }
@@ -1325,7 +1509,7 @@ public class MapActivity extends AppCompatActivity {
 
         if (prefs.getBoolean("map_allow_rotation", false)) {
             mRotationGestureOverlay.setEnabled(true);
-            btAllowRotation.setBackground(toggleCircle);
+            setToggleOn(btAllowRotation, true);
         } else {
             mRotationGestureOverlay.setEnabled(false);
         }
@@ -1336,17 +1520,20 @@ public class MapActivity extends AppCompatActivity {
                 Log.i(TAG, "btFollowMe clicked ");
                 if (mLocationOverlay.isFollowLocationEnabled()) {
                     mLocationOverlay.disableFollowLocation();
-                    btFollowMe.setBackgroundResource(0);
+                    setToggleOn(btFollowMe, false);
                     prefs.edit().putBoolean("map_followme", false).apply();
                 } else {
+                    if (!ensureLocationPermission(btFollowMe::performClick)) {
+                        return;
+                    }
                     // disable autozoom
-                    btZoomAuto.setBackgroundResource(0);
+                    setToggleOn(btZoomAuto, false);
                     prefs.edit().putBoolean("map_autozoom", false).apply();
                     // enable follow me
                     mLocationOverlay.enableMyLocation();
                     mLocationOverlay.enableFollowLocation();
-                    btFollowMe.setBackground(toggleCircle);
-                    btDisplayMyLoc.setBackground(toggleCircle);
+                    setToggleOn(btFollowMe, true);
+                    setToggleOn(btDisplayMyLoc, true);
                     prefs.edit().putBoolean("map_myposition", true).apply();
                     prefs.edit().putBoolean("map_followme", true).apply();
                 }
@@ -1364,10 +1551,10 @@ public class MapActivity extends AppCompatActivity {
         });
 
         if (prefs.getBoolean("map_autozoom", true)) {
-            btZoomAuto.setBackground(toggleCircle);
+            setToggleOn(btZoomAuto, true);
             // disable follow me
             mLocationOverlay.disableFollowLocation();
-            btFollowMe.setBackgroundResource(0);
+            setToggleOn(btFollowMe, false);
             prefs.edit().putBoolean("map_followme", false).apply();
         }
 
@@ -1378,14 +1565,14 @@ public class MapActivity extends AppCompatActivity {
                 if (!prefs.getBoolean("map_autozoom", true)) {
                     // disable follow me
                     mLocationOverlay.disableFollowLocation();
-                    btFollowMe.setBackgroundResource(0);
+                    setToggleOn(btFollowMe, false);
                     prefs.edit().putBoolean("map_followme", false).apply();
                     // enable auto zoom
-                    btZoomAuto.setBackground(toggleCircle);
+                    setToggleOn(btZoomAuto, true);
                     prefs.edit().putBoolean("map_autozoom", true).apply();
                     zoomOnAllMarkers();
                 } else {
-                    btZoomAuto.setBackgroundResource(0);
+                    setToggleOn(btZoomAuto, false);
                     prefs.edit().putBoolean("map_autozoom", false).apply();
                 }
             }
@@ -1417,6 +1604,25 @@ public class MapActivity extends AppCompatActivity {
                 selectDialog.show();
             }
         });
+    }
+
+    /**
+     * Shows a map toggle as on (a circle in the app colour behind the icon) or off, also to
+     * accessibility services. The icon is black or white, whichever reads better on the app colour.
+     */
+    private void setToggleOn(ImageButton button, boolean on) {
+        button.setSelected(on);
+        ViewCompat.setStateDescription(button, getString(on ? R.string.map_toggle_on : R.string.map_toggle_off));
+        if (on) {
+            Drawable circle = ContextCompat.getDrawable(ctx, R.drawable.ic_plain_circle_grey_24dp).mutate();
+            int color = ThemeUtils.primaryColor(ctx);
+            circle.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+            button.setBackground(circle);
+            button.setColorFilter(ThemeUtils.onPrimaryColor(color));
+        } else {
+            button.setBackground(null);
+            button.setColorFilter(Color.WHITE);
+        }
     }
 
     private void setTileSource(String layerKey) {
@@ -1623,6 +1829,22 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    /** Reads the new local position on the refresh thread, not on the main thread. */
+    @VisibleForTesting
+    void onLocalPositionSaved() {
+        localDataChanged.set(true);
+        if (timer != null) {
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (localDataChanged.getAndSet(false)) {
+                        updatePositionsWithLocalData();
+                    }
+                }
+            }, 0);
+        }
+    }
+
     private void registerBroadcastReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(LoggerService.BROADCAST_LOCATION_UPDATED);
@@ -1643,7 +1865,7 @@ public class MapActivity extends AppCompatActivity {
                 case LoggerService.BROADCAST_LOCATION_UPDATED:
                     long ljId = intent.getLongExtra(LoggerService.BROADCAST_EXTRA_PARAM, 0);
                     if (LoggerService.DEBUG) { Log.d(TAG, "[inMAP broadcast loc updated " + ljId + "]"); }
-                    updatePositionsWithLocalData();
+                    onLocalPositionSaved();
                     break;
             }
         }

@@ -27,6 +27,7 @@
     <string name="action_search">Search</string>
     <string name="example_hostname" translatable="false">example.org</string>
     <string name="simple_cancel">Cancel</string>
+    <string name="simple_retry">Retry</string>
     <string name="simple_yes">Yes</string>
     <string name="simple_no">No</string>
     <string name="simple_ok">Ok</string>
@@ -388,6 +389,12 @@
     <string name="zoom_all_markers">Zoom on all markers</string>
     <string name="auto_zoom">Auto zoom</string>
     <string name="allow_rotation">Allow rotation</string>
+    <!-- state of a map button such as "Follow my position", read out by screen readers -->
+    <string name="map_toggle_on">On</string>
+    <string name="map_toggle_off">Off</string>
+    <!-- map subtitle, %1$s is a time such as 14:05 -->
+    <string name="map_updated_at">Updated %1$s</string>
+    <string name="map_location_permission_needed">Showing your position on the map needs the location permission</string>
 
     <!-- Accessibility (TalkBack) -->
     <string name="a11y_logjob_more_options">More options for %1$s</string>
