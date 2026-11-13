@@ -41,7 +41,19 @@ public final class LocationSamplePolicy {
      */
     static final long MAX_KEEP_GPS_ON_UPDATE_INTERVAL_MILLIS = 5000;
 
+    /** A GPS fix another log job got is never used by this one when older than this. */
+    static final long MAX_SHARED_FIX_AGE_MILLIS = 10_000;
+
     private LocationSamplePolicy() {
+    }
+
+    /**
+     * Whether a GPS fix that is ageMillis old can stand for a new sample of a log job with this
+     * interval instead of a search: at most 10 s old and at most a sixth of the interval, so the
+     * points stay as far apart as the user asked for, give or take a few seconds.
+     */
+    public static boolean canReuseFix(long ageMillis, long intervalMillis) {
+        return ageMillis >= 0 && ageMillis <= Math.min(MAX_SHARED_FIX_AGE_MILLIS, intervalMillis / 6);
     }
 
     /**

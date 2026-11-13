@@ -362,6 +362,72 @@ public class LoggerServiceSamplingTest {
         assertEquals(30_000, nextSampleIn());
     }
 
+    /** Let time pass until the next point alarm of a log job, plus lateMillis, and deliver it. */
+    private void reachNextSampleOf(long id, long lateMillis) {
+        for (ShadowAlarmManager.ScheduledAlarm alarm : shadowOf(alarmManager).getScheduledAlarms()) {
+            Intent intent = shadowOf(alarm.operation).getSavedIntent();
+            if (intent.getBooleanExtra(LoggerService.GET_NEXT_POINT, false)
+                    && intent.getLongExtra(LoggerService.JOB_ID, 0) == id) {
+                ShadowLooper.idleMainLooper(Math.max(0, alarm.getTriggerAtMs() - SystemClock.elapsedRealtime()) + lateMillis,
+                        TimeUnit.MILLISECONDS);
+                alarmManager.cancel(alarm.operation);
+                controller.withIntent(intent).startCommand(0, 1);
+                idleAll();
+                return;
+            }
+        }
+        throw new AssertionError("no next sample scheduled for " + id);
+    }
+
+    @Test
+    public void aLogjobUsesAFixAnotherOneGotSecondsAgo() {
+        long a = addLogjob(60, 0, 50, 30);
+        long b = addLogjob(60, 0, 50, 30);
+        startService();
+        deliver(fix(LocationManager.GPS_PROVIDER, 0, 5));
+        assertEquals(1, logged(a));
+        assertEquals(1, logged(b));
+
+        reachNextSampleOf(a, 0);
+        assertTrue(searching(LocationManager.GPS_PROVIDER));
+        deliver(fix(LocationManager.GPS_PROVIDER, 10, 5));
+        assertEquals(2, logged(a));
+        assertFalse(searching(LocationManager.GPS_PROVIDER));
+
+        // B's turn 3 s later: no new search, it logs A's fix
+        reachNextSampleOf(b, 3_000);
+        assertEquals(2, logged(b));
+        assertFalse(searching(LocationManager.GPS_PROVIDER));
+        long next = nextSampleIn();
+        assertTrue("next sample in " + next, next > 55_000 && next <= 60_000);
+    }
+
+    @Test
+    public void aLogjobSearchesItselfWhenTheOtherFixIsTooOldOrNotAccurateEnough() {
+        long a = addLogjob(60, 0, 50, 30);
+        long b = addLogjob(60, 0, 10, 30);
+        startService();
+        deliver(fix(LocationManager.GPS_PROVIDER, 0, 5));
+
+        // good enough for A, not for B
+        reachNextSampleOf(a, 0);
+        deliver(fix(LocationManager.GPS_PROVIDER, 10, 30));
+        assertEquals(2, logged(a));
+        reachNextSampleOf(b, 3_000);
+        assertEquals(1, logged(b));
+        assertTrue(searching(LocationManager.GPS_PROVIDER));
+        deliver(fix(LocationManager.GPS_PROVIDER, 20, 5));
+        assertEquals(2, logged(b));
+
+        // too old for B
+        reachNextSampleOf(a, 0);
+        deliver(fix(LocationManager.GPS_PROVIDER, 30, 5));
+        assertEquals(3, logged(a));
+        reachNextSampleOf(b, 30_000);
+        assertEquals(2, logged(b));
+        assertTrue(searching(LocationManager.GPS_PROVIDER));
+    }
+
     @Test
     public void keepGpsOnLogjobHasNoSearchDuration() {
         addLogjob(10, 0, 50, 5, true);
