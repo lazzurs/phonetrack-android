@@ -138,7 +138,6 @@
   <string name="homescreen_map_shortcut_long_title">Map for %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="manage_accounts">Manage accounts</string>
-  <string name="is_running">running (%1$s pending, %2$s sent)</string>
   <string name="settings_server_settings">Account</string>
   <string name="settings_url">Server address</string>
   <string name="settings_url_warn_http">WARNING: \"http\" is unsafe. Please use \"https\".</string>
@@ -148,8 +147,6 @@
   <string name="settings_submit">Connect</string>
   <string name="settings_submitting">Connecting …</string>
   <string name="settings_theme_title">Theme</string>
-  <string name="settings_notification_importance_title">Low notification importance</string>
-  <string name="settings_notification_importance_subtitle">Reduce logging notification importance</string>
   <string name="settings_sms">Listen to SMS</string>
   <string name="settings_sms_keyword_title">SMS keyword</string>
   <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
@@ -281,7 +278,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

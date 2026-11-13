@@ -1,26 +1,57 @@
 package net.eneiluj.nextcloud.phonetrack.android.quicksettings;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.core.service.quicksettings.PendingIntentActivityWrapper;
 import androidx.core.service.quicksettings.TileServiceCompat;
 
+import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.EditPhoneTrackLogjobActivity;
+import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 
 /**
  * This {@link TileService} adds a quick settings tile that leads to the new logjob view.
+ * The tile is on, and says how many log jobs run, only while logging runs.
  */
 public class NewLogjobTileService extends TileService {
 
     @Override
     public void onStartListening() {
         Tile tile = getQsTile();
-        tile.setState(Tile.STATE_ACTIVE);
-
+        if (tile == null) {
+            return;
+        }
+        boolean running = LoggerService.isRunning();
+        int enabled = 0;
+        if (running) {
+            Integer count = PhoneTrackSQLiteOpenHelper.getInstance(this).getEnabledCount().get("1");
+            enabled = count != null ? count : 0;
+        }
+        tile.setState(tileState(running));
+        CharSequence subtitle = subtitle(this, running, enabled);
+        tile.setSubtitle(subtitle);
+        tile.setStateDescription(subtitle);
         tile.updateTile();
+    }
+
+    /** An "on" tile reads as "tracking is running": only show it on while it is. */
+    @VisibleForTesting
+    static int tileState(boolean loggingRunning) {
+        return loggingRunning ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
+    }
+
+    @VisibleForTesting
+    static CharSequence subtitle(Context context, boolean loggingRunning, int enabledLogjobs) {
+        if (!loggingRunning) {
+            return context.getString(R.string.quicksettings_not_logging);
+        }
+        return context.getResources().getQuantityString(R.plurals.logging_notification_title, enabledLogjobs, enabledLogjobs);
     }
 
     @Override

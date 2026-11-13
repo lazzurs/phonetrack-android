@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Удалить задание журнала</string>
   <string name="manage_accounts">Управление аккаунтами</string>
-  <string name="is_running">выполнение (ожидает %1$s, отправлено %2$s)</string>
   <string name="settings_server_settings">Учетная запись</string>
   <string name="settings_url">Адрес сервера</string>
   <string name="settings_url_warn_http">Предупреждение: Для безопасности вместо протокола «http» используйте «https».</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">Подключится</string>
   <string name="settings_submitting">Подключение …</string>
   <string name="settings_theme_title">Тема</string>
-  <string name="settings_notification_importance_title">Низкий приоритет уведомления</string>
-  <string name="settings_notification_importance_subtitle">Уменьшить приоритет сообщений журнала</string>
   <string name="settings_reset_stats">Сбросить статистику при активации журнала</string>
   <string name="settings_reset_stats_subtitle">Сбросить статистику в диалоге журнала при активации журнала</string>
   <string name="settings_sms">Слушать SMS</string>
@@ -310,7 +307,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

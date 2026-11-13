@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Журнал активності експортовано в %s</string>
   <string name="delete_logjob_menu_title">Видалити журнал</string>
   <string name="manage_accounts">Керування обліковими записами</string>
-  <string name="is_running">у роботі (%1$s в очікуванні, %2$s відправлено)</string>
   <string name="settings_server_settings">Обліковий запис</string>
   <string name="settings_url">Адреса сервера</string>
   <string name="settings_url_warn_http">ПОПЕРЕДЖЕННЯ: \"http\" не є безпечним. Будь ласка, використовуйте \"https\".</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">З’єднатись</string>
   <string name="settings_submitting">З\'єднання …</string>
   <string name="settings_theme_title">Тема</string>
-  <string name="settings_notification_importance_title">Сповіщення низького пріоритету</string>
-  <string name="settings_notification_importance_subtitle">Зменшити пріоритет сповіщень про журналювання</string>
   <string name="settings_reset_stats">Скинути статистику при старті завдання журналювання</string>
   <string name="settings_reset_stats_subtitle">Скинути статистику у інформаційному вікні завдання журналювання, коли завдання активовано</string>
   <string name="settings_sms">Слухати SMS</string>
@@ -310,7 +307,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

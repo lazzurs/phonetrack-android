@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Delete logjob</string>
   <string name="manage_accounts">Manage accounts</string>
-  <string name="is_running">running (%1$s pending, %2$s sent)</string>
   <string name="settings_server_settings">帳戶</string>
   <string name="settings_url">伺服器位址</string>
   <string name="settings_url_warn_http">WARNING: \"http\" is unsafe. Please use \"https\".</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">連線</string>
   <string name="settings_submitting">連線中…</string>
   <string name="settings_theme_title">主題</string>
-  <string name="settings_notification_importance_title">Low notification importance</string>
-  <string name="settings_notification_importance_subtitle">降低記錄通知的重要性</string>
   <string name="settings_reset_stats">追蹤記錄啟動時重設統計</string>
   <string name="settings_reset_stats_subtitle">追蹤記錄啟動時，重設追蹤記錄資訊對話方塊中的統計。</string>
   <string name="settings_sms">監聽SMS簡訊</string>
@@ -310,7 +307,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

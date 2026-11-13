@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Activiteiten log geëxporteerd in %s</string>
   <string name="delete_logjob_menu_title">Logtaak verwijderen</string>
   <string name="manage_accounts">Beheer accounts</string>
-  <string name="is_running">draaiend (%1$s in behandeling, %2$s verzonden)</string>
   <string name="settings_server_settings">Account</string>
   <string name="settings_url">Serveradres</string>
   <string name="settings_url_warn_http">Waarschuwing: \"http\" onveilig is. Gelieve \'https\' gebruiken.</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">Verbinden</string>
   <string name="settings_submitting">Verbinding maken …</string>
   <string name="settings_theme_title">Thema</string>
-  <string name="settings_notification_importance_title">Gering belang van melding</string>
-  <string name="settings_notification_importance_subtitle">Verminder het belang van logboekmeldingen</string>
   <string name="settings_reset_stats">Reset statistieken bij logjob activering</string>
   <string name="settings_reset_stats_subtitle">Reset statistieken in logjob informatie dialoogvenster wanneer logjob is geactiveerd</string>
   <string name="settings_sms">Luister naar SMS</string>
@@ -310,7 +307,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

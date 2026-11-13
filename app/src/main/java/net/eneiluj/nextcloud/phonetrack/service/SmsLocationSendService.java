@@ -2,8 +2,6 @@ package net.eneiluj.nextcloud.phonetrack.service;
 
 import android.Manifest;
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
@@ -63,9 +61,11 @@ public class SmsLocationSendService extends Service {
     public static final Map<String, Boolean> isRunning = new ConcurrentHashMap<>();
 
     /** Channel of the notifications about SMS commands that were answered or run */
-    static final String INFO_CHANNEL_ID = "11111";
-    private static final String PROGRESS_CHANNEL_ID = "sms_position_request";
-    private static final int FOREGROUND_NOTIFICATION_ID = 1526756640;
+    static final String INFO_CHANNEL_ID = NotificationChannels.SMS_ACTIVITY;
+    private static final String PROGRESS_CHANNEL_ID = NotificationChannels.SMS_POSITION_REQUEST;
+    /** Not the one of {@link LoggerService}: this service would replace the logging notification */
+    @VisibleForTesting
+    static final int FOREGROUND_NOTIFICATION_ID = 1526756630;
     private static int notificationId = 1526756641;
 
     private static final int TIMEOUT_SECONDS = 120;
@@ -134,7 +134,7 @@ public class SmsLocationSendService extends Service {
     }
 
     private void startLocationForeground(String requester) {
-        createNotificationChannel(PROGRESS_CHANNEL_ID, NotificationManager.IMPORTANCE_LOW);
+        NotificationChannels.createSmsPositionRequest(this);
         Notification notification = new NotificationCompat.Builder(this, PROGRESS_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notify_24dp)
                 .setContentTitle(getString(R.string.app_name))
@@ -331,7 +331,7 @@ public class SmsLocationSendService extends Service {
         Intent ptIntent = SmsInfoStore.save(getApplicationContext(), smsContent, fromNotification);
 
         String chanId = INFO_CHANNEL_ID;
-        createNotificationChannel(chanId, NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannels.createSmsActivity(this);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanId)
                 .setSmallIcon(R.drawable.ic_notify_24dp)
                 .setContentTitle(getString(R.string.app_name))
@@ -340,11 +340,6 @@ public class SmsLocationSendService extends Service {
                 .setContentIntent(PendingIntent.getActivity(this, 1, ptIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT))
                 .setAutoCancel(true);
         NotificationManagerCompat.from(this).notify(notificationId++, builder.build());
-    }
-
-    private void createNotificationChannel(String channelId, int importance) {
-        NotificationChannel channel = new NotificationChannel(channelId, getString(R.string.app_name), importance);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
     }
 
     private String getContactNameForNotification(String number) {

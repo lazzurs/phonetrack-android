@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">删除日志</string>
   <string name="manage_accounts">Manage accounts</string>
-  <string name="is_running">正在运行(%1$s 待定, %2$s 已发送)</string>
   <string name="settings_server_settings">账户</string>
   <string name="settings_url">Server address</string>
   <string name="settings_url_warn_http">警告：“http” 不安全。请使用 “https”。</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">连接</string>
   <string name="settings_submitting">正在连接至 …</string>
   <string name="settings_theme_title">主题</string>
-  <string name="settings_notification_importance_title">低通知重要程度</string>
-  <string name="settings_notification_importance_subtitle">降低日志记录通知的重要程度（系统可根据通知重要程度对通知进行排序）</string>
   <string name="settings_reset_stats">在Logjob被激活时重置统计信息</string>
   <string name="settings_reset_stats_subtitle">当logjob激活时，重置logjob信息对话框中的统计数据</string>
   <string name="settings_sms">监听短信</string>
@@ -310,7 +307,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

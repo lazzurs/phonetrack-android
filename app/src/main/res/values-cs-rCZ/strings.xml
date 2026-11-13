@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Záznam aktivity exportován do %s</string>
   <string name="delete_logjob_menu_title">Smazat úlohu zaznamenávání</string>
   <string name="manage_accounts">Spravovat účty</string>
-  <string name="is_running">spuštěné (%1$s čeká, %2$s odesláno)</string>
   <string name="settings_server_settings">Účet</string>
   <string name="settings_url">Adresa serveru</string>
   <string name="settings_url_warn_http">VAROVÁNÍ: „http“ není bezpečné. Použijte „https://“.</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">Připojit</string>
   <string name="settings_submitting">Připojování …</string>
   <string name="settings_theme_title">Vzhled</string>
-  <string name="settings_notification_importance_title">Nízká důležitost upozornění</string>
-  <string name="settings_notification_importance_subtitle">Snížit důležitost upozorňování ze zaznamenávání</string>
   <string name="settings_reset_stats">Při aktivování úlohy zaznamenávání vynulovat statistiky</string>
   <string name="settings_reset_stats_subtitle">Vynulovat statistiky v informačním dialogu o úloze zaznamenávání když je úloha aktivována</string>
   <string name="settings_sms">Očekávat příjem SMS zpráv</string>
@@ -310,7 +307,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

@@ -54,6 +54,7 @@ import android.widget.Toast;
 
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.service.NotificationChannels;
 
 import net.eneiluj.nextcloud.phonetrack.android.activity.EditMapsLogjobActivity;
 import net.eneiluj.nextcloud.phonetrack.android.preference.ColorPreference;
@@ -162,6 +163,21 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             }
         });
 
+
+        Preference loggingNotification = findPreference(getString(R.string.pref_key_logging_notification));
+        loggingNotification.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                    .putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName())
+                    .putExtra(Settings.EXTRA_CHANNEL_ID, NotificationChannels.LOGGING);
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                // some builds have no screen for a single channel: show those of the app
+                startActivity(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                        .putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName()));
+            }
+            return true;
+        });
 
         Preference resetTrust = findPreference(getString(R.string.pref_key_reset_trust));
         resetTrust.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

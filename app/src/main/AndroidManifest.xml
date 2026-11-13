@@ -197,6 +197,11 @@
         <!-- BOOT_COMPLETED is sent by the system, which may deliver to
              non-exported receivers; nothing else should be able to trigger it.
              (QUICKBOOT_POWERON was dropped: onReceive only acts on BOOT_COMPLETED.) -->
+        <!-- "Stop" action of the logging notification -->
+        <receiver
+            android:name="net.eneiluj.nextcloud.phonetrack.service.StopLoggingReceiver"
+            android:exported="false" />
+
         <receiver
             android:name="net.eneiluj.nextcloud.phonetrack.service.BootCompletedReceiver"
             android:enabled="true"

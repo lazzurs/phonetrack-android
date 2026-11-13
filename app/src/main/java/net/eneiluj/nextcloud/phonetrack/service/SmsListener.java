@@ -1,8 +1,6 @@
 package net.eneiluj.nextcloud.phonetrack.service;
 
 import android.Manifest;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -372,9 +370,7 @@ public class SmsListener extends BroadcastReceiver {
         }
         // the channel of the other SMS command notifications
         String channelId = SmsLocationSendService.INFO_CHANNEL_ID;
-        context.getSystemService(NotificationManager.class).createNotificationChannel(
-                new NotificationChannel(channelId, context.getString(R.string.app_name),
-                        NotificationManager.IMPORTANCE_DEFAULT));
+        NotificationChannels.createSmsActivity(context);
         PendingIntent open = PendingIntent.getActivity(context, 0,
                 new Intent(context, LogjobsListViewActivity.class),
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);

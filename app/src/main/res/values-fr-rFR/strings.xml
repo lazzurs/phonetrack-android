@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Journal d\'activité exporté dans %s</string>
   <string name="delete_logjob_menu_title">Supprimer le logjob</string>
   <string name="manage_accounts">Gérer les comptes</string>
-  <string name="is_running">en marche (%1$s en attente, %2$s envoyés)</string>
   <string name="settings_server_settings">Compte</string>
   <string name="settings_url">Adresse du serveur</string>
   <string name="settings_url_warn_http">ATTENTION: \"http\" n\'est pas sur. Utilisez \"https\" svp.</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">Connexion</string>
   <string name="settings_submitting">Connexion en cours …</string>
   <string name="settings_theme_title">Thème</string>
-  <string name="settings_notification_importance_title">Faible importance de la notification</string>
-  <string name="settings_notification_importance_subtitle">Réduire l\'importance de la notification de logging</string>
   <string name="settings_reset_stats">Réinitialiser les stats quand le logjob est activé</string>
   <string name="settings_reset_stats_subtitle">Remettre à zéro les statistiques des informations d\'un logjob quand il est activé</string>
   <string name="settings_sms">Écouter les SMS</string>
@@ -310,7 +307,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>
