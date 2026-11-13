@@ -6,9 +6,14 @@ name: Release
 #     "build: release X.Y.Z" (gradle.properties + CHANGELOG.md) on top, tags it and publishes it.
 #     A version set by hand in gradle.properties that has no tag yet is released as it is.
 #   - push of a v* tag: publishes that tag (vX.Y.Z = full release, vX.Y.Z-suffix = pre-release)
+#     The tagged commit must be on main, or the run stops.
 #   - run manually: dry run of what a push to main would release (or of the current version),
-#     uploaded as a workflow artifact (notes, signed APKs, checksums) instead
+#     uploaded as a workflow artifact (notes, APKs, checksums) instead. Only a dry run on main is
+#     signed with the release key; on any other branch the APKs are debug-signed.
 # Nothing here runs for pull requests, so code from other repositories never gets the signing key.
+# A run that publishes fails unless its APKs are signed with the release key, whose certificate
+# digest is pinned in scripts/release/release-cert.sha256 (scripts/release/verify-apk-signer.sh).
+# Actions are pinned to commit SHAs (scripts/release/check-workflows.sh); Dependabot updates them.
 on:
   push:
     branches: [main]
@@ -32,13 +37,28 @@ jobs:
       publish: ${{ steps.plan.outputs.publish }}
       tag: ${{ steps.plan.outputs.tag }}
       bump: ${{ steps.plan.outputs.bump }}
+      signing: ${{ steps.plan.outputs.signing }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # all tags: the next version comes from the commits since the previous release
           fetch-depth: 0
           persist-credentials: false
+
+      # a release is code that was merged to main: a tag on any other commit (a branch, a commit
+      # nobody reviewed) is refused before anything is built or signed
+      - name: Refuse a tag that is not on main
+        if: github.ref_type == 'tag'
+        run: |
+          git rev-parse -q --verify refs/remotes/origin/main >/dev/null \
+            || git fetch --no-tags origin '+refs/heads/main:refs/remotes/origin/main'
+          commit=$(git rev-parse "$GITHUB_SHA^{commit}")
+          if ! git merge-base --is-ancestor "$commit" refs/remotes/origin/main; then
+            echo "::error::$GITHUB_REF_NAME is on $commit, which is not on main: only commits on main are released"
+            exit 1
+          fi
+          echo "$GITHUB_REF_NAME is on main ($commit)"
 
       - name: Install git-cliff
         # computes the next version from the commit messages ([bump] in cliff.toml)
@@ -50,8 +70,9 @@ jobs:
           EVENT: ${{ github.event_name }}
           REF_TYPE: ${{ github.ref_type }}
           REF_NAME: ${{ github.ref_name }}
+          REF: ${{ github.ref }}
         run: |
-          build=true publish=false tag='' bump=''
+          build=true publish=false tag='' bump='' signing=other
           if [[ $REF_TYPE == tag ]]; then
             publish=true tag=$REF_NAME
           else
@@ -74,13 +95,23 @@ jobs:
               build=false
             fi
           fi
-          printf 'build=%s\npublish=%s\ntag=%s\nbump=%s\n' "$build" "$publish" "$tag" "$bump" | tee -a "$GITHUB_OUTPUT"
+          # the release key signs what is published, and a dry run of main; never another branch
+          if [[ $publish == true || $REF == refs/heads/main ]]; then
+            signing=release
+          fi
+          printf 'build=%s\npublish=%s\ntag=%s\nbump=%s\nsigning=%s\n' "$build" "$publish" "$tag" "$bump" "$signing" \
+            | tee -a "$GITHUB_OUTPUT"
 
   build:
-    name: Build signed APKs
+    name: Build and sign the APKs
     needs: plan
     if: needs.plan.outputs.build == 'true'
     runs-on: ubuntu-latest
+    # The job that uses the release key runs in the "release" environment; a dry run away from
+    # main runs in none. Today the signing secrets are repository secrets, which a job in an
+    # environment reads too; once they are environment secrets (RELEASING.md, "Signing"), only
+    # runs on main and on v* tags can get them.
+    environment: ${{ needs.plan.outputs.signing == 'release' && 'release' || '' }}
     # read-only token: this job runs the Gradle build, i.e. third-party plugins and dependencies
     outputs:
       version: ${{ steps.meta.outputs.version }}
@@ -88,7 +119,7 @@ jobs:
       artifact: ${{ steps.artifact.outputs.name }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # all tags: the version code is compared with the previous release's
           fetch-depth: 0
@@ -112,38 +143,27 @@ jobs:
           TAG: ${{ needs.plan.outputs.tag }}
         run: scripts/release/prepare.sh "$TAG" release-out
 
-      - name: Name the artifact
-        id: artifact
-        env:
-          PUBLISH: ${{ needs.plan.outputs.publish }}
-          VERSION: ${{ steps.meta.outputs.version }}
-        run: |
-          if [[ $PUBLISH == true ]]; then
-            echo "name=release-$VERSION" >> "$GITHUB_OUTPUT"
-          else
-            echo "name=release-dry-run-$VERSION" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v6
+        uses: gradle/actions/wrapper-validation@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
       # 17 runs Gradle (last listed = JAVA_HOME); 21 is the javac and unit-test
       # toolchain (app/build.gradle.kts), found through JAVA_HOME_21_X64
       - name: Set up JDK 17 and 21
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: |
             21
             17
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: platform-tools
+      # the Android SDK is the runner image's own (ANDROID_HOME); the Android Gradle plugin
+      # downloads the platform and build-tools versions it is missing
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          # the job that signs doesn't restore a Gradle cache written by another workflow run
+          cache-disabled: true
 
       - name: Run unit tests
         # AGP 9 only wires up unit test tasks for the Debug build type (its
@@ -152,34 +172,70 @@ jobs:
         # testing the normal flavor's Debug variant is an equivalent check.
         run: ./gradlew -Pci --console=plain :app:testNormalDebugUnitTest
 
-      # the signing secrets are only given to the two steps that need them
+      # the signing secrets are only given to the two steps that need them, and only when this
+      # run may use the release key (it publishes, or it is a dry run of main)
       - name: Decode release keystore
+        id: keystore
         env:
-          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_KEYSTORE_BASE64: ${{ needs.plan.outputs.signing == 'release' && secrets.RELEASE_KEYSTORE_BASE64 || '' }}
+          SIGNING: ${{ needs.plan.outputs.signing }}
+          PUBLISH: ${{ needs.plan.outputs.publish }}
         run: |
-          if [ -n "$RELEASE_KEYSTORE_BASE64" ]; then
+          signed=other
+          if [[ $SIGNING != release ]]; then
+            echo "::notice::dry run away from main: the APKs are debug-signed, not signed with the release key"
+          elif [[ -n $RELEASE_KEYSTORE_BASE64 ]]; then
             echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
             echo "RELEASE_KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+            signed=release
+          elif [[ $PUBLISH == true ]]; then
+            echo "::error::the RELEASE_KEYSTORE_BASE64 secret is not set: refusing to publish a release that is not signed with the release key"
+            exit 1
           else
-            echo "::warning::RELEASE_KEYSTORE_BASE64 secret not set; release APKs will be debug-signed."
+            echo "::warning::RELEASE_KEYSTORE_BASE64 secret not set; the dry run's APKs are debug-signed."
           fi
+          echo "signed=$signed" >> "$GITHUB_OUTPUT"
 
       - name: Assemble release APKs
         env:
-          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
-        run: ./gradlew -Pci --console=plain assembleNormalRelease assemblePlayRelease
+          RELEASE_KEYSTORE_PASSWORD: ${{ steps.keystore.outputs.signed == 'release' && secrets.RELEASE_KEYSTORE_PASSWORD || '' }}
+          SIGNED: ${{ steps.keystore.outputs.signed }}
+        run: |
+          if [[ $SIGNED == release && -z $RELEASE_KEYSTORE_PASSWORD ]]; then
+            echo "::error::the RELEASE_KEYSTORE_PASSWORD secret is not set"
+            exit 1
+          fi
+          ./gradlew -Pci --console=plain assembleNormalRelease assemblePlayRelease
 
       - name: Remove release keystore
         if: always()
         run: rm -f "$RUNNER_TEMP/release.keystore"
 
+      # release: both APKs must be signed with the pinned release certificate, or the run fails
+      # here (a missing password, another key, a debug-signed build); other: neither may be
+      - name: Verify the APK signer
+        env:
+          SIGNED: ${{ steps.keystore.outputs.signed }}
+        run: |
+          scripts/release/verify-apk-signer.sh "$SIGNED" \
+            app/build/outputs/apk/normal/release/app-normal-release.apk \
+            app/build/outputs/apk/play/release/app-play-release.apk
+
       - name: Collect APKs
+        id: artifact
         env:
           VERSION: ${{ steps.meta.outputs.version }}
+          PUBLISH: ${{ needs.plan.outputs.publish }}
+          SIGNED: ${{ steps.keystore.outputs.signed }}
         run: |
+          # APKs that are not signed with the release key say so in their name and the artifact's
+          suffix=''
+          if [[ $SIGNED != release ]]; then
+            suffix=-debug-signed
+          fi
           for flavor in normal play; do
             cp "app/build/outputs/apk/$flavor/release/app-$flavor-release.apk" \
-              "release-out/phonetrack-$VERSION-$flavor.apk"
+              "release-out/phonetrack-$VERSION-$flavor$suffix.apk"
             # R8 mapping files, to turn obfuscated stack traces back into readable ones
             # (retrace phonetrack-<version>-<flavor>-mapping.txt trace.txt)
             cp "app/build/outputs/mapping/${flavor}Release/mapping.txt" \
@@ -187,11 +243,16 @@ jobs:
           done
           (cd release-out && sha256sum phonetrack-*.apk phonetrack-*-mapping.txt > SHA256SUMS.txt)
           cat release-out/SHA256SUMS.txt
+          if [[ $PUBLISH == true ]]; then
+            echo "name=release-$VERSION" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=release-dry-run-$VERSION$suffix" >> "$GITHUB_OUTPUT"
+          fi
 
       # a dry run's artifact is the APK to test on a device; a release's is what the publish job
-      # uploads (with required reviewers on the "release" environment, it can be tested first)
+      # uploads
       - name: Upload release
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ steps.artifact.outputs.name }}
           path: release-out/
@@ -212,15 +273,23 @@ jobs:
       VERSION: ${{ needs.build.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
       - name: Download release
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ needs.build.outputs.artifact }}
           path: release-out
+
+      # before anything is pushed: what is published is what the build job made, and it is
+      # signed with the release key
+      - name: Verify the checksums and the APK signer
+        run: |
+          (cd release-out && sha256sum --check --strict SHA256SUMS.txt)
+          scripts/release/verify-apk-signer.sh release \
+            "release-out/phonetrack-$VERSION-normal.apk" "release-out/phonetrack-$VERSION-play.apk"
 
       - name: Commit the version and tag the release
         id: tag
@@ -272,7 +341,7 @@ jobs:
 
       - name: Create GitHub release
         if: github.ref_type == 'tag' || steps.tag.outputs.pushed == 'true'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
           tag_name: ${{ needs.plan.outputs.tag }}
           name: PhoneTrack ${{ needs.build.outputs.version }}
