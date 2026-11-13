@@ -189,7 +189,7 @@
     <string name="settings_reset_stats">Reset stats on log job activation</string>
     <string name="settings_reset_stats_subtitle">Reset statistics in log job information dialog when log job is activated</string>
     <string name="settings_sms">Listen to SMS</string>
-    <string name="settings_sms_subtitle">Listen to incoming SMS and answer location information if following keyword is received</string>
+    <string name="settings_sms_subtitle">Answer position requests and run commands received by SMS. Only the allowed senders below are obeyed.</string>
     <string name="settings_sms_keyword_title">SMS keyword</string>
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
@@ -236,6 +236,23 @@
     <string name="settings_theming_category">Theming</string>
     <string name="settings_group_sync_title">Send points in batches of at least</string>
     <string name="settings_group_sync_off">Off: each point is sent straight away</string>
+    <string name="settings_sms_summary_no_senders">No allowed sender yet: every SMS command is ignored. Tap \"Allowed senders\" to add one.</string>
+    <string name="settings_sms_summary_no_pin">No PIN set: sender numbers can be forged. Tap \"SMS PIN\" to set one.</string>
+    <string name="settings_sms_summary_no_permission">SMS permission missing: nothing can be received. Untick and tick this box again to allow it.</string>
+    <string name="settings_sms_fix_background_title">Allow location all the time</string>
+    <string name="settings_sms_fix_background_summary">Replies need location access while the app is closed. Without it, the sender gets an error SMS. Tap to open the permission settings.</string>
+    <string name="settings_sms_permission_title">Allow SMS access?</string>
+    <string name="settings_sms_permission_message">PhoneTrack needs to read incoming SMS to spot your keyword, and to send the position back by SMS. Only numbers in \"Allowed senders\" can trigger it. Nothing is sent anywhere else.</string>
+    <string name="settings_sms_permission_continue">Continue</string>
+    <string name="settings_sms_permission_denied">SMS control stays off: PhoneTrack needs both the permission to receive and to send SMS.</string>
+    <string name="settings_sms_permission_blocked_title">SMS permission blocked</string>
+    <string name="settings_sms_permission_blocked_message">Android no longer asks for it. Allow SMS for PhoneTrack in the app settings, then tick \"Listen to SMS\" again.</string>
+    <string name="settings_sms_permission_open_settings">Open settings</string>
+    <string name="settings_sms_contacts_title">Show contact names?</string>
+    <string name="settings_sms_contacts_message">Optional. PhoneTrack can look up the name of the sender in your contacts for its notifications. Without it, the phone number is shown. Contacts are not uploaded.</string>
+    <string name="settings_sms_contacts_allow">Allow</string>
+    <string name="settings_sms_contacts_skip">Not now</string>
+    <string name="pref_key_sms_fix_background" translatable="false">SMSfixBackground</string>
     <string name="settings_group_sync_long">Number of points, for all log jobs. Points are kept on the phone until at least this many are waiting, then sent together. This saves mobile data and battery, but points will not always reach the server in real time. 0 or 1 sends every point straight away.</string>
     <string name="settings_send_deadline_title">Send at the latest after</string>
     <string name="settings_send_deadline_long">Number of hours, for all log jobs. Points that are waiting for the bunch above to be complete are sent anyway once the oldest of them has waited this long, even if the phone is not moving. 0 means no time limit. Android may delay the upload a little to save battery.</string>
