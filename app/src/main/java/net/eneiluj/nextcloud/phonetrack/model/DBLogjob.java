@@ -222,8 +222,8 @@ public class DBLogjob implements Item, Serializable {
 
     @Override
     public String toString() {
+        // no token or URL (it can contain the token): this string ends up in logs
         return "#DBLogjob" + getId() + "/" + this.title + ", " + this.enabled + ", " +
-                this.url + ", " + this.token + ", " +
                 this.deviceName;
     }
 

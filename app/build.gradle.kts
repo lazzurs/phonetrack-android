@@ -61,6 +61,8 @@ android {
     buildFeatures {
         // AGP 9 defaults this to false; defaultConfig/flavors below use resValue
         resValues = true
+        // BuildConfig.DEBUG gates what may reach logcat (see SystemLogger)
+        buildConfig = true
     }
 
     androidResources {

@@ -81,7 +81,7 @@ public class DBSession {
     }
 
     public String toString() {
-        return "#" + this.id + "/" + this.name + ", " + this.token + ", " + this.nextURL +
-                ", " + this.publicToken + ", "+ this.isFromShare;
+        // no token or URL: this string ends up in logs
+        return "#" + this.id + "/" + this.name + ", " + this.isFromShare;
     }
 }
