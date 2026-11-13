@@ -22,6 +22,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
+import net.eneiluj.nextcloud.phonetrack.model.DBSyslog;
 import net.eneiluj.nextcloud.phonetrack.persistence.DbTestSupport;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
@@ -34,6 +35,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.fakes.RoboMenu;
 import org.robolectric.shadows.ShadowAlertDialog;
+
+import java.util.List;
 
 /** Switching off the Nextcloud Files account and re-enabling the activity log ask first. */
 @RunWith(AndroidJUnit4.class)
@@ -134,7 +137,8 @@ public class DestructiveActionConfirmationTest {
 
     @Test
     public void enablingTheActivityLogAsksBeforeWipingEntries() {
-        PhoneTrackSQLiteOpenHelper.getInstance(app).addSyslog("w", "TAG", "an old entry");
+        PhoneTrackSQLiteOpenHelper.getInstance(app).addSyslogs(
+                List.of(new DBSyslog("an old entry", "TAG", "w", 1_700_000_000L)), SystemLogger.MAX_ROWS);
         SyslogManagerActivity activity = Robolectric.buildActivity(SyslogManagerActivity.class).setup().get();
         MenuItem toggle = toggleItem(activity);
 
@@ -154,7 +158,8 @@ public class DestructiveActionConfirmationTest {
 
     @Test
     public void confirmingClearsTheLogAndEnablesLogging() {
-        PhoneTrackSQLiteOpenHelper.getInstance(app).addSyslog("w", "TAG", "an old entry");
+        PhoneTrackSQLiteOpenHelper.getInstance(app).addSyslogs(
+                List.of(new DBSyslog("an old entry", "TAG", "w", 1_700_000_000L)), SystemLogger.MAX_ROWS);
         SyslogManagerActivity activity = Robolectric.buildActivity(SyslogManagerActivity.class).setup().get();
         MenuItem toggle = toggleItem(activity);
         activity.onOptionsItemSelected(toggle);
@@ -182,7 +187,8 @@ public class DestructiveActionConfirmationTest {
     @Test
     public void switchingTheLogOffNeedsNoQuestion() {
         SystemLogger.setEnabled(true);
-        PhoneTrackSQLiteOpenHelper.getInstance(app).addSyslog("w", "TAG", "an entry");
+        PhoneTrackSQLiteOpenHelper.getInstance(app).addSyslogs(
+                List.of(new DBSyslog("an entry", "TAG", "w", 1_700_000_000L)), SystemLogger.MAX_ROWS);
         SyslogManagerActivity activity = Robolectric.buildActivity(SyslogManagerActivity.class).setup().get();
         ShadowAlertDialog.reset();
 

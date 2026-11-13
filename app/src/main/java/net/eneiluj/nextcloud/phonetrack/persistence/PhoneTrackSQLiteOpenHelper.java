@@ -3,7 +3,6 @@ package net.eneiluj.nextcloud.phonetrack.persistence;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.eneiluj.nextcloud.phonetrack.R;
-import net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.model.DBSession;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
@@ -1364,22 +1362,33 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         // update the widgets
     }
 
-    public long addSyslog(String level, String tag, String message) {
-        long timestamp = System.currentTimeMillis() / 1000;
+    /**
+     * Store activity log lines in one transaction and delete the oldest so that at most
+     * keepAtMost remain.
+     */
+    @WorkerThread
+    public void addSyslogs(@NonNull List<DBSyslog> lines, int keepAtMost) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(key_level, level);
-        values.put(key_tag, tag);
-        values.put(key_message, message);
-        values.put(key_timestamp, timestamp);
-
-        Intent intent = new Intent(SyslogManagerActivity.BROADCAST_NEW_SYSLOG);
-        intent.putExtra(SyslogManagerActivity.BROADCAST_MESSAGE, message);
-        intent.putExtra(SyslogManagerActivity.BROADCAST_TIMESTAMP, timestamp);
-        intent.setPackage(context.getPackageName());
-        context.sendBroadcast(intent);
-
-        return db.insert(table_syslog, null, values);
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            for (DBSyslog line : lines) {
+                values.clear();
+                values.put(key_level, line.getLevel());
+                values.put(key_tag, line.getTag());
+                values.put(key_message, line.getMessage());
+                values.put(key_timestamp, line.getTimestamp());
+                db.insert(table_syslog, null, values);
+            }
+            // ids only grow (AUTOINCREMENT) and only the oldest rows are ever deleted, so the
+            // newest keepAtMost rows are those above MAX(ID) - keepAtMost: a rowid range, no scan
+            db.execSQL("DELETE FROM " + table_syslog + " WHERE " + key_id + " <= "
+                    + "(SELECT MAX(" + key_id + ") FROM " + table_syslog + ") - ?",
+                    new Object[]{keepAtMost});
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public List<DBSyslog> getSyslogs(@Nullable Integer tsMin, @Nullable Integer tsMax) {

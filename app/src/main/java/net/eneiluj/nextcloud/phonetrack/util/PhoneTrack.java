@@ -29,7 +29,7 @@ public class PhoneTrack extends Application {
         CredentialStore.migrate(this);
         // if the process died while an SMS alarm was ringing, put the alarm volume back
         SmsAlarmService.restoreVolumeAfterInterruptedAlarm(this);
-        SystemLogger.getDb(getApplicationContext());
+        SystemLogger.init(getApplicationContext());
     }
 
     public static void setAppTheme(String themeMode) {
