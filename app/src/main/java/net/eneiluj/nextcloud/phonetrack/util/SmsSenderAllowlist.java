@@ -74,13 +74,16 @@ public final class SmsSenderAllowlist {
 
     /**
      * Compares numbers the way the telephony stack does, so "+353 87 123 4567" matches
-     * "087 123 4567" on an Irish SIM.
+     * "087 123 4567" on an Irish SIM. Without a country the numbers must be equal once
+     * formatting is removed: PhoneNumberUtils.compare() would match any two numbers that
+     * share their last seven digits.
      */
     private static boolean samePhoneNumber(String a, String b, @Nullable String countryIso) {
         if (countryIso != null && !countryIso.isEmpty()) {
             return PhoneNumberUtils.areSamePhoneNumber(a, b, countryIso);
         }
-        return PhoneNumberUtils.compare(a, b);
+        String na = PhoneNumberUtils.normalizeNumber(a);
+        return na != null && !na.isEmpty() && na.equals(PhoneNumberUtils.normalizeNumber(b));
     }
 
     @Nullable

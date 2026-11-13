@@ -1,6 +1,9 @@
 package net.eneiluj.nextcloud.phonetrack.service;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +16,13 @@ import android.util.Log;
 //import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
+import net.eneiluj.nextcloud.phonetrack.util.SmsCommandGuard;
 import net.eneiluj.nextcloud.phonetrack.util.SmsSenderAllowlist;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
@@ -32,6 +39,9 @@ import static net.eneiluj.nextcloud.phonetrack.service.LoggerService.BROADCAST_L
 public class SmsListener extends BroadcastReceiver {
     private static final String TAG = SmsListener.class.getSimpleName();
     public static final String BROADCAST_LOGJOB_LIST_UPDATED = "net.eneiluj.nextcloud.phonetrack.broadcast.logjob_list_updated";
+    /** Title of the logjob made by the createlogjob command */
+    static final String SMS_LOGJOB_TITLE = "sms";
+    private static int commandNotificationId = 1526756670;
 
 
     @Override
@@ -62,8 +72,12 @@ public class SmsListener extends BroadcastReceiver {
                         SystemLogger.w(TAG, "Ignored SMS command from " + msg_from + ": not an allowed sender");
                         return;
                     }
+                    String[] words = checkPinAndRateLimit(context, msgContent.split("\\s+"), msg_from);
+                    if (words == null) {
+                        return;
+                    }
                     Log.d(TAG, "We received the keyword: "+keyword);
-                    keywordReceived(msgContent, msg_from, context);
+                    keywordReceived(words, msg_from, context);
                 }
             } catch (Exception e) {
                 Log.d(TAG, "SMS Exception caught: " + e.getMessage());
@@ -71,21 +85,60 @@ public class SmsListener extends BroadcastReceiver {
         }
     }
 
-    private void keywordReceived(String msgContent, String from, Context context) {
-        String[] words = msgContent.split("\\s+");
+    /**
+     * The sender number can be forged, so when a PIN is set it must follow the keyword:
+     * "KEYWORD PIN [COMMAND...]". Every sender is also rate limited, as each command is
+     * answered by SMS at the user's cost.
+     *
+     * @return the words of the message without the PIN, or null to ignore the message
+     */
+    @Nullable
+    private static String[] checkPinAndRateLimit(Context context, String[] words, String from) {
+        String pin = CredentialStore.getSmsPin(context);
+        if (!pin.isEmpty()) {
+            if (SmsCommandGuard.isLockedOut(context, from)) {
+                SystemLogger.w(TAG, "Ignored SMS command from " + from + ": too many wrong PINs, try again later");
+                return null;
+            }
+            String givenPin = words.length > 1 ? words[1] : "";
+            if (!SmsCommandGuard.pinMatches(pin, givenPin)) {
+                boolean lockedOut = SmsCommandGuard.recordWrongPin(context, from);
+                SystemLogger.w(TAG, "Ignored SMS command from " + from + ": missing or wrong PIN"
+                        + (lockedOut ? ", sender ignored for a while" : ""));
+                return null;
+            }
+            SmsCommandGuard.recordCorrectPin(context, from);
+            String[] withoutPin = new String[words.length - 1];
+            withoutPin[0] = words[0];
+            System.arraycopy(words, 2, withoutPin, 1, words.length - 2);
+            words = withoutPin;
+        }
+        if (!SmsCommandGuard.tryAcquire(context, from, words.length == 1)) {
+            SystemLogger.w(TAG, "Ignored SMS command from " + from + ": too many commands, try again later");
+            return null;
+        }
+        return words;
+    }
+
+    private void keywordReceived(String[] words, String from, Context context) {
         if (words.length > 1) {
             String word1 = words[1].toLowerCase();
             // make some noise!
             if (word1.equals("alarm")) {
-                int duration = 60;
+                long duration = 60;
                 if (words.length > 2) {
                     try {
-                        duration = Integer.parseInt(words[2]);
+                        duration = Long.parseLong(words[2]);
                     }
                     catch (Exception e) {
                     }
                 }
-                startAlarm(context, from, duration);
+                if (duration <= 0) {
+                    SystemLogger.w(TAG, "Ignored SMS alarm command: the duration must be positive");
+                    return;
+                }
+                startAlarm(context, from, (int) Math.min(duration, SmsAlarmService.MAX_DURATION_SECONDS));
+                notifyCommand(context, from, word1);
             }
             else if (word1.equals("startlogjobs")) {
                 String logjobName = null;
@@ -100,6 +153,7 @@ public class SmsListener extends BroadcastReceiver {
                 }
                 Log.v(TAG, "LOLO '"+logjobName+"'");
                 startOrStopLogjobs(context, true, from, logjobName);
+                notifyCommand(context, from, word1);
             }
             else if (word1.equals("stoplogjobs")) {
                 String logjobName = null;
@@ -113,6 +167,7 @@ public class SmsListener extends BroadcastReceiver {
                     logjobName = logjobName.trim();
                 }
                 startOrStopLogjobs(context, false, from, logjobName);
+                notifyCommand(context, from, word1);
             }
             else if (word1.equals("createlogjob")) {
                 int minTime = 10;
@@ -124,6 +179,7 @@ public class SmsListener extends BroadcastReceiver {
                     }
                 }
                 createLogjob(context, from, minTime);
+                notifyCommand(context, from, word1);
             }
         }
         else {
@@ -227,11 +283,29 @@ public class SmsListener extends BroadcastReceiver {
         List<DBSession> sessions = db.getSessions();
         if (sessions.size() > 0) {
             DBSession s = sessions.get(0);
-            DBLogjob lj = new DBLogjob(0, "sms", s.getNextURL(), s.getToken(),
-                    "me", minTime, 0, 50,
-                    false, false, false,
-                    0, false, true, 0, null, null, false);
-            long newLjId = db.addLogjob(lj);
+            // reuse the logjob of an earlier command: repeated SMS must not pile up logjobs
+            DBLogjob existing = findSmsLogjob(db, s);
+            long newLjId;
+            if (existing == null) {
+                DBLogjob lj = new DBLogjob(0, SMS_LOGJOB_TITLE, s.getNextURL(), s.getToken(),
+                        "me", minTime, 0, 50,
+                        false, false, false,
+                        0, false, true, 0, null, null, false);
+                newLjId = db.addLogjob(lj);
+            } else {
+                if (existing.getMinTime() != minTime) {
+                    existing = db.updateLogjobAndSync(existing, existing.getTitle(), existing.getToken(),
+                            existing.getUrl(), existing.getDeviceName(), existing.getPost(), minTime,
+                            existing.getMinDistance(), existing.getMinAccuracy(), existing.keepGpsOnBetweenFixes(),
+                            existing.useSignificantMotion(), existing.useSignificantMotionMixed(),
+                            existing.getLocationRequestTimeout(), existing.getLogin(), existing.getPassword(),
+                            existing.getJson(), null);
+                }
+                if (!existing.isEnabled()) {
+                    db.toggleEnabled(existing, null, resetOnToggle);
+                }
+                newLjId = existing.getId();
+            }
 
             // let LoggerService know
             Intent intent = new Intent(context, LoggerService.class);
@@ -252,7 +326,8 @@ public class SmsListener extends BroadcastReceiver {
             ) == PackageManager.PERMISSION_GRANTED
             ) {
                 String smsContent;
-                smsContent = context.getString(R.string.sms_logjob_created, minTime, sessionName);
+                smsContent = context.getString(existing == null ? R.string.sms_logjob_created : R.string.sms_logjob_updated,
+                        minTime, sessionName);
                 smsManager.sendTextMessage(from, null, smsContent, null, null);
             }
         }
@@ -266,6 +341,52 @@ public class SmsListener extends BroadcastReceiver {
                 smsContent = context.getString(R.string.sms_logjob_creation_impossible);
                 smsManager.sendTextMessage(from, null, smsContent, null, null);
             }
+        }
+    }
+
+    @Nullable
+    private static DBLogjob findSmsLogjob(PhoneTrackSQLiteOpenHelper db, DBSession session) {
+        for (DBLogjob lj : db.getLogjobs()) {
+            if (SMS_LOGJOB_TITLE.equals(lj.getTitle()) && session.getToken() != null
+                    && session.getToken().equals(lj.getToken())) {
+                return lj;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Shows every command that changed something, so a forged one does not go unnoticed.
+     * Never shows the message itself, which may contain the PIN.
+     */
+    private static void notifyCommand(Context context, String from, String command) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        String text = context.getString(R.string.sms_command_notification, command, from);
+        if (CredentialStore.getSmsPin(context).isEmpty()) {
+            text += " " + context.getString(R.string.sms_command_notification_no_pin);
+        }
+        // the channel of the other SMS command notifications
+        String channelId = SmsLocationSendService.INFO_CHANNEL_ID;
+        context.getSystemService(NotificationManager.class).createNotificationChannel(
+                new NotificationChannel(channelId, context.getString(R.string.app_name),
+                        NotificationManager.IMPORTANCE_DEFAULT));
+        PendingIntent open = PendingIntent.getActivity(context, 0,
+                new Intent(context, LogjobsListViewActivity.class),
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_notify_24dp)
+                .setContentTitle(context.getString(R.string.sms_command_notification_title))
+                .setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentIntent(open)
+                .setAutoCancel(true);
+        try {
+            NotificationManagerCompat.from(context).notify(commandNotificationId++, builder.build());
+        } catch (SecurityException e) {
+            Log.w(TAG, "Unable to show the SMS command notification: " + e);
         }
     }
 

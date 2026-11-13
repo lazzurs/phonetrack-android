@@ -144,6 +144,10 @@
     <string name="sms_logjobs_stopped">%d logjobs have been stopped</string>
     <string name="sms_logjob_created">A logjob with %1$d seconds frequency has been created in session %2$s</string>
     <string name="sms_logjob_creation_impossible">Impossible to create a logjob, no session found</string>
+    <string name="sms_logjob_updated">The SMS logjob in session %2$s is running with %1$d seconds frequency</string>
+    <string name="sms_command_notification_title">SMS command run</string>
+    <string name="sms_command_notification">The SMS command \"%1$s\" from %2$s was run.</string>
+    <string name="sms_command_notification_no_pin">Sender numbers can be forged: if you did not send it, set an SMS PIN in the settings.</string>
     <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
     <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>
     <string name="sms_failure_permission_sms">PhoneTrack failed to get location permission</string>
@@ -182,6 +186,12 @@
     <string name="settings_sms_keyword_long">If this phone receives a SMS which just contains this keyword, location information will be sent back.</string>
     <string name="settings_sms_keyword_long2">You can also send commands with this syntax: KEYWORD COMMAND</string>
     <string name="settings_sms_keyword_long3">Available commands:\n- %1$s [NBSECONDS(def=60)]\n- %2$s [LOGJOB NAME]\n- %3$s [LOGJOB NAME]\n- %4$s MINTIME</string>
+    <string name="settings_sms_keyword_long_pin">If an SMS PIN is set, it goes after the keyword: KEYWORD PIN COMMAND, or KEYWORD PIN to get the position. The alarm rings for at most %1$d seconds.</string>
+    <string name="settings_sms_pin_title">SMS PIN</string>
+    <string name="settings_sms_pin_long">Anyone can forge the sender number of an SMS, so the allowed senders alone do not stop others from sending commands. With a PIN, commands must be sent as KEYWORD PIN COMMAND, and a sender is ignored for a while after %1$d wrong PINs. Leave empty to accept commands without a PIN.</string>
+    <string name="settings_sms_pin_none">Not set. Sender numbers can be forged: setting a PIN is recommended</string>
+    <string name="settings_sms_pin_set">Set. Commands must be sent as KEYWORD PIN COMMAND</string>
+    <string name="error_invalid_sms_pin">The PIN needs at least %1$d characters and no spaces</string>
     <string name="settings_use_server_color_title">Use server color</string>
     <string name="settings_use_server_color_subtitle">Get server color when syncing and use it as main app color</string>
     <string name="settings_providers_title">Location providers</string>
@@ -343,6 +353,8 @@
     <string name="pref_key_sms_keyword" translatable="false">SMSkeyword</string>
     <string name="pref_key_sms_allowed_senders" translatable="false">SMSallowedSenders</string>
     <string name="pref_key_sms_add_contact" translatable="false">SMSaddContact</string>
+    <!-- not stored in the default preferences: see CredentialStore -->
+    <string name="pref_key_sms_pin" translatable="false">SMSpin</string>
     <string name="pref_key_use_server_color" translatable="false">useServerColor</string>
     <string name="pref_key_avatar" translatable="false">ncAvatar</string>
     <string name="pref_key_autostart" translatable="false">autostart</string>

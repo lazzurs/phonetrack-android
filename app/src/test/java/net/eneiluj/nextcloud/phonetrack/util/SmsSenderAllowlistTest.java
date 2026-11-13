@@ -51,4 +51,19 @@ public class SmsSenderAllowlistTest {
         assertFalse(SmsSenderAllowlist.isAllowed(null, allowed, "ie"));
         assertFalse(SmsSenderAllowlist.isAllowed("", allowed, "ie"));
     }
+
+    @Test
+    public void withoutACountryTheLastSevenDigitsAreNotEnough() {
+        List<String> allowed = Collections.singletonList("+353871234567");
+        assertFalse(SmsSenderAllowlist.isAllowed("+447001234567", allowed, null));
+        assertFalse(SmsSenderAllowlist.isAllowed("1234567", allowed, null));
+        assertFalse(SmsSenderAllowlist.isAllowed("+447001234567", allowed, ""));
+    }
+
+    @Test
+    public void withoutACountryTheSameNumberStillMatchesWhateverTheFormatting() {
+        List<String> allowed = Collections.singletonList("+353 (87) 123-4567");
+        assertTrue(SmsSenderAllowlist.isAllowed("+353871234567", allowed, null));
+        assertFalse(SmsSenderAllowlist.isAllowed("", allowed, null));
+    }
 }

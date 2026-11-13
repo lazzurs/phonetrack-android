@@ -136,6 +136,14 @@
     <Preference
         android:key="@string/pref_key_sms_add_contact"
         android:title="@string/settings_sms_add_contact_title" />
+
+    <!-- kept in CredentialStore (left out of backups), not in these preferences -->
+    <EditTextPreference
+        android:icon="@drawable/ic_lock_grey_24dp"
+        android:dialogTitle="@string/settings_sms_pin_title"
+        android:key="@string/pref_key_sms_pin"
+        android:persistent="false"
+        android:title="@string/settings_sms_pin_title" />
     </PreferenceCategory>
 
     <PreferenceCategory

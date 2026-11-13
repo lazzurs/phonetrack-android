@@ -54,6 +54,8 @@ public class SmsAlarmService extends Service {
     public static final String ACTION_STOP = "net.eneiluj.nextcloud.phonetrack.action.ALARM_STOP";
     public static final String EXTRA_FROM = "from";
     public static final String EXTRA_DURATION_SECONDS = "duration";
+    /** Longest alarm an SMS can ask for, so a forged SMS can't ring for days. */
+    public static final int MAX_DURATION_SECONDS = 600;
 
     @VisibleForTesting
     static final String PREF_VOLUME_TO_RESTORE = "smsAlarmVolumeToRestore";
@@ -145,7 +147,13 @@ public class SmsAlarmService extends Service {
     }
 
     @SuppressLint("ApplySharedPref") // commit: the volume must be on disk before it is raised
-    private void startAlarm(@Nullable String from, int durationSeconds) {
+    private void startAlarm(@Nullable String from, int requestedSeconds) {
+        if (requestedSeconds <= 0) {
+            SystemLogger.w(TAG, "Ignored an SMS alarm with a duration that is not positive");
+            stopAlarm(null);
+            return;
+        }
+        int durationSeconds = Math.min(requestedSeconds, MAX_DURATION_SECONDS);
         int originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM);
         // saved first: if the process dies from here on, the next app start restores it
         PreferenceManager.getDefaultSharedPreferences(this).edit()

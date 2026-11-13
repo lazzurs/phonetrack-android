@@ -63,6 +63,9 @@ import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.CertificateTrust;
 import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
+import net.eneiluj.nextcloud.phonetrack.service.SmsAlarmService;
+import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
+import net.eneiluj.nextcloud.phonetrack.util.SmsCommandGuard;
 import net.eneiluj.nextcloud.phonetrack.util.SmsSenderAllowlist;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
@@ -82,6 +85,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
 
     public final static int PERMISSION_SMS_SEND_AND_RECEIVE = 4;
     private final static int import_file_cmd = 123;
+    private static final int MIN_SMS_PIN_LENGTH = 4;
 
     private static final String TAG = PreferencesFragment.class.getSimpleName();
 
@@ -223,7 +227,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         smsKeywordPref.setDialogMessage(
                 getString(R.string.settings_sms_keyword_long)+"\n"
                         + getString(R.string.settings_sms_keyword_long2)+"\n"
-                        + getString(R.string.settings_sms_keyword_long3, "alarm", "startlogjobs", "stoplogjobs", "createlogjob")
+                        + getString(R.string.settings_sms_keyword_long3, "alarm", "startlogjobs", "stoplogjobs", "createlogjob")+"\n"
+                        + getString(R.string.settings_sms_keyword_long_pin, SmsAlarmService.MAX_DURATION_SECONDS)
         );
         smsKeywordPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
@@ -282,6 +287,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         });
 
         setupSmsAllowedSenders();
+        setupSmsPin();
         setSmsSettingsVisible(smsPref.isChecked());
 
         final EditTextPreference groupSyncPref = (EditTextPreference) findPreference(getString(R.string.pref_key_group_sync));
@@ -496,6 +502,36 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         findPreference(getString(R.string.pref_key_sms_keyword)).setVisible(visible);
         findPreference(getString(R.string.pref_key_sms_allowed_senders)).setVisible(visible);
         findPreference(getString(R.string.pref_key_sms_add_contact)).setVisible(visible);
+        findPreference(getString(R.string.pref_key_sms_pin)).setVisible(visible);
+    }
+
+    /** The PIN lives in CredentialStore, so it is never shown in the summary and never backed up. */
+    private void setupSmsPin() {
+        final EditTextPreference pinPref = findPreference(getString(R.string.pref_key_sms_pin));
+        pinPref.setDialogMessage(getString(R.string.settings_sms_pin_long, SmsCommandGuard.MAX_WRONG_PINS));
+        pinPref.setText(CredentialStore.getSmsPin(requireContext()));
+        updateSmsPinSummary(pinPref);
+        pinPref.setOnBindEditTextListener(editText -> editText.setInputType(
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD));
+        pinPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            String pin = newValue == null ? "" : ((String) newValue).trim();
+            if (!pin.isEmpty() && (pin.length() < MIN_SMS_PIN_LENGTH || pin.matches(".*\\s.*"))) {
+                showToast(getString(R.string.error_invalid_sms_pin, MIN_SMS_PIN_LENGTH), Toast.LENGTH_LONG);
+                return false;
+            }
+            CredentialStore.setSmsPin(requireContext(), pin);
+            // a new PIN starts with a clean slate for every sender
+            SmsCommandGuard.resetPinFailures(requireContext());
+            ((EditTextPreference) preference).setText(pin);
+            updateSmsPinSummary(preference);
+            return false;
+        });
+    }
+
+    private void updateSmsPinSummary(Preference preference) {
+        preference.setSummary(CredentialStore.getSmsPin(requireContext()).isEmpty()
+                ? R.string.settings_sms_pin_none
+                : R.string.settings_sms_pin_set);
     }
 
     private void setupSmsAllowedSenders() {
