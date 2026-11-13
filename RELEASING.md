@@ -185,6 +185,13 @@ anything here):
   else (`com.github.bitfireat` for cert4android, `com.github.nextcloud` for Android-SingleSignOn;
   the content filter in [`settings.gradle.kts`](settings.gradle.kts)). cert4android is pinned by its
   full commit hash.
+- JitPack can rebuild an artifact, so the bytes behind a version are not fixed. Gradle therefore
+  checks the artifacts of those two groups against the SHA-256 checksums in
+  [`gradle/verification-metadata.xml`](gradle/verification-metadata.xml) and fails the build on any
+  other content; every other group is trusted as downloaded. After changing the version of one of
+  the two (review the new code first), set the new version and the SHA-256 of its `.aar` and
+  `.module` files in its `<component>` there; the build fails until they match, and its
+  dependency verification report shows the checksums of what was downloaded.
 - The Gradle wrapper checks the Gradle distribution it downloads against `distributionSha256Sum` in
   [`gradle/wrapper/gradle-wrapper.properties`](gradle/wrapper/gradle-wrapper.properties). When
   updating Gradle, take the new checksum from <https://gradle.org/release-checksums/>
