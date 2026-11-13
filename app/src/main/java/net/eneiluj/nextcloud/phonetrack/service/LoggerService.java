@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import net.eneiluj.nextcloud.phonetrack.BuildConfig;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
@@ -128,7 +129,12 @@ public class LoggerService extends Service {
     private NotificationCompat.Builder mNotificationBuilder;
     private boolean useGps = true;
     private boolean useNet = true;
-    public static boolean DEBUG = true;
+    /**
+     * Debug build: guards lines meant for logcat only. Lines that also feed the in-app activity
+     * log are guarded by {@link SystemLogger#isActive()} instead, which is on in release builds
+     * too once the user switches that log on.
+     */
+    public static final boolean DEBUG = BuildConfig.DEBUG;
 
     private Map<Long, LogjobWorker> mLogjobWorkers;
     /** Log jobs that cannot get positions now, and why. */
@@ -145,7 +151,7 @@ public class LoggerService extends Service {
      */
     @Override
     public void onCreate() {
-        if (DEBUG) {
+        if (SystemLogger.isActive()) {
             SystemLogger.d(TAG, "onCreate");
         }
         firstRun = true;
@@ -270,7 +276,7 @@ public class LoggerService extends Service {
         } else {
             final Notification notification = showNotification(NOTIFICATION_ID);
             startLocationForeground(notification);
-            if (DEBUG) {
+            if (SystemLogger.isActive()) {
                 SystemLogger.d(TAG, "onCreate: stop because no logjob enabled");
             }
             stopSelf();
@@ -297,18 +303,18 @@ public class LoggerService extends Service {
                 // this to avoid doing two loc upd when service is down and then a logjob is enabled
                 // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
                 if (firstRun) {
-                    if (DEBUG) {
+                    if (SystemLogger.isActive()) {
                         SystemLogger.d(TAG, "onStartCommand: updated logjob but firstrun so nothing");
                     }
                 } else {
                     long ljId = intent.getLongExtra(LogjobsListViewActivity.UPDATED_LOGJOB_ID, 0);
-                    if (DEBUG) {
+                    if (SystemLogger.isActive()) {
                         SystemLogger.d(TAG, "onStartCommand: updated logjob");
                     }
                     handleLogjobUpdated(ljId);
                 }
             } else if (providersUpdated) {
-                if (DEBUG) {
+                if (SystemLogger.isActive()) {
                     SystemLogger.d(TAG, "onStartCommand : updated providers");
                 }
                 String providersValue = intent.getStringExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE);
@@ -332,12 +338,16 @@ public class LoggerService extends Service {
                         logjobWorker.nextPointIntent = null;
                         boolean shouldGetPosition = logjobWorker.shouldGetPositionAfterInterval();
                         if (!shouldGetPosition) {
-                            SystemLogger.d(TAG, "[command] no position needed for " + jobId);
+                            if (SystemLogger.isActive()) {
+                                SystemLogger.d(TAG, "[command] no position needed for " + jobId);
+                            }
                             // this happens in sigmotion when no motion has been seen
                             long intervalTimeMillis = intent.getLongExtra(SCHEDULE_INTERVAL, 0);
                             logjobWorker.onIntervalOverWithoutMotion(intervalTimeMillis);
                         } else if (!logjobWorker.useRecentFix(latestGpsFix)) {
-                            SystemLogger.d(TAG, "[command] request location update for " + jobId);
+                            if (SystemLogger.isActive()) {
+                                SystemLogger.d(TAG, "[command] request location update for " + jobId);
+                            }
                             boolean startTimeout = intent.getBooleanExtra(START_TIMEOUT, false);
                             boolean firstReqAfterAccepted = intent.getBooleanExtra(FIRST_REQ_AFTER_ACCEPTED, false);
                             requestLocationUpdates(jobId, startTimeout, firstReqAfterAccepted);
@@ -347,19 +357,23 @@ public class LoggerService extends Service {
             } else if (intent != null && ACTION_RETRY_PAUSED_JOB.equals(intent.getAction())) {
                 long jobId = intent.getLongExtra(JOB_ID, 0);
                 if (pausedJobs.containsKey(jobId) && logjobs.containsKey(jobId)) {
-                    SystemLogger.d(TAG, "[command] paused job " + jobId + ": check again");
+                    if (SystemLogger.isActive()) {
+                        SystemLogger.d(TAG, "[command] paused job " + jobId + ": check again");
+                    }
                     restartUpdates(jobId);
                 }
             } else if (intent != null && intent.getBooleanExtra(RECHECK_PAUSED_JOBS, false)) {
                 for (long jobId : new ArrayList<>(pausedJobs.keySet())) {
                     if (logjobs.containsKey(jobId)) {
-                        SystemLogger.d(TAG, "[command] recheck paused job " + jobId);
+                        if (SystemLogger.isActive()) {
+                            SystemLogger.d(TAG, "[command] recheck paused job " + jobId);
+                        }
                         restartUpdates(jobId);
                     }
                 }
             } else {
                 // start without parameter
-                if (DEBUG) {
+                if (SystemLogger.isActive()) {
                     SystemLogger.d(TAG, "onStartCommand: start without parameter");
                 }
             }
@@ -418,7 +432,7 @@ public class LoggerService extends Service {
      */
     private TrackingReadiness.Cause locationGate() {
         TrackingReadiness.Cause cause = TrackingReadiness.serviceGate(TrackingReadiness.read(this));
-        if (DEBUG) {
+        if (SystemLogger.isActive()) {
             SystemLogger.d(TAG, "location gate: " + cause);
         }
         return cause;
@@ -494,7 +508,7 @@ public class LoggerService extends Service {
                    || "6".equals(providersPref)
                    || "7".equals(providersPref)
                  ) && providerExists(LocationManager.NETWORK_PROVIDER));
-        if (DEBUG) {
+        if (SystemLogger.isActive()) {
             SystemLogger.d(TAG, "update prefs " + providersPref + ", gps : " + useGps
                 + ", net : " + useNet + "]");
         }
@@ -577,7 +591,7 @@ public class LoggerService extends Service {
      * @return True if succeeded, false otherwise (eg. disabled all providers)
      */
     private boolean restartUpdates(long jobId) {
-        if (DEBUG) { SystemLogger.d(TAG, "location updates restart for job: " + jobId); }
+        if (SystemLogger.isActive()) { SystemLogger.d(TAG, "location updates restart for job: " + jobId); }
 
         stopJob(jobId);
 
@@ -585,7 +599,9 @@ public class LoggerService extends Service {
     }
 
     private void stopJob(long jobId) {
-        SystemLogger.d(TAG, "stop job " + jobId + " => locManager.removeUpdates()");
+        if (SystemLogger.isActive()) {
+            SystemLogger.d(TAG, "stop job " + jobId + " => locManager.removeUpdates()");
+        }
         mLocationListener gpsLocListener = gpsLocListeners.get(jobId);
         if (gpsLocListener != null) {
             locManager.removeUpdates(gpsLocListener);
@@ -611,12 +627,16 @@ public class LoggerService extends Service {
     private boolean requestLocationUpdates(long ljId, boolean startTimeout, boolean firstRequestAfterAccepted) {
         // here we start a location request for each activated logjob
         DBLogjob lj = logjobs.get(ljId);
-        SystemLogger.d(TAG, "requestLocationUpdates job " + ljId);
+        if (SystemLogger.isActive()) {
+            SystemLogger.d(TAG, "requestLocationUpdates job " + ljId);
+        }
         mLocationListener gpsLocListener = gpsLocListeners.get(ljId);
         mLocationListener networkLocListener = networkLocListeners.get(ljId);
         LogjobWorker logjobWorker = mLogjobWorkers.get(ljId);
         if (lj == null || gpsLocListener == null || networkLocListener == null || logjobWorker == null) {
-            SystemLogger.d(TAG, "requestLocationUpdates ERROR for job " + ljId + ". Unexpected null value.");
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "requestLocationUpdates ERROR for job " + ljId + ". Unexpected null value.");
+            }
             return false;
         }
         boolean hasLocationUpdates = false;
@@ -643,7 +663,7 @@ public class LoggerService extends Service {
 
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { SystemLogger.d(TAG, "requestLocationUpdates using network provider, min time " + lj.getMinTime()); }
+                    if (SystemLogger.isActive()) { SystemLogger.d(TAG, "requestLocationUpdates using network provider, min time " + lj.getMinTime()); }
                 }
             }
             if (useGps) {
@@ -653,19 +673,19 @@ public class LoggerService extends Service {
 
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
-                    if (DEBUG) { SystemLogger.d(TAG, "requestLocationUpdates using gps provider, min time " + lj.getMinTime()); }
+                    if (SystemLogger.isActive()) { SystemLogger.d(TAG, "requestLocationUpdates using gps provider, min time " + lj.getMinTime()); }
                 }
             }
             if (hasLocationUpdates) {
                 // start timeout only if we're not in an "accuracy improvement" loop
                 if (startTimeout) {
-                    if (DEBUG) { SystemLogger.d(TAG, "requestLocationUpdates startResultTimeout()"); }
+                    if (SystemLogger.isActive()) { SystemLogger.d(TAG, "requestLocationUpdates startResultTimeout()"); }
                     logjobWorker.startResultTimeout();
                 }
             } else {
                 // no location provider available
                 sendBroadcast(BROADCAST_LOCATION_DISABLED);
-                if (DEBUG) { SystemLogger.d(TAG, "No available location updates"); }
+                if (SystemLogger.isActive()) { SystemLogger.d(TAG, "No available location updates"); }
                 // the updates requested above start if location is switched on before the search
                 // ends; the retry covers a longer switch-off
                 LocationManager lm = locManager;
@@ -675,7 +695,9 @@ public class LoggerService extends Service {
             }
         } else {
             // can't access location: say why, and check again later instead of stalling
-            SystemLogger.d(TAG, "Not requesting location for job " + ljId + ": " + gate);
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "Not requesting location for job " + ljId + ": " + gate);
+            }
             pauseJob(ljId, gate);
         }
 
@@ -708,7 +730,7 @@ public class LoggerService extends Service {
      */
     @Override
     public void onDestroy() {
-        if (DEBUG) { SystemLogger.d(TAG, "onDestroy"); }
+        if (SystemLogger.isActive()) { SystemLogger.d(TAG, "onDestroy"); }
 
         // removing updates needs no permission; this also cancels the retries of paused jobs
         for (long ljId : gpsLocListeners.keySet()) {
@@ -764,18 +786,18 @@ public class LoggerService extends Service {
 
         @Override
         public void interrupt() {
-            if (DEBUG) { SystemLogger.d(TAG, "LoggerThread interrupt"); }
+            if (SystemLogger.isActive()) { SystemLogger.d(TAG, "LoggerThread interrupt"); }
         }
 
         @Override
         public void finalize() throws Throwable {
-            if (DEBUG) { SystemLogger.d(TAG, "LoggerThread finalize"); }
+            if (SystemLogger.isActive()) { SystemLogger.d(TAG, "LoggerThread finalize"); }
             super.finalize();
         }
 
         @Override
         public void run() {
-            if (DEBUG) { SystemLogger.d(TAG, "LoggerThread run"); }
+            if (SystemLogger.isActive()) { SystemLogger.d(TAG, "LoggerThread run"); }
             super.run();
         }
     }
@@ -821,7 +843,7 @@ public class LoggerService extends Service {
      * @param mId Notification Id
      */
     private Notification showNotification(int mId) {
-        if (DEBUG) { SystemLogger.v(TAG, "showNotification " + mId); }
+        if (SystemLogger.isActive()) { SystemLogger.v(TAG, "showNotification " + mId); }
 
         mNotificationBuilder = LoggingNotification.builder(this);
         setNotificationContent();
@@ -894,7 +916,7 @@ public class LoggerService extends Service {
             double newBatteryLevel = Math.round(batLevel * 100.0) / 100.0;
             if (newBatteryLevel != battery) {
                 battery = newBatteryLevel;
-                if (LoggerService.DEBUG) {
+                if (SystemLogger.isActive()) {
                     SystemLogger.i(TAG, "battery level changed " + battery);
                 }
             }
@@ -951,7 +973,7 @@ public class LoggerService extends Service {
         @Override
         public void onLocationChanged(@NonNull Location location) {
             CorrectingLocation loc = new CorrectingLocation(location);
-            if (DEBUG) {
+            if (SystemLogger.isActive()) {
                 SystemLogger.d(TAG, "location changed [" + type + "]: " + logjobId + "/" + logjob.getTitle() + ", bat : " + battery);
             }
             boolean gps = LocationManager.GPS_PROVIDER.equals(loc.getProvider());
@@ -985,14 +1007,14 @@ public class LoggerService extends Service {
                 elapsedMillisSinceLastUpdate = (loc.getElapsedRealtimeNanos() / 1000000) - ljLastUpdateRealtime;
 
                 if (elapsedMillisSinceLastUpdate < minTimeMillis) {
-                    if (DEBUG) { SystemLogger.d(TAG,"skip because " + elapsedMillisSinceLastUpdate + " < "+ minTimeMillis); }
+                    if (SystemLogger.isActive()) { SystemLogger.d(TAG,"skip because " + elapsedMillisSinceLastUpdate + " < "+ minTimeMillis); }
                     return true;
                 }
             }
             int maxAccuracy = logjob.getMinAccuracy();
             // accuracy radius too high
             if (loc.hasAccuracy() && loc.getAccuracy() > maxAccuracy) {
-                if (DEBUG) { SystemLogger.d(TAG, "[location accuracy above limit: " + loc.getAccuracy() + " > " + maxAccuracy + "]"); }
+                if (SystemLogger.isActive()) { SystemLogger.d(TAG, "[location accuracy above limit: " + loc.getAccuracy() + " > " + maxAccuracy + "]"); }
                 // reset gps provider to get better accuracy even if time and distance criteria don't change
                 if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                     restartUpdates(logjobId);
@@ -1011,7 +1033,7 @@ public class LoggerService extends Service {
                     long elapsedMillis = SystemClock.elapsedRealtime() - ljLastUpdateRealtime;
                     if (lastLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && elapsedMillis < maxTimeMillis) {
                         // skip network provider
-                        if (DEBUG) {
+                        if (SystemLogger.isActive()) {
                             SystemLogger.d(TAG, "[location network provider skipped]");
                         }
                         return true;
@@ -1027,7 +1049,7 @@ public class LoggerService extends Service {
          */
         @Override
         public void onProviderDisabled(@NonNull String provider) {
-            if (DEBUG) { SystemLogger.d(TAG, "location provider " + provider + " disabled"); }
+            if (SystemLogger.isActive()) { SystemLogger.d(TAG, "location provider " + provider + " disabled"); }
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
                 sendBroadcast(BROADCAST_LOCATION_GPS_DISABLED);
             } else if (provider.equals(LocationManager.NETWORK_PROVIDER)) {
@@ -1041,7 +1063,7 @@ public class LoggerService extends Service {
          */
         @Override
         public void onProviderEnabled(@NonNull String provider) {
-            if (DEBUG) { SystemLogger.d(TAG, "location provider " + provider + " enabled"); }
+            if (SystemLogger.isActive()) { SystemLogger.d(TAG, "location provider " + provider + " enabled"); }
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
                 sendBroadcast(BROADCAST_LOCATION_GPS_ENABLED);
             } else if (provider.equals(LocationManager.NETWORK_PROVIDER)) {
@@ -1057,7 +1079,7 @@ public class LoggerService extends Service {
          */
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            if (DEBUG) {
+            if (SystemLogger.isActive()) {
                 final String statusString;
                 switch (status) {
                     case OUT_OF_SERVICE:
@@ -1073,7 +1095,7 @@ public class LoggerService extends Service {
                         statusString = "unknown";
                         break;
                 }
-                if (DEBUG) { SystemLogger.d(TAG, "location status for " + provider + " changed: " + statusString); }
+                if (SystemLogger.isActive()) { SystemLogger.d(TAG, "location status for " + provider + " changed: " + statusString); }
             }
         }
     }
@@ -1100,7 +1122,7 @@ public class LoggerService extends Service {
 
         @Override
         public void onAvailable(@NonNull Network network) {
-            if (DEBUG) { SystemLogger.d(TAG, "Network is available again: launch sync from loggerservice"); }
+            if (SystemLogger.isActive()) { SystemLogger.d(TAG, "Network is available again: launch sync from loggerservice"); }
             // no need to wait for the connection to be usable: the upload work only runs on a
             // validated network. Queues nothing when no position is due for upload.
             UploadScheduler.uploadWhatIsDue(getApplicationContext());
@@ -1189,19 +1211,23 @@ public class LoggerService extends Service {
                         lastLocation.getLongitude(), loc.getLongitude(),
                         lastLocation.getAltitude(), loc.getAltitude()
                 );
-                SystemLogger.d(TAG, "Distance with last point: " + distance);
-                SystemLogger.d(TAG, "Logjob minimum distance: " + minDistance);
                 boolean isOk = (distance >= minDistance);
-                SystemLogger.d(TAG, "isMinDistanceOk? " + isOk);
+                if (SystemLogger.isActive()) {
+                    SystemLogger.d(TAG, "Distance with last point: " + distance);
+                    SystemLogger.d(TAG, "Logjob minimum distance: " + minDistance);
+                    SystemLogger.d(TAG, "isMinDistanceOk? " + isOk);
+                }
                 return isOk;
             }
         }
 
         protected boolean isMinAccuracyOk(CorrectingLocation loc) {
             int minAccuracy = mLogJob.getMinAccuracy();
-            SystemLogger.d(TAG, "Accuracy of current point: "+loc.getAccuracy());
             boolean isOk = (loc.getAccuracy() <= minAccuracy);
-            SystemLogger.d(TAG, "isMinAccuracyOk? " + isOk);
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "Accuracy of current point: " + loc.getAccuracy());
+                SystemLogger.d(TAG, "isMinAccuracyOk? " + isOk);
+            }
             return isOk;
         }
 
@@ -1220,9 +1246,11 @@ public class LoggerService extends Service {
             }
             LocationSamplePolicy.Decision decision = LocationSamplePolicy.decide(
                     loc.getAccuracy(), mLogJob.getMinAccuracy(), lastLocation != null, distance, minDistance);
-            SystemLogger.d(TAG, "Fix from " + loc.getProvider() + ": accuracy " + loc.getAccuracy()
-                    + " (max " + mLogJob.getMinAccuracy() + "), distance from last logged point " + distance
-                    + " (min " + minDistance + ") => " + decision);
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "Fix from " + loc.getProvider() + ": accuracy " + loc.getAccuracy()
+                        + " (max " + mLogJob.getMinAccuracy() + "), distance from last logged point " + distance
+                        + " (min " + minDistance + ") => " + decision);
+            }
             return decision;
         }
 
@@ -1295,7 +1323,9 @@ public class LoggerService extends Service {
                 i.setAction(ACTION_LOCATION_TIMEOUT);
                 i.putExtra(JOB_ID, mJobId);
                 timeoutIntent = PendingIntent.getService(LoggerService.this, (int) mJobId, i, PendingIntent.FLAG_IMMUTABLE);
-                SystemLogger.d(TAG, "Waiting " + mLocationTimeout + " seconds for timeout");
+                if (SystemLogger.isActive()) {
+                    SystemLogger.d(TAG, "Waiting " + mLocationTimeout + " seconds for timeout");
+                }
                 setAlarmAllowWhileIdle(alarmManager, mTimeoutDeadline, timeoutIntent);
             }
         }
@@ -1313,7 +1343,9 @@ public class LoggerService extends Service {
          */
         public void onResultTimeoutAlarm() {
             if (mTimeoutRunnable == null || SystemClock.elapsedRealtime() < mTimeoutDeadline) {
-                SystemLogger.d(TAG, "Location timeout alarm for job " + mJobId + " ignored, no search is due to end");
+                if (SystemLogger.isActive()) {
+                    SystemLogger.d(TAG, "Location timeout alarm for job " + mJobId + " ignored, no search is due to end");
+                }
                 return;
             }
             Runnable timeout = mTimeoutRunnable;
@@ -1333,8 +1365,10 @@ public class LoggerService extends Service {
             if (backOff) {
                 interval = LocationSamplePolicy.backedOffIntervalMillis(mIntervalTimeMillis, mConsecutiveMisses);
                 if (interval != mIntervalTimeMillis) {
-                    SystemLogger.d(TAG, mConsecutiveMisses + " searches in a row without a position, searching "
-                            + (interval / 1000) + " s after the last one instead of " + (mIntervalTimeMillis / 1000) + " s");
+                    if (SystemLogger.isActive()) {
+                        SystemLogger.d(TAG, mConsecutiveMisses + " searches in a row without a position, searching "
+                                + (interval / 1000) + " s after the last one instead of " + (mIntervalTimeMillis / 1000) + " s");
+                    }
                 }
             }
             return Math.max(0, interval - (mLocationTimeout * 1000L) - late);
@@ -1362,7 +1396,9 @@ public class LoggerService extends Service {
                     || decide(fix) == LocationSamplePolicy.Decision.KEEP_SEARCHING) {
                 return false;
             }
-            SystemLogger.d(TAG, "Using a GPS fix from " + (ageMillis / 1000.0) + " s ago for job " + mJobId + " instead of searching");
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "Using a GPS fix from " + (ageMillis / 1000.0) + " s ago for job " + mJobId + " instead of searching");
+            }
             updateLastAcquisitionStart();
             handleLocationChange(fix);
             return true;
@@ -1411,7 +1447,9 @@ public class LoggerService extends Service {
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
                         long timeToWait = timeToWaitAfterTimeout();
-                        SystemLogger.d(TAG, "Schedule next sample in " + (timeToWait / 1000) + " seconds [timeout reached]");
+                        if (SystemLogger.isActive()) {
+                            SystemLogger.d(TAG, "Schedule next sample in " + (timeToWait / 1000) + " seconds [timeout reached]");
+                        }
                         scheduleSampleAfterInterval(timeToWait);
                     }
                 }
@@ -1419,7 +1457,9 @@ public class LoggerService extends Service {
         }
 
         public void scheduleSampleAfterInterval(long millisDelay) {
-            SystemLogger.d(TAG, "Schedule location request in " + (millisDelay / 1000.0) + " seconds");
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "Schedule location request in " + (millisDelay / 1000.0) + " seconds");
+            }
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
             }
@@ -1467,8 +1507,10 @@ public class LoggerService extends Service {
 
                         mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
                     } else {
-                        SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] Not enough DISTANCE (min "
-                                + mLogJob.getMinDistance() + "), not logging this location and stopping the search");
+                        if (SystemLogger.isActive()) {
+                            SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] Not enough DISTANCE (min "
+                                    + mLogJob.getMinDistance() + "), not logging this location and stopping the search");
+                        }
                     }
 
                     // Cancel timeout if we got a correct position
@@ -1483,8 +1525,10 @@ public class LoggerService extends Service {
                         SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] remove updates because got position");
                     }
                 } else {
-                    SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] Not enough ACCURACY (min "
-                            + mLogJob.getMinAccuracy() + "), we skip this location");
+                    if (SystemLogger.isActive()) {
+                        SystemLogger.d(TAG, "[LogjobClassicWorker::handleLocationChange] Not enough ACCURACY (min "
+                                + mLogJob.getMinAccuracy() + "), we skip this location");
+                    }
                 }
 
                 // If using an interval AND the search is done: schedule sample for X seconds from last sample
@@ -1496,15 +1540,19 @@ public class LoggerService extends Service {
                     if (timeToWaitSecond < 0) {
                         timeToWaitSecond = 0;
                     }
-                    SystemLogger.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
-                            "with interval=" + mLogJob.getMinTime() + ", " +
-                            "we now wait " + timeToWaitSecond + " seconds before getting a new one");
+                    if (SystemLogger.isActive()) {
+                        SystemLogger.d(TAG, "As we spent " + timeSpentSearching + "s to search position, " +
+                                "with interval=" + mLogJob.getMinTime() + ", " +
+                                "we now wait " + timeToWaitSecond + " seconds before getting a new one");
+                    }
                     SystemLogger.d(TAG, "Schedule next location request because we got an accurate position");
                     scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 } else {
-                    SystemLogger.d(TAG, "DO NOT schedule next location request because "
-                            + "mUseInterval " + mUseInterval
-                            + " && searchDone " + searchDone);
+                    if (SystemLogger.isActive()) {
+                        SystemLogger.d(TAG, "DO NOT schedule next location request because "
+                                + "mUseInterval " + mUseInterval
+                                + " && searchDone " + searchDone);
+                    }
                 }
             } else {
                 SystemLogger.d(TAG, "Network location returned first, caching");
@@ -1572,9 +1620,11 @@ public class LoggerService extends Service {
 
                     mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
                 } else {
-                    SystemLogger.d(TAG, "Not enough DISTANCE (" + minDistanceOk + " min " + mLogJob.getMinDistance()
-                            + ") or ACCURACY (" + minAccuracyOk + " min " + mLogJob.getMinAccuracy()
-                            + "), we skip this location");
+                    if (SystemLogger.isActive()) {
+                        SystemLogger.d(TAG, "Not enough DISTANCE (" + minDistanceOk + " min " + mLogJob.getMinDistance()
+                                + ") or ACCURACY (" + minAccuracyOk + " min " + mLogJob.getMinAccuracy()
+                                + "), we skip this location");
+                    }
                 }
                 // no need to schedule anything now as requestLocationUpdates is still running
             } else {
@@ -1623,7 +1673,7 @@ public class LoggerService extends Service {
 
         public void stop() {
             super.stop();
-            SystemLogger.e(TAG, "stop sigmotion sensor");
+            SystemLogger.d(TAG, "stop sigmotion sensor");
             if (mSensor != null) {
                 mSensorManager.cancelTriggerSensor(LogjobSignificantMotionWorker.this, mSensor);
             }
@@ -1644,8 +1694,10 @@ public class LoggerService extends Service {
             // in case the interval is over, get a position if a motion was detected
             // or if using the mixed mode
             boolean shouldWe = mMotionDetected || mUseMixedMode;
-            SystemLogger.d(TAG, "[SigMotion] Interval is finished, should we get a location after having waited? => " + shouldWe
-                    + " (motion detected: " + mMotionDetected + " ; mixed mode: " + mUseMixedMode + ")");
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "[SigMotion] Interval is finished, should we get a location after having waited? => " + shouldWe
+                        + " (motion detected: " + mMotionDetected + " ; mixed mode: " + mUseMixedMode + ")");
+            }
             return shouldWe;
         }
 
@@ -1676,7 +1728,9 @@ public class LoggerService extends Service {
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
                         long timeToWait = timeToWaitAfterTimeout();
-                        SystemLogger.d(TAG, "Schedule next location request in " + (timeToWait / 1000) + "s");
+                        if (SystemLogger.isActive()) {
+                            SystemLogger.d(TAG, "Schedule next location request in " + (timeToWait / 1000) + "s");
+                        }
                         scheduleSampleAfterInterval(timeToWait);
                     }
                 }
@@ -1684,7 +1738,9 @@ public class LoggerService extends Service {
         }
 
         public void scheduleSampleAfterInterval(long millisDelay) {
-            SystemLogger.d(TAG, "Scheduling next location request in " + (millisDelay / 1000.0) + "s");
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "Scheduling next location request in " + (millisDelay / 1000.0) + "s");
+            }
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
             }
@@ -1701,7 +1757,7 @@ public class LoggerService extends Service {
 
             if (SupportUtil.isDozing(LoggerService.this)){
                 // Only invoked every 15 minutes in doze mode
-                SystemLogger.e(TAG, "Device is dozing, using infrequent alarm");
+                SystemLogger.d(TAG, "Device is dozing, using infrequent alarm");
                 setAlarmAllowWhileIdle(alarmManager, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
             } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + millisDelay, nextPointIntent);
@@ -1731,8 +1787,10 @@ public class LoggerService extends Service {
 
                         mLastUpdateRealtime = loc.getElapsedRealtimeNanos() / 1000000;
                     } else {
-                        SystemLogger.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance()
-                                + "), not logging this location and stopping the search");
+                        if (SystemLogger.isActive()) {
+                            SystemLogger.d(TAG, "Not enough DISTANCE (min " + mLogJob.getMinDistance()
+                                    + "), not logging this location and stopping the search");
+                        }
                     }
 
                     // Cancel timeout
@@ -1746,7 +1804,9 @@ public class LoggerService extends Service {
                         locManager.removeUpdates(networkLocationListener);
                     }
                 } else {
-                    SystemLogger.d(TAG, "Not enough ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
+                    if (SystemLogger.isActive()) {
+                        SystemLogger.d(TAG, "Not enough ACCURACY (min " + mLogJob.getMinAccuracy() + "), we skip this location");
+                    }
                 }
 
                 // Clear significant motion flag for next interval
@@ -1764,9 +1824,11 @@ public class LoggerService extends Service {
                     if (timeToWaitSecond < 0) {
                         timeToWaitSecond = 0;
                     }
-                    SystemLogger.d(TAG, "[MOTION] As we spent " + timeSpentSearching + " seconds to search position, " +
-                            "with interval=" + mLogJob.getMinTime() + ", " +
-                            "we now wait " + timeToWaitSecond + " seconds before requesting a new one");
+                    if (SystemLogger.isActive()) {
+                        SystemLogger.d(TAG, "[MOTION] As we spent " + timeSpentSearching + " seconds to search position, " +
+                                "with interval=" + mLogJob.getMinTime() + ", " +
+                                "we now wait " + timeToWaitSecond + " seconds before requesting a new one");
+                    }
                     scheduleSampleAfterInterval(timeToWaitSecond * 1000);
                 }
                 // if the position was not accurate enough, the location request is still running
@@ -1781,7 +1843,9 @@ public class LoggerService extends Service {
         // motion detected by the sensor
         @Override
         public void onTrigger(TriggerEvent event) {
-            SystemLogger.d(TAG, "Significant motion seen, logjob " + mJobId);
+            if (SystemLogger.isActive()) {
+                SystemLogger.d(TAG, "Significant motion seen, logjob " + mJobId);
+            }
 
             // We detected a motion during the interval
             mMotionDetected = true;
@@ -1807,8 +1871,10 @@ public class LoggerService extends Service {
                         }
                         mWaitingForMotion = false;
 
-                        SystemLogger.d(TAG, "Triggering immediate location request after significant motion due to " +
-                                (millisSinceLast / 1000.0) + " seconds since last point");
+                        if (SystemLogger.isActive()) {
+                            SystemLogger.d(TAG, "Triggering immediate location request after significant motion due to " +
+                                    (millisSinceLast / 1000.0) + " seconds since last point");
+                        }
 
                         requestUpdates = true;
                     }

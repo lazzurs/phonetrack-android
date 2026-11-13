@@ -1,9 +1,7 @@
 package net.eneiluj.nextcloud.phonetrack.android.activity;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.appcompat.widget.Toolbar;
@@ -34,7 +31,6 @@ import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBSyslog;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
-import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
@@ -46,10 +42,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class SyslogManagerActivity extends AppCompatActivity {
-
-    public static final String BROADCAST_TIMESTAMP = "net.eneiluj.nextcloud.phonetrack.broadcast.timestamp";
-    public static final String BROADCAST_NEW_SYSLOG = "net.eneiluj.nextcloud.phonetrack.broadcast.new_syslog";
-    public static final String BROADCAST_MESSAGE = "net.eneiluj.nextcloud.phonetrack.broadcast.message";
 
     private static final String TAG = SyslogManagerActivity.class.getSimpleName();
 
@@ -87,13 +79,15 @@ public class SyslogManagerActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.menu_toggle_logs) {
             boolean isSyslogEnabled = SystemLogger.getEnabled();
+            // lines logged just before the log was switched off may still wait in memory
+            SystemLogger.flush();
             if (!isSyslogEnabled && !db.getSyslogs(null, null).isEmpty()) {
                 // switching logging on wipes the previous entries: ask first
                 new android.app.AlertDialog.Builder(new android.view.ContextThemeWrapper(this, R.style.AppThemeDialog))
                         .setTitle(R.string.syslog_clear_title)
                         .setMessage(R.string.syslog_clear_message)
                         .setPositiveButton(R.string.syslog_clear_confirm, (dialog, which) -> {
-                            db.clearSyslog();
+                            SystemLogger.clear(this);
                             textView.setText("");
                             SystemLogger.setEnabled(true);
                             toggleSyslogItem.setChecked(true);
@@ -165,19 +159,15 @@ public class SyslogManagerActivity extends AppCompatActivity {
     public void onResume(){
         Log.i(TAG, "[onResume begin]");
         super.onResume();
-        registerBroadcastReceiver();
+        // while the log is on screen its lines are stored and shown at once
+        SystemLogger.setListener(syslogListener);
         Log.i(TAG, "[onResume end]");
     }
 
     public void onPause(){
         Log.i(TAG, "[onPause begin]");
         super.onPause();
-
-        try {
-            unregisterReceiver(mBroadcastReceiver);
-        } catch (RuntimeException e) {
-            if (LoggerService.DEBUG) { Log.d(TAG, "RECEIVER PROBLEM, let's ignore it..."); }
-        }
+        SystemLogger.removeListener(syslogListener);
         Log.i(TAG, "[onPause end]");
     }
 
@@ -189,6 +179,7 @@ public class SyslogManagerActivity extends AppCompatActivity {
         new BackgroundTask<Void, CharSequence>() {
             @Override
             protected CharSequence doInBackground(Void... voids) {
+                SystemLogger.flush();
                 SpannableStringBuilder content = new SpannableStringBuilder();
                 for (DBSyslog sl : db.getSyslogs(null, null)) {
                     content.append(formatLine(sl.getMessage(), sl.getTimestamp()));
@@ -212,11 +203,6 @@ public class SyslogManagerActivity extends AppCompatActivity {
             return Html.fromHtml("<b>[" + sdfComplete.format(timestamp * 1000) + "]</b> " + message + "<br/>",
                     Html.FROM_HTML_MODE_LEGACY);
         }
-    }
-
-    private void addLine(String message, long timestamp) {
-        textView.append(formatLine(message, timestamp));
-        scrollToEnd();
     }
 
     private void scrollToEnd() {
@@ -272,7 +258,8 @@ public class SyslogManagerActivity extends AppCompatActivity {
 
         content += "\n";
 
-        // get all syslogs
+        // get all syslogs, including the ones still waiting to be stored
+        SystemLogger.flush();
         List<DBSyslog> syslogs = db.getSyslogs(null, null);
         for (DBSyslog sl: syslogs) {
             content += "[" + sdfComplete.format(sl.getTimestamp() * 1000) + "] " + sl.getMessage() + "\n";
@@ -326,33 +313,19 @@ public class SyslogManagerActivity extends AppCompatActivity {
         }
     }
 
-    private void registerBroadcastReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BROADCAST_NEW_SYSLOG);
-        ContextCompat.registerReceiver(this, mBroadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
-    }
-
-    /**
-     * Broadcast receiver
-     */
-    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    /** Lines stored while the log is on screen, handed over on the logger's thread. */
+    private final SystemLogger.Listener syslogListener = new SystemLogger.Listener() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            //if (LoggerService.DEBUG) { Log.e(TAG, "broadcast received " + intent); }
-            if (intent == null || intent.getAction() == null) {
-                return;
-            }
-            switch (intent.getAction()) {
-                case BROADCAST_NEW_SYSLOG:
-                    long timestamp = intent.getLongExtra(BROADCAST_TIMESTAMP, 0);
-                    String message = intent.getStringExtra(BROADCAST_MESSAGE);
-                    if (LoggerService.DEBUG) { Log.d(TAG, "[inSyslog broadcast new syslog " + message + "]"); }
-                    addLine(message, timestamp);
-                    break;
-                default:
-                    Log.d(TAG, "Unknown intent action in mBroadcastReceiver::onReceive");
-                    break;
-            }
+        public void onNewLines(@NonNull List<DBSyslog> lines) {
+            runOnUiThread(() -> {
+                if (isDestroyed()) {
+                    return;
+                }
+                for (DBSyslog line : lines) {
+                    textView.append(formatLine(line.getMessage(), line.getTimestamp()));
+                }
+                scrollToEnd();
+            });
         }
     };
 
