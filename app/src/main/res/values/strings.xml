@@ -195,6 +195,9 @@
     <string name="sms_logjob_updated">The SMS log job in session %2$s is running with %1$d seconds frequency</string>
     <string name="sms_command_notification_title">SMS command run</string>
     <string name="sms_command_notification">The SMS command \"%1$s\" from %2$s was run.</string>
+    <string name="sms_ignored_notification_title">SMS command ignored</string>
+    <string name="sms_ignored_notification">An SMS command from %1$s was ignored because that number is not in your allowed senders. Tap to change the SMS settings.</string>
+    <string name="sms_ignored_notification_no_senders">An SMS command from %1$s was ignored because no allowed sender is set. Tap to add one in the SMS settings.</string>
     <string name="sms_command_notification_no_pin">Sender numbers can be forged: if you did not send it, set an SMS PIN in the settings.</string>
     <string name="sms_failure_timeout_sms">PhoneTrack failed to get position after %d seconds</string>
     <string name="sms_failure_timeout_notification">%1$d sec timeout reached, an error SMS has been sent to %2$s</string>

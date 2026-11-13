@@ -107,6 +107,58 @@ public class SmsListenerTest {
     }
 
     @Test
+    public void ignoredCommandFromAStrangerLeavesOneNotificationPerDay() {
+        setAllowedSenders("+31641600987");
+        receiveSms("phonetrack alarm 99 secretword");
+        receiveSms("phonetrack");
+
+        List<Notification> notifications = notifications();
+        assertEquals(1, notifications.size());
+        String text = notifications.get(0).extras.getCharSequence(Notification.EXTRA_TEXT).toString();
+        assertEquals(app.getString(R.string.sms_ignored_notification, FROM), text);
+        // never the message itself
+        assertFalse(text.contains("secretword"));
+        assertEquals(app.getString(R.string.sms_ignored_notification_title),
+                notifications.get(0).extras.getCharSequence(Notification.EXTRA_TITLE).toString());
+        assertNull(startedLocationReply());
+
+        // a day later the same sender may be reported again
+        now += SmsCommandGuard.IGNORED_NOTICE_INTERVAL_MS + 1;
+        receiveSms("phonetrack");
+        assertEquals(2, notifications().size());
+    }
+
+    @Test
+    public void ignoredCommandWithNoAllowedSenderSaysSo() {
+        setAllowedSenders("");
+        receiveSms("phonetrack");
+
+        List<Notification> notifications = notifications();
+        assertEquals(1, notifications.size());
+        assertEquals(app.getString(R.string.sms_ignored_notification_no_senders, FROM),
+                notifications.get(0).extras.getCharSequence(Notification.EXTRA_TEXT).toString());
+    }
+
+    @Test
+    public void ignoredCommandsStaySilentWithoutNotificationPermission() {
+        shadowOf(app).denyPermissions(Manifest.permission.POST_NOTIFICATIONS);
+        setAllowedSenders("");
+        receiveSms("phonetrack");
+        assertTrue(notifications().isEmpty());
+        // and the quota was not used up while the notification could not be shown
+        shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS);
+        receiveSms("phonetrack");
+        assertEquals(1, notifications().size());
+    }
+
+    @Test
+    public void allowedSendersNeverGetAnIgnoredNotification() {
+        setAllowedSenders(FROM);
+        receiveSms("phonetrack");
+        assertTrue(notifications().isEmpty());
+    }
+
+    @Test
     public void answersAnAllowedSenderWrittenInNationalFormat() {
         setAllowedSenders("06 41600986");
         receiveSms();

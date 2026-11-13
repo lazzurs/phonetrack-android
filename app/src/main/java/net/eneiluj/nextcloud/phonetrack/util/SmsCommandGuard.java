@@ -39,12 +39,17 @@ public final class SmsCommandGuard {
     public static final int MAX_COMMANDS_PER_HOUR = 10;
     public static final long POSITION_REQUEST_INTERVAL_MS = 60 * 1000L;
     private static final long HOUR_MS = 60 * 60 * 1000L;
+    /** A sender that is not allowed gets at most one notification per this time. */
+    public static final long IGNORED_NOTICE_INTERVAL_MS = 24 * HOUR_MS;
+    /** Whatever the senders, at most this many such notifications per {@link #IGNORED_NOTICE_INTERVAL_MS}. */
+    public static final int MAX_IGNORED_NOTICES = 3;
 
     private static final String KEY_WRONG_PINS = "wrongPins_";
     private static final String KEY_LOCKOUTS = "lockouts_";
     private static final String KEY_LOCKED_UNTIL = "lockedUntil_";
     private static final String KEY_COMMANDS = "commands_";
     private static final String KEY_LAST_POSITION = "lastPosition_";
+    private static final String KEY_IGNORED_NOTICES = "ignoredNotices";
 
     private static LongSupplier clock = System::currentTimeMillis;
 
@@ -166,6 +171,45 @@ public final class SmsCommandGuard {
             editor.putLong(key(KEY_LAST_POSITION, sender), now);
         }
         editor.commit();
+        return true;
+    }
+
+    /**
+     * Whether to tell the user that a command from a sender who may not send commands was
+     * ignored. Anyone can text the keyword, so this must not become a way to flood the
+     * notification shade: one notice per sender, and a small total, per day. Only the
+     * last day's notices are stored, so the state stays tiny however many numbers text us.
+     *
+     * @return true if a notification may be shown now (and the quota is used up for it)
+     */
+    @SuppressLint("ApplySharedPref") // commit: a burst of SMS must not outrun the count
+    public static boolean tryAcquireIgnoredNotice(Context context, String sender) {
+        SharedPreferences prefs = prefs(context);
+        long now = clock.getAsLong();
+        String senderKey = key("", sender);
+        List<String> recent = new ArrayList<>();
+        for (String entry : prefs.getString(KEY_IGNORED_NOTICES, "").split(";")) {
+            int colon = entry.indexOf(':');
+            if (colon <= 0) {
+                continue;
+            }
+            try {
+                long t = Long.parseLong(entry.substring(0, colon));
+                if (t <= now && now - t < IGNORED_NOTICE_INTERVAL_MS) {
+                    if (entry.substring(colon + 1).equals(senderKey)) {
+                        return false;
+                    }
+                    recent.add(entry);
+                }
+            } catch (NumberFormatException ignored) {
+                // corrupted entry
+            }
+        }
+        if (recent.size() >= MAX_IGNORED_NOTICES) {
+            return false;
+        }
+        recent.add(now + ":" + senderKey);
+        prefs.edit().putString(KEY_IGNORED_NOTICES, String.join(";", recent)).commit();
         return true;
     }
 
