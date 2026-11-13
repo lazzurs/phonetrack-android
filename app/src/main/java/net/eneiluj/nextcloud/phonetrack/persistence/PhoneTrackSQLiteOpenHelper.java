@@ -142,6 +142,20 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private final String userAgent;
 
+    /**
+     * Positions waiting for upload, counted once and then kept up to date in memory: the tracking
+     * notification shows it after every position. Every write to the positions table goes
+     * through this class and either adjusts it (a new position) or forgets it (anything else),
+     * so it is right in this process; a new process counts again.
+     */
+    private final Object pendingCountLock = new Object();
+    /** The count, or -1 when it must be read from the database. */
+    private int pendingCount = -1;
+    /** Changes with every write, so that a count read during a write is not kept. */
+    private long pendingCountVersion = 0;
+    @VisibleForTesting
+    int pendingCountQueries = 0;
+
     private PhoneTrackSQLiteOpenHelper(Context context) {
         super(context, database_name, null, database_version);
         this.context = context.getApplicationContext();
@@ -426,6 +440,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     private void recreateDatabase(SQLiteDatabase db) {
+        forgetPendingCount();
         dropIndexes(db);
         db.execSQL("DROP TABLE " + table_sessions);
         db.execSQL("DROP TABLE " + table_logjobs);
@@ -766,7 +781,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             db.update(table_locations, locValues, key_logjobid + " = ?", new String[]{String.valueOf(ljId)});
             db.setTransactionSuccessful();
         } finally {
-            db.endTransaction();
+            try {
+                db.endTransaction();
+            } finally {
+                forgetPendingCount();
+            }
         }
     }
 
@@ -901,7 +920,11 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                     new String[]{String.valueOf(id)});
             db.setTransactionSuccessful();
         } finally {
-            db.endTransaction();
+            try {
+                db.endTransaction();
+            } finally {
+                forgetPendingCount();
+            }
         }
         CredentialStore.removeLogjobPassword(context, id);
     }
@@ -944,13 +967,27 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_currentRun, 1);
 
         // one commit per position instead of two
+        boolean stored = false;
+        boolean successful = false;
         db.beginTransaction();
         try {
-            db.insert(table_locations, null, values);
+            stored = db.insert(table_locations, null, values) != -1;
             setLastLocTimestamp(ljId, loc.getTime() / 1000);
             db.setTransactionSuccessful();
+            successful = true;
         } finally {
-            db.endTransaction();
+            boolean committed = false;
+            try {
+                db.endTransaction();
+                committed = successful;
+            } finally {
+                // the notification counts it after every position: no need to count them all
+                if (committed && stored) {
+                    pendingCountChanged(1);
+                } else {
+                    forgetPendingCount();
+                }
+            }
         }
     }
 
@@ -973,7 +1010,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         values.put(key_synced, dbLoc.isSynced() ? 1 : 0);
         values.put(key_currentRun, dbLoc.isCurrentRun() ? 1 : 0);
 
-        db.insert(table_locations, null, values);
+        boolean stored = db.insert(table_locations, null, values) != -1;
+        if (stored) {
+            pendingCountChanged(dbLoc.isSynced() ? 0 : 1);
+        } else {
+            forgetPendingCount();
+        }
     }
 
     /**
@@ -1166,8 +1208,45 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    /** Positions waiting for upload, of all logjobs. Reads the database only when needed. */
     @WorkerThread
     public int getLocationNotSyncedCount() {
+        long version;
+        synchronized (pendingCountLock) {
+            if (pendingCount >= 0) {
+                return pendingCount;
+            }
+            version = pendingCountVersion;
+        }
+        int result = queryLocationNotSyncedCount();
+        synchronized (pendingCountLock) {
+            if (pendingCountVersion == version) {
+                pendingCount = result;
+            }
+        }
+        return result;
+    }
+
+    /** A write added (or removed) this many positions waiting for upload. */
+    private void pendingCountChanged(int added) {
+        synchronized (pendingCountLock) {
+            pendingCountVersion++;
+            if (pendingCount >= 0) {
+                pendingCount += added;
+            }
+        }
+    }
+
+    /** A write changed the positions waiting for upload in a way not worth computing here. */
+    private void forgetPendingCount() {
+        synchronized (pendingCountLock) {
+            pendingCountVersion++;
+            pendingCount = -1;
+        }
+    }
+
+    private int queryLocationNotSyncedCount() {
+        pendingCountQueries++;
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(
                 table_locations,
@@ -1215,7 +1294,12 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
                     new Object[]{locationIds.size(), System.currentTimeMillis() / 1000, logjob.getId()});
             db.setTransactionSuccessful();
         } finally {
-            db.endTransaction();
+            try {
+                db.endTransaction();
+            } finally {
+                // ids may have been sent already or deleted meanwhile: count again when needed
+                forgetPendingCount();
+            }
         }
         logjob.setNbSync(logjob.getNbSync() + locationIds.size());
     }
@@ -1225,6 +1309,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         db.delete(table_locations,
                 key_id + " = ?",
                 new String[]{String.valueOf(id)});
+        forgetPendingCount();
     }
 
     public int getNbSync(long logjobId) {
