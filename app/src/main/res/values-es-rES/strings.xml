@@ -222,8 +222,6 @@
   <string name="using_network">Usando ubicación basada en red</string>
   <string name="using_gps">Usando ubicación por gps</string>
   <string name="background_location_permission_title">Permiso de ubicación en segundo plano</string>
-  <string name="background_location_permission_message">Para permitir que PhoneTrack se ejecute en segundo plano, se debe conceder un permiso adicional. En la siguiente pantalla de configuración por favor seleccione: </string>
-  <string name="location_permission_denied">Permiso de ubicación denegado</string>
   <string name="sessions_sync_success">Sesiones sincronizadas</string>
   <string name="pref_autostart_title">Inicio automático</string>
   <string name="pref_autostart_summary">El registro se iniciará al arrancar el sistema</string>

@@ -222,8 +222,6 @@
   <string name="using_network">Netwerklocatie in gebruik</string>
   <string name="using_gps">GPS-locatie in gebruik</string>
   <string name="background_location_permission_title">Toegang tot locatie op de achtergrond</string>
-  <string name="background_location_permission_message">Als PhoneTrack op de achtergrond moet werken, is een extra toegangsrecht vereist. Kies in het volgende instellingenscherm: </string>
-  <string name="location_permission_denied">Toegang tot locatie geweigerd</string>
   <string name="sessions_sync_success">Sessies gesynchroniseerd</string>
   <string name="pref_autostart_title">Automatisch starten</string>
   <string name="pref_autostart_summary">Logboekregistratie begint als systeem opstart</string>

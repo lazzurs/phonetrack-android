@@ -222,8 +222,6 @@
   <string name="using_network">Pomocí určování polohy ze sítě</string>
   <string name="using_gps">Pomocí určování polohy z gps</string>
   <string name="background_location_permission_title">Oprávnění k průběžnému získávání údajů o poloze</string>
-  <string name="background_location_permission_message">Aby PhoneTrack mohlo být spuštěné na pozadí je třeba, aby bylo uděleno další oprávnění. Na následující obrazovce nastavení prosím vyberte: </string>
-  <string name="location_permission_denied">Oprávnění k poloze bylo odepřeno</string>
   <string name="sessions_sync_success">Relace synchronizovány</string>
   <string name="pref_autostart_title">Automatické spuštění</string>
   <string name="pref_autostart_summary">Záznam bude spuštěn při startu systému</string>

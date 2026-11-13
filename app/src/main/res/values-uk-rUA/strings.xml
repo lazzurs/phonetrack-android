@@ -222,8 +222,6 @@
   <string name="using_network">Використовується розташування з мережі</string>
   <string name="using_gps">Використовується розташування gps</string>
   <string name="background_location_permission_title">Доступ до місцезнаходження у фоновому режимі</string>
-  <string name="background_location_permission_message">Для роботи PhoneTrack у фоновому режимі, необхідно надати додатковий дозвіл. На наступному екрані налаштуваннь, будь ласка, виберіть: </string>
-  <string name="location_permission_denied">Немає дозволу на отримання місцерозташування</string>
   <string name="sessions_sync_success">Сеанси синхронізовано</string>
   <string name="pref_autostart_title">Автозапуск</string>
   <string name="pref_autostart_summary">Журналювання почнеться при завантаженні системи</string>

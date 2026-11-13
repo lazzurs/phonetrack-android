@@ -222,8 +222,6 @@
   <string name="using_network">Utilise la localisation par le réseau</string>
   <string name="using_gps">Utilise la localisation Gps</string>
   <string name="background_location_permission_title">Accès à l\'emplacement en arrière-plan</string>
-  <string name="background_location_permission_message">Pour permettre à PhoneTrack de s\'exécuter en arrière-plan, une autorisation supplémentaire doit être accordée. Sur l\'écran de réglage suivant, veuillez sélectionner : </string>
-  <string name="location_permission_denied">Permission de localisation refusée</string>
   <string name="sessions_sync_success">Sessions synchronisées</string>
   <string name="pref_autostart_title">Démarrage auto</string>
   <string name="pref_autostart_summary">Le logging commencera au démarrage du système</string>

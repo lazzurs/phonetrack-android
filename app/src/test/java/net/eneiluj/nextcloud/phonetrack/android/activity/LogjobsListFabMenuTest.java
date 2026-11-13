@@ -104,6 +104,8 @@ public class LogjobsListFabMenuTest {
         assertEquals(View.GONE, view(R.id.fab_row_maps).getVisibility());
         assertEquals(View.VISIBLE, view(R.id.fab_row_phonetrack).getVisibility());
         assertEquals(View.VISIBLE, view(R.id.fab_row_custom).getVisibility());
+        // and the menu says why
+        assertEquals(View.VISIBLE, view(R.id.fab_account_hint).getVisibility());
     }
 
     @Test
@@ -114,6 +116,7 @@ public class LogjobsListFabMenuTest {
         tapMain();
         assertEquals(View.VISIBLE, view(R.id.fab_row_session).getVisibility());
         assertEquals(View.VISIBLE, view(R.id.fab_row_maps).getVisibility());
+        assertEquals(View.GONE, view(R.id.fab_account_hint).getVisibility());
     }
 
     @Test

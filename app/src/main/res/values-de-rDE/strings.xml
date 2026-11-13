@@ -222,8 +222,6 @@
   <string name="using_network">Netzwerkerfassung Ihres Standorts verwenden</string>
   <string name="using_gps">GPS-Standortbestimmung verwenden</string>
   <string name="background_location_permission_title">Standortbestimmung im Hintergrund erlauben</string>
-  <string name="background_location_permission_message">Um PhoneTrack im Hintergrund aktiviert zu lassen, muss eine zusätzliche Berechtigung erteilt werden. Auf dem nächsten Einstellungsbildschirm wählen Sie bitte: </string>
-  <string name="location_permission_denied">Standortbestimmungsberechtigung abgelehnt</string>
   <string name="sessions_sync_success">Sitzungen synchronisiert</string>
   <string name="pref_autostart_title">Automatisch starten</string>
   <string name="pref_autostart_summary">Protokollierung wird beim Systemstart gestartet</string>

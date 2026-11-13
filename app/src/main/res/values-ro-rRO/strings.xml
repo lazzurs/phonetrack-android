@@ -222,8 +222,6 @@
   <string name="using_network">Folosind locația prin rețea</string>
   <string name="using_gps">Folosind locația gps</string>
   <string name="background_location_permission_title">Permisiune locație fundal</string>
-  <string name="background_location_permission_message">Pentru a permite PhoneTrack să ruleze în fundal, trebuie acordată o permisiune suplimentară. Pe următorul ecran de setare vă rugăm să selectați: </string>
-  <string name="location_permission_denied">Permisiune de locație refuzată</string>
   <string name="sessions_sync_success">Sesiuni sincronizate</string>
   <string name="pref_autostart_title">Pornire automată</string>
   <string name="pref_autostart_summary">Logarea va porni la pornirea sistemului</string>

@@ -222,8 +222,6 @@
   <string name="using_network">Utilizzando la posizione di rete</string>
   <string name="using_gps">Usando la posizione Gps</string>
   <string name="background_location_permission_title">Permessi posizione in background</string>
-  <string name="background_location_permission_message">Per consentire l\'esecuzione di PhoneTrack in background, è necessario concedere un\'autorizzazione aggiuntiva. Nella schermata di impostazione successiva selezionare: </string>
-  <string name="location_permission_denied">Autorizzazione di posizione negata</string>
   <string name="sessions_sync_success">Sessioni sincronizzate</string>
   <string name="pref_autostart_title">Avvio automatico</string>
   <string name="pref_autostart_summary">La registrazione inizierà all\'avvio del sistema</string>

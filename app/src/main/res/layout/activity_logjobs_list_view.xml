@@ -103,6 +103,63 @@
             </com.google.android.material.card.MaterialCardView>
         </com.google.android.material.appbar.AppBarLayout>
 
+        <!-- What stops logging, with a button that fixes it (see updateStatusBanner()) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/status_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacer_1x"
+            android:layout_marginTop="@dimen/spacer_1hx"
+            android:layout_marginEnd="@dimen/spacer_1x"
+            android:layout_marginBottom="@dimen/spacer_1hx"
+            android:accessibilityLiveRegion="polite"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/appbar"
+            app:cardCornerRadius="@dimen/spacer_1x"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/spacer_2x"
+                android:paddingTop="@dimen/spacer_2x"
+                android:paddingEnd="@dimen/spacer_1x">
+
+                <TextView
+                    android:id="@+id/status_banner_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacer_1x"
+                    android:textColor="@color/fg_default"
+                    android:textSize="16sp"
+                    tools:text="@string/status_needs_precise_location" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/status_banner_dismiss"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/status_action_dismiss" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/status_banner_action"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="@string/status_action_allow_precise_location" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/swiperefreshlayout"
             android:layout_width="match_parent"
@@ -121,6 +178,20 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
+
+    <!-- shown instead of a blank list before the first log job is created -->
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/logjobs_list_empty"
+        android:textColor="@color/fg_default_low"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <!-- "New ..." speed-dial menu (Material FloatingActionButton; replaced the archived
          com.github.clans:fab). The backdrop closes the menu when tapped. -->
@@ -149,6 +220,16 @@
             android:gravity="end"
             android:orientation="vertical"
             android:visibility="gone">
+
+            <!-- says why the session and Maps entries are missing (no Nextcloud account) -->
+            <TextView
+                android:id="@+id/fab_account_hint"
+                style="@style/FabMenuLabel"
+                android:layout_marginBottom="12dp"
+                android:maxWidth="280dp"
+                android:maxLines="4"
+                android:importantForAccessibility="yes"
+                android:text="@string/fab_account_hint" />
 
             <LinearLayout
                 android:id="@+id/fab_row_session"

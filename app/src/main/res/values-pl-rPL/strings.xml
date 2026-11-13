@@ -222,8 +222,6 @@
   <string name="using_network">Korzystanie z lokalizacji sieciowej</string>
   <string name="using_gps">Korzystanie z lokalizacji GPS</string>
   <string name="background_location_permission_title">Uprawnienia na lokalizację w tle</string>
-  <string name="background_location_permission_message">Aby umożliwić uruchomienie PhoneTrack w tle, należy przyznać dodatkowe uprawnienia. Na następnym ekranie ustawień, wybierz: </string>
-  <string name="location_permission_denied">Odmowa dostępu do lokalizacji</string>
   <string name="sessions_sync_success">Sesje zsynchronizowane</string>
   <string name="pref_autostart_title">Automatyczny start</string>
   <string name="pref_autostart_summary">Rejestrowanie rozpocznie się po uruchomieniu systemu</string>
