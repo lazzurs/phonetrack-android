@@ -16,7 +16,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://jitpack.io")
+        // JitPack builds artifacts from Git on demand, so it only serves the two libraries that
+        // are published nowhere else; everything else must come from Google or Maven Central
+        maven("https://jitpack.io") {
+            content {
+                includeGroup("com.github.bitfireat")
+                includeGroup("com.github.nextcloud")
+            }
+        }
     }
 }
 
