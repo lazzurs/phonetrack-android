@@ -207,7 +207,6 @@
     <string name="delete_logjob_menu_title">Delete log job</string>
     <string name="manage_accounts">Manage accounts</string>
 
-    <string name="is_running">running (%1$s pending, %2$s sent)</string>
 
     <!-- Settings -->
     <string name="settings_server_settings">Account</string>
@@ -223,10 +222,10 @@
     <string name="settings_submit">Connect</string>
     <string name="settings_submitting">Connecting &#8230;</string>
     <string name="settings_theme_title">Theme</string>
-    <string name="settings_notification_importance_title">Low notification importance</string>
-    <string name="settings_notification_importance_subtitle">Reduce logging notification importance</string>
     <string name="settings_reset_stats">Reset stats on log job activation</string>
     <string name="settings_reset_stats_subtitle">Reset statistics in log job information dialog when log job is activated</string>
+    <string name="settings_logging_notification_title">Logging notification</string>
+    <string name="settings_logging_notification_summary">Change how the notification shown while logging looks and sounds in the system settings</string>
     <string name="settings_sms">Listen to SMS</string>
     <string name="settings_sms_subtitle">Answer position requests and run commands received by SMS. Only the allowed senders below are obeyed.</string>
     <string name="settings_sms_keyword_title">SMS keyword</string>
@@ -375,11 +374,7 @@
     <string name="e_auth_failure" translatable="false">Authorization failure: %d</string>
     <string name="e_http_code" translatable="false">HTTP error code: %d</string>
     <string name="e_server_response" translatable="false">Server response error</string>
-    <string name="e_unknown_host" translatable="false">Unknown host: %s</string>
-    <string name="e_bad_url" translatable="false">Bad URL: %s</string>
-    <string name="e_connect" translatable="false">Connection error: %s</string>
     <string name="malformed_post_url" translatable="false">Malformed POST URL</string>
-    <string name="uploading_failed" translatable="false">Uploading failed:</string>
     <string name="uploading_started" translatable="false">Uploading started</string>
 
     <!-- Certificates -->
@@ -471,8 +466,8 @@
     <string name="pref_key_osmdroid_load" translatable="false">loadOsmdroidPath</string>
     <string name="pref_key_osmdroid_delete" translatable="false">osmdroidDelete</string>
     <string name="pref_key_open_syslog" translatable="false">openSyslogManager</string>
+    <string name="pref_key_logging_notification" translatable="false">loggingNotification</string>
     <string name="pref_key_providers" translatable="false">locationProviders</string>
-    <string name="pref_key_notification_importance" translatable="false">notificationImportance</string>
     <string name="pref_key_reset_stats" translatable="false">resetStats</string>
     <string name="pref_key_power_saving_awareness" translatable="false">powerSavingAware</string>
     <string name="pref_key_offline_mode_awareness" translatable="false">offlineModeAware</string>
@@ -530,5 +525,49 @@
     <plurals name="settings_send_deadline_summary">
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>
+    </plurals>
+
+    <!-- Notifications -->
+    <string name="notification_channel_logging">Location logging</string>
+    <string name="notification_channel_logging_description">Shown while log jobs are running, with the positions waiting to be uploaded</string>
+    <string name="notification_channel_sms_position_request">SMS position requests</string>
+    <string name="notification_channel_sms_position_request_description">Shown while the position asked for by an SMS is being found</string>
+    <string name="notification_channel_sms_activity">SMS remote control activity</string>
+    <string name="notification_channel_sms_activity_description">A record of the SMS commands this phone answered or ran</string>
+    <string name="logging_notification_stop">Stop logging</string>
+    <string name="logging_notification_nothing_pending">All positions uploaded</string>
+    <plurals name="logging_notification_title">
+        <item quantity="one">Logging %d log job</item>
+        <item quantity="other">Logging %d log jobs</item>
+    </plurals>
+    <string name="quicksettings_not_logging">Not logging</string>
+    <string name="logging_notification_upload_failing">Upload failing for ‘%1$s’: %2$s</string>
+    <plurals name="logging_notification_upload_failing_several">
+        <item quantity="one">Upload failing for %d log job</item>
+        <item quantity="other">Uploads failing for %d log jobs</item>
+    </plurals>
+
+    <!-- Upload errors -->
+    <string name="upload_error_login_refused">The server refused the login (HTTP %d)</string>
+    <string name="upload_error_not_found">Address not found on the server (HTTP %d)</string>
+    <string name="upload_error_server">The server had an internal error (HTTP %d)</string>
+    <string name="upload_error_http">The server refused the positions (HTTP %d)</string>
+    <string name="upload_error_certificate">The server\'s certificate is not trusted</string>
+    <string name="upload_error_timeout">The server did not answer in time</string>
+    <string name="upload_error_unknown_host">Server not found: %s</string>
+    <string name="upload_error_unknown_host_no_name">Server not found</string>
+    <string name="upload_error_bad_url">The upload address is not valid</string>
+    <string name="upload_error_connect">Could not connect to the server</string>
+    <string name="upload_error_server_response">The server did not accept the positions</string>
+    <string name="upload_error_unknown">Unknown error</string>
+    <string name="logjob_upload_failing">Upload failing: %s</string>
+    <string name="upload_failed_one">Upload failed for ‘%1$s’: %2$s</string>
+    <plurals name="upload_failed_several">
+        <item quantity="one">Upload failed for %d log job</item>
+        <item quantity="other">Upload failed for %d log jobs</item>
+    </plurals>
+    <plurals name="logjob_info_failures_in_a_row">
+        <item quantity="one">%d failed attempt in a row</item>
+        <item quantity="other">%d failed attempts in a row</item>
     </plurals>
 </resources>

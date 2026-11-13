@@ -16,12 +16,7 @@ import com.nextcloud.android.sso.helper.SingleAccountHelper;
 import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.NoRouteToHostException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -282,18 +277,10 @@ public class WebTrackSync {
      * @param e Exception
      */
     private void handleError(Exception e, long ljId) {
-        String message;
-        if (e instanceof UnknownHostException) {
-            message = context.getString(R.string.e_unknown_host, e.getMessage());
-        } else if (e instanceof MalformedURLException || e instanceof URISyntaxException) {
-            message = context.getString(R.string.e_bad_url, e.getMessage());
-        } else if (e instanceof ConnectException || e instanceof NoRouteToHostException) {
-            message = context.getString(R.string.e_connect, e.getMessage());
-        } else {
-            message = e.getMessage();
-        }
-        if (LoggerService.DEBUG) { Log.d(TAG, "[websync retry: " + message + "]"); }
+        String message = UploadErrors.describe(context, e);
+        if (LoggerService.DEBUG) { Log.d(TAG, "[websync retry: " + message + " (" + e + ")]"); }
 
+        // also counts the failures in a row, reset by the next successful upload
         db.setLastSyncError(ljId, System.currentTimeMillis()/1000, message);
         //db.setError(message);
         Intent intent = new Intent(BROADCAST_SYNC_FAILED);

@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Jurnal activitate exportat în %s</string>
   <string name="delete_logjob_menu_title">Ştergeţi jurnalul</string>
   <string name="manage_accounts">Administrare conturi</string>
-  <string name="is_running">in_functiune ( %1$s in_asteptare. %2$s trimis)</string>
   <string name="settings_server_settings">Cont utilizator</string>
   <string name="settings_url">Adresă server</string>
   <string name="settings_url_warn_http">ATENTIE: \"http\" e nesigur. Va rugam folositi \"https\".</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">Conectare</string>
   <string name="settings_submitting">Se conecteaza …</string>
   <string name="settings_theme_title"> Temă</string>
-  <string name="settings_notification_importance_title">Importanța scăzută a notificărilor</string>
-  <string name="settings_notification_importance_subtitle">Reduce importanţa notificărilor de logare</string>
   <string name="settings_reset_stats">Resetare statistici la activarea jurnalului</string>
   <string name="settings_reset_stats_subtitle">Resetează statisticile în dialogul cu informații de jurnal atunci când acesta este activat</string>
   <string name="settings_sms">Ascultă SMS</string>
@@ -244,11 +241,7 @@
   <string name="e_auth_failure">Authorization failure: %d</string>
   <string name="e_http_code">HTTP error code: %d</string>
   <string name="e_server_response">Server response error</string>
-  <string name="e_unknown_host">Unknown host: %s</string>
-  <string name="e_bad_url">Bad URL: %s</string>
-  <string name="e_connect">Connection error: %s</string>
   <string name="malformed_post_url">Malformed POST URL</string>
-  <string name="uploading_failed">Uploading failed:</string>
   <string name="uploading_started">Uploading started</string>
   <string name="certificate_notification_connection_security">PhoneTrack - Securitatea conexiunii</string>
   <string name="trust_certificate_unknown_certificate_found">PhoneTrack a întâlnit un certificat necunoscut. Vrei să ai încredere în el?</string>
@@ -310,7 +303,6 @@
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

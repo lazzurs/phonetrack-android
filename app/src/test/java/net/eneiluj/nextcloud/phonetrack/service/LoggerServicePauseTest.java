@@ -154,7 +154,7 @@ public class LoggerServicePauseTest {
 
         assertTrue(searching());
         assertNull("retry not cancelled", retryAlarm());
-        assertTrue(notificationText(), notificationText().startsWith("running"));
+        assertEquals("All positions uploaded", notificationText());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class LoggerServicePauseTest {
         shadowOf(locationManager).simulateLocation(fix);
         idleAll();
         assertEquals(1, db.getLogjobLocationNotSyncedCount(id));
-        assertTrue(notificationText(), notificationText().startsWith("running"));
+        assertEquals("1 position waiting to upload", notificationText());
     }
 
     @Test

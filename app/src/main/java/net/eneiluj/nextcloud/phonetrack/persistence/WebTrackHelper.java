@@ -30,6 +30,7 @@ import java.util.Map;
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
+import net.eneiluj.nextcloud.phonetrack.util.HttpStatusException;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClient;
 import net.eneiluj.nextcloud.phonetrack.util.ServerResponse;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
@@ -138,10 +139,10 @@ public class WebTrackHelper {
                     }
                 }
                 else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    throw new IOException(context.getString(R.string.e_auth_failure, responseCode));
+                    throw new HttpStatusException(responseCode, context.getString(R.string.e_auth_failure, responseCode));
                 }
                 else if (responseCode != HttpURLConnection.HTTP_OK) {
-                    throw new IOException(context.getString(R.string.e_http_code, responseCode));
+                    throw new HttpStatusException(responseCode, context.getString(R.string.e_http_code, responseCode));
                 }
             } while (redirect);
 
@@ -252,10 +253,10 @@ public class WebTrackHelper {
                     }
                 }
                 else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    throw new IOException(context.getString(R.string.e_auth_failure, responseCode));
+                    throw new HttpStatusException(responseCode, context.getString(R.string.e_auth_failure, responseCode));
                 }
                 else if (responseCode != HttpURLConnection.HTTP_OK) {
-                    throw new IOException(context.getString(R.string.e_http_code, responseCode));
+                    throw new HttpStatusException(responseCode, context.getString(R.string.e_http_code, responseCode));
                 }
             } while (redirect);
 
@@ -353,10 +354,10 @@ public class WebTrackHelper {
                     }
                 }
                 else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    throw new IOException(context.getString(R.string.e_auth_failure, responseCode));
+                    throw new HttpStatusException(responseCode, context.getString(R.string.e_auth_failure, responseCode));
                 }
                 else if (responseCode != HttpURLConnection.HTTP_OK) {
-                    throw new IOException(context.getString(R.string.e_http_code, responseCode));
+                    throw new HttpStatusException(responseCode, context.getString(R.string.e_http_code, responseCode));
                 }
             } while (redirect);
 

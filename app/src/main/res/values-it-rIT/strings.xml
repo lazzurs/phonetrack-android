@@ -154,7 +154,6 @@
   <string name="syslog_saved_success">Registro attività esportato in %s</string>
   <string name="delete_logjob_menu_title">Elimina logjob</string>
   <string name="manage_accounts">Gestisci account</string>
-  <string name="is_running">in esecuzione (%1$s in sospeso, %2$s inviato)</string>
   <string name="settings_server_settings">Account</string>
   <string name="settings_url">Indirizzo Server</string>
   <string name="settings_url_warn_http">ATTENZIONE: \"http\" non è sicuro. Si prega di utilizzare \"https\".</string>
@@ -164,8 +163,6 @@
   <string name="settings_submit">Connetti</string>
   <string name="settings_submitting">Connessione …</string>
   <string name="settings_theme_title">Tema</string>
-  <string name="settings_notification_importance_title">Bassa importanza di notifica</string>
-  <string name="settings_notification_importance_subtitle">Riduce l\'importanza della notifica di logging</string>
   <string name="settings_reset_stats">Reimposta statistiche all\'attivazione del logjob</string>
   <string name="settings_reset_stats_subtitle">Reimposta le statistiche nella finestra di dialogo delle informazioni del log quando il log job è attivato</string>
   <string name="settings_sms">Ascolta SMS</string>
@@ -244,11 +241,7 @@
   <string name="e_auth_failure">Authorization failure: %d</string>
   <string name="e_http_code">HTTP error code: %d</string>
   <string name="e_server_response">Server response error</string>
-  <string name="e_unknown_host">Unknown host: %s</string>
-  <string name="e_bad_url">Bad URL: %s</string>
-  <string name="e_connect">Connection error: %s</string>
   <string name="malformed_post_url">Malformed POST URL</string>
-  <string name="uploading_failed">Uploading failed:</string>
   <string name="uploading_started">Uploading started</string>
   <string name="certificate_notification_connection_security">PhoneTrack - Sicurezza della connessione</string>
   <string name="trust_certificate_unknown_certificate_found">PhoneTrack ha riscontrato un certificato sconosciuto. Vuoi fidarti di esso?</string>
@@ -311,7 +304,6 @@ href=\"https://materialdesignicons.com/\"&gt;Icone Material Design&lt;/a&gt; pro
   <string name="pref_key_osmdroid_delete">osmdroidDelete</string>
   <string name="pref_key_open_syslog">openSyslogManager</string>
   <string name="pref_key_providers">locationProviders</string>
-  <string name="pref_key_notification_importance">notificationImportance</string>
   <string name="pref_key_reset_stats">resetStats</string>
   <string name="pref_key_power_saving_awareness">powerSavingAware</string>
   <string name="pref_key_offline_mode_awareness">offlineModeAware</string>

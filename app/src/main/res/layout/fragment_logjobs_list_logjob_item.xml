@@ -80,6 +80,22 @@
                     android:textSize="@dimen/secondary_font_size" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!-- shown while the uploads of the log job fail -->
+            <TextView
+                android:id="@+id/logjobUploadError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:importantForAccessibility="no"
+                android:maxLines="2"
+                android:paddingTop="2dp"
+                android:textColor="@color/bg_attention"
+                android:textSize="@dimen/secondary_font_size"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_warning_red_16dp" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 

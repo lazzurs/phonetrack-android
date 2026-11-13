@@ -87,6 +87,11 @@ public class WebTrackWorkerTest {
         assertEquals(1, db.getLogjobLocationNotSyncedCount(id));
         String error = db.getLastSyncError(id).getMessage();
         assertTrue(error, error.toLowerCase().contains("connect"));
+        assertEquals(1, db.getLastSyncError(id).getConsecutiveFailures());
+
+        // the retry fails again: counted, so the notification can tell a lasting failure from a blip
+        assertEquals(ListenableWorker.Result.retry(), run(id, 1));
+        assertEquals(2, db.getLastSyncError(id).getConsecutiveFailures());
     }
 
     @Test

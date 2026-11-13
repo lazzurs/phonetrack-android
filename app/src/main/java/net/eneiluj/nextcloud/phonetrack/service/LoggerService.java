@@ -11,7 +11,6 @@ package net.eneiluj.nextcloud.phonetrack.service;
 
 import android.app.AlarmManager;
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -47,7 +46,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
-import androidx.core.app.TaskStackBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,7 +122,8 @@ public class LoggerService extends Service {
     private volatile CorrectingLocation latestGpsFix;
     private static volatile Map<Long, Long> lastUpdateRealtime;
 
-    private final int NOTIFICATION_ID = 1526756640;
+    @VisibleForTesting
+    static final int NOTIFICATION_ID = 1526756640;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
     private boolean useGps = true;
@@ -162,7 +161,8 @@ public class LoggerService extends Service {
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotificationManager != null) {
-            mNotificationManager.cancelAll();
+            // only a notification left by an earlier run: the SMS ones are the owner's record
+            mNotificationManager.cancel(NOTIFICATION_ID);
         }
 
         locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -393,7 +393,12 @@ public class LoggerService extends Service {
         else {
             if (logjobs.isEmpty()) {
                 stopSelf();
+                return;
             }
+        }
+        if (isRunning) {
+            // the notification says how many log jobs run
+            updateNotificationContent();
         }
     }
 
@@ -818,37 +823,9 @@ public class LoggerService extends Service {
     private Notification showNotification(int mId) {
         if (DEBUG) { SystemLogger.v(TAG, "showNotification " + mId); }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean lowImportance = prefs.getBoolean(getString(R.string.pref_key_notification_importance), false);
-        int priority = NotificationCompat.PRIORITY_DEFAULT;
-        if (lowImportance) {
-            priority = NotificationCompat.PRIORITY_MIN;
-        }
-
-        final String channelId = String.valueOf(mId);
-        createNotificationChannel(channelId, lowImportance);
-        String nbLocations = String.valueOf(db.getLocationNotSyncedCount());
-        String nbSent = String.valueOf(db.getNbTotalSync());
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.ic_notify_24dp)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setPriority(priority)
-                        .setOnlyAlertOnce(true)
-                        .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-                        .setContentText(String.format(getString(R.string.is_running), nbLocations, nbSent));
-                        //.setSmallIcon(R.drawable.ic_stat_notify_24dp)
-                        //.setContentText(String.format(getString(R.string.is_running), getString(R.string.app_name)));
-        mNotificationBuilder = mBuilder;
-
-        Intent resultIntent = new Intent(this, LogjobsListViewActivity.class);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(LogjobsListViewActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(resultPendingIntent);
-        Notification mNotification = mBuilder.build();
+        mNotificationBuilder = LoggingNotification.builder(this);
+        setNotificationContent();
+        Notification mNotification = mNotificationBuilder.build();
         mNotificationManager.notify(mId, mNotification);
         return mNotification;
     }
@@ -858,14 +835,19 @@ public class LoggerService extends Service {
             // still starting: showNotification() comes next
             return;
         }
-        String nbLocations = String.valueOf(db.getLocationNotSyncedCount());
-        String nbSent = String.valueOf(db.getNbTotalSync());
-        String text = String.format(getString(R.string.is_running), nbLocations, nbSent);
-        String paused = pausedText();
+        setNotificationContent();
+        mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+    }
+
+    private void setNotificationContent() {
         // a paused job must not look like it is running: say why instead
-        mNotificationBuilder.setContentText(paused != null ? paused : text);
-        mNotificationBuilder.setStyle(paused != null ? new NotificationCompat.BigTextStyle().bigText(paused) : null);
-        mNotificationManager.notify(this.NOTIFICATION_ID, mNotificationBuilder.build());
+        int running = 0;
+        for (long jobId : logjobs.keySet()) {
+            if (!pausedJobs.containsKey(jobId)) {
+                running++;
+            }
+        }
+        LoggingNotification.setContent(this, mNotificationBuilder, running, pausedText(), db);
     }
 
     /** Why (the most important reason) log jobs are paused, or null if none is. */
@@ -877,15 +859,6 @@ public class LoggerService extends Service {
             }
         }
         return cause == null ? null : TrackingReadiness.describe(this, cause);
-    }
-
-    private void createNotificationChannel(String channelId, boolean lowImportance) {
-        int importance = NotificationManager.IMPORTANCE_LOW;
-        if (lowImportance) {
-            importance = NotificationManager.IMPORTANCE_MIN;
-        }
-        NotificationChannel chan = new NotificationChannel(channelId, getString(R.string.app_name), importance);
-        mNotificationManager.createNotificationChannel(chan);
     }
 
     /**

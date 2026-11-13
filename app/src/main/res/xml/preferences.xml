@@ -59,11 +59,13 @@
         android:summary="@string/pref_shownbsynced_summary"
         android:defaultValue="@string/pref_shownbsynced_default" />
 
-        <CheckBoxPreference
+        <!-- opens the system settings of the channel: an app can lower a channel's importance but not raise it -->
+        <Preference
             android:icon="@drawable/ic_notifications_grey_24dp"
-            android:key="@string/pref_key_notification_importance"
-            android:title="@string/settings_notification_importance_title"
-            android:summary="@string/settings_notification_importance_subtitle" />
+            android:key="@string/pref_key_logging_notification"
+            android:persistent="false"
+            android:title="@string/settings_logging_notification_title"
+            android:summary="@string/settings_logging_notification_summary" />
 
         <CheckBoxPreference
             android:icon="@drawable/ic_sync_grey_24dp"
