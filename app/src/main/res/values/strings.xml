@@ -378,6 +378,25 @@
     <string name="auto_zoom">Auto zoom</string>
     <string name="allow_rotation">Allow rotation</string>
 
+    <!-- Accessibility (TalkBack) -->
+    <string name="a11y_logjob_more_options">More options for %1$s</string>
+    <string name="a11y_logjob_enabled">enabled</string>
+    <string name="a11y_logjob_disabled">disabled</string>
+    <string name="a11y_logjob_fix_found">location found</string>
+    <string name="a11y_logjob_fix_searching">searching for location</string>
+    <string name="a11y_logjob_toggle_action">Turn on or off</string>
+    <string name="a11y_nav_selected">selected</string>
+    <string name="a11y_nav_folder_action">Expand or collapse</string>
+    <string name="a11y_nav_track_action">Show or hide track</string>
+    <plurals name="a11y_logjob_pending">
+        <item quantity="one">%d position waiting to upload</item>
+        <item quantity="other">%d positions waiting to upload</item>
+    </plurals>
+    <plurals name="a11y_logjob_sent">
+        <item quantity="one">%d position uploaded</item>
+        <item quantity="other">%d positions uploaded</item>
+    </plurals>
+
     <!-- Plurals -->
     <plurals name="delete_logjobs_confirm">
         <item quantity="one">Delete this log job?</item>

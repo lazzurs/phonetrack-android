@@ -4,11 +4,14 @@ import android.content.SharedPreferences;
 //import android.preference.PreferenceManager;
 import android.graphics.PorterDuff;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SwitchCompat;
+import android.content.Context;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -130,6 +133,11 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             Log.d(TAG, "[UUUUUUUUUUUUUUPDATE logjob enabled : ]"+logjob.isEnabled());
             nvHolder.logjobEnabled.setChecked(logjob.isEnabled());
+            // name the switch and the menu button after the job, otherwise TalkBack reads "Switch, on"
+            final String jobTitle = Html.fromHtml(logjob.getTitle()).toString();
+            nvHolder.logjobEnabled.setContentDescription(jobTitle);
+            nvHolder.moreButton.setContentDescription(
+                    db.getContext().getString(R.string.a11y_logjob_more_options, jobTitle));
             if (nvHolder.logjobEnabled.isChecked()) {
                 nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ThemeUtils.primaryDarkColor(db.getContext()), PorterDuff.Mode.SRC_IN);
                 nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ThemeUtils.primaryColor(db.getContext()), PorterDuff.Mode.MULTIPLY);
@@ -166,8 +174,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             int visible = (nb == 0) ? View.INVISIBLE : View.VISIBLE;
             nvHolder.nosyncIcon.setVisibility(visible);
 
+            int nbSentShown = 0;
             if (prefs.getBoolean(db.getContext().getString(R.string.pref_key_shownbsynced), false)) {
                 int nbSent = db.getNbSync(logjob.getId());
+                nbSentShown = nbSent;
                 nbTxt = (nbSent == 0) ? "" : String.valueOf(nbSent);
                 if (LoggerService.DEBUG) {
                     Log.d(TAG, "[onBind : " + nbSent + " nbSync]");
@@ -183,6 +193,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
             // icon to show if there was a location fix since last activation
+            Context ctx = db.getContext();
+            List<String> summary = new ArrayList<>();
+            summary.add(jobTitle);
+            summary.add(ctx.getString(logjob.isEnabled() ? R.string.a11y_logjob_enabled : R.string.a11y_logjob_disabled));
             if (!logjob.isEnabled()) {
                 nvHolder.locSuccessIcon.setVisibility(View.GONE);
             }
@@ -191,11 +205,21 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // select the icon
                 if (db.getLastLocTimestamp(logjob.getId()) >= db.getLastActivationGpsTimestamp(logjob.getId())) {
                     nvHolder.locSuccessIcon.setImageResource(R.drawable.ic_location_found_grey_24dp);
+                    summary.add(ctx.getString(R.string.a11y_logjob_fix_found));
                 }
                 else {
                     nvHolder.locSuccessIcon.setImageResource(R.drawable.ic_location_searching_grey_24dp);
+                    summary.add(ctx.getString(R.string.a11y_logjob_fix_searching));
                 }
             }
+            if (nb > 0) {
+                summary.add(ctx.getResources().getQuantityString(R.plurals.a11y_logjob_pending, nb, nb));
+            }
+            if (nbSentShown > 0) {
+                summary.add(ctx.getResources().getQuantityString(R.plurals.a11y_logjob_sent, nbSentShown, nbSentShown));
+            }
+            // The row sums up its state; the icons and counters are hidden from TalkBack in the layout.
+            nvHolder.itemView.setContentDescription(TextUtils.join(", ", summary));
         }
     }
 
@@ -296,6 +320,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.moreButton = v.findViewById(R.id.moreButton);
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
+            // the swipe gesture has no TalkBack equivalent, so offer it as an action on the row
+            ViewCompat.addAccessibilityAction(v, v.getContext().getString(R.string.a11y_logjob_toggle_action),
+                    (view, args) -> logjobEnabled.performClick());
         }
 
         @Override

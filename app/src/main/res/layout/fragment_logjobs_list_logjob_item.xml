@@ -101,8 +101,7 @@
                 android:src="@drawable/ic_baseline_more_vert_24"
                 app:tint="#999999"
                 android:clickable="true"
-                android:background="#00000000"
-                android:textColor="#000000" />
+                android:background="#00000000" />
 
         </FrameLayout>
 
@@ -135,8 +134,8 @@
             android:layout_marginEnd="2dp"
             android:layout_marginBottom="1dp"
             android:adjustViewBounds="false"
-            android:src="@drawable/ic_location_searching_grey_24dp"
-             />
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_location_searching_grey_24dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -153,6 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
+            android:importantForAccessibility="no"
             android:text="1" />
 
         <ImageView
@@ -163,7 +163,8 @@
             android:layout_marginEnd="2dp"
             android:layout_marginBottom="1dp"
             android:adjustViewBounds="false"
-            android:src="@drawable/ic_notify_grey_24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_cloud_upload_grey_24dp"
             app:tint="#990000" />
 
         <TextView
@@ -171,6 +172,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
+            android:importantForAccessibility="no"
             android:text="2" />
 
         <ImageView
@@ -180,7 +182,8 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="1dp"
             android:adjustViewBounds="false"
-            android:src="@drawable/ic_notify_grey_24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_cloud_done_grey_24dp"
             app:tint="#009900" />
 
     </LinearLayout>
