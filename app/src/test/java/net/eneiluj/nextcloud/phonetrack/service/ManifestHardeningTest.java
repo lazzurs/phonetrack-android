@@ -20,8 +20,11 @@ import org.junit.runner.RunWith;
 
 import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Guards manifest declarations that platform rules or security depend on.
@@ -82,5 +85,48 @@ public class ManifestHardeningTest {
     public void bootReceiverIsNotExported() throws Exception {
         android.content.pm.ActivityInfo info = pm.getReceiverInfo(new ComponentName(context, BootCompletedReceiver.class), 0);
         assertFalse(info.exported);
+    }
+
+    @Test
+    public void onlyTheExpectedComponentsAreExported() throws Exception {
+        PackageInfo pkg = pm.getPackageInfo(context.getPackageName(),
+                PackageManager.GET_ACTIVITIES | PackageManager.GET_SERVICES
+                        | PackageManager.GET_RECEIVERS | PackageManager.GET_PROVIDERS);
+        Set<String> exported = new TreeSet<>();
+        List<android.content.pm.ComponentInfo> all = new ArrayList<>();
+        for (android.content.pm.ComponentInfo[] group : new android.content.pm.ComponentInfo[][]{
+                pkg.activities, pkg.services, pkg.receivers, pkg.providers}) {
+            if (group != null) {
+                all.addAll(Arrays.asList(group));
+            }
+        }
+        for (android.content.pm.ComponentInfo info : all) {
+            if (info.exported) {
+                exported.add(info.name);
+            }
+        }
+        String activities = "net.eneiluj.nextcloud.phonetrack.android.activity.";
+        Set<String> expected = new TreeSet<>(Arrays.asList(
+                // launcher
+                activities + "LogjobsListViewActivity",
+                // the two share targets (aliases of the non-exported editors)
+                activities + "SharePhoneTrackLogjobAlias",
+                activities + "ShareCustomLogjobAlias",
+                "net.eneiluj.nextcloud.phonetrack.android.quicksettings.NewLogjobTileService",
+                SmsListener.class.getName(),
+                // AndroidX libraries; each is protected by a system-only permission or ignores its input
+                "androidx.profileinstaller.ProfileInstallReceiver",
+                "androidx.work.impl.background.systemjob.SystemJobService",
+                "androidx.work.impl.diagnostics.DiagnosticsReceiver"));
+        assertEquals(expected, exported);
+    }
+
+    @Test
+    public void logjobEditorsAreNotExported() throws Exception {
+        // an exported editor would let any app open an existing logjob by ID
+        String activities = "net.eneiluj.nextcloud.phonetrack.android.activity.";
+        for (String name : new String[]{"EditPhoneTrackLogjobActivity", "EditCustomLogjobActivity", "EditMapsLogjobActivity"}) {
+            assertFalse(name, pm.getActivityInfo(new ComponentName(context.getPackageName(), activities + name), 0).exported);
+        }
     }
 }

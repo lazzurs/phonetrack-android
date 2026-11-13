@@ -35,8 +35,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.ServiceCompat;
 
 import net.eneiluj.nextcloud.phonetrack.R;
-import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
+import net.eneiluj.nextcloud.phonetrack.util.SmsInfoStore;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 
@@ -324,9 +324,7 @@ public class SmsLocationSendService extends Service {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        Intent ptIntent = new Intent(getApplicationContext(), LogjobsListViewActivity.class);
-        ptIntent.putExtra(LogjobsListViewActivity.PARAM_SMSINFO_CONTENT, smsContent);
-        ptIntent.putExtra(LogjobsListViewActivity.PARAM_SMSINFO_FROM, fromNotification);
+        Intent ptIntent = SmsInfoStore.save(getApplicationContext(), smsContent, fromNotification);
 
         String chanId = String.valueOf(CHANNEL_ID);
         createNotificationChannel(chanId, NotificationManager.IMPORTANCE_DEFAULT);

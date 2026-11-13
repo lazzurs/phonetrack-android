@@ -103,14 +103,21 @@
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="standard"
+            android:exported="false" />
+
+        <!-- The share target. The editor itself is not exported: this alias is the only way in from
+             another app, and the editor ignores any logjob ID that arrives through it. -->
+        <activity-alias
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.SharePhoneTrackLogjobAlias"
+            android:targetActivity="net.eneiluj.nextcloud.phonetrack.android.activity.EditPhoneTrackLogjobActivity"
+            android:label="@string/simple_edit_pt"
             android:exported="true">
-            <!-- this is to receive share action from other apps -->
             <intent-filter android:label="@string/action_create_share">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-        </activity>
+        </activity-alias>
 
         <activity
             android:name="net.eneiluj.nextcloud.phonetrack.android.activity.EditCustomLogjobActivity"
@@ -118,14 +125,21 @@
             android:parentActivityName="net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="standard"
+            android:exported="false" />
+
+        <!-- The share target. The editor itself is not exported: this alias is the only way in from
+             another app, and the editor ignores any logjob ID that arrives through it. -->
+        <activity-alias
+            android:name="net.eneiluj.nextcloud.phonetrack.android.activity.ShareCustomLogjobAlias"
+            android:targetActivity="net.eneiluj.nextcloud.phonetrack.android.activity.EditCustomLogjobActivity"
+            android:label="@string/simple_edit_cu"
             android:exported="true">
-            <!-- this is to receive share action from other apps -->
             <intent-filter android:label="@string/action_create_custom_share">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-        </activity>
+        </activity-alias>
 
         <activity
             android:name="net.eneiluj.nextcloud.phonetrack.android.activity.EditMapsLogjobActivity"

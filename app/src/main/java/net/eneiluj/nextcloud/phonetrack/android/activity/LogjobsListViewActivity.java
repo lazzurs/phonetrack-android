@@ -118,6 +118,7 @@ import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
+import net.eneiluj.nextcloud.phonetrack.util.SmsInfoStore;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
@@ -143,8 +144,6 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
     private static final String TAG = LogjobsListViewActivity.class.getSimpleName();
 
-    public final static String PARAM_SMSINFO_FROM = "net.eneiluj.nextcloud.phonetrack.smsinfoFrom";
-    public final static String PARAM_SMSINFO_CONTENT = "net.eneiluj.nextcloud.phonetrack.smsinfoContent";
 
     public final static String CREDENTIALS_CHANGED = "net.eneiluj.nextcloud.phonetrack.CREDENTIALS_CHANGED";
     public static final String ADAPTER_KEY_ALL = "all";
@@ -287,9 +286,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             startForegroundService(intent);
         }
 
-        String smsInfoContent = getIntent().getStringExtra(PARAM_SMSINFO_CONTENT);
-        String smsInfoFrom = getIntent().getStringExtra(PARAM_SMSINFO_FROM);
-        if (smsInfoContent != null) {
+        // only text the app stored itself (see SmsInfoStore): this activity is exported
+        String[] smsInfo = SmsInfoStore.lookup(this, getIntent());
+        if (smsInfo != null) {
+            String smsInfoContent = smsInfo[0];
+            String smsInfoFrom = smsInfo[1];
             View dView = LayoutInflater.from(this).inflate(R.layout.items_sms_infodialog, null);
             TextView tv = dView.findViewById(R.id.smsInfoDialogTextMessage);
             tv.setText(smsInfoContent);
