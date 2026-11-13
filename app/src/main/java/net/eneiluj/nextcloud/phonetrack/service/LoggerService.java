@@ -586,10 +586,13 @@ public class LoggerService extends Service {
             long searchDurationMillis = startTimeout ? logjobWorker.searchDurationMillis() : 0;
             // before the logger thread exists (first searches, from onCreate) callbacks run on the main thread, as before
             Executor callbackExecutor = new Handler(looper != null ? looper : Looper.getMainLooper())::post;
-            if (useNet) {
+            long updateIntervalMillis = logjobWorker.updateIntervalMillis();
+            // a keep GPS on log job never uses network fixes while it has GPS
+            if (useNet && (!useGps || logjobWorker.usesNetworkFixesWithGps())) {
                 // normal or significant motion based sampling
                 locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                        searchRequest(LocationManager.NETWORK_PROVIDER, searchDurationMillis), callbackExecutor, networkLocListener);
+                        searchRequest(LocationManager.NETWORK_PROVIDER, updateIntervalMillis, searchDurationMillis),
+                        callbackExecutor, networkLocListener);
 
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
@@ -598,7 +601,8 @@ public class LoggerService extends Service {
             }
             if (useGps) {
                 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                        searchRequest(LocationManager.GPS_PROVIDER, searchDurationMillis), callbackExecutor, gpsLocListener);
+                        searchRequest(LocationManager.GPS_PROVIDER, updateIntervalMillis, searchDurationMillis),
+                        callbackExecutor, gpsLocListener);
 
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
@@ -632,8 +636,12 @@ public class LoggerService extends Service {
      */
     @VisibleForTesting
     static LocationRequest searchRequest(String provider, long durationMillis) {
-        LocationRequest.Builder builder = new LocationRequest.Builder(1000)
-                .setMinUpdateIntervalMillis(1000)
+        return searchRequest(provider, 1000, durationMillis);
+    }
+
+    private static LocationRequest searchRequest(String provider, long updateIntervalMillis, long durationMillis) {
+        LocationRequest.Builder builder = new LocationRequest.Builder(updateIntervalMillis)
+                .setMinUpdateIntervalMillis(updateIntervalMillis)
                 .setQuality(LocationManager.GPS_PROVIDER.equals(provider)
                         ? LocationRequest.QUALITY_HIGH_ACCURACY : LocationRequest.QUALITY_BALANCED_POWER_ACCURACY);
         if (durationMillis > 0) {
@@ -1199,6 +1207,20 @@ public class LoggerService extends Service {
         }
 
         /**
+         * Time between location updates while searching.
+         */
+        public long updateIntervalMillis() {
+            return 1000;
+        }
+
+        /**
+         * Whether network fixes are of any use when GPS is used too.
+         */
+        public boolean usesNetworkFixesWithGps() {
+            return true;
+        }
+
+        /**
          * How long a search may keep the location providers on, 0 for no limit.
          */
         public long searchDurationMillis() {
@@ -1434,6 +1456,17 @@ public class LoggerService extends Service {
             return 0;
         }
 
+        @Override
+        public long updateIntervalMillis() {
+            return LocationSamplePolicy.keepGpsOnUpdateIntervalMillis(mIntervalTimeMillis);
+        }
+
+        @Override
+        public boolean usesNetworkFixesWithGps() {
+            // they would only be cached, and nothing reads the cache in this mode
+            return false;
+        }
+
         public void scheduleSampleAfterInterval(long millisDelay) {
 
         }
@@ -1443,14 +1476,16 @@ public class LoggerService extends Service {
             if (loc.getProvider().equals(LocationManager.GPS_PROVIDER)
                     || (!useGps)
             ) {
+                // most fixes come before the minimum time is over: drop them before any other work
+                if (!isMinTimeOk(loc)) {
+                    return;
+                }
                 SystemLogger.d(TAG, "[LogjobClassicGpsOnWorker::handleLocationChange] Got GPS result (or network one without using GPS provider), immediately accepting");
 
-                // respect minimum distance/accuracy/time settings
+                // respect minimum distance/accuracy settings
                 boolean minDistanceOk = isMinDistanceOk(loc);
                 boolean minAccuracyOk = isMinAccuracyOk(loc);
-                boolean minTimeOk = isMinTimeOk(loc);
-                long timeSinceLastAccepted = (loc.getElapsedRealtimeNanos() / 1000000000) - (mLastUpdateRealtime / 1000);
-                if (minDistanceOk && minAccuracyOk && minTimeOk) {
+                if (minDistanceOk && minAccuracyOk) {
                     // Accept, store and sync location
                     mCachedNetworkResult = null;
                     lastLocation = loc;
@@ -1460,7 +1495,7 @@ public class LoggerService extends Service {
                 } else {
                     SystemLogger.d(TAG, "Not enough DISTANCE (" + minDistanceOk + " min " + mLogJob.getMinDistance()
                             + ") or ACCURACY (" + minAccuracyOk + " min " + mLogJob.getMinAccuracy()
-                            + ") or TIME (" + minTimeOk + " " + timeSinceLastAccepted + "/" + mLogJob.getMinTime() + "), we skip this location");
+                            + "), we skip this location");
                 }
                 // no need to schedule anything now as requestLocationUpdates is still running
             } else {
@@ -1472,11 +1507,8 @@ public class LoggerService extends Service {
 
         protected boolean isMinTimeOk(CorrectingLocation loc) {
             long timeSinceLastAccepted = (loc.getElapsedRealtimeNanos() / 1000000000) - (mLastUpdateRealtime / 1000);
-            int minTime = mLogJob.getMinTime();
-            SystemLogger.d(TAG, "is " + timeSinceLastAccepted + " >= " + minTime + "?");
-            boolean isOk = (timeSinceLastAccepted >= minTime);
-            SystemLogger.d(TAG, "isMinTimeOk? " + isOk);
-            return isOk;
+            // not logged: called for every fix
+            return timeSinceLastAccepted >= mLogJob.getMinTime();
         }
 
         // this is triggered only when significant motion mode is enabled

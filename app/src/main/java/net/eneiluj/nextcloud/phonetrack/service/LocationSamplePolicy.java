@@ -35,7 +35,22 @@ public final class LocationSamplePolicy {
     /** ...nor beyond this, unless the log job's own interval is longer. */
     static final long MAX_BACKOFF_INTERVAL_MILLIS = 10 * 60 * 1000L;
 
+    /**
+     * Longest time between location updates of a "keep GPS on" log job. Android may switch GPS
+     * off between fixes from 10 s between updates, which would defeat keeping it on.
+     */
+    static final long MAX_KEEP_GPS_ON_UPDATE_INTERVAL_MILLIS = 5000;
+
     private LocationSamplePolicy() {
+    }
+
+    /**
+     * Time between location updates for a "keep GPS on" log job, which used to get one per
+     * second whatever its interval: a fifth of the interval, so a point is logged at most 20 %
+     * late, between 1 s and {@link #MAX_KEEP_GPS_ON_UPDATE_INTERVAL_MILLIS}.
+     */
+    public static long keepGpsOnUpdateIntervalMillis(long intervalMillis) {
+        return Math.max(1000, Math.min(MAX_KEEP_GPS_ON_UPDATE_INTERVAL_MILLIS, intervalMillis / 5));
     }
 
     /**
