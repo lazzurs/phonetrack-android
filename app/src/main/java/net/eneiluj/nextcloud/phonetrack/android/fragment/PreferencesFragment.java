@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -26,7 +27,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
@@ -71,6 +71,7 @@ import net.eneiluj.nextcloud.phonetrack.service.SmsAlarmService;
 import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
 import net.eneiluj.nextcloud.phonetrack.util.SmsCommandGuard;
 import net.eneiluj.nextcloud.phonetrack.util.SmsSenderAllowlist;
+import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
 import net.eneiluj.nextcloud.phonetrack.util.ThemeUtils;
 
 import java.io.File;
@@ -80,6 +81,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class PreferencesFragment extends PreferenceFragmentCompat implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback{
@@ -87,7 +89,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     public final static String UPDATED_PROVIDERS = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS";
     public final static String UPDATED_PROVIDERS_VALUE = "net.eneiluj.nextcloud.phonetrack.UPDATED_PROVIDERS_VALUE";
 
-    public final static int PERMISSION_SMS_SEND_AND_RECEIVE = 4;
     private final static int import_file_cmd = 123;
     private static final int MIN_SMS_PIN_LENGTH = 4;
 
@@ -109,6 +110,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         super.onResume();
         PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .registerOnSharedPreferenceChangeListener(trustSettingsListener);
+        // the user may have changed permissions in the system settings
+        CheckBoxPreference smsPref = findPreference(getString(R.string.pref_key_sms));
+        if (smsPref != null) {
+            updateSmsStatus(smsPref.isChecked());
+        }
     }
 
     @Override
@@ -277,49 +283,32 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         smsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Boolean listenToSms = (Boolean) newValue;
-                if (listenToSms) {
-                    if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SEND_SMS)
-                            != PackageManager.PERMISSION_GRANTED
-                    || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
-                            != PackageManager.PERMISSION_GRANTED
-                    || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS)
-                            != PackageManager.PERMISSION_GRANTED
-                    || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS)
-                            != PackageManager.PERMISSION_GRANTED) {
-
-                        if (LoggerService.DEBUG) {
-                            Log.d(TAG, "[request send sms permission]");
-                        }
-                        ActivityCompat.requestPermissions(
-                                getActivity(),
-                                new String[]{
-                                        Manifest.permission.SEND_SMS,
-                                        Manifest.permission.RECEIVE_SMS,
-                                        Manifest.permission.READ_CONTACTS,
-                                        Manifest.permission.GET_ACCOUNTS
-                                },
-                                PERMISSION_SMS_SEND_AND_RECEIVE
-                        );
-                    }
-
-                    setSmsSettingsVisible(true);
+                boolean listenToSms = (Boolean) newValue;
+                if (listenToSms && !hasSmsPermissions()) {
+                    // stays unticked until the user has been told why and has allowed both
+                    showSmsPermissionExplanation();
+                    return false;
                 }
-                else {
-                    setSmsSettingsVisible(false);
-                }
+                setSmsSettingsVisible(listenToSms);
+                updateSmsStatus(listenToSms);
                 return true;
             }
+        });
+
+        findPreference(getString(R.string.pref_key_sms_fix_background)).setOnPreferenceClickListener(preference -> {
+            openAppSettings();
+            return true;
         });
 
         setupSmsAllowedSenders();
         setupSmsPin();
         setSmsSettingsVisible(smsPref.isChecked());
+        updateSmsStatus(smsPref.isChecked());
 
         final EditTextPreference groupSyncPref = (EditTextPreference) findPreference(getString(R.string.pref_key_group_sync));
         String groupSyncValStr = sp.getString(getString(R.string.pref_key_group_sync), "0");
         long groupSyncVal = Long.valueOf(groupSyncValStr);
-        groupSyncPref.setSummary(String.valueOf(groupSyncVal));
+        setGroupSyncSummary(groupSyncPref, groupSyncVal);
         groupSyncPref.setDialogMessage(getString(R.string.settings_group_sync_long));
         groupSyncPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
@@ -345,7 +334,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                     /*SharedPreferences.Editor editor = sp.edit();
                     editor.putString(getString(R.string.pref_key_group_sync), String.valueOf(valLong));
                     editor.apply();*/
-                    preference.setSummary(String.valueOf(valLong));
+                    setGroupSyncSummary(preference, valLong);
                     updateSendDeadlinePref(valLong, null);
                     applyUploadSettingsOnceSaved();
                     return true;
@@ -480,6 +469,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         final View preview = colorView.findViewById(R.id.colorPreview);
         final EditText hexField = colorView.findViewById(R.id.colorHex);
         final int[] chosen = {colorPref.getValue()};
+        final View contrastHint = colorView.findViewById(R.id.colorContrastHint);
+        final Runnable updateContrastHint = () -> contrastHint.setVisibility(
+                ThemeUtils.onPrimaryColor(chosen[0]) == Color.WHITE ? View.GONE : View.VISIBLE);
+        updateContrastHint.run();
 
         preview.setBackground(ColorPreference.circle(chosen[0]));
         hexField.setText(ColorPreference.toHex(chosen[0]));
@@ -500,6 +493,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 preview.setBackground(ColorPreference.circle(color));
                 // updates the field; the watcher below accepts the same value
                 hexField.setText(ColorPreference.toHex(color));
+                updateContrastHint.run();
             });
             grid.addView(swatch);
         }
@@ -519,6 +513,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 if (parsed != null) {
                     chosen[0] = parsed;
                     preview.setBackground(ColorPreference.circle(parsed));
+                    updateContrastHint.run();
                 }
             }
         });
@@ -549,6 +544,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         findPreference(getString(R.string.pref_key_sms_allowed_senders)).setVisible(visible);
         findPreference(getString(R.string.pref_key_sms_add_contact)).setVisible(visible);
         findPreference(getString(R.string.pref_key_sms_pin)).setVisible(visible);
+        if (!visible) {
+            findPreference(getString(R.string.pref_key_sms_fix_background)).setVisible(false);
+        }
     }
 
     /** The PIN lives in CredentialStore, so it is never shown in the summary and never backed up. */
@@ -570,6 +568,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             SmsCommandGuard.resetPinFailures(requireContext());
             ((EditTextPreference) preference).setText(pin);
             updateSmsPinSummary(preference);
+            updateSmsStatus(isSmsChecked());
             return false;
         });
     }
@@ -596,6 +595,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             String normalised = SmsSenderAllowlist.join(numbers);
             ((EditTextPreference) preference).setText(normalised);
             updateSmsAllowedSendersSummary(preference, normalised);
+            updateSmsStatus(isSmsChecked());
             return false;
         });
 
@@ -633,6 +633,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         String joined = SmsSenderAllowlist.join(numbers);
         allowedPref.setText(joined);
         updateSmsAllowedSendersSummary(allowedPref, joined);
+        updateSmsStatus(isSmsChecked());
+    }
+
+    private boolean isSmsChecked() {
+        CheckBoxPreference smsPref = findPreference(getString(R.string.pref_key_sms));
+        return smsPref != null && smsPref.isChecked();
     }
 
     private void updateSmsAllowedSendersSummary(Preference preference, String value) {
@@ -642,9 +648,116 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 : SmsSenderAllowlist.join(numbers));
     }
 
-    public void disableSms() {
-        final CheckBoxPreference smsPref = (CheckBoxPreference) findPreference(getString(R.string.pref_key_sms));
-        smsPref.setChecked(false);
+    private boolean hasPermission(String permission) {
+        return ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean hasSmsPermissions() {
+        return hasPermission(Manifest.permission.SEND_SMS) && hasPermission(Manifest.permission.RECEIVE_SMS);
+    }
+
+    private void openAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", requireContext().getPackageName(), null));
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Log.w(TAG, "No settings screen for the app: " + e);
+        }
+    }
+
+    private final ActivityResultLauncher<String[]> smsPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), this::onSmsPermissionResult);
+
+    private final ActivityResultLauncher<String> contactsPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> { });
+
+    /** Explains what the SMS permissions are for before Android asks, and asks only for those two. */
+    void showSmsPermissionExplanation() {
+        new AlertDialog.Builder(requireActivity())
+                .setTitle(R.string.settings_sms_permission_title)
+                .setMessage(R.string.settings_sms_permission_message)
+                .setPositiveButton(R.string.settings_sms_permission_continue, (dialog, which) ->
+                        smsPermissionLauncher.launch(new String[]{
+                                Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS}))
+                .setNegativeButton(R.string.simple_cancel, null)
+                .show();
+    }
+
+    /** Every permission asked for is checked, not just the first one. */
+    void onSmsPermissionResult(Map<String, Boolean> result) {
+        boolean granted = Boolean.TRUE.equals(result.get(Manifest.permission.SEND_SMS))
+                && Boolean.TRUE.equals(result.get(Manifest.permission.RECEIVE_SMS));
+        if (granted) {
+            CheckBoxPreference smsPref = findPreference(getString(R.string.pref_key_sms));
+            smsPref.setChecked(true);
+            setSmsSettingsVisible(true);
+            updateSmsStatus(true);
+            offerContactNames();
+            return;
+        }
+        // no further system prompt is shown once the user has chosen "don't allow" twice
+        boolean blocked = false;
+        for (String permission : new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS}) {
+            if (!Boolean.TRUE.equals(result.get(permission))
+                    && !shouldShowRequestPermissionRationale(permission)) {
+                blocked = true;
+            }
+        }
+        if (blocked) {
+            new AlertDialog.Builder(requireActivity())
+                    .setTitle(R.string.settings_sms_permission_blocked_title)
+                    .setMessage(R.string.settings_sms_permission_blocked_message)
+                    .setPositiveButton(R.string.settings_sms_permission_open_settings, (dialog, which) -> openAppSettings())
+                    .setNegativeButton(R.string.simple_cancel, null)
+                    .show();
+        } else {
+            showToast(getString(R.string.settings_sms_permission_denied), Toast.LENGTH_LONG);
+        }
+    }
+
+    /** Contact names in notifications are a nicety, so this is asked separately and can be declined. */
+    private void offerContactNames() {
+        if (hasPermission(Manifest.permission.READ_CONTACTS)) {
+            return;
+        }
+        new AlertDialog.Builder(requireActivity())
+                .setTitle(R.string.settings_sms_contacts_title)
+                .setMessage(R.string.settings_sms_contacts_message)
+                .setPositiveButton(R.string.settings_sms_contacts_allow, (dialog, which) ->
+                        contactsPermissionLauncher.launch(Manifest.permission.READ_CONTACTS))
+                .setNegativeButton(R.string.settings_sms_contacts_skip, null)
+                .show();
+    }
+
+    /**
+     * "Listen to SMS" can be on while it can never work: say so in its summary, and offer the way out.
+     *
+     * @param enabled the value of the box, which is not saved yet when called from its change listener
+     */
+    void updateSmsStatus(boolean enabled) {
+        Preference smsPref = findPreference(getString(R.string.pref_key_sms));
+        Preference fixBackground = findPreference(getString(R.string.pref_key_sms_fix_background));
+        EditTextPreference allowedPref = findPreference(getString(R.string.pref_key_sms_allowed_senders));
+        if (smsPref == null || fixBackground == null || allowedPref == null) {
+            return;
+        }
+        StringBuilder summary = new StringBuilder(getString(R.string.settings_sms_subtitle));
+        boolean needsBackgroundLocation = false;
+        if (enabled) {
+            if (!hasSmsPermissions()) {
+                summary.append("\n").append(getString(R.string.settings_sms_summary_no_permission));
+            }
+            if (SmsSenderAllowlist.parse(allowedPref.getText()).isEmpty()) {
+                summary.append("\n").append(getString(R.string.settings_sms_summary_no_senders));
+            }
+            if (CredentialStore.getSmsPin(requireContext()).isEmpty()) {
+                summary.append("\n").append(getString(R.string.settings_sms_summary_no_pin));
+            }
+            needsBackgroundLocation = !SupportUtil.hasBackgroundLocationPermission(requireContext());
+        }
+        smsPref.setSummary(summary.toString());
+        fixBackground.setVisible(enabled && needsBackgroundLocation);
     }
 
     private void setThemePreferenceIcon(Preference preference, boolean darkThemeActive) {
@@ -679,6 +792,16 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         } else {
             int quantity = (int) Math.min(hours, Integer.MAX_VALUE);
             pref.setSummary(getResources().getQuantityString(R.plurals.settings_send_deadline_summary, quantity, quantity));
+        }
+    }
+
+    /** A bare number says nothing: give the unit, and say what 0 and 1 mean. */
+    private void setGroupSyncSummary(Preference pref, long points) {
+        if (points <= 1) {
+            pref.setSummary(R.string.settings_group_sync_off);
+        } else {
+            int quantity = (int) Math.min(points, Integer.MAX_VALUE);
+            pref.setSummary(getResources().getQuantityString(R.plurals.settings_group_sync_summary, quantity, quantity));
         }
     }
 
