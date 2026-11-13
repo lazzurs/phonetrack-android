@@ -14,14 +14,16 @@ import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 import com.nextcloud.android.sso.helper.SingleAccountHelper;
@@ -39,6 +41,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -47,7 +52,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import at.bitfire.cert4android.CustomCertManager;
 import net.eneiluj.nextcloud.phonetrack.R;
@@ -113,9 +117,12 @@ public class SettingsActivity extends AppCompatActivity {
     private String old_password = "";
 
     private WebView webView;
+    /** The account form, kept so a failed web login can return to it with the address still filled in */
+    private View formView;
+    /** While the web login is shown, Back goes back in its history and then returns to the form */
+    private OnBackPressedCallback webLoginBackCallback;
 
     private boolean first_run = false;
-    private boolean useWebLogin = true;
 
     private LoginDialogFragment loginDialogFragment;
 
@@ -124,6 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         View view = LayoutInflater.from(this).inflate(R.layout.activity_settings, null);
         setContentView(view);
+        formView = view;
         EdgeToEdgeUtil.enable(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -195,6 +203,18 @@ public class SettingsActivity extends AppCompatActivity {
         });
         setPasswordHint(false);
 
+        webLoginBackCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                if (webView != null && webView.canGoBack()) {
+                    webView.goBack();
+                } else {
+                    showLoginForm(null);
+                }
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, webLoginBackCallback);
+
         handleSubmitButtonEnabled();
     }
 
@@ -251,6 +271,8 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String url = PhoneTrackClientUtil.formatURL(field_url.getText().toString());
+                // a login error is about the old address
+                url_wrapper.setError(null);
 
                 if (PhoneTrackClientUtil.isHttp(url) && !preferences.getBoolean(SETTINGS_USE_SSO, false)) {
                     urlWarnHttp.setVisibility(View.VISIBLE);
@@ -310,20 +332,6 @@ public class SettingsActivity extends AppCompatActivity {
         return Patterns.WEB_URL.matcher(url).matches();
     }
 
-    private void legacyLogin() {
-        String url = field_url.getText().toString().trim();
-        String username = field_username.getText().toString();
-        String password = field_password.getText().toString();
-
-        if (password.isEmpty()) {
-            password = old_password;
-        }
-
-        url = PhoneTrackClientUtil.formatURL(url);
-
-        new LoginValidatorTask().executeInParallel(url, username, password);
-    }
-
     private final ActivityResultLauncher<String> localNetworkPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     // go on either way: a refusal shows up as a connection error
@@ -360,11 +368,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void startLogin() {
-        if (useWebLogin) {
-            webLogin();
-        } else {
-            legacyLogin();
-        }
+        webLogin();
     }
 
     /**
@@ -395,9 +399,11 @@ public class SettingsActivity extends AppCompatActivity {
     // user's own server.
     @SuppressLint("SetJavaScriptEnabled")
     private void webLogin() {
+        url_wrapper.setError(null);
         setContentView(R.layout.activity_settings_webview);
         webView = findViewById(R.id.login_webview);
         webView.setVisibility(View.GONE);
+        webLoginBackCallback.setEnabled(true);
 
         final ProgressBar progressBar = findViewById(R.id.login_webview_progress_bar);
 
@@ -413,12 +419,19 @@ public class SettingsActivity extends AppCompatActivity {
         headers.put("OCS-APIREQUEST", "true");
 
 
-        webView.loadUrl(normalizeUrlSuffix(field_url.getText().toString()) + "index.php/login/flow", headers);
-
         webView.setWebViewClient(new WebViewClient() {
+            /** Set once a page of the login flow has been shown */
+            private boolean flowPageShown = false;
+            /** Set once the server has handed over the login data: later load errors don't matter */
+            private boolean loginDataReceived = false;
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (url.startsWith("nc://login/")) {
+                    loginDataReceived = true;
+                    // nothing more to do on the page while the login is checked
+                    view.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
                     parseAndLoginFromWebView(url);
                     return true;
                 }
@@ -428,9 +441,37 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-
+                if (loginDataReceived) {
+                    return;
+                }
+                flowPageShown = true;
                 progressBar.setVisibility(View.GONE);
-                webView.setVisibility(View.VISIBLE);
+                view.setVisibility(View.VISIBLE);
+            }
+
+            // wrong address, no network, server down, certificate refused: instead of the
+            // WebView's generic error page, go back to the form and say what happened
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                if (!request.isForMainFrame() || loginDataReceived) {
+                    return;
+                }
+                Log.w(TAG, "web login: page could not be loaded, error "
+                        + (error == null ? "?" : error.getErrorCode() + " " + error.getDescription()));
+                showLoginForm(getString(R.string.web_login_error_unreachable));
+            }
+
+            // an HTTP error on the first page means there is no Nextcloud login at this address.
+            // Later pages come from Nextcloud itself, which explains its own errors (and Back
+            // returns to the form).
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                if (!request.isForMainFrame() || flowPageShown || loginDataReceived
+                        || errorResponse.getStatusCode() < 400) {
+                    return;
+                }
+                Log.w(TAG, "web login: HTTP " + errorResponse.getStatusCode() + " for the login page");
+                showLoginForm(getString(R.string.web_login_error_not_nextcloud, errorResponse.getStatusCode()));
             }
 
             // proceed() only runs after the user explicitly trusted this certificate in
@@ -461,18 +502,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         });
 
-        // don't show old login method because SSO+weblogin is enough
-        // TODO cleanup
-        /*// show snackbar after 60s to switch back to old login method
-        new Handler().postDelayed(() -> {
-            Snackbar.make(webView, R.string.fallback_weblogin_text, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.fallback_weblogin_back, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            initLegacyLogin(field_url.getText().toString());
-                        }
-                    }).show();
-        }, 60 * 1000);*/
+        webView.loadUrl(normalizeUrlSuffix(field_url.getText().toString()) + "index.php/login/flow", headers);
     }
 
     private String getWebLoginUserAgent() {
@@ -482,14 +512,65 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void parseAndLoginFromWebView(String dataString) {
         String prefix = "nc://login/";
-        LoginUrlInfo loginUrlInfo = parseLoginDataUrl(prefix, dataString);
-
-        if (loginUrlInfo != null) {
-            String url = normalizeUrlSuffix(loginUrlInfo.serverAddress);
-
-            new LoginValidatorTask().executeInParallel(url, loginUrlInfo.username,
-                    loginUrlInfo.password);
+        LoginUrlInfo loginUrlInfo;
+        try {
+            loginUrlInfo = parseLoginDataUrl(prefix, dataString);
+        } catch (IllegalArgumentException e) {
+            // an element this app doesn't know, or broken %-encoding: a failed login, not a crash
+            Log.e(TAG, "web login: unexpected login data: " + e.getMessage());
+            loginUrlInfo = null;
         }
+
+        if (loginUrlInfo == null || loginUrlInfo.serverAddress == null
+                || loginUrlInfo.username == null || loginUrlInfo.password == null) {
+            showLoginForm(getString(R.string.error_invalid_login, getString(R.string.web_login_error_bad_data)));
+            return;
+        }
+
+        String url = normalizeUrlSuffix(loginUrlInfo.serverAddress);
+        new LoginValidatorTask().executeInParallel(url, loginUrlInfo.username,
+                loginUrlInfo.password);
+    }
+
+    /**
+     * Leaves the web login (if it is shown) and shows the account form again, with the
+     * address the user typed.
+     *
+     * @param urlError shown under the address field, or null
+     */
+    private void showLoginForm(@Nullable CharSequence urlError) {
+        webLoginBackCallback.setEnabled(false);
+        if (webView != null) {
+            final WebView oldWebView = webView;
+            webView = null;
+            oldWebView.stopLoading();
+            // late callbacks from the old page must not reach this activity any more
+            oldWebView.setWebViewClient(new WebViewClient());
+            // not from inside one of its own callbacks
+            new Handler(Looper.getMainLooper()).post(oldWebView::destroy);
+        }
+        if (formView.getParent() == null) {
+            setContentView(formView);
+        }
+        btn_submit.setText(R.string.settings_submit);
+        setInputsEnabled(true);
+        handleSubmitButtonEnabled();
+        url_wrapper.setError(urlError);
+        if (urlError != null) {
+            field_url.requestFocus();
+        }
+    }
+
+    /**
+     * Sets all Input-Fields and Buttons to enabled or disabled depending on the given boolean.
+     *
+     * @param enabled - boolean
+     */
+    private void setInputsEnabled(boolean enabled) {
+        btn_submit.setEnabled(enabled);
+        field_url.setEnabled(enabled);
+        field_username.setEnabled(enabled);
+        field_password.setEnabled(enabled);
     }
 
     /**
@@ -548,19 +629,6 @@ public class SettingsActivity extends AppCompatActivity {
         return url;
     }
 
-    private void initLegacyLogin(String oldUrl) {
-        useWebLogin = false;
-
-        webView.setVisibility(View.INVISIBLE);
-        setContentView(R.layout.activity_settings);
-
-        setupListener();
-
-        field_url.setText(oldUrl);
-        username_wrapper.setVisibility(View.VISIBLE);
-        password_wrapper.setVisibility(View.VISIBLE);
-    }
-
     private void handleSubmitButtonEnabled() {
         // drawable[2] is not null if url is valid, see URLValidatorTask::onPostExecute
         if (field_url.getCompoundDrawables()[2] != null && (username_wrapper.getVisibility() == View.GONE ||
@@ -601,6 +669,8 @@ public class SettingsActivity extends AppCompatActivity {
             } else {
                 field_url.setCompoundDrawables(null, null, null, null);
             }
+            // explain why "Connect" is disabled
+            url_wrapper.setHelperText(o ? null : getString(R.string.settings_url_helper));
             handleSubmitButtonEnabled();
         }
     }
@@ -647,22 +717,12 @@ public class SettingsActivity extends AppCompatActivity {
                 finish();
             } else {
                 Log.e("PhoneTrack", "invalid login");
-                btn_submit.setText(R.string.settings_submit);
-                setInputsEnabled(true);
-                Toast.makeText(getApplicationContext(), getString(R.string.error_invalid_login, getString(status.str)), Toast.LENGTH_LONG).show();
+                if (isDestroyed()) {
+                    return;
+                }
+                // the web login replaced the form: go back to it and show the reason there
+                showLoginForm(getString(R.string.error_invalid_login, getString(status.str)));
             }
-        }
-
-        /**
-         * Sets all Input-Fields and Buttons to enabled or disabled depending on the given boolean.
-         *
-         * @param enabled - boolean
-         */
-        private void setInputsEnabled(boolean enabled) {
-            btn_submit.setEnabled(enabled);
-            field_url.setEnabled(enabled);
-            field_username.setEnabled(enabled);
-            field_password.setEnabled(enabled);
         }
     }
     /**

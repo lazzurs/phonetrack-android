@@ -157,6 +157,7 @@
     <string name="sms_failure_provider_notification">GPS service is disabled, an error SMS has been sent to %1$s</string>
     <string name="map_choose_layer">Choose a map tile provider</string>
     <string name="drawer_connect_hint">Tap here to connect</string>
+    <string name="drawer_account_unavailable">Account unavailable, tap to reconnect</string>
     <string name="homescreen_map_shortcut_long_title">Map for %s</string>
     <string name="display_info_menu_title">Logjob information</string>
     <string name="display_map_menu_title">Map of logjob\'s session</string>
@@ -171,6 +172,10 @@
     <string name="settings_server_settings">Account</string>
     <string name="settings_url">Server address</string>
     <string name="settings_url_warn_http">WARNING: "http" is unsafe. Please use "https".</string>
+    <string name="settings_url_helper">Enter your Nextcloud address, for example cloud.example.org</string>
+    <string name="web_login_error_unreachable">Could not reach the server. Check the address and your connection.</string>
+    <string name="web_login_error_not_nextcloud">No Nextcloud login page at this address (HTTP error %1$d). Check the address.</string>
+    <string name="web_login_error_bad_data">the server sent login details this app does not understand</string>
     <string name="settings_username">Username</string>
     <string name="settings_password">Password</string>
     <string name="settings_password_unchanged">Password (not changed)</string>
