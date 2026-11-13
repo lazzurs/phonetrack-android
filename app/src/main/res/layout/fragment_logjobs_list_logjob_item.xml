@@ -14,16 +14,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:text="@string/swipe_left" />
 
     <ImageView
         android:id="@+id/logjobDeleteRight"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_gravity="right|end|center_vertical"
+        android:layout_gravity="end|center_vertical"
         android:layout_marginEnd="@dimen/button_padding"
-        android:layout_marginRight="@dimen/button_padding"
         android:contentDescription="@string/menu_delete"
         android:src="@drawable/ic_delete_white_32dp" />
 
@@ -40,9 +39,9 @@
             android:layout_weight="1"
             android:background="@drawable/list_item_background_selector"
             android:orientation="vertical"
-            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
             android:paddingTop="16dp"
-            android:paddingRight="16dp"
+            android:paddingEnd="16dp"
             android:paddingBottom="16dp">
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -72,7 +71,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:maxLines="1"
@@ -112,13 +110,10 @@
             android:id="@+id/logjobEnabled"
             android:layout_width="48dp"
             android:layout_height="match_parent"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginLeft="12dp"
+            android:layout_gravity="end|center_vertical"
             android:layout_marginStart="12dp"
 
-            android:paddingLeft="4dp"
             android:paddingStart="4dp"
-            android:paddingRight="4dp"
             android:paddingEnd="4dp" />
 
     </LinearLayout>
@@ -128,7 +123,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:gravity="bottom|center_horizontal"
         android:minWidth="48dp"
         android:orientation="horizontal">
@@ -138,7 +133,6 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginEnd="2dp"
-            android:layout_marginRight="2dp"
             android:layout_marginBottom="1dp"
             android:adjustViewBounds="false"
             android:src="@drawable/ic_location_searching_grey_24dp"
@@ -148,9 +142,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:gravity="bottom|center_horizontal"
-        android:layout_marginRight="48dp"
         android:layout_marginEnd="48dp"
         android:minWidth="48dp"
         android:orientation="horizontal">
@@ -168,7 +161,6 @@
             android:layout_height="16dp"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginEnd="2dp"
-            android:layout_marginRight="2dp"
             android:layout_marginBottom="1dp"
             android:adjustViewBounds="false"
             android:src="@drawable/ic_notify_grey_24dp"

@@ -15,8 +15,8 @@
             android:layout_height="wrap_content"
             android:gravity="top"
             android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:paddingTop="16dp"
             android:paddingBottom="58dp"
             >
@@ -34,7 +34,7 @@
                     android:id="@+id/titleIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="8dp"
                     android:src="@drawable/ic_title_grey_24dp" />
 
@@ -58,7 +58,7 @@
                         android:id="@+id/editTitleSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:layout_weight="1"
                         android:text="@string/setting_title_long" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -83,7 +83,7 @@
                     android:id="@+id/urlIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="8dp"
                     android:src="@drawable/ic_cloud_grey_24dp" />
 
@@ -107,7 +107,7 @@
                         android:id="@+id/editUrlSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:layout_weight="1"
                         android:text="@string/setting_lj_url_long" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -132,7 +132,7 @@
                     android:id="@+id/tokenIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="8dp"
                     android:src="@drawable/ic_lock_grey_24dp" />
 
@@ -156,7 +156,7 @@
                         android:id="@+id/editTokenSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:layout_weight="1"
                         android:text="@string/setting_token_long" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -181,7 +181,7 @@
                     android:id="@+id/deviceNameIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="8dp"
                     android:src="@drawable/ic_phone_android_grey_24dp" />
 
@@ -205,7 +205,7 @@
                         android:id="@+id/editDeviceNameSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:layout_weight="1"
                         android:text="@string/setting_devicename_long" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -231,7 +231,7 @@
                     android:id="@+id/setPresetIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:tooltipText="@string/setting_set_preset_summary"
                     android:src="@drawable/ic_settings_grey600_24dp" />
 
@@ -252,7 +252,7 @@
                         android:id="@+id/setPresetSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:text="@string/setting_set_preset_summary" />
 
                 </LinearLayout>
@@ -279,7 +279,7 @@
                     android:id="@+id/signMotionModeIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:tooltipText="@string/setting_significantmotion_summary"
                     android:src="@drawable/ic_walk_grey_24dp" />
 
@@ -300,7 +300,7 @@
                         android:id="@+id/signMotionSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:text="@string/setting_significantmotion_summary" />
 
 
@@ -327,7 +327,7 @@
                     android:id="@+id/minDistanceIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="8dp"
                     android:src="@drawable/ic_length_grey_24dp" />
 
@@ -352,7 +352,7 @@
                         android:id="@+id/editMinDistanceSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:layout_weight="1"
                         android:text="@string/setting_min_distance_long" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -379,7 +379,7 @@
                     android:id="@+id/applyMinTimeIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:tooltipText="@string/setting_significantmotion_min_time_applied_summary"
                     android:src="@drawable/ic_timer_grey_24dp" />
 
@@ -402,7 +402,7 @@
                         android:id="@+id/signMotionIntervalSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:text="@string/setting_significantmotion_min_time_applied_summary" />
 
 
@@ -430,7 +430,7 @@
                     android:id="@+id/mixedModeIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:tooltipText="@string/setting_significantmotion_mixed_summary"
                     android:src="@drawable/ic_merge_grey_24dp" />
 
@@ -453,7 +453,7 @@
                         android:id="@+id/usesignificantmotionmixedSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:text="@string/setting_significantmotion_mixed_summary" />
 
 
@@ -479,7 +479,7 @@
                     android:id="@+id/minTimeIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="8dp"
                     android:tooltipText="@string/setting_min_time_long"
                     android:src="@drawable/ic_timer_grey_24dp" />
@@ -505,7 +505,7 @@
                         android:id="@+id/editMinTimeSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:layout_weight="1"
                         android:text="@string/setting_min_time_long" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -530,7 +530,7 @@
                     android:id="@+id/minAccuracyIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="8dp"
                     android:tooltipText="@string/setting_min_accuracy_long"
                     android:src="@drawable/ic_accuracy_grey_24dp" />
@@ -556,7 +556,7 @@
                         android:id="@+id/editMinAccuracySummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:layout_weight="1"
                         android:text="@string/setting_min_accuracy_long" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -583,7 +583,7 @@
                     android:id="@+id/keepGpsOnIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="0dp"
                     android:tooltipText="@string/setting_keepgps_summary"
                     android:src="@drawable/ic_crosshairs_gps_grey_24dp" />
@@ -607,7 +607,7 @@
                         android:id="@+id/keepgpsonSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:text="@string/setting_keepgps_summary" />
 
 
@@ -633,7 +633,7 @@
                     android:id="@+id/editSigMotionTimeoutIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginEnd="32dp"
                     android:paddingTop="8dp"
                     android:tooltipText="@string/setting_significantmotion_timeout_summary"
                     android:src="@drawable/ic_av_timer_grey_24dp" />
@@ -659,7 +659,7 @@
                         android:id="@+id/editSigMotionTimeoutSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
                         android:layout_weight="1"
                         android:text="@string/setting_significantmotion_timeout_summary" />
                 </com.google.android.material.textfield.TextInputLayout>
