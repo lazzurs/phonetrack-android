@@ -205,6 +205,46 @@ public class LoggerServiceSamplingTest {
     }
 
     @Test
+    public void networkFallbackAtTheTimeoutMustMeetTheMinimumAccuracy() {
+        useProviders("3");
+        long id = addLogjob(60, 5, 50, 30);
+        startService();
+
+        // a cell tower position, while GPS gets nothing
+        deliver(fix(LocationManager.NETWORK_PROVIDER, 0, 500));
+        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        assertEquals(0, logged(id));
+        assertFalse(searching(LocationManager.GPS_PROVIDER));
+        assertFalse(searching(LocationManager.NETWORK_PROVIDER));
+
+        // a Wi-Fi position is good enough
+        fireNextSample();
+        deliver(fix(LocationManager.NETWORK_PROVIDER, 0, 20));
+        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        assertEquals(1, logged(id));
+    }
+
+    @Test
+    public void networkFallbackAtTheTimeoutMustMeetTheMinimumDistance() {
+        useProviders("3");
+        long id = addLogjob(60, 50, 50, 30);
+        startService();
+        deliver(fix(LocationManager.GPS_PROVIDER, 0, 5));
+        assertEquals(1, logged(id));
+
+        // indoors, not moved: the network position used to be logged every interval
+        fireNextSample();
+        deliver(fix(LocationManager.NETWORK_PROVIDER, 10, 20));
+        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        assertEquals(1, logged(id));
+
+        fireNextSample();
+        deliver(fix(LocationManager.NETWORK_PROVIDER, 200, 20));
+        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        assertEquals(2, logged(id));
+    }
+
+    @Test
     public void networkOnlyLogjobAlsoStopsWhenThePhoneHasNotMoved() {
         useProviders("2");
         long id = addLogjob(60, 50, 100, 30);

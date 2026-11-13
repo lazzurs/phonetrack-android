@@ -1138,6 +1138,19 @@ public class LoggerService extends Service {
             return decision;
         }
 
+        /**
+         * At the timeout, log the cached network fix instead of a GPS one, if it passes the same
+         * minimum accuracy and distance checks as any other fix.
+         */
+        protected void useCachedNetworkResult() {
+            if (decide(mCachedNetworkResult) == LocationSamplePolicy.Decision.ACCEPT) {
+                lastLocation = mCachedNetworkResult;
+                acceptAndSyncLocation(mJobId, mCachedNetworkResult);
+            } else {
+                SystemLogger.d(TAG, "Network location not accurate enough or too close to the last point, not logging it");
+            }
+        }
+
         public void updateLastAcquisitionStart() {
             // store time when position acquisition was launched
             lastAcquisitionStartTimestamp = System.currentTimeMillis() / 1000;
@@ -1195,8 +1208,7 @@ public class LoggerService extends Service {
 
                     if (mCachedNetworkResult != null) {
                         SystemLogger.d(TAG, "Reached timeout for location request, using network cached location");
-                        lastLocation = mCachedNetworkResult;
-                        acceptAndSyncLocation(mJobId, mCachedNetworkResult);
+                        useCachedNetworkResult();
                     } else {
                         SystemLogger.d(TAG, "Reached timeout for location request, NO network location");
                     }
@@ -1420,8 +1432,7 @@ public class LoggerService extends Service {
 
                     if (mCachedNetworkResult != null) {
                         SystemLogger.d(TAG, "Reached timeout before GPS sample, using network sample");
-                        lastLocation = mCachedNetworkResult;
-                        acceptAndSyncLocation(mJobId, mCachedNetworkResult);
+                        useCachedNetworkResult();
                     } else {
                         SystemLogger.d(TAG, "Reached timeout before GPS sample, NO network sample");
                     }
