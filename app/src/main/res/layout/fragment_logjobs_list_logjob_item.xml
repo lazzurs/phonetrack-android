@@ -181,7 +181,7 @@
             android:adjustViewBounds="false"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_cloud_upload_grey_24dp"
-            app:tint="#990000" />
+            app:tint="@color/pending_icon_tint" />
 
         <TextView
             android:id="@+id/nbSync"

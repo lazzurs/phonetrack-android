@@ -139,8 +139,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             nvHolder.moreButton.setContentDescription(
                     db.getContext().getString(R.string.a11y_logjob_more_options, jobTitle));
             if (nvHolder.logjobEnabled.isChecked()) {
-                nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ThemeUtils.primaryDarkColor(db.getContext()), PorterDuff.Mode.SRC_IN);
-                nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ThemeUtils.primaryColor(db.getContext()), PorterDuff.Mode.MULTIPLY);
+                applyCheckedSwitchTint(nvHolder.logjobEnabled, db.getContext());
             } else {
                 nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
                 nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_high), PorterDuff.Mode.MULTIPLY);
@@ -150,8 +149,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View view) {
                     logjobClickListener.onLogjobEnabledClick(holder.getAdapterPosition(), view);
                     if (nvHolder.logjobEnabled.isChecked()) {
-                        nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ThemeUtils.primaryDarkColor(db.getContext()), PorterDuff.Mode.SRC_IN);
-                        nvHolder.logjobEnabled.getThumbDrawable().setColorFilter(ThemeUtils.primaryColor(db.getContext()), PorterDuff.Mode.MULTIPLY);
+                        applyCheckedSwitchTint(nvHolder.logjobEnabled, db.getContext());
                     }
                     else {
                         nvHolder.logjobEnabled.getTrackDrawable().setColorFilter(ContextCompat.getColor(db.getContext(), R.color.fg_default_low), PorterDuff.Mode.SRC_IN);
@@ -299,6 +297,21 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         /** The row's "Delete" accessibility action (the swipe gesture has no TalkBack equivalent). */
         void onLogjobDeleteAction(int position);
+    }
+
+    /** Colours of an enabled job's switch: {track, thumb}. */
+    static int[] checkedSwitchColors(int appColor) {
+        return new int[]{appColor, ThemeUtils.onPrimaryColor(appColor)};
+    }
+
+    /**
+     * Track in the app colour, thumb in the colour that contrasts with it (white or black), so
+     * the thumb stays visible on light app colours too.
+     */
+    private static void applyCheckedSwitchTint(SwitchCompat switchView, Context context) {
+        int[] colors = checkedSwitchColors(ThemeUtils.primaryColor(context));
+        switchView.getTrackDrawable().setColorFilter(colors[0], PorterDuff.Mode.SRC_IN);
+        switchView.getThumbDrawable().setColorFilter(colors[1], PorterDuff.Mode.MULTIPLY);
     }
 
     public class LogjobViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
