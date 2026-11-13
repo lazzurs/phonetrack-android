@@ -151,6 +151,9 @@ public class SmsLocationSendServiceTest {
     public void repliesWithAnErrorWhenNoFixArrivesInTime() {
         grantLocation();
         request(ALICE);
+        // ended by the platform even if the CPU sleeps through the handler delay below
+        assertEquals(120_000, shadowOf(app.getSystemService(LocationManager.class))
+                .getLocationRequests(LocationManager.GPS_PROVIDER).get(0).getDurationMillis());
 
         worker().idleFor(Duration.ofSeconds(121));
 
