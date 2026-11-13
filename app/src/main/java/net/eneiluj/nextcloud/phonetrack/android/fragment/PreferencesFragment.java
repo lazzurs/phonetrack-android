@@ -88,6 +88,28 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     private List<String> providersList;
     private ActionBar toolbar;
 
+    // runs after the new value is saved, so no new connection can be trusted under the old one;
+    // a field because SharedPreferences only keeps a weak reference to its listeners
+    private final SharedPreferences.OnSharedPreferenceChangeListener trustSettingsListener = (prefs, key) -> {
+        if (key != null && isAdded() && key.equals(getString(R.string.pref_key_trust_system_certs))) {
+            CertificateTrust.onTrustSystemCertsChanged();
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .registerOnSharedPreferenceChangeListener(trustSettingsListener);
+    }
+
+    @Override
+    public void onPause() {
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .unregisterOnSharedPreferenceChangeListener(trustSettingsListener);
+        super.onPause();
+    }
+
     @Override
     public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
         caller.setPreferenceScreen(pref);

@@ -54,6 +54,16 @@ public final class CertificateTrust {
     /** Forgets every certificate the user accepted or rejected (rewrites a small file). */
     public static void resetUserDecisions(@NonNull Context context) {
         CustomCertStore.Companion.getInstance(context.getApplicationContext()).clearUserDecisions();
+        // open connections and cached TLS sessions were trusted under the old decisions
+        SupportUtil.resetTlsConnections();
+    }
+
+    /**
+     * Call after the "trust system certificates" setting changed (once the new value is saved):
+     * open connections and cached TLS sessions were trusted under the old setting.
+     */
+    public static void onTrustSystemCertsChanged() {
+        SupportUtil.resetTlsConnections();
     }
 
     private static final class Settings implements SettingsProvider {

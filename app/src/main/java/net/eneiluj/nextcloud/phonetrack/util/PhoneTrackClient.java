@@ -289,8 +289,6 @@ public class PhoneTrackClient {
                     "Authorization",
                     "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
         }
-        // https://github.com/square/retrofit/issues/805#issuecomment-93426183
-        con.setRequestProperty( "Connection", "Close");
         con.setRequestProperty("User-Agent", "phonetrack-android/" + SupportUtil.getAppVersionName(context));
         if (lastETag != null && METHOD_GET.equals(method)) {
             con.setRequestProperty("If-None-Match", lastETag);
@@ -318,14 +316,18 @@ public class PhoneTrackClient {
         Log.d(getClass().getSimpleName(), "HTTP response code: " + responseCode);
 
         if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
+            // no body: closing the empty stream leaves the connection to the pool
+            closeEmptyResponse(con);
             throw new ServerResponse.NotModifiedException();
         }
 
         Log.i(TAG, "METHOD : "+method);
-        BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String line;
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
+        // read to the end and close, so the connection can be reused
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+            String line;
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
         }
         // create response object
         String etag = con.getHeaderField("ETag");
@@ -378,6 +380,14 @@ public class PhoneTrackClient {
         return new ResponseData(strBase64, "", 0);
     }
 
+    private static void closeEmptyResponse(HttpURLConnection con) {
+        try {
+            con.getInputStream().close();
+        } catch (IOException e) {
+            con.disconnect();
+        }
+    }
+
     private ResponseData imageRequestServer(CustomCertManager ccm, String target,
                                                                        String method, JSONObject params, String lastETag, boolean needLogin, boolean isOCSRequest)
             throws IOException {
@@ -392,8 +402,6 @@ public class PhoneTrackClient {
                     "Authorization",
                     "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
         }
-        // https://github.com/square/retrofit/issues/805#issuecomment-93426183
-        con.setRequestProperty( "Connection", "Close");
         con.setRequestProperty("User-Agent", "phonetrack-android/" + SupportUtil.getAppVersionName(context));
         if (lastETag != null && METHOD_GET.equals(method)) {
             con.setRequestProperty("If-None-Match", lastETag);
@@ -426,7 +434,16 @@ public class PhoneTrackClient {
 
         Log.i(TAG, "METHOD : "+method);
 
-        Bitmap selectedImage = BitmapFactory.decodeStream(con.getInputStream());
+        Bitmap selectedImage;
+        try (InputStream in = con.getInputStream()) {
+            selectedImage = BitmapFactory.decodeStream(in);
+            // the decoder may stop before the end of the body: read the rest so the
+            // connection can be reused
+            byte[] rest = new byte[8192];
+            while (in.read(rest) != -1) {
+                // discard
+            }
+        }
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();

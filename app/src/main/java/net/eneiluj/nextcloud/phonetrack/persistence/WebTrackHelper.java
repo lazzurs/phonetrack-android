@@ -85,6 +85,7 @@ public class WebTrackHelper {
         HttpURLConnection connection = null;
         InputStream in = null;
         //OutputStream out = null;
+        boolean responseRead = false;
         try {
             boolean redirect;
             int redirectTries = RedirectPolicy.MAX_REDIRECTS;
@@ -153,12 +154,14 @@ public class WebTrackHelper {
                 sb.append(inputLine);
             }
             response = sb.toString();
+            responseRead = true;
         } finally {
             try {
                 if (in != null) {
                     in.close();
                 }
-                if (connection != null) {
+                // a fully read response leaves the connection to the pool for the next upload
+                if (connection != null && !responseRead) {
                     connection.disconnect();
                 }
             } catch (final IOException e) {
@@ -196,6 +199,7 @@ public class WebTrackHelper {
         HttpURLConnection connection = null;
         InputStream in = null;
         OutputStream out = null;
+        boolean responseRead = false;
         try {
             boolean redirect;
             int redirectTries = RedirectPolicy.MAX_REDIRECTS;
@@ -264,6 +268,7 @@ public class WebTrackHelper {
                 sb.append(inputLine);
             }
             response = sb.toString();
+            responseRead = true;
         } finally {
             try {
                 if (out != null) {
@@ -272,7 +277,8 @@ public class WebTrackHelper {
                 if (in != null) {
                     in.close();
                 }
-                if (connection != null) {
+                // a fully read response leaves the connection to the pool for the next upload
+                if (connection != null && !responseRead) {
                     connection.disconnect();
                 }
             } catch (final IOException e) {
@@ -293,6 +299,7 @@ public class WebTrackHelper {
         HttpURLConnection connection = null;
         InputStream in = null;
         OutputStream out = null;
+        boolean responseRead = false;
         try {
             boolean redirect;
             int redirectTries = RedirectPolicy.MAX_REDIRECTS;
@@ -362,6 +369,7 @@ public class WebTrackHelper {
                 sb.append(inputLine);
             }
             response = sb.toString();
+            responseRead = true;
         } finally {
             try {
                 if (out != null) {
@@ -370,7 +378,8 @@ public class WebTrackHelper {
                 if (in != null) {
                     in.close();
                 }
-                if (connection != null) {
+                // a fully read response leaves the connection to the pool for the next upload
+                if (connection != null && !responseRead) {
                     connection.disconnect();
                 }
             } catch (final IOException e) {
@@ -471,12 +480,19 @@ public class WebTrackHelper {
                     "Authorization",
                     "Basic " + Base64.encodeToString((login + ":" + password).getBytes(), Base64.NO_WRAP));
         }
-        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String line;
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
+        boolean responseRead = false;
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            String line;
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            responseRead = true;
+        } finally {
+            // a fully read response leaves the connection to the pool for the next upload
+            if (!responseRead) {
+                conn.disconnect();
+            }
         }
-        rd.close();
         if (LoggerService.DEBUG) { Log.d(TAG, "[GET request response: " + result + "]"); }
     }
 
