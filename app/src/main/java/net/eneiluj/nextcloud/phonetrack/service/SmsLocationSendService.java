@@ -206,7 +206,10 @@ public class SmsLocationSendService extends Service {
                 return;
             }
             try {
-                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this, handler.getLooper());
+                // the platform ends the request at the timeout even if the CPU sleeps, which delays the handler below
+                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        LoggerService.searchRequest(LocationManager.GPS_PROVIDER, TIMEOUT_SECONDS * 1000L),
+                        handler::post, this);
             } catch (SecurityException e) {
                 sendFailure(getString(R.string.sms_failure_permission_sms),
                         getString(R.string.sms_failure_permission_notification, fromNotification));

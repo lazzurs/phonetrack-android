@@ -3,6 +3,7 @@ package net.eneiluj.nextcloud.phonetrack.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -83,8 +84,12 @@ public class LoggerServiceSamplingTest {
 
     /** An enabled classic (interval) log job whose server refuses connections. */
     private long addLogjob(int interval, int minDistance, int minAccuracy, int timeout) {
+        return addLogjob(interval, minDistance, minAccuracy, timeout, false);
+    }
+
+    private long addLogjob(int interval, int minDistance, int minAccuracy, int timeout, boolean keepGpsOn) {
         return db.addLogjob(new DBLogjob(0, "test", "http://127.0.0.1:9/log", "", "",
-                interval, minDistance, minAccuracy, false, false, false, timeout,
+                interval, minDistance, minAccuracy, keepGpsOn, false, false, timeout,
                 false, true, 0, null, null, false));
     }
 
@@ -132,6 +137,31 @@ public class LoggerServiceSamplingTest {
         ShadowAlarmManager.ScheduledAlarm alarm = shadowOf(alarmManager).peekNextScheduledAlarm();
         assertNotNull("no next sample scheduled", alarm);
         return alarm.getTriggerAtMs() - SystemClock.elapsedRealtime();
+    }
+
+    /** The pending location timeout alarm, or null. */
+    private ShadowAlarmManager.ScheduledAlarm timeoutAlarm() {
+        for (ShadowAlarmManager.ScheduledAlarm alarm : shadowOf(alarmManager).getScheduledAlarms()) {
+            if (LoggerService.ACTION_LOCATION_TIMEOUT.equals(shadowOf(alarm.operation).getSavedIntent().getAction())) {
+                return alarm;
+            }
+        }
+        return null;
+    }
+
+    /** Let time pass until the location timeout alarm, plus lateMillis, and deliver it. */
+    private void reachTimeout(long lateMillis) {
+        ShadowAlarmManager.ScheduledAlarm alarm = timeoutAlarm();
+        assertNotNull("no location timeout scheduled", alarm);
+        ShadowLooper.idleMainLooper(alarm.getTriggerAtMs() - SystemClock.elapsedRealtime() + lateMillis,
+                TimeUnit.MILLISECONDS);
+        alarmManager.cancel(alarm.operation);
+        controller.withIntent(shadowOf(alarm.operation).getSavedIntent()).startCommand(0, 1);
+        idleAll();
+    }
+
+    private void reachTimeout() {
+        reachTimeout(0);
     }
 
     /** Fire the pending next-sample alarm, as the system would. */
@@ -185,6 +215,7 @@ public class LoggerServiceSamplingTest {
         assertTrue("next sample in " + next, next > 55_000 && next <= 60_000);
 
         // and the timeout no longer fires
+        assertNull(timeoutAlarm());
         ShadowLooper.idleMainLooper(59, TimeUnit.SECONDS);
         assertEquals(1, logged(id));
         assertFalse(searching(LocationManager.GPS_PROVIDER));
@@ -199,9 +230,66 @@ public class LoggerServiceSamplingTest {
         assertEquals(0, logged(id));
         assertTrue(searching(LocationManager.GPS_PROVIDER));
 
-        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        reachTimeout();
         assertFalse(searching(LocationManager.GPS_PROVIDER));
         assertEquals(30_000, nextSampleIn());
+    }
+
+    @Test
+    public void thePlatformEndsTheSearchAtTheTimeoutEvenIfTheCpuSleeps() {
+        useProviders("3");
+        addLogjob(60, 50, 50, 30);
+        startService();
+
+        assertEquals(30_000, shadowOf(locationManager).getLocationRequests(LocationManager.GPS_PROVIDER)
+                .get(0).getDurationMillis());
+        assertEquals(30_000, shadowOf(locationManager).getLocationRequests(LocationManager.NETWORK_PROVIDER)
+                .get(0).getDurationMillis());
+        // a wake-up alarm, not a Handler delay that stops while the CPU sleeps
+        ShadowAlarmManager.ScheduledAlarm timeout = timeoutAlarm();
+        assertNotNull(timeout);
+        assertEquals(AlarmManager.ELAPSED_REALTIME_WAKEUP, timeout.getType());
+        assertTrue(timeout.isAllowWhileIdle());
+        assertEquals(SystemClock.elapsedRealtime() + 30_000, timeout.getTriggerAtMs());
+
+        // an accepted fix cancels it
+        deliver(fix(LocationManager.GPS_PROVIDER, 0, 5));
+        assertNull(timeoutAlarm());
+    }
+
+    @Test
+    public void aLateTimeoutAlarmKeepsSearchesOneIntervalApart() {
+        addLogjob(60, 50, 50, 30);
+        startService();
+
+        reachTimeout(20_000);
+        assertFalse(searching(LocationManager.GPS_PROVIDER));
+        assertEquals(10_000, nextSampleIn());
+    }
+
+    @Test
+    public void aTimeoutAlarmForAnEarlierSearchIsIgnored() {
+        addLogjob(60, 50, 50, 30);
+        startService();
+        ShadowAlarmManager.ScheduledAlarm timeout = timeoutAlarm();
+        assertNotNull(timeout);
+
+        // as if left over from before the service was restarted
+        ShadowLooper.idleMainLooper(10, TimeUnit.SECONDS);
+        controller.withIntent(shadowOf(timeout.operation).getSavedIntent()).startCommand(0, 1);
+        idleAll();
+        assertTrue(searching(LocationManager.GPS_PROVIDER));
+        assertNotNull(timeoutAlarm());
+    }
+
+    @Test
+    public void keepGpsOnLogjobHasNoSearchDuration() {
+        addLogjob(10, 0, 50, 5, true);
+        startService();
+
+        assertEquals(Long.MAX_VALUE, shadowOf(locationManager).getLocationRequests(LocationManager.GPS_PROVIDER)
+                .get(0).getDurationMillis());
+        assertNull(timeoutAlarm());
     }
 
     @Test
@@ -212,7 +300,7 @@ public class LoggerServiceSamplingTest {
 
         // a cell tower position, while GPS gets nothing
         deliver(fix(LocationManager.NETWORK_PROVIDER, 0, 500));
-        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        reachTimeout();
         assertEquals(0, logged(id));
         assertFalse(searching(LocationManager.GPS_PROVIDER));
         assertFalse(searching(LocationManager.NETWORK_PROVIDER));
@@ -220,7 +308,7 @@ public class LoggerServiceSamplingTest {
         // a Wi-Fi position is good enough
         fireNextSample();
         deliver(fix(LocationManager.NETWORK_PROVIDER, 0, 20));
-        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        reachTimeout();
         assertEquals(1, logged(id));
     }
 
@@ -235,12 +323,12 @@ public class LoggerServiceSamplingTest {
         // indoors, not moved: the network position used to be logged every interval
         fireNextSample();
         deliver(fix(LocationManager.NETWORK_PROVIDER, 10, 20));
-        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        reachTimeout();
         assertEquals(1, logged(id));
 
         fireNextSample();
         deliver(fix(LocationManager.NETWORK_PROVIDER, 200, 20));
-        ShadowLooper.idleMainLooper(30, TimeUnit.SECONDS);
+        reachTimeout();
         assertEquals(2, logged(id));
     }
 

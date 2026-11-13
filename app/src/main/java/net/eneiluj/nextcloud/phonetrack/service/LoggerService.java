@@ -30,6 +30,7 @@ import android.hardware.TriggerEventListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationRequest;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -55,6 +56,7 @@ import androidx.core.app.TaskStackBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
@@ -98,6 +100,8 @@ public class LoggerService extends Service {
     public static final String START_TIMEOUT = "starttimeout";
     public static final String JOB_ID = "jobid";
     public static final String SCHEDULE_INTERVAL = "scheduleinterval";
+    /** Action of the alarm that ends a location search at the log job's location timeout */
+    static final String ACTION_LOCATION_TIMEOUT = "net.eneiluj.nextcloud.phonetrack.action.LOCATION_TIMEOUT";
 
 
     private static volatile boolean isRunning = false;
@@ -154,6 +158,8 @@ public class LoggerService extends Service {
         }
 
         locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        // needed by the location timeouts of the first searches, started below
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         lastLocations = new HashMap<>();
         lastUpdateRealtime = new HashMap<>();
@@ -212,7 +218,6 @@ public class LoggerService extends Service {
             thread = new LoggerThread();
             thread.start();
             looper = thread.getLooper();
-            alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
             battery = getBatteryLevelOnce();
             // register for battery level
@@ -279,6 +284,7 @@ public class LoggerService extends Service {
             final boolean providersUpdated = (intent != null) && intent.getBooleanExtra(PreferencesFragment.UPDATED_PROVIDERS, false);
             final boolean updateNotif = (intent != null) && intent.getBooleanExtra(UPDATE_NOTIFICATION, false);
             final boolean getNextPoint = (intent != null) && intent.getBooleanExtra(GET_NEXT_POINT, false);
+            final boolean locationTimeout = (intent != null) && ACTION_LOCATION_TIMEOUT.equals(intent.getAction());
             if (logjobsUpdated) {
                 // this to avoid doing two loc upd when service is down and then a logjob is enabled
                 // in this scenario, we run onCreate which already does it all, no need to handle logjo updated
@@ -304,6 +310,11 @@ public class LoggerService extends Service {
                 }
             } else if (updateNotif && isRunning) {
                 updateNotificationContent();
+            } else if (locationTimeout) {
+                LogjobWorker logjobWorker = mLogjobWorkers.get(intent.getLongExtra(JOB_ID, 0));
+                if (logjobWorker != null) {
+                    logjobWorker.onResultTimeoutAlarm();
+                }
             } else if (getNextPoint) {
                 long jobId = intent.getLongExtra(JOB_ID, 0);
                 if (logjobs.containsKey(jobId)) {
@@ -571,9 +582,14 @@ public class LoggerService extends Service {
             if (firstRequestAfterAccepted) {
                 logjobWorker.updateLastAcquisitionStart();
             }
+            // the platform ends the search at the timeout itself, even if the CPU sleeps meanwhile
+            long searchDurationMillis = startTimeout ? logjobWorker.searchDurationMillis() : 0;
+            // before the logger thread exists (first searches, from onCreate) callbacks run on the main thread, as before
+            Executor callbackExecutor = new Handler(looper != null ? looper : Looper.getMainLooper())::post;
             if (useNet) {
                 // normal or significant motion based sampling
-                locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, networkLocListener, looper);
+                locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        searchRequest(LocationManager.NETWORK_PROVIDER, searchDurationMillis), callbackExecutor, networkLocListener);
 
                 if (locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     hasLocationUpdates = true;
@@ -581,7 +597,8 @@ public class LoggerService extends Service {
                 }
             }
             if (useGps) {
-                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, gpsLocListener, looper);
+                locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        searchRequest(LocationManager.GPS_PROVIDER, searchDurationMillis), callbackExecutor, gpsLocListener);
 
                 if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     hasLocationUpdates = true;
@@ -606,6 +623,23 @@ public class LoggerService extends Service {
         }
 
         return hasLocationUpdates;
+    }
+
+    /**
+     * Location request for one search: one update per second with the quality the deprecated
+     * (provider, minTime, minDistance) request had, removed by the platform after durationMillis
+     * of elapsed real time (0 for no limit).
+     */
+    @VisibleForTesting
+    static LocationRequest searchRequest(String provider, long durationMillis) {
+        LocationRequest.Builder builder = new LocationRequest.Builder(1000)
+                .setMinUpdateIntervalMillis(1000)
+                .setQuality(LocationManager.GPS_PROVIDER.equals(provider)
+                        ? LocationRequest.QUALITY_HIGH_ACCURACY : LocationRequest.QUALITY_BALANCED_POWER_ACCURACY);
+        if (durationMillis > 0) {
+            builder.setDurationMillis(durationMillis);
+        }
+        return builder.build();
     }
 
     /**
@@ -1042,8 +1076,10 @@ public class LoggerService extends Service {
 
         protected Long mLastUpdateRealtime;
 
-        protected Handler mTimeoutHandler;
         protected Runnable mTimeoutRunnable;
+        /** Elapsed realtime at which the current search times out */
+        protected long mTimeoutDeadline;
+        protected PendingIntent timeoutIntent;
         protected PendingIntent nextPointIntent;
         protected CorrectingLocation mCachedNetworkResult;
 
@@ -1069,8 +1105,9 @@ public class LoggerService extends Service {
             mLastUpdateRealtime = 0L;
             lastAcquisitionStartTimestamp = System.currentTimeMillis() / 1000;
 
-            mTimeoutHandler = null;
             mTimeoutRunnable = null;
+            mTimeoutDeadline = 0;
+            timeoutIntent = null;
             nextPointIntent = null;
             mCachedNetworkResult = null;
 
@@ -1148,30 +1185,71 @@ public class LoggerService extends Service {
         }
 
         protected void stop() {
-            if (mTimeoutHandler != null) {
-                if (mTimeoutRunnable != null) {
-                    mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
-                    mTimeoutRunnable = null;
-                }
-                mTimeoutHandler = null;
-            }
+            cancelResultTimeout();
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
             }
         }
 
+        /**
+         * How long a search may keep the location providers on, 0 for no limit.
+         */
+        public long searchDurationMillis() {
+            return mLocationTimeout > 0 ? mLocationTimeout * 1000L : 0;
+        }
+
+        /**
+         * End the search at the timeout with a wake-up alarm rather than a Handler: a Handler
+         * delay does not advance while the CPU sleeps, and without a fix nothing wakes it up.
+         */
         public void startResultTimeout() {
             mCachedNetworkResult = null;
+            cancelResultTimeout();
 
             if (mLocationTimeout > 0) {
-                if (mTimeoutHandler == null)
-                    mTimeoutHandler = new Handler();
-
-                // Create and post
                 mTimeoutRunnable = createSampleTimeoutDelayRunnable();
+                if (mTimeoutRunnable == null) {
+                    return;
+                }
+                mTimeoutDeadline = SystemClock.elapsedRealtime() + mLocationTimeout * 1000L;
+                Intent i = new Intent(LoggerService.this, LoggerService.class);
+                // the action keeps it apart from the next point PendingIntent, which has the same request code
+                i.setAction(ACTION_LOCATION_TIMEOUT);
+                i.putExtra(JOB_ID, mJobId);
+                timeoutIntent = PendingIntent.getService(LoggerService.this, (int) mJobId, i, PendingIntent.FLAG_IMMUTABLE);
                 SystemLogger.d(TAG, "Waiting " + mLocationTimeout + " seconds for timeout");
-                mTimeoutHandler.postDelayed(mTimeoutRunnable, mLocationTimeout * 1000L);
+                setAlarmAllowWhileIdle(alarmManager, mTimeoutDeadline, timeoutIntent);
             }
+        }
+
+        protected void cancelResultTimeout() {
+            mTimeoutRunnable = null;
+            if (timeoutIntent != null) {
+                alarmManager.cancel(timeoutIntent);
+            }
+        }
+
+        /**
+         * The timeout alarm fired. Ignored when the search already ended, or when the alarm is
+         * for an earlier search (the service was restarted meanwhile and started a new one).
+         */
+        public void onResultTimeoutAlarm() {
+            if (mTimeoutRunnable == null || SystemClock.elapsedRealtime() < mTimeoutDeadline) {
+                SystemLogger.d(TAG, "Location timeout alarm for job " + mJobId + " ignored, no search is due to end");
+                return;
+            }
+            Runnable timeout = mTimeoutRunnable;
+            mTimeoutRunnable = null;
+            timeout.run();
+        }
+
+        /**
+         * Time to wait after the timeout until the next search, so that searches still start
+         * one interval apart when the timeout alarm was delivered late.
+         */
+        protected long timeToWaitAfterTimeout() {
+            long late = Math.max(0, SystemClock.elapsedRealtime() - mTimeoutDeadline);
+            return Math.max(0, mIntervalTimeMillis - (mLocationTimeout * 1000L) - late);
         }
 
         public boolean shouldGetPositionAfterInterval() {
@@ -1212,10 +1290,7 @@ public class LoggerService extends Service {
 
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
-                        long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000L);
-                        if (timeToWait < 0) {
-                            timeToWait = 0;
-                        }
+                        long timeToWait = timeToWaitAfterTimeout();
                         SystemLogger.d(TAG, "Schedule next sample in " + (timeToWait / 1000) + " seconds [timeout reached]");
                         scheduleSampleAfterInterval(timeToWait);
                     }
@@ -1276,11 +1351,8 @@ public class LoggerService extends Service {
                                 + mLogJob.getMinDistance() + "), not logging this location and stopping the search");
                     }
 
-                    // Cancel timeout runnable if we got a correct position
-                    if (mTimeoutHandler != null) {
-                        mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
-                        mTimeoutRunnable = null;
-                    }
+                    // Cancel timeout if we got a correct position
+                    cancelResultTimeout();
 
                     // stop location request
                     if (useGps || useNet) {
@@ -1334,6 +1406,12 @@ public class LoggerService extends Service {
 
         protected Runnable createSampleTimeoutDelayRunnable() {
             return null;
+        }
+
+        @Override
+        public long searchDurationMillis() {
+            // GPS stays on between fixes
+            return 0;
         }
 
         public void scheduleSampleAfterInterval(long millisDelay) {
@@ -1439,10 +1517,7 @@ public class LoggerService extends Service {
 
                     // Schedule sample for X seconds from last time a sample was asked
                     if (mUseInterval) {
-                        long timeToWait = mIntervalTimeMillis - (mLocationTimeout * 1000L);
-                        if (timeToWait < 0) {
-                            timeToWait = 0;
-                        }
+                        long timeToWait = timeToWaitAfterTimeout();
                         SystemLogger.d(TAG, "Schedule next location request in " + (timeToWait / 1000) + "s");
                         scheduleSampleAfterInterval(timeToWait);
                     }
@@ -1502,11 +1577,8 @@ public class LoggerService extends Service {
                                 + "), not logging this location and stopping the search");
                     }
 
-                    // Cancel timeout runnable
-                    if (mTimeoutHandler != null) {
-                        mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
-                        mTimeoutRunnable = null;
-                    }
+                    // Cancel timeout
+                    cancelResultTimeout();
 
                     // stop location request because the search is done
                     if (useGps || useNet) {
