@@ -280,9 +280,7 @@
   <string name="about_testers_title">Analistas (Testers)</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Código-fonte</string>
-  <string name="about_source">Este projeto está alojado no Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Problemas</string>
-  <string name="about_issues">Pode reportar erros, lançar propostas de melhoramento e solicitar funcionalidades no rastreador de questões do GitLab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Traduzir</string>
   <string name="about_translate">Junte-se à equipa do MoneyBuster no Crowdin e ajude-nos a traduzir esta aplicação: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">Licença da aplicação</string>

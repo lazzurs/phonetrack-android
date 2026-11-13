@@ -280,9 +280,7 @@
   <string name="about_testers_title">Тестери</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Код</string>
-  <string name="about_source">Този проект се хоства на Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Задачи</string>
-  <string name="about_issues">Можете да докладвате за грешки, предложения за подобрения и заявки за функции в проследяващото издание на Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Превод</string>
   <string name="about_translate">Присъединете се към екипа на PhoneTrack в Crowdin и ни помогнете да преведем това приложение: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">Лиценз на апликацията</string>

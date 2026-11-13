@@ -280,9 +280,7 @@
   <string name="about_testers_title">Tester</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Quelltext</string>
-  <string name="about_source">Dieses Projekt ist auf Gitlab verfügbar: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Probleme</string>
-  <string name="about_issues">Sie können Fehler, Verbesserungsvorschläge und Funktionswünsche im Gitlab Issue Tracker melden: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Übersetzen</string>
   <string name="about_translate">Werden Sie Teil des PhoneTrack-Teams auf Crowdin und helfen Sie uns, diese App zu übersetzen: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">App-Lizenz</string>

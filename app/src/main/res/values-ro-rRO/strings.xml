@@ -280,9 +280,7 @@
   <string name="about_testers_title">Testeri</string>
   <string name="about_testers">Julien Veyssier</string>
   <string name="about_source_title">Cod sursă</string>
-  <string name="about_source">Acest proiect este găzduit pe Gitlab: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_issues_title">Probleme</string>
-  <string name="about_issues">Puteți raporta erori, propuneri de îmbunătățire și cereri de caracteristici pe Gitlab issue tracker: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_translate_title">Tradu</string>
   <string name="about_translate">Alătură-te echipei PhoneTrack pe Crowdin și ajută-ne să traducem această aplicație: &lt;a href=\"%1$s\"&gt;%1$s&lt;/a&gt;</string>
   <string name="about_app_license_title">Licență aplicație</string>

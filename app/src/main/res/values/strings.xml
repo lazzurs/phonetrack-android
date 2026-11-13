@@ -306,9 +306,9 @@
     <!-- Snackbar Actions -->
 
     <!-- URLs -->
-    <string name="url_source" translatable="false">https://gitlab.com/eneiluj/phonetrack-android</string>
-    <string name="url_issues" translatable="false">https://gitlab.com/eneiluj/phonetrack-android/issues</string>
-    <string name="url_license" translatable="false">https://gitlab.com/eneiluj/phonetrack-android/blob/master/LICENSE</string>
+    <string name="url_source" translatable="false">https://github.com/lazzurs/phonetrack-android</string>
+    <string name="url_issues" translatable="false">https://github.com/lazzurs/phonetrack-android/issues</string>
+    <string name="url_license" translatable="false">https://github.com/lazzurs/phonetrack-android/blob/main/LICENSE</string>
     <string name="url_translations" translatable="false">https://crowdin.com/project/phonetrack/</string>
 
     <!-- About -->
@@ -323,9 +323,9 @@
     <string name="about_testers_title">Testers</string>
     <string name="about_testers" translatable="false">Julien Veyssier</string>
     <string name="about_source_title">Source code</string>
-    <string name="about_source">This project is hosted on Gitlab: &lt;a href="%1$s">%1$s&lt;/a></string>
+    <string name="about_source_fork">This fork is hosted on GitHub: &lt;a href="%1$s">%1$s&lt;/a>. It is based on the original PhoneTrack for Android by Julien Veyssier on &lt;a href="https://gitlab.com/eneiluj/phonetrack-android">Gitlab&lt;/a>.</string>
     <string name="about_issues_title">Issues</string>
-    <string name="about_issues">You can report bugs, enhancement proposals and feature requests at the Gitlab issue tracker: &lt;a href="%1$s">%1$s&lt;/a></string>
+    <string name="about_issues_fork">You can report bugs, enhancement proposals and feature requests for this app at the GitHub issue tracker: &lt;a href="%1$s">%1$s&lt;/a></string>
     <string name="about_translate_title">Translate</string>
     <string name="about_translate">Join the PhoneTrack team on Crowdin and help us to translate this app: &lt;a href="%1$s">%1$s&lt;/a></string>
     <string name="about_app_license_title">App license</string>

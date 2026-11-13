@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="@string/about_source" />
+            android:text="@string/about_source_fork" />
 
         <TextView
             android:id="@+id/about_issues_title"
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="@string/about_issues" />
+            android:text="@string/about_issues_fork" />
 
         <TextView
             android:id="@+id/about_translate_title"
