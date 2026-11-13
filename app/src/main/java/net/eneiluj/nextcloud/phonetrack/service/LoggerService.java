@@ -1082,6 +1082,8 @@ public class LoggerService extends Service {
         protected PendingIntent timeoutIntent;
         protected PendingIntent nextPointIntent;
         protected CorrectingLocation mCachedNetworkResult;
+        /** Searches in a row that ended at the timeout without logging a position */
+        protected int mConsecutiveMisses;
 
         protected boolean mUseSignificantMotion;
         protected boolean mUseMixedMode;
@@ -1110,6 +1112,7 @@ public class LoggerService extends Service {
             timeoutIntent = null;
             nextPointIntent = null;
             mCachedNetworkResult = null;
+            mConsecutiveMisses = 0;
 
             mIntervalTimeMillis = mLogJob.getMinTime() * 1000L;
             mUseInterval = mIntervalTimeMillis > 0;
@@ -1170,12 +1173,14 @@ public class LoggerService extends Service {
          * At the timeout, log the cached network fix instead of a GPS one, if it passes the same
          * minimum accuracy and distance checks as any other fix.
          */
-        protected void useCachedNetworkResult() {
+        protected boolean useCachedNetworkResult() {
             if (decide(mCachedNetworkResult) == LocationSamplePolicy.Decision.ACCEPT) {
                 lastLocation = mCachedNetworkResult;
                 acceptAndSyncLocation(mJobId, mCachedNetworkResult);
+                return true;
             } else {
                 SystemLogger.d(TAG, "Network location not accurate enough or too close to the last point, not logging it");
+                return false;
             }
         }
 
@@ -1186,6 +1191,8 @@ public class LoggerService extends Service {
 
         protected void stop() {
             cancelResultTimeout();
+            // a restarted job searches at its normal interval again
+            mConsecutiveMisses = 0;
             if (nextPointIntent != null) {
                 alarmManager.cancel(nextPointIntent);
             }
@@ -1249,7 +1256,17 @@ public class LoggerService extends Service {
          */
         protected long timeToWaitAfterTimeout() {
             long late = Math.max(0, SystemClock.elapsedRealtime() - mTimeoutDeadline);
-            return Math.max(0, mIntervalTimeMillis - (mLocationTimeout * 1000L) - late);
+            long interval = mIntervalTimeMillis;
+            boolean backOff = PreferenceManager.getDefaultSharedPreferences(LoggerService.this)
+                    .getBoolean(getString(R.string.pref_key_search_backoff), true);
+            if (backOff) {
+                interval = LocationSamplePolicy.backedOffIntervalMillis(mIntervalTimeMillis, mConsecutiveMisses);
+                if (interval != mIntervalTimeMillis) {
+                    SystemLogger.d(TAG, mConsecutiveMisses + " searches in a row without a position, searching "
+                            + (interval / 1000) + " s after the last one instead of " + (mIntervalTimeMillis / 1000) + " s");
+                }
+            }
+            return Math.max(0, interval - (mLocationTimeout * 1000L) - late);
         }
 
         public boolean shouldGetPositionAfterInterval() {
@@ -1275,12 +1292,14 @@ public class LoggerService extends Service {
                 public void run() {
                     SystemLogger.d(TAG, "[LogjobClassicWorker] Location request timeout hit");
 
+                    boolean logged = false;
                     if (mCachedNetworkResult != null) {
                         SystemLogger.d(TAG, "Reached timeout for location request, using network cached location");
-                        useCachedNetworkResult();
+                        logged = useCachedNetworkResult();
                     } else {
                         SystemLogger.d(TAG, "Reached timeout for location request, NO network location");
                     }
+                    mConsecutiveMisses = logged ? 0 : mConsecutiveMisses + 1;
 
                     // stop requesting locations anyway
                     locManager.removeUpdates(gpsLocationListener);
@@ -1353,6 +1372,7 @@ public class LoggerService extends Service {
 
                     // Cancel timeout if we got a correct position
                     cancelResultTimeout();
+                    mConsecutiveMisses = 0;
 
                     // stop location request
                     if (useGps || useNet) {
@@ -1499,12 +1519,14 @@ public class LoggerService extends Service {
                 public void run() {
                     SystemLogger.d(TAG, "[LogjobSignificantMotionWorker] Location request timeout hit");
 
+                    boolean logged = false;
                     if (mCachedNetworkResult != null) {
                         SystemLogger.d(TAG, "Reached timeout before GPS sample, using network sample");
-                        useCachedNetworkResult();
+                        logged = useCachedNetworkResult();
                     } else {
                         SystemLogger.d(TAG, "Reached timeout before GPS sample, NO network sample");
                     }
+                    mConsecutiveMisses = logged ? 0 : mConsecutiveMisses + 1;
 
                     locManager.removeUpdates(gpsLocationListener);
                     locManager.removeUpdates(networkLocationListener);
@@ -1579,6 +1601,7 @@ public class LoggerService extends Service {
 
                     // Cancel timeout
                     cancelResultTimeout();
+                    mConsecutiveMisses = 0;
 
                     // stop location request because the search is done
                     if (useGps || useNet) {
@@ -1626,6 +1649,8 @@ public class LoggerService extends Service {
 
             // We detected a motion during the interval
             mMotionDetected = true;
+            // the phone moved: a position may be found again, search at the normal interval
+            mConsecutiveMisses = 0;
 
             // If the job doesn't have a minimum interval or hasn't requested a sample for longer than its interval:
             // sample immediately

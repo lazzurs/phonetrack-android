@@ -24,6 +24,7 @@ import androidx.work.testing.SynchronousExecutor;
 import androidx.work.testing.WorkManagerTestInitHelper;
 
 import net.eneiluj.nextcloud.phonetrack.R;
+import net.eneiluj.nextcloud.phonetrack.android.fragment.PreferencesFragment;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.DbTestSupport;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
@@ -280,6 +281,85 @@ public class LoggerServiceSamplingTest {
         idleAll();
         assertTrue(searching(LocationManager.GPS_PROVIDER));
         assertNotNull(timeoutAlarm());
+    }
+
+    /** Let n searches in a row end at the timeout without a position. */
+    private void missSearches(int n) {
+        for (int i = 0; i < n; i++) {
+            if (i > 0 || timeoutAlarm() == null) {
+                fireNextSample();
+            }
+            reachTimeout();
+        }
+    }
+
+    @Test
+    public void searchesLessOftenAfterThreeSearchesInARowWithoutAPosition() {
+        long id = addLogjob(60, 0, 50, 30);
+        startService();
+
+        missSearches(2);
+        assertEquals(30_000, nextSampleIn());
+        missSearches(1);
+        // the next search starts 2 intervals after the last one
+        assertEquals(90_000, nextSampleIn());
+        missSearches(1);
+        assertEquals(210_000, nextSampleIn());
+        // at most 4 intervals
+        missSearches(1);
+        assertEquals(210_000, nextSampleIn());
+
+        // the first position ends it
+        fireNextSample();
+        deliver(fix(LocationManager.GPS_PROVIDER, 0, 5));
+        assertEquals(1, logged(id));
+        long next = nextSampleIn();
+        assertTrue("next sample in " + next, next > 55_000 && next <= 60_000);
+        missSearches(1);
+        assertEquals(30_000, nextSampleIn());
+    }
+
+    @Test
+    public void aNetworkPositionLoggedAtTheTimeoutAlsoEndsIt() {
+        useProviders("3");
+        long id = addLogjob(60, 0, 50, 30);
+        startService();
+        missSearches(3);
+        assertEquals(90_000, nextSampleIn());
+
+        fireNextSample();
+        deliver(fix(LocationManager.NETWORK_PROVIDER, 0, 20));
+        reachTimeout();
+        assertEquals(1, logged(id));
+        assertEquals(30_000, nextSampleIn());
+    }
+
+    @Test
+    public void restartingTheLogjobSearchesAtTheNormalIntervalAgain() {
+        addLogjob(60, 0, 50, 30);
+        startService();
+        missSearches(3);
+        assertEquals(90_000, nextSampleIn());
+
+        // as when the location provider setting changes
+        controller.withIntent(new Intent(app, LoggerService.class)
+                .putExtra(PreferencesFragment.UPDATED_PROVIDERS, true)
+                .putExtra(PreferencesFragment.UPDATED_PROVIDERS_VALUE, "1")).startCommand(0, 1);
+        idleAll();
+        assertTrue(searching(LocationManager.GPS_PROVIDER));
+        reachTimeout();
+        assertEquals(30_000, nextSampleIn());
+    }
+
+    @Test
+    public void searchingLessOftenCanBeTurnedOff() {
+        PreferenceManager.getDefaultSharedPreferences(app).edit()
+                .putBoolean(app.getString(R.string.pref_key_search_backoff), false).commit();
+        addLogjob(60, 0, 50, 30);
+        startService();
+
+        missSearches(5);
+        assertEquals(30_000, nextSampleIn());
     }
 
     @Test

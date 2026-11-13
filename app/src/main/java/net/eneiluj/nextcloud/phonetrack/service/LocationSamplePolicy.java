@@ -26,7 +26,32 @@ public final class LocationSamplePolicy {
     /** Location timeout given to log jobs created by SMS command never exceeds this. */
     static final int MAX_SMS_TIMEOUT_SECONDS = 60;
 
+    /** Searches in a row ending at the timeout without a position before searching less often. */
+    static final int BACKOFF_AFTER_MISSES = 3;
+
+    /** Searching less often never stretches the interval more than this many times... */
+    static final int MAX_BACKOFF_FACTOR = 4;
+
+    /** ...nor beyond this, unless the log job's own interval is longer. */
+    static final long MAX_BACKOFF_INTERVAL_MILLIS = 10 * 60 * 1000L;
+
     private LocationSamplePolicy() {
+    }
+
+    /**
+     * Interval to use between the start of the last search and the next one, after
+     * consecutiveMisses searches in a row ended at the timeout without a position. Normal for
+     * the first {@link #BACKOFF_AFTER_MISSES} - 1, then doubled for each further one, up to
+     * {@link #MAX_BACKOFF_FACTOR} times the interval and at most
+     * {@link #MAX_BACKOFF_INTERVAL_MILLIS}. Never shorter than the log job's interval.
+     */
+    public static long backedOffIntervalMillis(long intervalMillis, int consecutiveMisses) {
+        if (intervalMillis <= 0 || consecutiveMisses < BACKOFF_AFTER_MISSES) {
+            return intervalMillis;
+        }
+        int doublings = Math.min(consecutiveMisses - BACKOFF_AFTER_MISSES + 1, 30);
+        long factor = Math.min(MAX_BACKOFF_FACTOR, 1L << doublings);
+        return Math.max(intervalMillis, Math.min(intervalMillis * factor, MAX_BACKOFF_INTERVAL_MILLIS));
     }
 
     /**

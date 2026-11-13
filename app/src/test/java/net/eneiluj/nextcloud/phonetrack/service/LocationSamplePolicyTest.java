@@ -74,4 +74,27 @@ public class LocationSamplePolicyTest {
         assertEquals(100, LocationSamplePolicy.gpsOnPercentWithoutFixWarning(60, 90));
         assertEquals(0, LocationSamplePolicy.gpsOnPercentWithoutFixWarning(-1, 30));
     }
+
+    @Test
+    public void searchesLessOftenAfterThreeMissesInARow() {
+        assertEquals(60_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, 0));
+        assertEquals(60_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, 1));
+        assertEquals(60_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, 2));
+        assertEquals(120_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, 3));
+        assertEquals(240_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, 4));
+        // at most 4 times the interval
+        assertEquals(240_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, 5));
+        assertEquals(240_000, LocationSamplePolicy.backedOffIntervalMillis(60_000, Integer.MAX_VALUE));
+    }
+
+    @Test
+    public void searchingLessOftenNeverWaitsMoreThanTenMinutes() {
+        assertEquals(600_000, LocationSamplePolicy.backedOffIntervalMillis(300_000, 3));
+        assertEquals(600_000, LocationSamplePolicy.backedOffIntervalMillis(300_000, 4));
+        assertEquals(400_000, LocationSamplePolicy.backedOffIntervalMillis(200_000, 3));
+        assertEquals(600_000, LocationSamplePolicy.backedOffIntervalMillis(200_000, 4));
+        // nor shortens a longer interval
+        assertEquals(1_800_000, LocationSamplePolicy.backedOffIntervalMillis(1_800_000, 10));
+        assertEquals(0, LocationSamplePolicy.backedOffIntervalMillis(0, 10));
+    }
 }
