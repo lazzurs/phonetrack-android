@@ -38,7 +38,6 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
-import androidx.preference.SwitchPreferenceCompat;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
@@ -235,19 +234,17 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             }
         });
 
-        final SwitchPreferenceCompat themePref = (SwitchPreferenceCompat) findPreference(getString(R.string.pref_key_theme));
+        final ListPreference themePref = findPreference(getString(R.string.pref_key_theme_mode));
 
-        Boolean darkTheme = sp.getBoolean(getString(R.string.pref_key_theme), false);
-
-        setThemePreferenceSummary(themePref, darkTheme);
-        setThemePreferenceIcon(themePref, darkTheme);
+        // converts the old Light/Dark switch the first time
+        themePref.setValue(PhoneTrack.getThemeMode(requireContext()));
+        setThemePreferenceIcon(themePref, PhoneTrack.getAppTheme(requireContext()));
         themePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Boolean darkTheme = (Boolean) newValue;
-                PhoneTrack.setAppTheme(darkTheme);
-                setThemePreferenceSummary(themePref, darkTheme);
-                setThemePreferenceIcon(themePref, darkTheme);
+                String themeMode = (String) newValue;
+                PhoneTrack.setAppTheme(themeMode);
+                setThemePreferenceIcon(themePref, PhoneTrack.isDark(requireContext(), themeMode));
 
                 if (getActivity() != null) {
                     getActivity().recreate();
@@ -454,14 +451,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             if (ok && getActivity() != null) {
                 getActivity().recreate();
             }
-        }
-    }
-
-    private void setThemePreferenceSummary(SwitchPreferenceCompat themePref, Boolean darkTheme) {
-        if (darkTheme) {
-            themePref.setSummary(getString(R.string.pref_value_theme_dark));
-        } else {
-            themePref.setSummary(getString(R.string.pref_value_theme_light));
         }
     }
 
