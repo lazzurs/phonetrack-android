@@ -188,10 +188,10 @@ public class MapActivity extends AppCompatActivity {
         if (itemId == R.id.menu_import_map) {
             Intent intent = new Intent()
                     .setType("*/*")
-                    .setAction(Intent.ACTION_GET_CONTENT);
+                    .addCategory(Intent.CATEGORY_OPENABLE)
+                    .setAction(Intent.ACTION_OPEN_DOCUMENT);
 
-            //startActivityForResult(Intent.createChooser(intent, "Select a file"), import_file_cmd);
-            importMapFileLauncher.launch(Intent.createChooser(intent, "Select a file"));
+            importMapFileLauncher.launch(intent);
             return true;
         }
         else if (itemId == R.id.menu_delete_map) {

@@ -145,9 +145,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent()
                         .setType("*/*")
-                        .setAction(Intent.ACTION_GET_CONTENT);
+                        .addCategory(Intent.CATEGORY_OPENABLE)
+                        .setAction(Intent.ACTION_OPEN_DOCUMENT);
 
-                startActivityForResult(Intent.createChooser(intent, "Select a file"), import_file_cmd);
+                startActivityForResult(intent, import_file_cmd);
                 return true;
             }
         });
