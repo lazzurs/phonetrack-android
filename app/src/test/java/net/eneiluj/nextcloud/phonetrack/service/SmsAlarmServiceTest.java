@@ -3,6 +3,7 @@ package net.eneiluj.nextcloud.phonetrack.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -100,6 +101,28 @@ public class SmsAlarmServiceTest {
         shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(31));
 
         assertStoppedAndRestored();
+    }
+
+    @Test
+    public void aHugeDurationIsCapped() {
+        toggle(Integer.MAX_VALUE);
+
+        assertTrue(service.isRinging());
+        assertTrue(lastSms().contains(String.valueOf(SmsAlarmService.MAX_DURATION_SECONDS)));
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(SmsAlarmService.MAX_DURATION_SECONDS));
+
+        assertStoppedAndRestored();
+    }
+
+    @Test
+    public void aDurationThatIsNotPositiveIsRejected() {
+        toggle(-5);
+
+        assertFalse(service.isRinging());
+        assertEquals(ORIGINAL_VOLUME, alarmVolume());
+        assertFalse(restorePending());
+        assertTrue(shadowOf(service).isStoppedBySelf());
+        assertNull(shadowOf(app.getSystemService(SmsManager.class)).getLastSentTextMessageParams());
     }
 
     @Test

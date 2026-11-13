@@ -62,7 +62,8 @@ public class SmsLocationSendService extends Service {
     /** Numbers whose request is in progress, so a repeated SMS isn't answered twice. */
     public static final Map<String, Boolean> isRunning = new ConcurrentHashMap<>();
 
-    private static final int CHANNEL_ID = 11111;
+    /** Channel of the notifications about SMS commands that were answered or run */
+    static final String INFO_CHANNEL_ID = "11111";
     private static final String PROGRESS_CHANNEL_ID = "sms_position_request";
     private static final int FOREGROUND_NOTIFICATION_ID = 1526756640;
     private static int notificationId = 1526756641;
@@ -326,7 +327,7 @@ public class SmsLocationSendService extends Service {
         }
         Intent ptIntent = SmsInfoStore.save(getApplicationContext(), smsContent, fromNotification);
 
-        String chanId = String.valueOf(CHANNEL_ID);
+        String chanId = INFO_CHANNEL_ID;
         createNotificationChannel(chanId, NotificationManager.IMPORTANCE_DEFAULT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanId)
                 .setSmallIcon(R.drawable.ic_notify_24dp)

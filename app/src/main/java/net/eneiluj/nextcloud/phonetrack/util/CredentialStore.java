@@ -22,6 +22,7 @@ public final class CredentialStore {
 
     private static final String KEY_ACCOUNT_PASSWORD = "accountPassword";
     private static final String KEY_LOGJOB_PASSWORD_PREFIX = "logjobPassword_";
+    private static final String KEY_SMS_PIN = "smsPin";
 
     private CredentialStore() {
     }
@@ -53,6 +54,15 @@ public final class CredentialStore {
 
     public static void removeLogjobPassword(Context context, long logjobId) {
         setLogjobPassword(context, logjobId, null);
+    }
+
+    /** PIN that SMS commands must carry after the keyword; "" if none (commands need no PIN). */
+    public static String getSmsPin(Context context) {
+        return prefs(context).getString(KEY_SMS_PIN, "");
+    }
+
+    public static void setSmsPin(Context context, @Nullable String pin) {
+        put(prefs(context).edit(), KEY_SMS_PIN, pin).apply();
     }
 
     /**
