@@ -24,7 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 import com.nextcloud.android.sso.helper.SingleAccountHelper;
@@ -124,7 +123,6 @@ public class SettingsActivity extends AppCompatActivity {
     private OnBackPressedCallback webLoginBackCallback;
 
     private boolean first_run = false;
-    private boolean useWebLogin = true;
 
     private LoginDialogFragment loginDialogFragment;
 
@@ -334,20 +332,6 @@ public class SettingsActivity extends AppCompatActivity {
         return Patterns.WEB_URL.matcher(url).matches();
     }
 
-    private void legacyLogin() {
-        String url = field_url.getText().toString().trim();
-        String username = field_username.getText().toString();
-        String password = field_password.getText().toString();
-
-        if (password.isEmpty()) {
-            password = old_password;
-        }
-
-        url = PhoneTrackClientUtil.formatURL(url);
-
-        new LoginValidatorTask().executeInParallel(url, username, password);
-    }
-
     private final ActivityResultLauncher<String> localNetworkPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     // go on either way: a refusal shows up as a connection error
@@ -384,11 +368,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void startLogin() {
-        if (useWebLogin) {
-            webLogin();
-        } else {
-            legacyLogin();
-        }
+        webLogin();
     }
 
     /**
@@ -523,19 +503,6 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         webView.loadUrl(normalizeUrlSuffix(field_url.getText().toString()) + "index.php/login/flow", headers);
-
-        // don't show old login method because SSO+weblogin is enough
-        // TODO cleanup
-        /*// show snackbar after 60s to switch back to old login method
-        new Handler().postDelayed(() -> {
-            Snackbar.make(webView, R.string.fallback_weblogin_text, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.fallback_weblogin_back, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            initLegacyLogin(field_url.getText().toString());
-                        }
-                    }).show();
-        }, 60 * 1000);*/
     }
 
     private String getWebLoginUserAgent() {
@@ -660,19 +627,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         return url;
-    }
-
-    private void initLegacyLogin(String oldUrl) {
-        useWebLogin = false;
-
-        webView.setVisibility(View.INVISIBLE);
-        setContentView(R.layout.activity_settings);
-
-        setupListener();
-
-        field_url.setText(oldUrl);
-        username_wrapper.setVisibility(View.VISIBLE);
-        password_wrapper.setVisibility(View.VISIBLE);
     }
 
     private void handleSubmitButtonEnabled() {
