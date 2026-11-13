@@ -7,6 +7,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# read-only token: this workflow runs the Gradle build, i.e. third-party plugins and dependencies
+permissions:
+  contents: read
+
 concurrency:
   group: build-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -17,10 +21,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # all tags: the release check compares the version code with the previous release's
           fetch-depth: 0
+          persist-credentials: false
+
+      # a tag like v4 can be moved to other code; a commit SHA can't (Dependabot updates them)
+      - name: Check that actions are pinned to commit SHAs
+        run: scripts/release/check-workflows.sh
 
       # release notes and CHANGELOG.md are generated from the commit messages
       - name: Check commit messages (Conventional Commits)
@@ -48,25 +57,23 @@ jobs:
           cat release-out/RELEASE_NOTES.md
 
       - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v6
+        uses: gradle/actions/wrapper-validation@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
       # 17 runs Gradle (last listed = JAVA_HOME); 21 is the javac and unit-test
       # toolchain (app/build.gradle.kts), found through JAVA_HOME_21_X64
       - name: Set up JDK 17 and 21
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: |
             21
             17
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: platform-tools
+      # the Android SDK is the runner image's own (ANDROID_HOME); the Android Gradle plugin
+      # downloads the platform and build-tools versions it is missing
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
       - name: Lint (dev flavor)
         run: ./gradlew -Pci --console=plain :app:lintDevDebug
@@ -82,8 +89,21 @@ jobs:
       - name: Assemble minified release APK (normal flavor)
         run: ./gradlew -Pci --console=plain assembleNormalRelease
 
+      # this workflow never gets the signing key, so its APK is debug-signed: tests the check that
+      # keeps a debug-signed APK from being published (scripts/release/verify-apk-signer.sh)
+      - name: Test the release signer check
+        env:
+          APK: app/build/outputs/apk/normal/release/app-normal-release.apk
+        run: |
+          scripts/release/verify-apk-signer.sh other "$APK"
+          if scripts/release/verify-apk-signer.sh release "$APK"; then
+            echo "::error::a debug-signed APK passed as signed with the release key"
+            exit 1
+          fi
+          echo "a debug-signed APK is refused as a release, as it should be"
+
       - name: Upload debug APK
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: phonetrack-dev-debug
           path: app/build/outputs/apk/dev/debug/*.apk
@@ -91,7 +111,7 @@ jobs:
 
       - name: Upload lint report
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: lint-report
           path: app/build/reports/lint-results-*.html
@@ -99,7 +119,7 @@ jobs:
 
       - name: Upload test report
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: test-report
           path: app/build/reports/tests/
