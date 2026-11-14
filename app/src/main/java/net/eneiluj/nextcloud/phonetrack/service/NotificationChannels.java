@@ -28,7 +28,11 @@ public final class NotificationChannels {
     private NotificationChannels() {
     }
 
-    static void createLogging(Context context) {
+    /**
+     * Public for the settings screen: the system screen of a channel closes at once when the
+     * channel does not exist, which is the case until logging has started once.
+     */
+    public static void createLogging(Context context) {
         create(context, LOGGING, R.string.notification_channel_logging,
                 R.string.notification_channel_logging_description, NotificationManager.IMPORTANCE_LOW);
     }
