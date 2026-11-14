@@ -1,0 +1,20 @@
+// Used by update-verification-metadata.sh, not by normal builds.
+//
+// The Android Gradle plugin downloads aapt2 for the operating system the build runs on only
+// (aapt2-<version>-linux.jar on CI). This resolves the jars of all three, so that checksums
+// recorded on one operating system also let the build run on the other two.
+gradle.rootProject {
+    tasks.register("resolveAapt2ForAllPlatforms") {
+        def version = providers.gradleProperty("aapt2Version").get()
+        def aapt2 = configurations.detachedConfiguration(
+            *["linux", "osx", "windows"].collect {
+                dependencies.create("com.android.tools.build:aapt2:${version}:${it}")
+            })
+        aapt2.transitive = false
+        def files = aapt2.incoming.files
+        inputs.files(files)
+        doLast {
+            files.each { println("resolved ${it.name}") }
+        }
+    }
+}
