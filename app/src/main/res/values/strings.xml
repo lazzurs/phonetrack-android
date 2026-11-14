@@ -306,6 +306,11 @@
     <string name="settings_send_deadline_long">Number of hours, for all log jobs. Points that are waiting for the bunch above to be complete are sent anyway once the oldest of them has waited this long, even if the phone is not moving. 0 means no time limit. Android may delay the upload a little to save battery.</string>
     <string name="settings_send_deadline_off">No time limit</string>
     <string name="settings_send_deadline_not_needed">Not needed: every point is sent straight away. Set a bunch of 2 or more above to use this.</string>
+    <string name="settings_keep_uploaded_title">Keep uploaded positions on this phone</string>
+    <string name="settings_keep_uploaded_forever">Forever</string>
+    <string name="settings_keep_uploaded_forever_summary">Forever: nothing is deleted. Positions stay on this phone after they are uploaded, until you reset the statistics of the log job or delete it.</string>
+    <string name="settings_keep_uploaded_summary">Uploaded positions more than %1$s old are deleted from this phone, not from the server, each time the log job uploads. This applies to PhoneTrack and Nextcloud Maps log jobs only. The log job info (points, distance, duration) then only counts the positions kept, and so does the map while the server cannot be reached. Positions not uploaded yet, and all positions of custom log jobs, are always kept.</string>
+    <string name="logjob_info_kept_window">Only positions less than %1$s old are counted. Older uploaded ones are deleted from this phone, see Settings.</string>
     <string name="settings_saving_category">Power/data saving</string>
     <string name="settings_power_saving_awareness_title">Pause logging in power saving mode</string>
     <string name="settings_power_saving_awareness_subtitle">Active log jobs stop recording points while power saving mode is on, and resume when it is turned off</string>
@@ -474,6 +479,7 @@
     <string name="pref_value_theme_dark">Dark</string>
     <string name="pref_key_group_sync" translatable="false">groupSync</string>
     <string name="pref_key_send_deadline" translatable="false">sendDeadlineHours</string>
+    <string name="pref_key_keep_uploaded" translatable="false">keepUploadedDays</string>
     <string name="pref_key_osmdroid_load" translatable="false">loadOsmdroidPath</string>
     <string name="pref_key_osmdroid_delete" translatable="false">osmdroidDelete</string>
     <string name="pref_key_open_syslog" translatable="false">openSyslogManager</string>
@@ -536,6 +542,14 @@
     <plurals name="settings_send_deadline_summary">
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="settings_keep_uploaded_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="settings_keep_uploaded_years">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
     </plurals>
 
     <!-- Notifications -->

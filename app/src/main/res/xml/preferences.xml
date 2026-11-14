@@ -198,6 +198,14 @@
             android:persistent="true"
             android:dialogLayout="@layout/preference_edit_text_integer"
             android:title="@string/settings_send_deadline_title" />
+        <!-- entries and summary are set in PreferencesFragment -->
+        <ListPreference
+            android:defaultValue="0"
+            android:icon="@drawable/ic_cloud_done_grey_24dp"
+            android:dialogTitle="@string/settings_keep_uploaded_title"
+            android:entryValues="@array/keepUploadedValues"
+            android:key="@string/pref_key_keep_uploaded"
+            android:title="@string/settings_keep_uploaded_title" />
 
     </PreferenceCategory>
 
