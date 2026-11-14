@@ -165,6 +165,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
 
         Preference loggingNotification = findPreference(getString(R.string.pref_key_logging_notification));
         loggingNotification.setOnPreferenceClickListener(preference -> {
+            // the channel is otherwise only created when logging starts: without it the
+            // system screen opens and closes at once, so that nothing seems to happen
+            NotificationChannels.createLogging(requireContext());
             Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                     .putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName())
                     .putExtra(Settings.EXTRA_CHANNEL_ID, NotificationChannels.LOGGING);
