@@ -105,6 +105,7 @@ import net.eneiluj.nextcloud.phonetrack.model.SyncError;
 import net.eneiluj.nextcloud.phonetrack.persistence.LoadLogjobsListTask;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
+import net.eneiluj.nextcloud.phonetrack.persistence.UploadedPositionRetention;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.SmsListener;
 import net.eneiluj.nextcloud.phonetrack.service.TrackingReadiness;
@@ -1530,6 +1531,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         if (cRLocations.size() > 0) {
             String nbPointsText = c.getString(R.string.logjob_info_nbpoints, cRLocations.size());
+            // points, distance and duration only cover what "Keep uploaded positions" kept
+            int keepDays = UploadedPositionRetention.keepDays(c, logjob);
+            if (keepDays != UploadedPositionRetention.KEEP_FOREVER) {
+                nbPointsText += "\n" + c.getString(R.string.logjob_info_kept_window,
+                        UploadedPositionRetention.describe(c, keepDays));
+            }
 
             TextView tv3 = iView.findViewById(R.id.infoNbPointsText);
             tv3.setText(nbPointsText);

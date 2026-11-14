@@ -62,6 +62,7 @@ import net.eneiluj.nextcloud.phonetrack.android.activity.MapActivity;
 import net.eneiluj.nextcloud.phonetrack.android.activity.SyslogManagerActivity;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
+import net.eneiluj.nextcloud.phonetrack.persistence.UploadedPositionRetention;
 import net.eneiluj.nextcloud.phonetrack.service.LoggerService;
 import net.eneiluj.nextcloud.phonetrack.service.UploadScheduler;
 import net.eneiluj.nextcloud.phonetrack.util.CertificateTrust;
@@ -376,6 +377,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
                 return true;
             }
         });
+
+        setupKeepUploadedPref();
 
         ListPreference providersListPref = (ListPreference) providersPref;
         providersList = new ArrayList<>();
@@ -800,6 +803,38 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
         } else {
             int quantity = (int) Math.min(hours, Integer.MAX_VALUE);
             pref.setSummary(getResources().getQuantityString(R.plurals.settings_send_deadline_summary, quantity, quantity));
+        }
+    }
+
+    /**
+     * "Keep uploaded positions on this phone": the choices read "Forever", "1 year", "90 days"...
+     * and the summary says what is deleted, so that nobody loses track history without knowing.
+     */
+    private void setupKeepUploadedPref() {
+        ListPreference pref = findPreference(getString(R.string.pref_key_keep_uploaded));
+        CharSequence[] values = pref.getEntryValues();
+        CharSequence[] entries = new CharSequence[values.length];
+        for (int i = 0; i < values.length; i++) {
+            int days = UploadedPositionRetention.parseDays(values[i].toString());
+            entries[i] = days == UploadedPositionRetention.KEEP_FOREVER
+                    ? getString(R.string.settings_keep_uploaded_forever)
+                    : UploadedPositionRetention.describe(requireContext(), days);
+        }
+        pref.setEntries(entries);
+        setKeepUploadedSummary(pref, pref.getValue());
+        pref.setOnPreferenceChangeListener((preference, newValue) -> {
+            setKeepUploadedSummary(preference, (String) newValue);
+            return true;
+        });
+    }
+
+    private void setKeepUploadedSummary(Preference pref, @Nullable String value) {
+        int days = UploadedPositionRetention.parseDays(value);
+        if (days == UploadedPositionRetention.KEEP_FOREVER) {
+            pref.setSummary(R.string.settings_keep_uploaded_forever_summary);
+        } else {
+            pref.setSummary(getString(R.string.settings_keep_uploaded_summary,
+                    UploadedPositionRetention.describe(requireContext(), days)));
         }
     }
 

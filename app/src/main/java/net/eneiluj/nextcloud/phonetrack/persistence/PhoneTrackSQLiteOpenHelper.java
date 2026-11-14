@@ -32,6 +32,7 @@ import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.CorrectingLocation;
 import net.eneiluj.nextcloud.phonetrack.util.SupportUtil;
+import net.eneiluj.nextcloud.phonetrack.util.SystemLogger;
 
 /**
  * Helps to add, get, update and delete log jobs, sessions, locations with the option to trigger a session Resync with the Server.
@@ -41,7 +42,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = PhoneTrackSQLiteOpenHelper.class.getSimpleName();
 
     @VisibleForTesting
-    static final int database_version = 22;
+    static final int database_version = 23;
     private static final String database_name = "NEXTCLOUD_PHONETRACK";
 
     private static final String table_sessions = "SESSIONS";
@@ -97,10 +98,23 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
     @VisibleForTesting
     static final String index_locations_pending = "LOCATIONS_PENDING_idx";
     @VisibleForTesting
-    static final String index_locations_logjob = "LOCATIONS_LOGJOBID_CURRENTRUN_idx";
+    static final String index_locations_logjob = "LOCATIONS_LOGJOBID_CURRENTRUN_TIME_idx";
+    /** Versions 21 and 22: the same index without TIME, replaced by the one above in version 23. */
+    @VisibleForTesting
+    static final String index_locations_logjob_v21 = "LOCATIONS_LOGJOBID_CURRENTRUN_idx";
     @VisibleForTesting
     static final String selection_logjob_after_id =
             "+" + key_logjobid + " = CAST(? AS INTEGER) AND " + key_id + " > ?";
+    /**
+     * Uploaded positions of a log job recorded before a time ("Keep uploaded positions on this
+     * phone"). Never matches a position waiting for upload. Uploaded positions are all part of the
+     * current run (the others are deleted as soon as they are sent), and the index on
+     * (LOGJOBID, CURRENTRUN, TIME) lets it visit only the rows older than the time.
+     */
+    @VisibleForTesting
+    static final String delete_uploaded_before = "DELETE FROM " + table_locations + " WHERE "
+            + key_logjobid + " = ? AND " + key_currentRun + " = 1 AND " + key_time + " < ? AND "
+            + key_synced + " = 1";
 
     private static final String table_syslog = "SYSLOG";
     private static final String key_tag = "TAG";
@@ -321,6 +335,21 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         if (oldVersion < 22) {
             addUploadErrorCountColumn(db);
         }
+        if (oldVersion < 23) {
+            addTimeToLogjobLocationIndex(db);
+        }
+    }
+
+    /**
+     * The index of a log job's positions gets TIME as its last column, so that deleting uploaded
+     * positions older than a time reads only those. It replaces the index without TIME, which it
+     * covers for every other query, so storing a position updates as many indexes as before.
+     * Safe to run again.
+     */
+    @VisibleForTesting
+    static void addTimeToLogjobLocationIndex(SQLiteDatabase db) {
+        db.execSQL("DROP INDEX IF EXISTS " + index_locations_logjob_v21);
+        createLocationIndexes(db);
     }
 
     /**
@@ -350,7 +379,9 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * <li>Positions waiting for upload, per logjob and in time order. It is partial (only rows
      * with SYNCED = 0), so it stays small however long the current run gets, and it covers the
      * per-position counts (notification, upload policy) and the read of what to send.</li>
-     * <li>Positions of a logjob (map, info dialog, reset current run, deletion).</li>
+     * <li>Positions of a logjob (map, info dialog, reset current run, deletion), in time order
+     * within the current run (deletion of old uploaded positions, see
+     * {@link UploadedPositionRetention}).</li>
      * </ul>
      * The queries must use the literal {@code SYNCED = 0} for SQLite to pick the partial index.
      */
@@ -359,7 +390,7 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE INDEX IF NOT EXISTS " + index_locations_pending + " ON " + table_locations
                 + "(" + key_logjobid + ", " + key_time + ") WHERE " + key_synced + " = 0");
         db.execSQL("CREATE INDEX IF NOT EXISTS " + index_locations_logjob + " ON " + table_locations
-                + "(" + key_logjobid + ", " + key_currentRun + ")");
+                + "(" + key_logjobid + ", " + key_currentRun + ", " + key_time + ")");
     }
 
     /**
@@ -1270,11 +1301,18 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
      * ones that are not part of the "current run" (nothing shows them any more), mark the others
      * as synced (the map and the info dialog still show them), add them to the logjob's sent
      * count and set its last sync time. If anything fails, all of them stay unsynced.
+     * <p>
+     * When "Keep uploaded positions on this phone" is not "Forever" and applies to this log job,
+     * the same transaction deletes its uploaded positions recorded before the kept window (see
+     * {@link UploadedPositionRetention}). The sent count is not changed: it counts positions sent.
      */
     public void markSynced(@NonNull DBLogjob logjob, @NonNull List<Long> locationIds) {
         if (locationIds.isEmpty()) {
             return;
         }
+        long now = System.currentTimeMillis() / 1000;
+        long oldestKept = UploadedPositionRetention.oldestKeptTime(context, logjob, now);
+        int pruned = 0;
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try (SQLiteStatement delete = db.compileStatement("DELETE FROM " + table_locations
@@ -1291,7 +1329,10 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             db.execSQL("UPDATE " + table_logjobs + " SET "
                             + key_nbsync + " = " + key_nbsync + " + ?, "
                             + key_lastSyncTimestamp + " = ? WHERE " + key_id + " = ?",
-                    new Object[]{locationIds.size(), System.currentTimeMillis() / 1000, logjob.getId()});
+                    new Object[]{locationIds.size(), now, logjob.getId()});
+            if (oldestKept > 0) {
+                pruned = deleteUploadedBefore(db, logjob.getId(), oldestKept);
+            }
             db.setTransactionSuccessful();
         } finally {
             try {
@@ -1302,6 +1343,20 @@ public class PhoneTrackSQLiteOpenHelper extends SQLiteOpenHelper {
             }
         }
         logjob.setNbSync(logjob.getNbSync() + locationIds.size());
+        if (pruned > 0) {
+            SystemLogger.i(TAG, "Deleted " + pruned + " uploaded positions of log job " + logjob.getId()
+                    + " recorded more than " + UploadedPositionRetention.keepDays(context, logjob)
+                    + " days ago");
+        }
+    }
+
+    /** One indexed DELETE; returns how many positions it deleted. */
+    private static int deleteUploadedBefore(SQLiteDatabase db, long logjobId, long oldestKept) {
+        try (SQLiteStatement delete = db.compileStatement(delete_uploaded_before)) {
+            delete.bindLong(1, logjobId);
+            delete.bindLong(2, oldestKept);
+            return delete.executeUpdateDelete();
+        }
     }
 
     public void deleteLocation(long id) {

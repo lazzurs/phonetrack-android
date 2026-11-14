@@ -9,9 +9,11 @@ import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 
+import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjob;
 import net.eneiluj.nextcloud.phonetrack.model.DBLogjobLocation;
 import net.eneiluj.nextcloud.phonetrack.persistence.DbTestSupport;
@@ -196,6 +198,33 @@ public class WebTrackSyncTest {
         assertEquals(3, paths.size());
         assertEquals(0, rows(id, "1 = 1"));
         assertEquals(3, db.getNbSync(id));
+    }
+
+    @Test
+    public void acceptedBatchDeletesUploadedPointsOlderThanTheKeptWindow() {
+        long id = phoneTrackLogjob();
+        long now = System.currentTimeMillis() / 1000;
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putString(context.getString(R.string.pref_key_keep_uploaded), "30").commit();
+        try {
+            // recorded offline: four 40 days ago, three today
+            for (int i = 0; i < 7; i++) {
+                long time = i < 4 ? now - 40 * 86400L + i : now - 60 + i;
+                db.addLocation(new DBLogjobLocation(0, id, 53.0, -6.0, time,
+                        null, null, null, null, null, 70.0, "test", false, true));
+            }
+
+            assertTrue(new WebTrackSync(context).sync(id, false));
+
+            assertEquals(1, paths.size());
+            assertEquals(3, rows(id, "SYNCED = 1 AND CURRENTRUN = 1"));
+            assertEquals(0, rows(id, "TIME < " + (now - 30 * 86400L)));
+            assertEquals(0, db.getLogjobLocationNotSyncedCount(id));
+            // all seven were sent
+            assertEquals(7, db.getNbSync(id));
+        } finally {
+            PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+        }
     }
 
     private long rowTime(long logjobId, String where) {

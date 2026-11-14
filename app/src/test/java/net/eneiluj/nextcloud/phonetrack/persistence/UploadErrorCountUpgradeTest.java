@@ -123,7 +123,7 @@ public class UploadErrorCountUpgradeTest {
         createVersion21Database();
         PhoneTrackSQLiteOpenHelper helper = openWithHelper();
 
-        assertEquals(22, helper.getReadableDatabase().getVersion());
+        assertEquals(PhoneTrackSQLiteOpenHelper.database_version, helper.getReadableDatabase().getVersion());
         assertEquals(1, countColumns(helper.getReadableDatabase(), "LASTSYNCERRCOUNT"));
         assertDataKept(helper);
     }
