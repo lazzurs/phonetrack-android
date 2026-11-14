@@ -185,13 +185,47 @@ anything here):
   else (`com.github.bitfireat` for cert4android, `com.github.nextcloud` for Android-SingleSignOn;
   the content filter in [`settings.gradle.kts`](settings.gradle.kts)). cert4android is pinned by its
   full commit hash.
-- JitPack can rebuild an artifact, so the bytes behind a version are not fixed. Gradle therefore
-  checks the artifacts of those two groups against the SHA-256 checksums in
-  [`gradle/verification-metadata.xml`](gradle/verification-metadata.xml) and fails the build on any
-  other content; every other group is trusted as downloaded. After changing the version of one of
-  the two (review the new code first), set the new version and the SHA-256 of its `.aar` and
-  `.module` files in its `<component>` there; the build fails until they match, and its
-  dependency verification report shows the checksums of what was downloaded.
+- **Every file Gradle downloads is checked against a SHA-256 checksum** recorded in
+  [`gradle/verification-metadata.xml`](gradle/verification-metadata.xml): the plugins and what they
+  depend on, the libraries, lint, aapt2 and each one's `.pom`/`.module` metadata, from all three
+  repositories and for every flavor. A file with another checksum, or with none recorded, fails the
+  build ("Dependency verification failed"), in CI and in the release build alike, before anything
+  is signed. No repository or group is trusted as a whole. This matters most for JitPack, which
+  can rebuild an artifact, so the bytes behind a version are not fixed there.
+- The only exception: `-sources.jar` and `-javadoc.jar` files, which an IDE downloads for
+  navigation, are not checked. They are never compiled, packaged or run.
+- Signatures (PGP) are not checked: several artifacts are not signed at all (Material, older
+  AndroidX libraries, both JitPack libraries), so they would need checksums anyway, and the rest
+  would need a list of trusted keys that somebody reviews and keeps up to date, for little more
+  than the checksums already give.
+- Not covered, because Gradle doesn't download them: the Android SDK, a JDK that the toolchain
+  resolver fetches when none is installed (CI installs its own), and the Android images that
+  Robolectric downloads from Maven Central when the unit tests run.
+
+### Changing a dependency
+
+Any change to what the build downloads (a library, the Android Gradle plugin, a settings plugin, a
+new Gradle task in CI that resolves something else) needs its checksums, or the build fails. In the
+same pull request:
+
+1. Change the version (`gradle/libs.versions.toml`); for cert4android or Android-SingleSignOn,
+   review the new code first.
+2. Run `scripts/dependencies/update-verification-metadata.sh` (a few minutes; it needs the Android
+   SDK). It builds every variant, records what was downloaded, and adds aapt2 for the operating
+   systems the build did not run on.
+3. **Review the diff of `gradle/verification-metadata.xml`.** The script records whatever was
+   downloaded, so this review is the check: only the components you changed, and what they newly
+   pull in, should differ. It refuses to replace the checksum of a version that was already
+   recorded; that means a repository now serves different bytes, so find out why.
+4. Commit the file with the version change.
+
+A pull request that changes a version without step 2 fails in CI with "Dependency verification
+failed" and the list of files (sometimes below a "Configuration cache state could not be cached"
+line); that includes one opened by a bot, which can't run the script.
+Check out its branch, run the script, review and push the result to the same branch. (Dependabot
+only updates the GitHub Actions here, which Gradle doesn't download, so today this only concerns
+version changes made by hand.)
+
 - The Gradle wrapper checks the Gradle distribution it downloads against `distributionSha256Sum` in
   [`gradle/wrapper/gradle-wrapper.properties`](gradle/wrapper/gradle-wrapper.properties). When
   updating Gradle, take the new checksum from <https://gradle.org/release-checksums/>

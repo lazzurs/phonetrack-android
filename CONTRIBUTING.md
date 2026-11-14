@@ -38,6 +38,14 @@ Please don't change the app version (`appVersionName` / `appVersionCode` in `gra
 pull request: the release workflow sets it when your change is released, and CI rejects version
 changes from forks.
 
+## Changing a dependency (this fork)
+
+Gradle checks every file it downloads against the checksums in `gradle/verification-metadata.xml`,
+so a pull request that adds or updates a library or a plugin fails with "Dependency verification
+failed" until that file is regenerated: run `scripts/dependencies/update-verification-metadata.sh`
+and commit the result with your change. A maintainer reviews that diff; see
+[RELEASING.md](RELEASING.md#dependencies).
+
 ## Adding new features
 
 If you want to contribute on the code, you can fork the project, commit your changes and make a pull request. For bigger features/changes, it's better to first [open an issue](https://github.com/lazzurs/phonetrack-android/issues) and ask if this feature is needed or wanted – it would be very disappointing if you add a new cool feature and your pull request will be rejected by some reasons you didn't thought about.
