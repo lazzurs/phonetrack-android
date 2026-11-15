@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -38,10 +39,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowLooper;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,6 +200,51 @@ public class UploadErrorDisplayTest {
         assertEquals(2, ((java.util.Map<?, ?>) field.get(activity)).size());
         broadcastRunDone();
         assertTrue(((java.util.Map<?, ?>) field.get(activity)).isEmpty());
+        assertEquals("Upload failed for 2 log jobs", snackbarText(activity));
+    }
+
+    /** Runs the garbage collector until it has cleared a weak reference */
+    private static void collectGarbage() {
+        WeakReference<Object> probe = new WeakReference<>(new Object());
+        for (int attempt = 0; attempt < 100 && probe.get() != null; attempt++) {
+            System.gc();
+        }
+        assertNull("the garbage collector did not run", probe.get());
+    }
+
+    /**
+     * Issue #116: Snackbar's manager only keeps a weak reference to a Snackbar waiting for the one
+     * on screen to slide out, so a garbage collection then used to lose the summary.
+     */
+    @Test
+    public void summaryIsNotLostToAGarbageCollectionWhileTheLastOneSlidesOut() throws Exception {
+        long hike = customLogjob("hike");
+        long car = customLogjob("car");
+        LogjobsListViewActivity activity = launch();
+        Field field = LogjobsListViewActivity.class.getDeclaredField("uploadFailures");
+        field.setAccessible(true);
+        String first = "Upload failed for ‘hike’: Could not connect to the server";
+        broadcastFailure(hike, "Could not connect to the server");
+        broadcastRunDone();
+        assertEquals(first, snackbarText(activity));
+
+        broadcastFailure(hike, "Could not connect to the server");
+        broadcastFailure(car, "The server refused the login (HTTP 401)");
+        ShadowLooper.idleMainLooper();
+        Intent done = new Intent(WebTrackSync.BROADCAST_SYNC_DONE);
+        done.setPackage(context.getPackageName());
+        context.sendBroadcast(done);
+        ShadowLooper mainLooper = Shadows.shadowOf(Looper.getMainLooper());
+        mainLooper.runOneTask();
+        // the run is over and its summary waits for the one shown to slide out
+        assertTrue(((java.util.Map<?, ?>) field.get(activity)).isEmpty());
+        assertEquals(first, snackbarText(activity));
+        for (int step = 0; step < 200 && first.equals(snackbarText(activity)); step++) {
+            collectGarbage();
+            mainLooper.runOneTask();
+        }
+
+        ShadowLooper.idleMainLooper(1, java.util.concurrent.TimeUnit.SECONDS);
         assertEquals("Upload failed for 2 log jobs", snackbarText(activity));
     }
 }
