@@ -191,6 +191,11 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
      * collection during that animation would lose the summary.
      */
     private Snackbar uploadFailureSnackbar;
+    /** The next four are kept for the same reason as uploadFailureSnackbar (issue #120) */
+    private Snackbar logjobDeletedSnackbar;
+    private Snackbar logjobRestoredSnackbar;
+    private Snackbar sessionsSyncedSnackbar;
+    private Snackbar sessionCreatedSnackbar;
     ImageView avatarView;
     AppCompatImageButton menuButton;
     AppCompatImageButton accountButton;
@@ -961,7 +966,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         notifyLoggerService(dbLogjob.getId());
 
         SystemLogger.v(TAG, "Item deleted through swipe");
-        Snackbar.make(swipeRefreshLayout, R.string.action_logjob_deleted, Snackbar.LENGTH_LONG)
+        logjobDeletedSnackbar = Snackbar.make(swipeRefreshLayout, R.string.action_logjob_deleted, Snackbar.LENGTH_LONG)
                 .setAction(R.string.action_undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -971,12 +976,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                             db.addLocation(dbloc);
                         }
                         refreshLists();
-                        Snackbar.make(swipeRefreshLayout, R.string.action_logjob_restored, Snackbar.LENGTH_SHORT)
-                                .show();
+                        logjobRestoredSnackbar = Snackbar.make(swipeRefreshLayout, R.string.action_logjob_restored, Snackbar.LENGTH_SHORT);
+                        logjobRestoredSnackbar.show();
                         notifyLoggerService(restoredId);
                     }
-                })
-                .show();
+                });
+        logjobDeletedSnackbar.show();
     }
 
     public void initList() {
@@ -1869,7 +1874,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         ssoSnackbar = null;
                     }
                     // (custom-view toasts are deprecated and not shown from the background)
-                    Snackbar.make(swipeRefreshLayout, R.string.sessions_sync_success, Snackbar.LENGTH_SHORT).show();
+                    sessionsSyncedSnackbar = Snackbar.make(swipeRefreshLayout, R.string.sessions_sync_success, Snackbar.LENGTH_SHORT);
+                    sessionsSyncedSnackbar.show();
 
                     updateAllLogjobItems();
                     break;
@@ -1944,7 +1950,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
 
         public void onFinish(String sessionId, String message) {
             if (sessionId != null) {
-                Snackbar.make(swipeRefreshLayout, R.string.action_session_created, Snackbar.LENGTH_LONG).show();
+                sessionCreatedSnackbar = Snackbar.make(swipeRefreshLayout, R.string.action_session_created, Snackbar.LENGTH_LONG);
+                sessionCreatedSnackbar.show();
                 synchronize();
             }
             else {
