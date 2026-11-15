@@ -247,4 +247,46 @@ public class UploadErrorDisplayTest {
         ShadowLooper.idleMainLooper(1, java.util.concurrent.TimeUnit.SECONDS);
         assertEquals("Upload failed for 2 log jobs", snackbarText(activity));
     }
+
+    /**
+     * Issue #120: the "deleted" Snackbar, with its undo action, was queued behind the one showing
+     * through a weak reference as well.
+     */
+    @Test
+    public void deletedMessageIsNotLostToAGarbageCollectionWhileTheLastOneSlidesOut() throws Exception {
+        long hike = customLogjob("hike");
+        long car = customLogjob("car");
+        LogjobsListViewActivity activity = launch();
+        broadcastFailure(hike, "Could not connect to the server");
+        broadcastRunDone();
+        String first = "Upload failed for ‘hike’: Could not connect to the server";
+        assertEquals(first, snackbarText(activity));
+
+        java.lang.reflect.Method delete = LogjobsListViewActivity.class
+                .getDeclaredMethod("cancelableLogjobDeletion", DBLogjob.class);
+        delete.setAccessible(true);
+        // the very instance the list holds, as a swipe gives
+        Field adapterField = LogjobsListViewActivity.class.getDeclaredField("adapter");
+        adapterField.setAccessible(true);
+        net.eneiluj.nextcloud.phonetrack.model.ItemAdapter adapter =
+                (net.eneiluj.nextcloud.phonetrack.model.ItemAdapter) adapterField.get(activity);
+        DBLogjob swiped = null;
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            if (!adapter.getItem(i).isSection() && ((DBLogjob) adapter.getItem(i)).getId() == car) {
+                swiped = (DBLogjob) adapter.getItem(i);
+            }
+        }
+        assertNotNull(swiped);
+        delete.invoke(activity, swiped);
+        // the deleted message waits for the one shown to slide out
+        assertEquals(first, snackbarText(activity));
+        ShadowLooper mainLooper = Shadows.shadowOf(Looper.getMainLooper());
+        for (int step = 0; step < 200 && first.equals(snackbarText(activity)); step++) {
+            collectGarbage();
+            mainLooper.runOneTask();
+        }
+
+        ShadowLooper.idleMainLooper(1, java.util.concurrent.TimeUnit.SECONDS);
+        assertEquals("Log job deleted", snackbarText(activity));
+    }
 }
