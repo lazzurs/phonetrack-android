@@ -25,6 +25,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import net.eneiluj.nextcloud.phonetrack.R;
 import net.eneiluj.nextcloud.phonetrack.persistence.DbTestSupport;
+import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.CredentialStore;
 import net.eneiluj.nextcloud.phonetrack.util.LocalNetworkAccess;
 
@@ -99,8 +100,18 @@ public class SettingsWebLoginTest {
         return shadowOf(webView()).getWebViewClient();
     }
 
-    private void assertFormShownWithError(String error) {
+    /**
+     * Back on the form, the address field takes the focus and checks the address again on the
+     * serial background thread (the button is disabled until then): wait for that check and
+     * its result on the main thread.
+     */
+    private static void finishAddressCheck() throws Exception {
+        BackgroundTask.awaitSerialQueue();
         shadowOf(Looper.getMainLooper()).idle();
+    }
+
+    private void assertFormShownWithError(String error) throws Exception {
+        finishAddressCheck();
         assertNull("web login still shown", webView());
         assertNotNull("form not shown", urlField());
         assertEquals("address lost", SERVER, urlField().getText().toString());
@@ -221,10 +232,12 @@ public class SettingsWebLoginTest {
     public void connectingAgainAfterAnErrorWorks() throws Exception {
         WebViewClient client = startWebLogin();
         client.onReceivedError(webView(), request(SERVER + "/index.php/login/flow", true), null);
-        shadowOf(Looper.getMainLooper()).idle();
+        finishAddressCheck();
         TextInputLayout wrapper = urlWrapper();
+        Button submit = activity.findViewById(R.id.settings_submit);
+        assertTrue(submit.isEnabled());
 
-        activity.findViewById(R.id.settings_submit).performClick();
+        submit.performClick();
         shadowOf(Looper.getMainLooper()).idle();
 
         assertNotNull(webView());
