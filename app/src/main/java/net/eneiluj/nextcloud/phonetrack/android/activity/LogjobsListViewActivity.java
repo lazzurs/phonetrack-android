@@ -185,6 +185,12 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     Snackbar ssoSnackbar;
     /** Upload errors of the sync run in progress, by log job id, shown together when it ends */
     private final Map<Long, String> uploadFailures = new LinkedHashMap<>();
+    /**
+     * The upload failure summary shown last. Snackbar's manager only keeps a weak reference to a
+     * Snackbar waiting for the one on screen to slide out, so without this one a garbage
+     * collection during that animation would lose the summary.
+     */
+    private Snackbar uploadFailureSnackbar;
     ImageView avatarView;
     AppCompatImageButton menuButton;
     AppCompatImageButton accountButton;
@@ -1927,7 +1933,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                     uploadFailures.size(), uploadFailures.size());
         }
         uploadFailures.clear();
-        Snackbar.make(swipeRefreshLayout, text, Snackbar.LENGTH_LONG).show();
+        uploadFailureSnackbar = Snackbar.make(swipeRefreshLayout, text, Snackbar.LENGTH_LONG);
+        uploadFailureSnackbar.show();
     }
 
     private final ICallback createSessionCallBack = new ICallback() {
