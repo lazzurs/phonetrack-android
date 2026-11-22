@@ -350,8 +350,18 @@ jobs:
           fi
           git tag -a "$TAG" -m "PhoneTrack $VERSION"
           if git push origin HEAD:refs/heads/main; then
-            git push "https://x-access-token:${BOT_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "refs/tags/$TAG" \
-              || { echo "::error::the release commit is on main but $TAG could not be pushed: push the tag by hand"; exit 1; }
+            # The checkout step saved the workflow's token as an http.extraheader for github.com, and
+            # git sends that header with every push there, even to a URL that carries another token:
+            # the tag would be pushed as github-actions[bot], which the v* ruleset refuses. For this
+            # push only, clear that header and send the release bot's instead, through the
+            # environment so that the token is never on a command line.
+            auth=$(printf 'x-access-token:%s' "$BOT_TOKEN" | base64 -w0)
+            echo "::add-mask::$auth"
+            GIT_CONFIG_COUNT=2 \
+              GIT_CONFIG_KEY_0=http.https://github.com/.extraheader GIT_CONFIG_VALUE_0='' \
+              GIT_CONFIG_KEY_1=http.https://github.com/.extraheader GIT_CONFIG_VALUE_1="AUTHORIZATION: basic $auth" \
+              git push origin "refs/tags/$TAG" \
+              || { echo "::error::the release commit is on main but $TAG could not be pushed with the release bot's token"; exit 1; }
             echo "pushed=true" >> "$GITHUB_OUTPUT"
           else
             # main moved on while this ran: the run queued for that push releases it all

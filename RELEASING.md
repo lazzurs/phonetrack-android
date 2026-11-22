@@ -135,8 +135,11 @@ for forks), and there is no `pull_request_target` workflow. Keep it that way:
 - All workflows have a read-only token, except the publish job. The job that signs doesn't use the
   Android SDK setup action or a Gradle cache written by another run.
 - Pull requests from other repositories can't change the version.
-- The workflow's own pushes (release commit and tag) use its token, which starts no workflow run, so
-  a release can't trigger another one.
+- The workflow pushes the release commit with its own token, which starts no workflow run, and the
+  tag with the release bot's token (see [Signing](#signing)), which starts only the tag run; that run
+  sees the bot as the tagger and does nothing, so a release can't trigger another one. The tag push
+  replaces the workflow token that `actions/checkout` saved in the git config (an
+  `http.extraheader`), because git would otherwise send that token, not the bot's.
 - Workflow inputs and event data reach scripts through environment variables, never through
   `${{ }}` inside `run:`.
 
