@@ -173,8 +173,11 @@ anything here):
   environment with the same values, check with a dry run on `main`, then delete the repository
   secrets.
 - *Rules → Rulesets*: a tag ruleset for `v*` that restricts creation, update and deletion, with
-  the repository admin and **GitHub Actions** in the bypass list (the release workflow pushes the
-  tag with its own token), and a branch ruleset or protection for `main`.
+  the release bot (a GitHub App owned by the repository's account, installed on this repository
+  only) in the bypass list: the release workflow creates each tag with a token from that app, so
+  that only the release run can publish. Its ID is the `RELEASE_BOT_APP_ID` variable of the
+  `release` environment, and its private key the `RELEASE_BOT_PRIVATE_KEY` secret there. A branch
+  ruleset or protection for `main` is still to be decided.
 - *Actions → General*: workflow permissions "Read repository contents" (the default token is
   read-only), and optionally "Require actions to be pinned to a full-length commit SHA".
 
