@@ -343,7 +343,11 @@ jobs:
           fi
           scripts/release/update-changelog.sh release-out/CHANGELOG_ENTRY.md
           git add gradle.properties CHANGELOG.md
-          git commit -m "build: release $VERSION"
+          # a version already on main without its tag (its release commit went in, the tag push
+          # was refused): nothing to commit, the tag goes on main as it is
+          if ! git diff --cached --quiet; then
+            git commit -m "build: release $VERSION"
+          fi
           git tag -a "$TAG" -m "PhoneTrack $VERSION"
           if git push origin HEAD:refs/heads/main; then
             git push "https://x-access-token:${BOT_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "refs/tags/$TAG" \
