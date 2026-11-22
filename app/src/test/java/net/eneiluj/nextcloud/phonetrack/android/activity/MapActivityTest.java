@@ -3,17 +3,20 @@ package net.eneiluj.nextcloud.phonetrack.android.activity;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.content.pm.ShortcutManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.net.Uri;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +37,8 @@ import net.eneiluj.nextcloud.phonetrack.model.NavigationAdapter;
 import net.eneiluj.nextcloud.phonetrack.persistence.DbTestSupport;
 import net.eneiluj.nextcloud.phonetrack.persistence.PhoneTrackSQLiteOpenHelper;
 import net.eneiluj.nextcloud.phonetrack.persistence.SessionServerSyncHelper;
+import net.eneiluj.nextcloud.phonetrack.util.MapUtils;
+import net.eneiluj.nextcloud.phonetrack.util.MapUtilsImportTest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -41,12 +46,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.fakes.RoboMenuItem;
+import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowShortcutManager;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ReflectionHelpers;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 @RunWith(AndroidJUnit4.class)
 public class MapActivityTest {
@@ -111,6 +122,70 @@ public class MapActivityTest {
             }
         }
         return null;
+    }
+
+    private static boolean importEnabled(MapActivity activity) {
+        return activity.toolbar.getMenu().findItem(R.id.menu_import_map).isEnabled();
+    }
+
+    /** The map also asks for permissions: look for the file picker. */
+    private static ShadowActivity.IntentForResult openDocumentRequest(MapActivity activity) {
+        ShadowActivity.IntentForResult started;
+        while ((started = shadowOf(activity).getNextStartedActivityForResult()) != null) {
+            if (Intent.ACTION_OPEN_DOCUMENT.equals(started.intent.getAction())) {
+                return started;
+            }
+        }
+        return null;
+    }
+
+    /** Issue #128: a big map file must not freeze the map, also if it is rotated during the copy. */
+    @Test
+    public void mapImportRunsInTheBackgroundAndSurvivesRotation() throws Exception {
+        File target = app.getExternalFilesDir(null);
+        target.mkdirs();
+        File src = File.createTempFile("src", ".bin");
+        Files.write(src.toPath(), "new map".getBytes(StandardCharsets.UTF_8));
+        MapUtilsImportTest.FakeProvider.source = src;
+        MapUtilsImportTest.FakeProvider.displayName = "region.map";
+        MapUtilsImportTest.FakeProvider.nullCursor = false;
+        MapUtilsImportTest.FakeProvider.omitNameColumn = false;
+        CountDownLatch gate = new CountDownLatch(1);
+        MapUtilsImportTest.FakeProvider.gate = gate;
+        Robolectric.setupContentProvider(MapUtilsImportTest.FakeProvider.class, "test.maps");
+        String progress = app.getString(R.string.map_import_running);
+        try {
+            MapActivity activity = launchMap();
+            assertTrue(importEnabled(activity));
+            activity.onOptionsItemSelected(new RoboMenuItem(R.id.menu_import_map));
+            ShadowActivity.IntentForResult request = openDocumentRequest(activity);
+            assertNotNull("the file picker was not opened", request);
+
+            shadowOf(activity).receiveResult(request.intent, Activity.RESULT_OK,
+                    new Intent().setData(Uri.parse("content://test.maps/doc")));
+            shadowOf(Looper.getMainLooper()).idle();
+
+            // the result handler has returned while the copy still waits for the file
+            assertTrue(MapUtils.isMapImportRunning());
+            assertFalse(new File(target, "region.map").exists());
+            assertEquals(progress, findSnackbarText(activity.getWindow().getDecorView()).getText().toString());
+            assertFalse(importEnabled(activity));
+
+            controller.recreate();
+            shadowOf(Looper.getMainLooper()).idle();
+            MapActivity rotated = controller.get();
+            assertEquals(progress, findSnackbarText(rotated.getWindow().getDecorView()).getText().toString());
+            assertFalse(importEnabled(rotated));
+        } finally {
+            gate.countDown();
+            MapUtilsImportTest.awaitImport();
+            MapUtilsImportTest.FakeProvider.gate = null;
+        }
+
+        assertEquals("new map", new String(Files.readAllBytes(new File(target, "region.map").toPath()),
+                StandardCharsets.UTF_8));
+        assertEquals(app.getString(R.string.osmdroid_file_load_success), ShadowToast.getTextOfLatestToast());
+        assertNotSame(Looper.getMainLooper().getThread(), MapUtilsImportTest.FakeProvider.openThread);
     }
 
     @Test

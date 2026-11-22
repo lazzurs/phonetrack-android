@@ -208,6 +208,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             }
         });
 
+        MapUtils.addMapImportListener(mapImportListener);
+        updateMapImportPreference();
+
         Preference deleteOsmdroidPref = findPreference(getString(R.string.pref_key_osmdroid_delete));
         deleteOsmdroidPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -451,13 +454,30 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "[ACT RESULT]");
         // Check which request we're responding to
-        if (requestCode == import_file_cmd && resultCode == Activity.RESULT_OK) {
+        if (requestCode == import_file_cmd && resultCode == Activity.RESULT_OK && data != null) {
             Uri selectedfile = data.getData();
-            boolean ok = MapUtils.importMapFile(getContext(), selectedfile);
-            if (ok && getActivity() != null) {
-                getActivity().recreate();
+            if (MapUtils.startMapImport(requireContext(), selectedfile)) {
+                updateMapImportPreference();
             }
         }
+    }
+
+    // while a map file is imported (also after a rotation), its entry says so and can't start another import
+    private final MapUtils.MapImportListener mapImportListener = imported -> updateMapImportPreference();
+
+    private void updateMapImportPreference() {
+        Preference loadOsmdroidPref = findPreference(getString(R.string.pref_key_osmdroid_load));
+        if (loadOsmdroidPref != null) {
+            boolean running = MapUtils.isMapImportRunning();
+            loadOsmdroidPref.setEnabled(!running);
+            loadOsmdroidPref.setSummary(running ? getString(R.string.map_import_running) : null);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        MapUtils.removeMapImportListener(mapImportListener);
+        super.onDestroy();
     }
 
     private void setProvidersSummary(Preference providersPref, String value) {

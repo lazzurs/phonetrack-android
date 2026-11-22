@@ -183,6 +183,8 @@ public class MapActivity extends AppCompatActivity {
     // the last position loading error shown, until a refresh succeeds (null: none)
     private String shownLoadError;
     private Snackbar loadErrorSnackbar;
+    // shown while a map file is imported, also by a map recreated (e.g. rotated) during the import
+    private Snackbar mapImportSnackbar;
     // what to do once the location permission is granted
     private Runnable pendingLocationAction;
     // the local database may have new positions: set on resume and when the logger saves one
@@ -203,6 +205,16 @@ public class MapActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_map_view, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // one import at a time
+        MenuItem importItem = menu.findItem(R.id.menu_import_map);
+        if (importItem != null) {
+            importItem.setEnabled(!MapUtils.isMapImportRunning());
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -234,13 +246,34 @@ public class MapActivity extends AppCompatActivity {
                             Intent data = result.getData();
                             if (result.getResultCode() == RESULT_OK && data != null) {
                                 Uri selectedFile = data.getData();
-                                boolean ok = MapUtils.importMapFile(MapActivity.this, selectedFile);
-                                if (ok) {
-                                    recreate();
+                                if (MapUtils.startMapImport(MapActivity.this, selectedFile)) {
+                                    showMapImportProgress();
                                 }
                             }
                         }
                     });
+
+    // the map files are read when the map is created: recreate it to show the new one
+    private final MapUtils.MapImportListener mapImportListener = imported -> {
+        hideMapImportProgress();
+        if (imported) {
+            recreate();
+        }
+    };
+
+    private void showMapImportProgress() {
+        mapImportSnackbar = Snackbar.make(relativeLayoutMap, R.string.map_import_running, Snackbar.LENGTH_INDEFINITE);
+        mapImportSnackbar.show();
+        invalidateOptionsMenu();
+    }
+
+    private void hideMapImportProgress() {
+        if (mapImportSnackbar != null) {
+            mapImportSnackbar.dismiss();
+            mapImportSnackbar = null;
+        }
+        invalidateOptionsMenu();
+    }
 
     private final ActivityResultLauncher<String[]> locationPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
@@ -388,6 +421,16 @@ public class MapActivity extends AppCompatActivity {
         mScaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);
         map.getOverlays().add(this.mScaleBarOverlay);
 
+        MapUtils.addMapImportListener(mapImportListener);
+        if (MapUtils.isMapImportRunning()) {
+            showMapImportProgress();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        MapUtils.removeMapImportListener(mapImportListener);
+        super.onDestroy();
     }
 
     /** A pinned map shortcut whose session is gone: grey it out on the home screen. */
