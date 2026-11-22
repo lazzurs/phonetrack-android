@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Мапа для %s</string>
   <string name="display_info_menu_title">Інформація журналювання</string>
   <string name="display_map_menu_title">Карта сесій журналювання</string>
-  <string name="file_saved_success">Журнал експортовано в %s</string>
   <string name="syslog_saved_success">Журнал активності експортовано в %s</string>
   <string name="delete_logjob_menu_title">Видалити журнал</string>
   <string name="manage_accounts">Керування обліковими записами</string>

@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Kaart voor %s</string>
   <string name="display_info_menu_title">Logtaak informatie</string>
   <string name="display_map_menu_title">Kaart van de logtaak sessie</string>
-  <string name="file_saved_success">Logtaak geëxporteerd in %s</string>
   <string name="syslog_saved_success">Activiteiten log geëxporteerd in %s</string>
   <string name="delete_logjob_menu_title">Logtaak verwijderen</string>
   <string name="manage_accounts">Beheer accounts</string>

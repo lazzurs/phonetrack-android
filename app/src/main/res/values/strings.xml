@@ -211,9 +211,17 @@
     <string name="homescreen_map_shortcut_long_title">Map for %s</string>
     <string name="display_info_menu_title">Log job information</string>
     <string name="display_map_menu_title">Map of log job\'s session</string>
-    <string name="file_saved_success">Log job exported in %s</string>
     <string name="syslog_saved_success">Activity log exported in %s</string>
     <string name="delete_logjob_menu_title">Delete log job</string>
+    <string name="export_gpx_menu_title">Export as GPX file</string>
+    <plurals name="gpx_export_saved">
+        <item quantity="one">%d position saved. The file only has the positions still on this phone: uploaded positions already deleted from this phone are not in it.</item>
+        <item quantity="other">%d positions saved. The file only has the positions still on this phone: uploaded positions already deleted from this phone are not in it.</item>
+    </plurals>
+    <string name="gpx_export_empty">The file was saved without positions: this log job has none still on this phone. Uploaded positions already deleted from this phone are not in it.</string>
+    <string name="gpx_export_failed">Could not save the GPX file: %s</string>
+    <string name="gpx_export_logjob_deleted">the log job was deleted</string>
+    <string name="gpx_export_no_file_app">No app on this phone can create the file</string>
     <string name="manage_accounts">Manage accounts</string>
 
 

@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Mapa dla %s</string>
   <string name="display_info_menu_title">Informacje o logowaniu</string>
   <string name="display_map_menu_title">Mapa sesji</string>
-  <string name="file_saved_success">Rejestr wyeksportowany do %s</string>
   <string name="syslog_saved_success">Dziennik aktywności wyeksportowany do %s</string>
   <string name="delete_logjob_menu_title">Usuń zadanie rejestratora</string>
   <string name="manage_accounts">Zarządzaj kontami</string>

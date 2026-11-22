@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Mapa de %s</string>
   <string name="display_info_menu_title">Información de la tarea de registro</string>
   <string name="display_map_menu_title">Mapa de sesiones de tareas de registro</string>
-  <string name="file_saved_success">Tarea de registro exportada en %s</string>
   <string name="syslog_saved_success">Registro de actividades exportado en %s</string>
   <string name="delete_logjob_menu_title">Borrar tarea de registro</string>
   <string name="manage_accounts">Administrar cuentas</string>

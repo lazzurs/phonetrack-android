@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Mapa pro %s</string>
   <string name="display_info_menu_title">Informace o úloze zaznamenávání</string>
   <string name="display_map_menu_title">Mapa relace úlohy zaznamenávání</string>
-  <string name="file_saved_success">Úloha zaznamenávání exportována do %s</string>
   <string name="syslog_saved_success">Záznam aktivity exportován do %s</string>
   <string name="delete_logjob_menu_title">Smazat úlohu zaznamenávání</string>
   <string name="manage_accounts">Spravovat účty</string>
