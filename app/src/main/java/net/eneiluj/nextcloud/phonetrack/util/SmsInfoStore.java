@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.annotation.VisibleForTesting;
+
 import net.eneiluj.nextcloud.phonetrack.android.activity.LogjobsListViewActivity;
 
 import java.nio.charset.StandardCharsets;
@@ -20,7 +22,8 @@ public final class SmsInfoStore {
 
     public static final String EXTRA_TOKEN = "net.eneiluj.nextcloud.phonetrack.smsinfoToken";
 
-    private static final String PREFS = "sms_info";
+    @VisibleForTesting
+    static final String PREFS = "sms_info";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_CONTENT = "content";
     private static final String KEY_FROM = "from";

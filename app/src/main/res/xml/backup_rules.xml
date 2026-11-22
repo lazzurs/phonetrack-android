@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Android 11 and older, where one set of rules covers every kind of backup.
      Mirrors the cloud backup rules in data_extraction_rules.xml: no database,
-     no passwords (CredentialStore.FILE_NAME), no Single Sign-On token file. -->
+     no passwords (CredentialStore.FILE_NAME), no Single Sign-On token file, no SMS
+     command state ("sms_info", SmsCommandGuard.FILE_NAME). -->
 <full-backup-content>
     <exclude domain="database" path="." />
     <exclude domain="sharedpref" path="credentials.xml" />
     <exclude domain="sharedpref" path="single-sign-on.xml" />
+    <exclude domain="sharedpref" path="sms_info.xml" />
+    <exclude domain="sharedpref" path="sms_command_guard.xml" />
 </full-backup-content>

@@ -13,11 +13,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * The backup rules must exclude the file CredentialStore writes, or passwords
- * end up in the cloud backup again.
+ * end up in the cloud backup again, and the SMS command files, or the last position
+ * sent by SMS and the numbers that sent commands end up there too.
  */
 public class BackupRulesTest {
 
     private static final String CREDENTIALS_FILE = CredentialStore.FILE_NAME + ".xml";
+    // the names the code passes to getSharedPreferences, so a rename cannot silently undo the exclusion
+    private static final String SMS_INFO_FILE = SmsInfoStore.PREFS + ".xml";
+    private static final String SMS_GUARD_FILE = SmsCommandGuard.FILE_NAME + ".xml";
 
     private static Element parse(String name) throws Exception {
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
@@ -85,6 +89,30 @@ public class BackupRulesTest {
     @Test
     public void legacyBackupExcludesCredentials() throws Exception {
         assertEquals(1, credentialExcludes(parse("backup_rules.xml")));
+    }
+
+    @Test
+    public void cloudBackupExcludesSmsCommandState() throws Exception {
+        Element cloud = section("cloud-backup");
+        assertEquals(1, excludes(cloud, "sharedpref", SMS_INFO_FILE));
+        assertEquals(1, excludes(cloud, "sharedpref", SMS_GUARD_FILE));
+        assertEquals(1, credentialExcludes(cloud));
+    }
+
+    @Test
+    public void legacyBackupExcludesSmsCommandState() throws Exception {
+        Element legacy = parse("backup_rules.xml");
+        assertEquals(1, excludes(legacy, "sharedpref", SMS_INFO_FILE));
+        assertEquals(1, excludes(legacy, "sharedpref", SMS_GUARD_FILE));
+        assertEquals(1, credentialExcludes(legacy));
+    }
+
+    @Test
+    public void deviceTransferKeepsSmsCommandState() throws Exception {
+        // like the database: the owner moves it to their own new phone
+        Element transfer = section("device-transfer");
+        assertEquals(0, excludes(transfer, "sharedpref", SMS_INFO_FILE));
+        assertEquals(0, excludes(transfer, "sharedpref", SMS_GUARD_FILE));
     }
 
     @Test

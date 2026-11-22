@@ -3,17 +3,22 @@
      Cloud backup: the database (session tokens, log job URLs and logins, recorded
      positions, system log) is never uploaded, nor are the passwords
      (CredentialStore.FILE_NAME) or the Nextcloud Single Sign-On token file
-     ("single-sign-on", Constants.SSO_SHARED_PREFERENCE in Android-SingleSignOn).
+     ("single-sign-on", Constants.SSO_SHARED_PREFERENCE in Android-SingleSignOn),
+     nor the SMS command state: the last position sent by SMS and who asked for it
+     (SmsInfoStore, "sms_info") and the numbers that sent commands (SmsCommandGuard.FILE_NAME).
      Only the ordinary preferences remain. The backup is only made when it can be
      encrypted client-side.
      Device transfer (direct, started by the owner): keeps the database so log jobs
-     survive a phone-to-phone migration. Passwords and the SSO token are left out so
+     survive a phone-to-phone migration, and the SMS command state with it, since the
+     owner moves it to their own phone just like the recorded positions. Passwords and the SSO token are left out so
      that secrets never leave the device: the owner signs in again on the new phone. -->
 <data-extraction-rules>
     <cloud-backup disableIfNoEncryptionCapabilities="true">
         <exclude domain="database" path="." />
         <exclude domain="sharedpref" path="credentials.xml" />
         <exclude domain="sharedpref" path="single-sign-on.xml" />
+        <exclude domain="sharedpref" path="sms_info.xml" />
+        <exclude domain="sharedpref" path="sms_command_guard.xml" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="sharedpref" path="credentials.xml" />
