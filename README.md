@@ -8,8 +8,6 @@
 
 An android app to log locations to [PhoneTrack Nextcloud app](https://gitlab.com/eneiluj/phonetrack-oc) or any custom server.
 
-[![Crowdin](https://d322cqt584bo4o.cloudfront.net/phonetrack/localized.svg)](https://crowdin.com/project/phonetrack)
-
 This app is originally a fork of [Nextcloud Notes for Android](https://github.com/stefan-niedermann/nextcloud-notes).
 It is also largely insired by [µLogger for Android](https://github.com/bfabiszewski/ulogger-android) for the logging service part.
 Many thanks to their developers :heart: !
@@ -47,7 +45,7 @@ This app is pretty simple so it has a low inpact on battery life. There has been
 * Display devices of a Nextcloud PhoneTrack session on a map
 * Dark theme
 * Cloud backups contain only ordinary settings, not the database, passwords or the Nextcloud sign-in token (see [PRIVACY.md](PRIVACY.md#backups))
-* Translated in many languages on [Crowdin](https://crowdin.com/project/phonetrack)
+* Translations: the app has language files for 46 locales besides English, from the original app's Crowdin project. In 17 of them most of the original app's text is translated; in the others much or most of it is still English. The text this fork added is in English in every language. Translations are welcome as pull requests: see [TRANSLATING.md](TRANSLATING.md)
 
 
 ## :link: Requirements

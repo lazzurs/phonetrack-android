@@ -52,6 +52,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="@string/about_translate" />
+            android:text="@string/about_translate_fork" />
     </LinearLayout>
 </ScrollView>

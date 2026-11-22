@@ -31,7 +31,7 @@ public class AboutFragmentContributingTab extends Fragment {
         //ButterKnife.bind(this, v);
         SupportUtil.setHtml(aboutSource, R.string.about_source_fork, getString(R.string.url_source));
         SupportUtil.setHtml(aboutIssues, R.string.about_issues_fork, getString(R.string.url_issues));
-        SupportUtil.setHtml(aboutTranslate, R.string.about_translate, getString(R.string.url_translations));
+        SupportUtil.setHtml(aboutTranslate, R.string.about_translate_fork, getString(R.string.url_translating));
         return v;
     }
 }
