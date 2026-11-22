@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Harta pentru %s</string>
   <string name="display_info_menu_title">Informații jurnal</string>
   <string name="display_map_menu_title">Harta jurnalului de sesiune</string>
-  <string name="file_saved_success">Jurnal exportat în %s</string>
   <string name="syslog_saved_success">Jurnal activitate exportat în %s</string>
   <string name="delete_logjob_menu_title">Ştergeţi jurnalul</string>
   <string name="manage_accounts">Administrare conturi</string>

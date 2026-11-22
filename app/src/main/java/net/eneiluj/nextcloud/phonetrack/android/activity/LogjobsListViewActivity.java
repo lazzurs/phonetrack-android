@@ -4,6 +4,7 @@ import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +19,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 
 import androidx.core.os.BundleCompat;
@@ -34,12 +34,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.preference.PreferenceManager;
 
-/*
-import com.codebutchery.androidgpx.data.GPXDocument;
-import com.codebutchery.androidgpx.data.GPXSegment;
-import com.codebutchery.androidgpx.data.GPXTrack;
-import com.codebutchery.androidgpx.data.GPXTrackPoint;
-*/
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -78,12 +72,10 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -115,6 +107,7 @@ import net.eneiluj.nextcloud.phonetrack.util.LogjobDeletion;
 import net.eneiluj.nextcloud.phonetrack.util.KeyboardUtil;
 import net.eneiluj.nextcloud.phonetrack.util.BackgroundTask;
 import net.eneiluj.nextcloud.phonetrack.util.EdgeToEdgeUtil;
+import net.eneiluj.nextcloud.phonetrack.util.GpxWriter;
 import net.eneiluj.nextcloud.phonetrack.util.ICallback;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrack;
 import net.eneiluj.nextcloud.phonetrack.util.PhoneTrackClientUtil;
@@ -155,8 +148,16 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private static final String SAVED_STATE_NAVIGATION_ADAPTER_SLECTION = "navigationAdapterSelection";
     private static final String SAVED_STATE_NAVIGATION_OPEN = "navigationOpen";
 
-    private static String contentToExport = "";
+    private static final String SAVED_STATE_GPX_EXPORT_LOGJOB_ID = "gpxExportLogjobId";
+    /** How long the GPX export result stays: longer than LENGTH_LONG, as it says what the file has */
+    private static final int GPX_EXPORT_MESSAGE_MS = 8000;
 
+    /**
+     * The log job being exported to GPX while the user chooses the file. Only its id is kept (in
+     * the saved state too), so the export survives the process being killed meanwhile; its
+     * positions are read when the file is written.
+     */
+    private long gpxExportLogjobId = -1;
 
     Toolbar toolbar;
     DrawerLayout drawerLayout;
@@ -196,6 +197,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
     private Snackbar logjobRestoredSnackbar;
     private Snackbar sessionsSyncedSnackbar;
     private Snackbar sessionCreatedSnackbar;
+    private Snackbar gpxExportSnackbar;
     ImageView avatarView;
     AppCompatImageButton menuButton;
     AppCompatImageButton accountButton;
@@ -252,6 +254,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
             navigationSelection = BundleCompat.getSerializable(savedInstanceState, SAVED_STATE_NAVIGATION_SELECTION, Category.class);
             navigationOpen = savedInstanceState.getString(SAVED_STATE_NAVIGATION_OPEN);
             categoryAdapterSelectedItem = savedInstanceState.getString(SAVED_STATE_NAVIGATION_ADAPTER_SLECTION);
+            gpxExportLogjobId = savedInstanceState.getLong(SAVED_STATE_GPX_EXPORT_LOGJOB_ID, -1);
         }
 
         setContentView(R.layout.drawer_layout);
@@ -531,6 +534,7 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         outState.putSerializable(SAVED_STATE_NAVIGATION_SELECTION, navigationSelection);
         outState.putString(SAVED_STATE_NAVIGATION_ADAPTER_SLECTION, adapterCategories.getSelectedItem());
         outState.putString(SAVED_STATE_NAVIGATION_OPEN, navigationOpen);
+        outState.putLong(SAVED_STATE_GPX_EXPORT_LOGJOB_ID, gpxExportLogjobId);
     }
 
     private void setupToolBar() {
@@ -1131,17 +1135,17 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         //if (requestCode == save_file_cmd) {
     }
 
-    private final ActivityResultLauncher<Intent> saveFileLauncher =
+    private final ActivityResultLauncher<Intent> gpxExportLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     new ActivityResultCallback<ActivityResult>() {
                         @Override
                         public void onActivityResult(ActivityResult result) {
-                            SystemLogger.d(TAG, "saveFileLauncher result, is " + result.getResultCode() + " == " + RESULT_OK + " ?");
+                            long logjobId = gpxExportLogjobId;
+                            gpxExportLogjobId = -1;
                             Intent data = result.getData();
-                            if (result.getResultCode() == RESULT_OK && data != null) {
-                                Uri savedFile = data.getData();
-                                SystemLogger.v(TAG, "Save to " + savedFile);
-                                saveToFileUri(contentToExport, savedFile);
+                            Uri file = data == null ? null : data.getData();
+                            if (result.getResultCode() == RESULT_OK && file != null && logjobId != -1) {
+                                new GpxExportTask(LogjobsListViewActivity.this, logjobId, file).executeInParallel();
                             }
                         }
                     });
@@ -1379,8 +1383,8 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
                         } else {
                             cancelableLogjobDeletion(logjobItem);
                         }
-                    // } else if (item.getItemId() == R.id.menuExportToGpx) {
-                        // exportLogjobToGPX(logjobMenu);
+                    } else if (item.getItemId() == R.id.menuExportToGpx) {
+                        exportLogjobToGpx(logjobMenu);
                     }
                     return true;
                 }
@@ -1389,71 +1393,83 @@ public class LogjobsListViewActivity extends AppCompatActivity implements ItemAd
         }
     }
 
-    /*
-    public void exportLogjobToGPX(DBLogjob logjob) {
-        List<DBLogjobLocation> locs = db.getLocationsOfLogjob(logjob.getId());
-
-        GPXSegment segment = new GPXSegment();
-        GPXTrackPoint point;
-        for (DBLogjobLocation loc: locs) {
-            point = new GPXTrackPoint((float)loc.getLat(), (float)loc.getLon());
-            segment.addPoint(point);
+    /** Asks where to save the GPX file; the positions are written once the file is chosen. */
+    private void exportLogjobToGpx(DBLogjob logjob) {
+        if (logjob == null) {
+            return;
         }
-        GPXTrack track = new GPXTrack();
-        track.addSegment(segment);
-        List<GPXTrack> tracks = new ArrayList<>();
-        tracks.add(track);
-        GPXDocument gpxDoc = new GPXDocument(null, tracks, null);
-
-        contentToExport = "";
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (PrintStream ps = new PrintStream(baos, true, "utf-8")) {
-            gpxDoc.toGPX(ps);
-            contentToExport = baos.toString("utf-8");
-        } catch (UnsupportedEncodingException e) {
-
-        }
-        String userAgent = getString(R.string.app_name) + "/" + SupportUtil.getAppVersionName(this);
-        contentToExport = contentToExport.replace("AndroidGPX ( http://codebutchery.wordpress.com )", userAgent);
-
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/gpx+xml");
-        intent.putExtra(Intent.EXTRA_TITLE, logjob.getTitle() + ".gpx");
-
-        // Optionally, specify a URI for the directory that should be opened in
-        // the system file picker when your app creates the document.
-        //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
-
-        //startActivityForResult(intent, save_file_cmd);
-        saveFileLauncher.launch(intent);
-    }
-    */
-
-    private void saveToFileUri(String content, Uri fileUri) {
+        intent.setType(GpxWriter.MIME_TYPE);
+        intent.putExtra(Intent.EXTRA_TITLE, GpxWriter.suggestedFileName(logjob.getTitle(), LocalDate.now()));
+        gpxExportLogjobId = logjob.getId();
         try {
-            OutputStream fOut = getContentResolver().openOutputStream(fileUri);
-            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-            myOutWriter.append(content);
-            myOutWriter.close();
-            if (fOut != null) {
-                fOut.flush();
-                fOut.close();
+            gpxExportLauncher.launch(intent);
+        } catch (ActivityNotFoundException e) {
+            gpxExportLogjobId = -1;
+            showToast(getString(R.string.gpx_export_no_file_app), Toast.LENGTH_LONG);
+        }
+    }
+
+    /**
+     * Writes the positions of a log job to the file chosen for it, off the main thread. Not on the
+     * serial queue: a file on a cloud storage provider can take a while to write, and the list
+     * loads must not wait for it.
+     */
+    private static class GpxExportTask extends BackgroundTask<Void, String> {
+        private final Context appContext;
+        private final WeakReference<LogjobsListViewActivity> activityRef;
+        private final long logjobId;
+        private final Uri file;
+
+        GpxExportTask(LogjobsListViewActivity activity, long logjobId, Uri file) {
+            this.appContext = activity.getApplicationContext();
+            this.activityRef = new WeakReference<>(activity);
+            this.logjobId = logjobId;
+            this.file = file;
+        }
+
+        /** @return the message for the user */
+        @Override
+        protected String doInBackground(Void[] params) {
+            PhoneTrackSQLiteOpenHelper db = PhoneTrackSQLiteOpenHelper.getInstance(appContext);
+            DBLogjob logjob = db.getLogjob(logjobId);
+            if (logjob == null) {
+                return appContext.getString(R.string.gpx_export_failed,
+                        appContext.getString(R.string.gpx_export_logjob_deleted));
             }
-            String lastPathSegment = fileUri.getLastPathSegment();
-            if (lastPathSegment != null) {
-                showToast(
-                    getString(
-                        R.string.file_saved_success, lastPathSegment.replace(
-                            Environment.getExternalStorageDirectory().toString(),
-                            ""
-                        )
-                    )
-                );
+            // all the positions of the log job on this phone, oldest first, as its map shows them
+            List<DBLogjobLocation> positions = db.getLocationsOfLogjob(logjobId);
+            String creator = appContext.getString(R.string.app_name) + "/" + SupportUtil.getAppVersionName(appContext);
+            int written;
+            try (OutputStream out = appContext.getContentResolver().openOutputStream(file, "wt")) {
+                if (out == null) {
+                    throw new IOException("the storage app did not open the file");
+                }
+                written = GpxWriter.write(out, logjob.getTitle(), creator, positions);
+            } catch (IOException | SecurityException | IllegalArgumentException e) {
+                // the last two: from the storage app (e.g. permission withdrawn, file gone)
+                SystemLogger.e(TAG, "GPX export failed: " + e);
+                String reason = e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.getClass().getSimpleName();
+                return appContext.getString(R.string.gpx_export_failed, reason);
             }
-        } catch (IOException e) {
-            SystemLogger.e(TAG, "File write failed: " + e.toString());
-            showToast(e.toString());
+            if (written == 0) {
+                return appContext.getString(R.string.gpx_export_empty);
+            }
+            return appContext.getResources().getQuantityString(R.plurals.gpx_export_saved, written, written);
+        }
+
+        @Override
+        protected void onPostExecute(String message) {
+            LogjobsListViewActivity activity = activityRef.get();
+            if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
+                Toast.makeText(appContext, message, Toast.LENGTH_LONG).show();
+                return;
+            }
+            // kept in a field for the same reason as uploadFailureSnackbar
+            activity.gpxExportSnackbar = Snackbar.make(activity.swipeRefreshLayout, message, GPX_EXPORT_MESSAGE_MS)
+                    .setTextMaxLines(5);
+            activity.gpxExportSnackbar.show();
         }
     }
 

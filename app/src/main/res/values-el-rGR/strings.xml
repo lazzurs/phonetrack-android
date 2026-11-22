@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Χάρτης για %s</string>
   <string name="display_info_menu_title">Πληροφορίες καταγραφής</string>
   <string name="display_map_menu_title">Χάρτης της συνεδρίας καταγραφής</string>
-  <string name="file_saved_success">Η εργασία καταγραφής εξάχθηκε στο %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Διαγραφή εργασίας καταγραφής</string>
   <string name="manage_accounts">Manage accounts</string>

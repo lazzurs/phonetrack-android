@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Mappa per %s</string>
   <string name="display_info_menu_title">Informazioni su Logjob</string>
   <string name="display_map_menu_title">Mappa della sessione del logjob</string>
-  <string name="file_saved_success">Logjob esportato in %s</string>
   <string name="syslog_saved_success">Registro attività esportato in %s</string>
   <string name="delete_logjob_menu_title">Elimina logjob</string>
   <string name="manage_accounts">Gestisci account</string>

@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">%s 地图</string>
   <string name="display_info_menu_title">日志信息</string>
   <string name="display_map_menu_title">日志作业会话地图</string>
-  <string name="file_saved_success">日志作业已导出到 %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">删除日志</string>
   <string name="manage_accounts">Manage accounts</string>

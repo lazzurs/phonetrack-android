@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Mapa para %s</string>
   <string name="display_info_menu_title">Informação</string>
   <string name="display_map_menu_title">Mapa da sessão da tarefa</string>
-  <string name="file_saved_success">Tarefa exportada para %s</string>
   <string name="syslog_saved_success">Registo de atividade exportado para %s</string>
   <string name="delete_logjob_menu_title">Eliminar tarefa</string>
   <string name="manage_accounts">Gerir contas</string>

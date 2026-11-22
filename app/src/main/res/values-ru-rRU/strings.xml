@@ -150,7 +150,6 @@
   <string name="homescreen_map_shortcut_long_title">Карта для %s</string>
   <string name="display_info_menu_title">Информация о задании журнала</string>
   <string name="display_map_menu_title">Карта лога сессии</string>
-  <string name="file_saved_success">Задание журнала экспортировано в %s</string>
   <string name="syslog_saved_success">Activity log exported in %s</string>
   <string name="delete_logjob_menu_title">Удалить задание журнала</string>
   <string name="manage_accounts">Управление аккаунтами</string>
