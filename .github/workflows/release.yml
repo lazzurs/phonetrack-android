@@ -71,10 +71,19 @@ jobs:
           REF_TYPE: ${{ github.ref_type }}
           REF_NAME: ${{ github.ref_name }}
           REF: ${{ github.ref }}
+          RELEASE_BOT_NAME: phonetrack-release-bot[bot]
         run: |
           build=true publish=false tag='' bump='' signing=other
           if [[ $REF_TYPE == tag ]]; then
-            publish=true tag=$REF_NAME
+            # the release run pushes its tag with the release bot's token, which starts this run:
+            # that run has published the release already, so this one does nothing
+            tagger=$(git for-each-ref --format='%(taggername)' "refs/tags/$REF_NAME")
+            if [[ $tagger == "$RELEASE_BOT_NAME" ]]; then
+              echo "$REF_NAME was pushed by the release run, which publishes it"
+              build=false
+            else
+              publish=true tag=$REF_NAME
+            fi
           else
             version=$(grep -E '^appVersionName=' gradle.properties | tail -1 | cut -d= -f2 | tr -d '[:space:]')
             if ! git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
@@ -291,16 +300,30 @@ jobs:
           scripts/release/verify-apk-signer.sh release \
             "release-out/phonetrack-$VERSION-normal.apk" "release-out/phonetrack-$VERSION-play.apk"
 
+      # tags can only be created by this app (a ruleset on v* tags, RELEASING.md); a token from it
+      # starts the tag run, which does nothing (see the plan job)
+      - name: Create a token for the release bot
+        id: bot
+        if: github.ref_type != 'tag'
+        uses: actions/create-github-app-token@a8d616148505b5069dccd32f177bb87d7f39123b # v2.1.1
+        with:
+          app-id: ${{ vars.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+
       - name: Commit the version and tag the release
         id: tag
         if: github.ref_type != 'tag'
         env:
           BUMP: ${{ needs.plan.outputs.bump }}
-        # the tag is on "build: release X.Y.Z", a child of the built commit that only adds the
-        # version, the CHANGELOG.md entry and names the highlights; pushed together, and with the workflow's token, which
-        # starts no other workflow run
+          BOT_TOKEN: ${{ steps.bot.outputs.token }}
+          RELEASE_BOT_NAME: phonetrack-release-bot[bot]
+        # the version commit goes to main with the workflow's token, which starts no other run; the
+        # tag goes with the release bot's token, which starts only the tag run, which does nothing
         run: |
-          git config user.name "github-actions[bot]"
+          git config user.name "$RELEASE_BOT_NAME"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
             # a re-run after the push
@@ -322,7 +345,9 @@ jobs:
           git add gradle.properties CHANGELOG.md
           git commit -m "build: release $VERSION"
           git tag -a "$TAG" -m "PhoneTrack $VERSION"
-          if git push --atomic origin HEAD:refs/heads/main "refs/tags/$TAG"; then
+          if git push origin HEAD:refs/heads/main; then
+            git push "https://x-access-token:${BOT_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "refs/tags/$TAG" \
+              || { echo "::error::the release commit is on main but $TAG could not be pushed: push the tag by hand"; exit 1; }
             echo "pushed=true" >> "$GITHUB_OUTPUT"
           else
             # main moved on while this ran: the run queued for that push releases it all
