@@ -46,6 +46,12 @@ failed" until that file is regenerated: run `scripts/dependencies/update-verific
 and commit the result with your change. A maintainer reviews that diff; see
 [RELEASING.md](RELEASING.md#dependencies).
 
+## Translating (this fork)
+
+Translations are contributed by pull request, one language per pull request; there is no
+translation platform. [TRANSLATING.md](TRANSLATING.md) explains how, including for someone who
+has never built the app.
+
 ## Adding new features
 
 If you want to contribute on the code, you can fork the project, commit your changes and make a pull request. For bigger features/changes, it's better to first [open an issue](https://github.com/lazzurs/phonetrack-android/issues) and ask if this feature is needed or wanted – it would be very disappointing if you add a new cool feature and your pull request will be rejected by some reasons you didn't thought about.
